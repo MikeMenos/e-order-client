@@ -1,0 +1,58 @@
+"use client";
+
+import { useOrdersList } from "../../../../hooks/useOrders";
+
+export default function OrderRetakePage() {
+  const ordersQuery = useOrdersList(0, 50);
+
+  const orders = ordersQuery.data?.ordersList ?? [];
+
+  return (
+    <main className="min-h-screen bg-slate-50 p-6 space-y-4 text-slate-900">
+      <header className="space-y-1">
+        <h1 className="text-2xl font-semibold text-slate-900">Order retake</h1>
+        <p className="text-sm text-slate-600">
+          List of previous orders that could be “retaken” (new order from an
+          existing one).
+        </p>
+      </header>
+
+      {ordersQuery.isLoading && (
+        <p className="text-xs text-slate-500">Loading orders…</p>
+      )}
+      {ordersQuery.error && (
+        <p className="text-xs text-red-400">Failed to load orders.</p>
+      )}
+
+      {orders.length === 0 && !ordersQuery.isLoading ? (
+        <p className="text-sm text-slate-600">No orders found.</p>
+      ) : (
+        <div className="space-y-2">
+          {orders.map((o: any) => (
+            <div
+              key={o.orderUID}
+              className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-900 shadow-sm"
+            >
+              <div className="min-w-0">
+                <p className="truncate font-semibold">
+                  {o.supplierTitle ?? "Order"}
+                </p>
+                <p className="truncate text-xs text-slate-600">{o.orderUID}</p>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="text-xs text-slate-700">
+                  {o.orderDateFormatted ?? o.orderDate}
+                </p>
+                {typeof o.totalAmount === "number" && (
+                  <p className="text-xs font-semibold text-slate-900">
+                    {o.totalAmount.toFixed(2)} {o.currency ?? ""}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </main>
+  );
+}
