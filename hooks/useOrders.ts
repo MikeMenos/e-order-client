@@ -5,7 +5,7 @@ export const useOrdersList = (page = 0, pageSize = 50) => {
   return useQuery({
     queryKey: ["orders-list", page, pageSize],
     queryFn: async () => {
-      const res = await api.post("Orders/Orders_GetList", {
+      const res = await api.post("/orders", {
         page,
         pageSize,
       });
@@ -13,4 +13,3 @@ export const useOrdersList = (page = 0, pageSize = 50) => {
     },
   });
 };
-

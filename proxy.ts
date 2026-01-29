@@ -1,32 +1,42 @@
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/", "/login"];
+const PUBLIC_PATHS = ["/", "/login", "/signup"];
 
-export function proxy(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+function isPublicPath(pathname: string): boolean {
+  return PUBLIC_PATHS.includes(pathname);
+}
 
-  // Allow Next internals and public auth pages
-  if (
-    PUBLIC_PATHS.includes(pathname) ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api") ||
-    pathname.startsWith("/favicon")
-  ) {
-    return NextResponse.next();
+export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  const accessToken = request.cookies.get("accessToken")?.value;
+  const isLoggedIn = !!accessToken?.trim();
+
+  // Logged in on public path -> send to dashboard
+  if (isLoggedIn && isPublicPath(pathname)) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  const accessToken = req.cookies.get("accessToken")?.value;
-
-  if (!accessToken) {
-    const url = req.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+  // Not logged in on protected path -> send to home
+  if (!isLoggedIn && !isPublicPath(pathname)) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|api).*)"],
+  // Run only on page routes we need for auth; avoid interfering with internal routes
+  matcher: [
+    "/",
+    "/login",
+    "/signup",
+    "/dashboard",
+    "/basket",
+    "/configuration",
+    "/suppliers",
+    // Match dynamic segments (suppliers/[id], configuration/...)
+    "/suppliers/:path*",
+    "/configuration/:path*",
+  ],
 };

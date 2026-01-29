@@ -16,16 +16,16 @@ export default function BasketPage() {
         <p className="text-sm text-slate-600">
           Overview of items currently in your baskets.
         </p>
-        <p className="text-xs text-slate-700">
+        <p className="text-sm text-slate-700">
           Total baskets: <span className="font-semibold">{totalCount}</span>
         </p>
       </header>
 
       {basketQuery.isLoading && (
-        <p className="text-xs text-slate-500">Loading basket items…</p>
+        <p className="text-sm text-slate-500">Loading basket items…</p>
       )}
       {basketQuery.error && (
-        <p className="text-xs text-red-400">Failed to load basket items.</p>
+        <p className="text-sm text-red-400">Failed to load basket items.</p>
       )}
 
       {baskets.length === 0 && !basketQuery.isLoading ? (
@@ -42,18 +42,18 @@ export default function BasketPage() {
                   <p className="truncate text-sm font-semibold text-slate-900">
                     {basket.supplierTitle}
                   </p>
-                  <p className="truncate text-xs text-slate-600">
+                  <p className="truncate text-sm text-slate-600">
                     {basket.supplierUID}
                   </p>
                 </div>
-                <p className="text-xs text-slate-700">
+                <p className="text-sm text-slate-700">
                   Items:{" "}
                   <span className="font-semibold">
                     {basket.items?.length ?? 0}
                   </span>
                 </p>
               </div>
-              <ul className="max-h-40 space-y-1 overflow-auto text-xs text-slate-700">
+              <ul className="max-h-40 space-y-1 overflow-auto text-sm text-slate-700">
                 {basket.items?.map((item: any) => (
                   <li
                     key={item.productUID}

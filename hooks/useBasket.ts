@@ -5,7 +5,7 @@ export const useBasketItems = () => {
   return useQuery({
     queryKey: ["basket-items"],
     queryFn: async () => {
-      const res = await api.get("Basket/Basket_GetItems", {
+      const res = await api.get("/basket-items", {
         params: {},
       });
       return res.data;
@@ -17,11 +17,10 @@ export const useBasketCounter = () => {
   return useQuery({
     queryKey: ["basket-counter"],
     queryFn: async () => {
-      const res = await api.get("Basket/Basket_GetCounter", {
+      const res = await api.get("/basket-counter", {
         params: {},
       });
       return res.data;
     },
   });
 };
-

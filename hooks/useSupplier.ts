@@ -1,11 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 
-export const useSupplierDisplay = (supplierUID: string | undefined, refDate?: string) => {
+export const useSupplierDisplay = (
+  supplierUID: string | undefined,
+  refDate?: string,
+) => {
   return useQuery({
     queryKey: ["supplier-display", supplierUID, refDate],
     queryFn: async () => {
-      const res = await api.post("Shop/Supplier_Display", {
+      const res = await api.post("/suppliers-display", {
         supplierUID,
         refDate,
       });
@@ -15,11 +18,14 @@ export const useSupplierDisplay = (supplierUID: string | undefined, refDate?: st
   });
 };
 
-export const useSupplierProducts = (supplierUID: string | undefined, refDate?: string) => {
+export const useSupplierProducts = (
+  supplierUID: string | undefined,
+  refDate?: string,
+) => {
   return useQuery({
     queryKey: ["supplier-products", supplierUID, refDate],
     queryFn: async () => {
-      const res = await api.post("Shop/Supplier_GetProducts", {
+      const res = await api.post("/suppliers-products", {
         supplierUID,
         refDate,
         erpCatUID: null,
@@ -32,4 +38,3 @@ export const useSupplierProducts = (supplierUID: string | undefined, refDate?: s
     enabled: !!supplierUID,
   });
 };
-

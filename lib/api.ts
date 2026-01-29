@@ -16,32 +16,18 @@ api.interceptors.request.use((config) => {
   const { accessToken, storeAccessToken } = useAuthStore.getState();
   const url = config.url ?? "";
 
-  // Endpoints that should use the store token when available
+  // Endpoints that should use the store token when available (flat /api paths)
   const useStoreToken =
-    url.includes("Shop/Suppliers_GetList") ||
-    url.includes("Shop/Supplier_GetProducts") ||
-    url.includes("Shop/Supplier_Display") ||
-    url.includes("Shop/Supplier_BasicInfos") ||
-    url.includes("Orders/Orders_GetList") ||
-    url.includes("MyStore/Users_Get") ||
-    url.includes("MyStore/Users_ViewProfile") ||
-    url.includes("Basket/Wishlist_GetItems") ||
-    url.includes("Basket/Wishlist_ToggleItem") ||
-    url.includes("Basket/Basket_AddOrUpdate") ||
-    url.includes("Basket/Basket_SuggestQty") ||
-    url.includes("Basket/Basket_RemoveItem") ||
-    url.includes("Basket/Basket_GetItems") ||
-    url.includes("Orders/Order_Add") ||
-    url.includes("MyStore/PersonalizedTexts_Update") ||
-    url.includes("Account/MyProfile") ||
-    url.includes("Basket/Basket_GetCounter") ||
-    url.includes("Basket/Basket_Delete") ||
-    url.includes("Basket/Wishlist_SortProduct") ||
-    url.includes("Shop/Product_Display") ||
-    url.includes("MyStore/PrefSchedule_Get") ||
-    url.includes("MyStore/PrefSchedule_Update") ||
-    url.includes("Orders/Order_View") ||
-    url.includes("Orders/Order_Retake");
+    url.includes("/suppliers-list") ||
+    url.includes("/suppliers") ||
+    url.includes("/suppliers-products") ||
+    url.includes("/suppliers-display") ||
+    url.includes("/orders") ||
+    url.includes("/store-users") ||
+    url.includes("/store-pref-schedule") ||
+    url.includes("/basket-items") ||
+    url.includes("/basket-counter") ||
+    url.includes("/wishlist-items");
 
   const token = useStoreToken ? storeAccessToken || accessToken : accessToken;
 
@@ -57,3 +43,26 @@ api.interceptors.request.use((config) => {
 
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => {
+    const data: any = response?.data;
+    if (
+      data &&
+      typeof data.statusCode === "number" &&
+      data.statusCode === 500
+    ) {
+      const message =
+        typeof data.message === "string" && data.message.trim().length > 0
+          ? data.message
+          : "An unexpected error occurred.";
+      const error = new Error(message);
+      (error as any).response = response;
+      throw error;
+    }
+    return response;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);

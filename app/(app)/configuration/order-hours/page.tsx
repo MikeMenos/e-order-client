@@ -18,14 +18,14 @@ export default function OrderHoursPage() {
       </header>
 
       {scheduleQuery.isLoading && (
-        <p className="text-xs text-slate-500">Loading schedule…</p>
+        <p className="text-sm text-slate-500">Loading schedule…</p>
       )}
       {scheduleQuery.error && (
-        <p className="text-xs text-red-400">Failed to load schedule.</p>
+        <p className="text-sm text-red-400">Failed to load schedule.</p>
       )}
 
       {schedule && (
-        <pre className="max-h-[400px] overflow-auto rounded-xl border border-slate-200 bg-white p-4 text-xs text-slate-900 shadow-sm">
+        <pre className="max-h-[400px] overflow-auto rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-900 shadow-sm">
           {JSON.stringify(schedule, null, 2)}
         </pre>
       )}

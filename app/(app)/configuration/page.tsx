@@ -27,7 +27,7 @@ export default function ConfigurationIndexPage() {
             className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-slate-300 transition-colors"
           >
             <p className="text-sm font-semibold text-slate-900">{link.label}</p>
-            <p className="mt-1 wrap-break-word text-xs text-slate-600">
+            <p className="mt-1 wrap-break-word text-sm text-slate-600">
               {link.href}
             </p>
           </Link>

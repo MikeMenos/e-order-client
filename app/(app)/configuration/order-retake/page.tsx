@@ -18,10 +18,10 @@ export default function OrderRetakePage() {
       </header>
 
       {ordersQuery.isLoading && (
-        <p className="text-xs text-slate-500">Loading orders…</p>
+        <p className="text-sm text-slate-500">Loading orders…</p>
       )}
       {ordersQuery.error && (
-        <p className="text-xs text-red-400">Failed to load orders.</p>
+        <p className="text-sm text-red-400">Failed to load orders.</p>
       )}
 
       {orders.length === 0 && !ordersQuery.isLoading ? (
@@ -37,14 +37,14 @@ export default function OrderRetakePage() {
                 <p className="truncate font-semibold">
                   {o.supplierTitle ?? "Order"}
                 </p>
-                <p className="truncate text-xs text-slate-600">{o.orderUID}</p>
+                <p className="truncate text-sm text-slate-600">{o.orderUID}</p>
               </div>
               <div className="text-right shrink-0">
-                <p className="text-xs text-slate-700">
+                <p className="text-sm text-slate-700">
                   {o.orderDateFormatted ?? o.orderDate}
                 </p>
                 {typeof o.totalAmount === "number" && (
-                  <p className="text-xs font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-900">
                     {o.totalAmount.toFixed(2)} {o.currency ?? ""}
                   </p>
                 )}

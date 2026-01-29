@@ -5,7 +5,8 @@ import { useWishlistItems } from "../../../../hooks/useWishlist";
 export default function FavouriteSuppliersPage() {
   const wishlistQuery = useWishlistItems();
 
-  const items = wishlistQuery.data?.items ?? wishlistQuery.data?.wishlistItems ?? [];
+  const items =
+    wishlistQuery.data?.items ?? wishlistQuery.data?.wishlistItems ?? [];
 
   return (
     <main className="min-h-screen bg-slate-50 p-6 space-y-4 text-slate-900">
@@ -19,10 +20,10 @@ export default function FavouriteSuppliersPage() {
       </header>
 
       {wishlistQuery.isLoading && (
-        <p className="text-xs text-slate-500">Loading favorites…</p>
+        <p className="text-sm text-slate-500">Loading favorites…</p>
       )}
       {wishlistQuery.error && (
-        <p className="text-xs text-red-400">Failed to load favorites.</p>
+        <p className="text-sm text-red-400">Failed to load favorites.</p>
       )}
 
       {items.length === 0 && !wishlistQuery.isLoading ? (
@@ -37,13 +38,13 @@ export default function FavouriteSuppliersPage() {
               <div className="min-w-0">
                 <p className="truncate font-semibold">{item.title}</p>
                 {item.supplierTitle && (
-                  <p className="truncate text-xs text-slate-600">
+                  <p className="truncate text-sm text-slate-600">
                     {item.supplierTitle}
                   </p>
                 )}
               </div>
               {typeof item.price === "number" && (
-                <p className="shrink-0 text-xs font-semibold text-slate-900">
+                <p className="shrink-0 text-sm font-semibold text-slate-900">
                   {item.price.toFixed(2)} {item.currency ?? ""}
                 </p>
               )}
@@ -54,4 +55,3 @@ export default function FavouriteSuppliersPage() {
     </main>
   );
 }
-

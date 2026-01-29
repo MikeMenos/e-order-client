@@ -30,17 +30,17 @@ export default function UsersManagementPage() {
           Read-only list of users for the current store.
         </p>
         {storeUID && (
-          <p className="text-xs text-slate-700">
+          <p className="text-sm text-slate-700">
             Store UID: <span className="font-mono">{storeUID}</span>
           </p>
         )}
       </header>
 
       {usersQuery.isLoading && (
-        <p className="text-xs text-slate-500">Loading users…</p>
+        <p className="text-sm text-slate-500">Loading users…</p>
       )}
       {usersQuery.error && (
-        <p className="text-xs text-red-400">Failed to load users.</p>
+        <p className="text-sm text-red-400">Failed to load users.</p>
       )}
 
       {userList.length === 0 && !usersQuery.isLoading ? (
@@ -56,11 +56,11 @@ export default function UsersManagementPage() {
                 <p className="truncate font-semibold">
                   {u.fname} {u.lname}
                 </p>
-                <p className="truncate text-xs text-slate-600">
+                <p className="truncate text-sm text-slate-600">
                   {u.email ?? u.username}
                 </p>
               </div>
-              <span className="shrink-0 text-xs text-slate-700">
+              <span className="shrink-0 text-sm text-slate-700">
                 {u.userType}
               </span>
             </div>

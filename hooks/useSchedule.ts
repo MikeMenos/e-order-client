@@ -5,9 +5,8 @@ export const usePrefSchedule = () => {
   return useQuery({
     queryKey: ["pref-schedule"],
     queryFn: async () => {
-      const res = await api.post("MyStore/PrefSchedule_Get");
+      const res = await api.post("/store-pref-schedule");
       return res.data;
     },
   });
 };
-
