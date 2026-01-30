@@ -13,7 +13,7 @@ export function SupplierProductSection({ section, sectionRef }: Props) {
     <section
       ref={sectionRef}
       data-section-id={section.id}
-      className="space-y-3"
+      className="scroll-mt-58 space-y-3"
     >
       <div className="border-b border-slate-200 pb-1 text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
         {section.label}

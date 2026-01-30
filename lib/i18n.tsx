@@ -118,7 +118,7 @@ const resources: Resources = {
     supplier_search_placeholder: "Αναζήτηση: Προμηθευτής, Προϊόν, Κατηγορία...",
     supplier_order_by: "Παραγγελία έως:",
     supplier_delivery: "Παράδοση:",
-    supplier_reserve: "Reserve:",
+    supplier_reserve: "Απόθεμα:",
     supplier_loading_products: "Φόρτωση προϊόντων…",
     supplier_error_products: "Αποτυχία φόρτωσης προϊόντων.",
     supplier_empty_products: "Δεν βρέθηκαν προϊόντα για αυτόν τον προμηθευτή.",
@@ -156,7 +156,7 @@ export function TranslationProvider({
       const table = resources[language] ?? resources.gr;
       return table[key] ?? resources.gr[key] ?? key;
     },
-    [language],
+    [language]
   );
 
   const value = useMemo(
@@ -165,7 +165,7 @@ export function TranslationProvider({
       setLanguage,
       t,
     }),
-    [language, setLanguage, t],
+    [language, setLanguage, t]
   );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

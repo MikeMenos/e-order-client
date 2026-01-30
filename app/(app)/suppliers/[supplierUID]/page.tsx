@@ -26,7 +26,7 @@ export default function SupplierPage() {
 
   const supplierInfoQuery = useSupplierDisplay(
     supplierUID,
-    refDate ?? undefined,
+    refDate ?? undefined
   );
   const productsQuery = useSupplierProducts(supplierUID, refDate ?? undefined);
 
@@ -50,7 +50,7 @@ export default function SupplierPage() {
         favIconColor: p.favIconColor ?? "#9CBDFA",
         favIconMode: p.favIconMode ?? "border",
       })),
-    [rawProducts],
+    [rawProducts]
   );
 
   // Build sections: favorites + categories
@@ -93,10 +93,10 @@ export default function SupplierPage() {
 
   // Scroll spy for sections
   const [activeSectionId, setActiveSectionId] = useState<string | null>(
-    sections[0]?.id ?? null,
+    sections[0]?.id ?? null
   );
   const sectionRefs = useRef<Record<string, HTMLDivElement | null | undefined>>(
-    {},
+    {}
   );
   const [showDetails, setShowDetails] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -115,7 +115,7 @@ export default function SupplierPage() {
           .sort(
             (a, b) =>
               (a.target as HTMLDivElement).offsetTop -
-              (b.target as HTMLDivElement).offsetTop,
+              (b.target as HTMLDivElement).offsetTop
           );
 
         if (visible[0]) {
@@ -128,7 +128,7 @@ export default function SupplierPage() {
       {
         root: null,
         threshold: 0.25,
-      },
+      }
     );
 
     sections.forEach((section) => {
@@ -162,7 +162,7 @@ export default function SupplierPage() {
           (p) =>
             p.title?.toLowerCase().includes(q) ||
             p.subTitle?.toLowerCase().includes(q) ||
-            p.description?.toLowerCase().includes(q),
+            p.description?.toLowerCase().includes(q)
         ),
       }))
       .filter((section) => section.products.length > 0);
@@ -203,7 +203,7 @@ export default function SupplierPage() {
 
           {filteredSections.length === 0 && !productsQuery.isLoading ? (
             <p className="text-sm text-slate-600">
-              No products found for this supplier.
+              {t("supplier_empty_products")}
             </p>
           ) : (
             filteredSections.map((section) => (
