@@ -20,7 +20,7 @@ const formatTodayForAthens = () => {
     day: "2-digit",
   };
   const athensDate = new Intl.DateTimeFormat("en-CA", options).format(
-    new Date(),
+    new Date()
   );
   return athensDate.replace(/\//g, "-");
 };
@@ -37,8 +37,8 @@ export default function DashboardPage() {
     return users?.hasSelectedStore === true
       ? users?.selectedStoreUID
       : selectedUser?.store?.storeUID
-        ? selectedUser.store.storeUID
-        : (users?.role?.store?.storeUID ?? null);
+      ? selectedUser.store.storeUID
+      : users?.role?.store?.storeUID ?? null;
   }, [users, selectedUser]);
 
   const selectStoreMutation = useMutation({
@@ -81,7 +81,7 @@ export default function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 p-5 space-y-4 text-slate-900">
-      <div className="sticky top-0 z-10 -mx-5 -mt-5 border-b border-slate-200 bg-slate-50 px-5 pb-4 pt-5 shadow-sm">
+      <div className="sticky top-0 z-10 -mx-5 -mt-5 border-b border-slate-200 bg-slate-50 px-5 pt-5 pb-2 shadow-sm mb-2">
         <DashboardHeader />
         <CalendarStrip
           days={calendarDays}

@@ -10,6 +10,35 @@ export const api = axios.create({
   },
 });
 
+// Skip auth-clear for login/register so failed login doesn't redirect
+const AUTH_ENDPOINTS = ["/auth-login", "/register"];
+
+function isAuthFailure(error: any): boolean {
+  const status = error?.response?.status;
+  const data = error?.response?.data;
+  const bodyStatus = data?.statusCode;
+  const message = (data?.message ?? error?.message ?? "")
+    .toString()
+    .toLowerCase();
+  const hadAuthHeader = !!(error?.config?.headers as any)?.["Authorization"];
+
+  if (status === 401) return true;
+  if (status === 500 || bodyStatus === 500) {
+    const authKeywords =
+      /token|expired|unauthorized|authorization|invalid.*session|session.*invalid|not.*logged|login.*required/;
+    if (authKeywords.test(message)) return true;
+    // Any 500 on an authenticated request may be expired/invalid token (e.g. after long idle)
+    if (hadAuthHeader) return true;
+  }
+  return false;
+}
+
+function clearAuthAndRedirect(): void {
+  if (typeof window === "undefined") return;
+  useAuthStore.getState().logout();
+  window.location.href = "/";
+}
+
 // Attach auth headers (dual token logic) and API key
 // These headers will be forwarded by the /api route handlers to the backend.
 api.interceptors.request.use((config) => {
@@ -63,6 +92,12 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    const url = error?.config?.url ?? "";
+    const isAuthEndpoint = AUTH_ENDPOINTS.some((p) => url.includes(p));
+
+    if (!isAuthEndpoint && isAuthFailure(error)) {
+      clearAuthAndRedirect();
+    }
     return Promise.reject(error);
-  },
+  }
 );
