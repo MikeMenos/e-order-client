@@ -22,7 +22,7 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+    <div className="fixed inset-0 z-50 flex min-h-dvh items-center justify-center overflow-y-auto bg-black/40 px-4 py-6">
       {children}
     </div>
   );
@@ -37,7 +37,7 @@ export function DialogContent({ className, children }: DialogContentProps) {
   return (
     <div
       className={cn(
-        "w-full max-w-md rounded-2xl border border-slate-200 bg-white p-4 shadow-xl",
+        "my-auto w-full max-w-md rounded-2xl border border-slate-200 bg-white p-4 shadow-xl max-h-[85vh] flex flex-col",
         className,
       )}
     >

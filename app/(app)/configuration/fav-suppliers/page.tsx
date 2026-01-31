@@ -1,8 +1,10 @@
 "use client";
 
 import { useWishlistItems } from "../../../../hooks/useWishlist";
+import { useTranslation } from "../../../../lib/i18n";
 
 export default function FavouriteSuppliersPage() {
+  const { t } = useTranslation();
   const wishlistQuery = useWishlistItems();
 
   const items =
@@ -12,22 +14,22 @@ export default function FavouriteSuppliersPage() {
     <main className="min-h-screen bg-slate-50 p-6 space-y-4 text-slate-900">
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold text-slate-900">
-          Favorite suppliers / products
+          {t("config_fav_title")}
         </h1>
         <p className="text-sm text-slate-600">
-          Read-only view of wishlist items from Basket/Wishlist_GetItems.
+          {t("config_fav_subtitle")}
         </p>
       </header>
 
       {wishlistQuery.isLoading && (
-        <p className="text-sm text-slate-500">Loading favorites…</p>
+        <p className="text-sm text-slate-500">{t("config_loading_favorites")}</p>
       )}
       {wishlistQuery.error && (
-        <p className="text-sm text-red-400">Failed to load favorites.</p>
+        <p className="text-sm text-red-400">{t("config_error_favorites")}</p>
       )}
 
       {items.length === 0 && !wishlistQuery.isLoading ? (
-        <p className="text-sm text-slate-600">No favorite items found.</p>
+        <p className="text-sm text-slate-600">{t("config_empty_favorites")}</p>
       ) : (
         <div className="space-y-2">
           {items.map((item: any) => (

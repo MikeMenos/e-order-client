@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams, useParams, useRouter } from "next/navigation";
+import { useSearchParams, useParams } from "next/navigation";
 import {
   useSupplierDisplay,
   useSupplierProducts,
@@ -15,10 +15,10 @@ import type {
 import { SupplierPageBar } from "../../../../components/supplier/SupplierPageBar";
 import { SupplierSearchAndTabs } from "../../../../components/supplier/SupplierSearchAndTabs";
 import { SupplierProductSection } from "../../../../components/supplier/SupplierProductSection";
+import { useMeasuredHeight } from "../../../../lib/utils";
 
 export default function SupplierPage() {
   const { t } = useTranslation();
-  const router = useRouter();
   const params = useParams<{ supplierUID: string }>();
   const searchParams = useSearchParams();
   const supplierUID = params.supplierUID;
@@ -30,7 +30,7 @@ export default function SupplierPage() {
   );
   const productsQuery = useSupplierProducts(supplierUID, refDate ?? undefined);
 
-  const selectedDate = supplierInfoQuery.data?.selectedDate ?? null;
+  const selectedDate = refDate ?? supplierInfoQuery.data?.selectedDate ?? null;
   const supplier = supplierInfoQuery.data?.supplier ?? null;
   const rawProducts = productsQuery.data?.products ?? [];
 
@@ -53,7 +53,6 @@ export default function SupplierPage() {
     [rawProducts]
   );
 
-  // Build sections: favorites + categories
   const sections: SupplierSection[] = useMemo(() => {
     if (!products || products.length === 0) return [];
 
@@ -68,19 +67,17 @@ export default function SupplierPage() {
       });
     }
 
-    const byCategory = new Map<string, any[]>();
+    const byCategory = new Map<string, SupplierProduct[]>();
 
     products.forEach((p) => {
       const rawCategory = p.category ?? "OTHER";
       const key = String(rawCategory).toUpperCase();
-      if (!byCategory.has(key)) {
-        byCategory.set(key, []);
-      }
+      if (!byCategory.has(key)) byCategory.set(key, []);
       byCategory.get(key)!.push(p);
     });
 
     for (const [label, list] of byCategory.entries()) {
-      if (label === "FAVORITES") continue; // already handled
+      if (label === "FAVORITES") continue;
       result.push({
         id: label.toLowerCase().replace(/\s+/g, "-"),
         label,
@@ -91,65 +88,8 @@ export default function SupplierPage() {
     return result;
   }, [products]);
 
-  // Scroll spy for sections
-  const [activeSectionId, setActiveSectionId] = useState<string | null>(
-    sections[0]?.id ?? null
-  );
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null | undefined>>(
-    {}
-  );
   const [showDetails, setShowDetails] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    setActiveSectionId(sections[0]?.id ?? null);
-  }, [sections]);
-
-  useEffect(() => {
-    if (sections.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort(
-            (a, b) =>
-              (a.target as HTMLDivElement).offsetTop -
-              (b.target as HTMLDivElement).offsetTop
-          );
-
-        if (visible[0]) {
-          const id = visible[0].target.getAttribute("data-section-id");
-          if (id && id !== activeSectionId) {
-            setActiveSectionId(id);
-          }
-        }
-      },
-      {
-        root: null,
-        threshold: 0.25,
-      }
-    );
-
-    sections.forEach((section) => {
-      const el = sectionRefs.current[
-        section.id
-      ] as unknown as HTMLElement | null;
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, [sections, activeSectionId]);
-
-  const handleTabClick = (id: string) => {
-    const el = sectionRefs.current[id];
-    if (!el) return;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  const handleBack = () => {
-    router.back();
-  };
 
   const filteredSections = useMemo(() => {
     if (!searchQuery) return sections;
@@ -168,37 +108,154 @@ export default function SupplierPage() {
       .filter((section) => section.products.length > 0);
   }, [sections, searchQuery]);
 
+  const header = useMeasuredHeight<HTMLDivElement>();
+
+  const tabsBar = useMeasuredHeight<HTMLDivElement>();
+
+  const stickyOffset = header.height + (showDetails ? tabsBar.height : 0);
+
+  const [activeSectionId, setActiveSectionId] = useState<string | null>(
+    filteredSections[0]?.id ?? null
+  );
+
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    if (filteredSections.length === 0) {
+      setActiveSectionId(null);
+      return;
+    }
+
+    if (
+      !activeSectionId ||
+      !filteredSections.some((s) => s.id === activeSectionId)
+    ) {
+      setActiveSectionId(filteredSections[0].id);
+    }
+  }, [filteredSections, activeSectionId]);
+
+  const lockActiveUntilRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (filteredSections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (Date.now() < lockActiveUntilRef.current) return;
+
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .map((e) => {
+            const id = e.target.getAttribute("data-section-id");
+            return {
+              id,
+              top: e.boundingClientRect.top,
+              bottom: e.boundingClientRect.bottom,
+              ratio: e.intersectionRatio,
+            };
+          })
+          .filter(
+            (
+              x
+            ): x is {
+              id: string;
+              top: number;
+              bottom: number;
+              ratio: number;
+            } => !!x.id
+          );
+
+        if (visible.length === 0) return;
+
+        const lineY = stickyOffset;
+
+        const started = visible.filter((v) => v.top <= lineY + 1);
+
+        let activeId: string;
+
+        if (started.length > 0) {
+          activeId = started.reduce((best, curr) =>
+            curr.top > best.top ? curr : best
+          ).id;
+        } else {
+          activeId = visible.reduce((best, curr) =>
+            curr.top < best.top ? curr : best
+          ).id;
+        }
+
+        setActiveSectionId(activeId);
+      },
+      {
+        root: null,
+        rootMargin: `-${stickyOffset}px 0px -60% 0px`,
+        threshold: [0, 0.01, 0.1, 0.25, 0.5, 1],
+      }
+    );
+
+    filteredSections.forEach((section) => {
+      const el = sectionRefs.current[section.id];
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [filteredSections, stickyOffset]);
+
+  const handleTabClick = (id: string) => {
+    const el = sectionRefs.current[id];
+    if (!el) return;
+
+    lockActiveUntilRef.current = Date.now() + 600;
+
+    setActiveSectionId(id);
+
+    const top = el.getBoundingClientRect().top + window.scrollY - stickyOffset;
+    window.scrollTo({ top, behavior: "smooth" });
+  };
+
   return (
     <main className="min-h-screen bg-slate-50 pb-12 text-slate-900">
-      <div className="sticky top-0 z-20 border-b border-slate-200 bg-slate-50 backdrop-blur supports-backdrop-filter:bg-slate-50/90">
-        <DashboardHeader embedded />
-        <SupplierPageBar
-          supplier={supplier}
-          selectedDate={selectedDate}
-          onBack={handleBack}
-        />
-        <div className="mx-auto flex max-w-4xl flex-col gap-2 px-4">
-          {showDetails && (
-            <SupplierSearchAndTabs
-              searchPlaceholder={t("supplier_search_placeholder")}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              sections={filteredSections}
-              activeSectionId={activeSectionId}
-              onTabClick={handleTabClick}
-            />
-          )}
-        </div>
+      {/* Sticky Header */}
+      <div
+        ref={header.ref}
+        className="sticky top-0 z-30 border-b border-slate-200 bg-slate-50 backdrop-blur supports-backdrop-filter:bg-slate-50/90"
+      >
+        <DashboardHeader embedded selectedDate={selectedDate} />
+        <SupplierPageBar supplier={supplier} selectedDate={selectedDate} />
       </div>
 
       <div className="mx-auto flex max-w-4xl flex-col gap-2 px-4 pt-2">
-        {/* Sections */}
+        {/* Sticky Tabs/Search */}
+        {showDetails && (
+          <div
+            ref={tabsBar.ref}
+            className="sticky z-20 -mx-4"
+            style={{ top: header.height }}
+          >
+            <div className="border-b border-slate-200 bg-slate-50 px-4 pt-0">
+              <SupplierSearchAndTabs
+                searchPlaceholder={t("supplier_search_placeholder")}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                sections={filteredSections}
+                activeSectionId={activeSectionId}
+                onTabClick={handleTabClick}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Content */}
         <div className="space-y-4">
           {productsQuery.isLoading && (
-            <p className="text-sm text-slate-500">Loading products…</p>
+            <p className="text-sm text-slate-500">
+              {t("supplier_loading_products")}
+            </p>
           )}
+
           {productsQuery.error && (
-            <p className="text-sm text-red-400">Failed to load products.</p>
+            <p className="text-sm text-red-400">
+              {t("supplier_error_products")}
+            </p>
           )}
 
           {filteredSections.length === 0 && !productsQuery.isLoading ? (
@@ -210,6 +267,7 @@ export default function SupplierPage() {
               <SupplierProductSection
                 key={section.id}
                 section={section}
+                stickyOffset={stickyOffset}
                 sectionRef={(el) => {
                   sectionRefs.current[section.id] = el;
                 }}

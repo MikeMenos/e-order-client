@@ -35,7 +35,7 @@ function SupplierTileExpandedDetails({
     <div
       className={`mt-2 space-y-1.5 border-t pt-2 text-sm ${borderCls} ${isFill ? "text-slate-900" : "text-slate-600"}`}
       role="region"
-      aria-label="Supplier details"
+      aria-label={t("aria_supplier_details")}
     >
       {supplier.subTitle && (
         <p className={`truncate ${textMuted}`}>{supplier.subTitle}</p>

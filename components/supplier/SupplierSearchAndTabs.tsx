@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import type { SupplierSection } from "./types";
 
 type Props = {
@@ -21,8 +21,10 @@ export function SupplierSearchAndTabs({
   activeSectionId,
   onTabClick,
 }: Props) {
+  const value = activeSectionId ?? sections[0]?.id ?? "";
+
   return (
-    <div className="sticky top-0 z-10 -mx-4 flex flex-col gap-0 bg-slate-50/95 px-4 pb-2 pt-2 backdrop-blur">
+    <div className="-mx-4 flex flex-col gap-0 bg-slate-50 px-4">
       <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3">
         <Input
           placeholder={searchPlaceholder}
@@ -33,30 +35,26 @@ export function SupplierSearchAndTabs({
       </div>
 
       {sections.length > 0 && (
-        <div className="-mx-4 overflow-x-auto border-y border-slate-100 px-4 py-2">
-          <nav className="flex min-w-0 gap-4 text-sm font-semibold tracking-wide">
-            {sections.map((section) => {
-              const isActive = section.id === activeSectionId;
-              return (
-                <Button
+        <Tabs value={value} onValueChange={onTabClick}>
+          <div className="-mx-4 overflow-x-auto border-y border-slate-100 px-4 py-2">
+            <TabsList className="h-auto w-max gap-4 bg-transparent p-0">
+              {sections.map((section) => (
+                <TabsTrigger
                   key={section.id}
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onTabClick(section.id)}
+                  value={section.id}
                   className={[
-                    "shrink-0 border-b-2 rounded-none pb-1 px-0 text-sm font-semibold tracking-[0.18em] whitespace-nowrap",
-                    isActive
-                      ? "border-slate-900 text-slate-900"
-                      : "border-transparent text-slate-400 hover:text-slate-700",
+                    "shrink-0 rounded px-0 p-1 text-sm font-semibold tracking-[0.18em] whitespace-nowrap",
+                    "border-b-2 border-transparent text-slate-400",
+                    "data-[state=active]:border-brand-600 data-[state=active]:text-brand-600",
+                    "hover:text-slate-700",
                   ].join(" ")}
                 >
                   {section.label}
-                </Button>
-              );
-            })}
-          </nav>
-        </div>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+        </Tabs>
       )}
     </div>
   );

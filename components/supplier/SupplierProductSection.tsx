@@ -6,14 +6,20 @@ import { SupplierProductCard } from "./SupplierProductCard";
 type Props = {
   section: SupplierSection;
   sectionRef: (el: HTMLDivElement | null) => void;
+  stickyOffset?: number;
 };
 
-export function SupplierProductSection({ section, sectionRef }: Props) {
+export function SupplierProductSection({
+  section,
+  sectionRef,
+  stickyOffset = 0,
+}: Props) {
   return (
     <section
       ref={sectionRef}
       data-section-id={section.id}
-      className="scroll-mt-58 space-y-3"
+      style={{ scrollMarginTop: stickyOffset }}
+      className="space-y-3"
     >
       <div className="border-b border-slate-200 pb-1 text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
         {section.label}

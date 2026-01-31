@@ -82,7 +82,7 @@ export default function DashboardPage() {
   return (
     <main className="min-h-screen bg-slate-50 p-5 space-y-4 text-slate-900">
       <div className="sticky top-0 z-10 -mx-5 -mt-5 border-b border-slate-200 bg-slate-50 px-5 pt-5 pb-2 shadow-sm mb-2">
-        <DashboardHeader />
+        <DashboardHeader selectedDate={refDate} />
         <CalendarStrip
           days={calendarDays}
           selectedDate={refDate}
