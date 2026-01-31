@@ -1,8 +1,10 @@
 "use client";
 
 import { useOrdersList } from "../../../../hooks/useOrders";
+import { useTranslation } from "../../../../lib/i18n";
 
 export default function OrderRetakePage() {
+  const { t } = useTranslation();
   const ordersQuery = useOrdersList(0, 50);
 
   const orders = ordersQuery.data?.ordersList ?? [];
@@ -10,22 +12,21 @@ export default function OrderRetakePage() {
   return (
     <main className="min-h-screen bg-slate-50 p-6 space-y-4 text-slate-900">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold text-slate-900">Order retake</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">{t("config_order_retake_title")}</h1>
         <p className="text-sm text-slate-600">
-          List of previous orders that could be “retaken” (new order from an
-          existing one).
+          {t("config_order_retake_subtitle")}
         </p>
       </header>
 
       {ordersQuery.isLoading && (
-        <p className="text-sm text-slate-500">Loading orders…</p>
+        <p className="text-sm text-slate-500">{t("config_loading_orders")}</p>
       )}
       {ordersQuery.error && (
-        <p className="text-sm text-red-400">Failed to load orders.</p>
+        <p className="text-sm text-red-400">{t("config_error_orders")}</p>
       )}
 
       {orders.length === 0 && !ordersQuery.isLoading ? (
-        <p className="text-sm text-slate-600">No orders found.</p>
+        <p className="text-sm text-slate-600">{t("config_empty_orders")}</p>
       ) : (
         <div className="space-y-2">
           {orders.map((o: any) => (
@@ -35,7 +36,7 @@ export default function OrderRetakePage() {
             >
               <div className="min-w-0">
                 <p className="truncate font-semibold">
-                  {o.supplierTitle ?? "Order"}
+                  {o.supplierTitle ?? t("config_order_fallback")}
                 </p>
                 <p className="truncate text-sm text-slate-600">{o.orderUID}</p>
               </div>

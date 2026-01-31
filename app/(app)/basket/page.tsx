@@ -1,8 +1,10 @@
 "use client";
 
 import { useBasketCounter, useBasketItems } from "../../../hooks/useBasket";
+import { useTranslation } from "../../../lib/i18n";
 
 export default function BasketPage() {
+  const { t } = useTranslation();
   const basketQuery = useBasketItems();
   const counterQuery = useBasketCounter();
 
@@ -12,24 +14,24 @@ export default function BasketPage() {
   return (
     <main className="min-h-screen bg-slate-50 p-6 space-y-4 text-slate-900">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold text-slate-900">Basket</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">{t("basket_title")}</h1>
         <p className="text-sm text-slate-600">
-          Overview of items currently in your baskets.
+          {t("basket_subtitle")}
         </p>
         <p className="text-sm text-slate-700">
-          Total baskets: <span className="font-semibold">{totalCount}</span>
+          {t("basket_total_baskets")} <span className="font-semibold">{totalCount}</span>
         </p>
       </header>
 
       {basketQuery.isLoading && (
-        <p className="text-sm text-slate-500">Loading basket items…</p>
+        <p className="text-sm text-slate-500">{t("basket_loading")}</p>
       )}
       {basketQuery.error && (
-        <p className="text-sm text-red-400">Failed to load basket items.</p>
+        <p className="text-sm text-red-400">{t("basket_error")}</p>
       )}
 
       {baskets.length === 0 && !basketQuery.isLoading ? (
-        <p className="text-sm text-slate-600">No items in your baskets.</p>
+        <p className="text-sm text-slate-600">{t("basket_empty")}</p>
       ) : (
         <div className="space-y-4">
           {baskets.map((basket: any) => (
@@ -47,7 +49,7 @@ export default function BasketPage() {
                   </p>
                 </div>
                 <p className="text-sm text-slate-700">
-                  Items:{" "}
+                  {t("basket_items_label")}{" "}
                   <span className="font-semibold">
                     {basket.items?.length ?? 0}
                   </span>

@@ -24,25 +24,9 @@ export function CalendarStrip({
   onToday,
 }: Props) {
   const { t } = useTranslation();
-  const date =
-    typeof selectedDate === "string" ? parseISO(selectedDate) : selectedDate;
-
-  const day = format(date, "dd");
-  const rest = format(date, "EEE MMM yyyy");
 
   return (
     <section className="space-y-3">
-      <div className="flex items-center justify-between my-1">
-        <p className="text-slate-900 flex items-baseline">
-          <span className="font-bold text-2xl mr-1">{day}</span>
-          <span className="text-sm font-medium text-slate-500">{rest}</span>
-        </p>
-
-        <Button variant="outline" size="sm" onClick={onToday}>
-          {t("calendar_today")}
-        </Button>
-      </div>
-
       <div className="flex items-center gap-3 overflow-x-auto rounded-xl border border-slate-200 bg-white px-3 py-2">
         {days.map((d) => {
           const isSelected = d.dateFormattedValue === selectedDate;

@@ -47,7 +47,7 @@ export default function HomePage() {
             />
             <div className="space-y-0.5">
               <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">
-                E-ORDER
+                {t("home_brand")}
               </p>
               <h1 className="text-lg font-semibold">
                 {t("home_welcome_title")}
@@ -62,7 +62,7 @@ export default function HomePage() {
             }
             className="flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-700 shadow-sm"
           >
-            <span>{i18n.language === "gr" ? "GR" : "EN"}</span>
+            <span>{i18n.language === "gr" ? t("lang_gr") : t("lang_en")}</span>
           </Button>
         </div>
 

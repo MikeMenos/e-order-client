@@ -77,7 +77,7 @@ export default function LoginPage() {
           isAddUser: false,
           users: data,
         });
-        toast.success("Logged in");
+        toast.success(t("login_toast_success"));
         router.push("/dashboard");
       };
 
@@ -101,7 +101,7 @@ export default function LoginPage() {
     },
     onError: (err: unknown) => {
       console.error(err);
-      toast.error("Login failed");
+      toast.error(t("login_toast_error"));
     },
   });
 

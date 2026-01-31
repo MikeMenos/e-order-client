@@ -3,8 +3,10 @@
 import { useMemo } from "react";
 import { useAuthStore } from "../../../../stores/auth";
 import { useUsersForStore } from "../../../../hooks/useUsers";
+import { useTranslation } from "../../../../lib/i18n";
 
 export default function UsersManagementPage() {
+  const { t } = useTranslation();
   const { users, selectedUser } = useAuthStore();
 
   const storeUID = useMemo(() => {
@@ -24,27 +26,27 @@ export default function UsersManagementPage() {
     <main className="min-h-screen bg-slate-50 p-6 space-y-4 text-slate-900">
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold text-slate-900">
-          Users management
+          {t("config_users_title")}
         </h1>
         <p className="text-sm text-slate-600">
-          Read-only list of users for the current store.
+          {t("config_users_subtitle")}
         </p>
         {storeUID && (
           <p className="text-sm text-slate-700">
-            Store UID: <span className="font-mono">{storeUID}</span>
+            {t("config_users_store_uid")} <span className="font-mono">{storeUID}</span>
           </p>
         )}
       </header>
 
       {usersQuery.isLoading && (
-        <p className="text-sm text-slate-500">Loading users…</p>
+        <p className="text-sm text-slate-500">{t("config_loading_users")}</p>
       )}
       {usersQuery.error && (
-        <p className="text-sm text-red-400">Failed to load users.</p>
+        <p className="text-sm text-red-400">{t("config_error_users")}</p>
       )}
 
       {userList.length === 0 && !usersQuery.isLoading ? (
-        <p className="text-sm text-slate-600">No users found.</p>
+        <p className="text-sm text-slate-600">{t("config_empty_users")}</p>
       ) : (
         <div className="space-y-2">
           {userList.map((u: any) => (

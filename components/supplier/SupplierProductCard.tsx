@@ -54,7 +54,7 @@ export function SupplierProductCard({ product }: Props) {
               variant="ghost"
               size="icon"
               className="h-5 w-5 shrink-0 text-sm"
-              aria-label="Decrease reserve quantity"
+              aria-label={t("aria_decrease_reserve")}
               onClick={() => setReserveClamped(reserveQty - 1)}
             >
               -
@@ -65,14 +65,14 @@ export function SupplierProductCard({ product }: Props) {
               value={reserveQty}
               onChange={(e) => setReserveClamped(Number(e.target.value) || 0)}
               className="h-5 w-8 shrink-0 border-0 bg-transparent p-0 text-center text-sm [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              aria-label="Reserve quantity"
+              aria-label={t("aria_reserve_quantity")}
             />
             <Button
               type="button"
               variant="ghost"
               size="icon"
               className="h-5 w-5 shrink-0 text-sm"
-              aria-label="Increase reserve quantity"
+              aria-label={t("aria_increase_reserve")}
               onClick={() => setReserveClamped(reserveQty + 1)}
             >
               +
@@ -86,7 +86,7 @@ export function SupplierProductCard({ product }: Props) {
           variant="ghost"
           size="icon"
           className="h-5 w-5 shrink-0 text-sm"
-          aria-label="Decrease basket quantity"
+          aria-label={t("aria_decrease_basket")}
           onClick={() => setBasketClamped(basketQty - 1)}
         >
           -
@@ -97,14 +97,14 @@ export function SupplierProductCard({ product }: Props) {
           value={basketQty}
           onChange={(e) => setBasketClamped(Number(e.target.value) || 0)}
           className="h-5 w-8 shrink-0 border-0 bg-transparent p-0 text-center text-sm [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-          aria-label="Basket quantity"
+          aria-label={t("aria_basket_quantity")}
         />
         <Button
           type="button"
           variant="ghost"
           size="icon"
           className="h-5 w-5 shrink-0 text-sm"
-          aria-label="Increase basket quantity"
+          aria-label={t("aria_increase_basket")}
           onClick={() => setBasketClamped(basketQty + 1)}
         >
           +

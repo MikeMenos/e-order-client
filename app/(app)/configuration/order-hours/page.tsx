@@ -1,8 +1,10 @@
 "use client";
 
 import { usePrefSchedule } from "../../../../hooks/useSchedule";
+import { useTranslation } from "../../../../lib/i18n";
 
 export default function OrderHoursPage() {
+  const { t } = useTranslation();
   const scheduleQuery = usePrefSchedule();
 
   const schedule = scheduleQuery.data ?? null;
@@ -10,18 +12,17 @@ export default function OrderHoursPage() {
   return (
     <main className="min-h-screen bg-slate-50 p-6 space-y-4 text-slate-900">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold text-slate-900">Order hours</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">{t("config_order_hours_title")}</h1>
         <p className="text-sm text-slate-600">
-          Read-only view of preferred schedule for orders (from
-          MyStore/PrefSchedule_Get).
+          {t("config_order_hours_subtitle")}
         </p>
       </header>
 
       {scheduleQuery.isLoading && (
-        <p className="text-sm text-slate-500">Loading schedule…</p>
+        <p className="text-sm text-slate-500">{t("config_loading_schedule")}</p>
       )}
       {scheduleQuery.error && (
-        <p className="text-sm text-red-400">Failed to load schedule.</p>
+        <p className="text-sm text-red-400">{t("config_error_schedule")}</p>
       )}
 
       {schedule && (
