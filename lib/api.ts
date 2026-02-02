@@ -51,6 +51,7 @@ api.interceptors.request.use((config) => {
     url.includes("/suppliers") ||
     url.includes("/suppliers-products") ||
     url.includes("/suppliers-display") ||
+    url.includes("/orders-get-list") ||
     url.includes("/orders") ||
     url.includes("/store-users") ||
     url.includes("/store-pref-schedule") ||

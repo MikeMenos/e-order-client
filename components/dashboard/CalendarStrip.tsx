@@ -26,7 +26,7 @@ export function CalendarStrip({
   const { t } = useTranslation();
 
   return (
-    <section className="space-y-3">
+    <section className="space-y-3 mt-2">
       <div className="flex items-center gap-3 overflow-x-auto rounded-xl border border-slate-200 bg-white px-3 py-2">
         {days.map((d) => {
           const isSelected = d.dateFormattedValue === selectedDate;

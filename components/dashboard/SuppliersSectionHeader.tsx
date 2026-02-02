@@ -43,7 +43,7 @@ export function SuppliersSectionHeader({
         <h2 className="text-sm font-semibold text-slate-900">
           {t("suppliers_orders_of_day")}
         </h2>
-        <Label className="flex items-center justify-end mb-0 w-fit">
+        <Label className="flex items-center justify-end mb-0 w-fit gap-0.5">
           <Input
             type="checkbox"
             checked={showCompleted}

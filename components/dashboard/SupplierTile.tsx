@@ -7,6 +7,7 @@ import {
   AlarmClockCheck,
   ChevronDown,
   ChevronUp,
+  History,
 } from "lucide-react";
 import type { Supplier } from "./types";
 
@@ -33,7 +34,9 @@ function SupplierTileExpandedDetails({
 
   return (
     <div
-      className={`mt-2 space-y-1.5 border-t pt-2 text-sm ${borderCls} ${isFill ? "text-slate-900" : "text-slate-600"}`}
+      className={`mt-2 space-y-1.5 border-t pt-2 text-sm ${borderCls} ${
+        isFill ? "text-slate-900" : "text-slate-600"
+      }`}
       role="region"
       aria-label={t("aria_supplier_details")}
     >
@@ -85,12 +88,16 @@ export function SupplierTile({
   isExpanded,
   onToggleExpanded,
 }: Props) {
+  const { t } = useTranslation();
   const supplierHref = `/suppliers/${encodeURIComponent(
-    supplier.supplierUID,
+    supplier.supplierUID
   )}?refDate=${encodeURIComponent(refDate)}`;
 
+  const orderHistoryHref = `/suppliers/${encodeURIComponent(
+    supplier.supplierUID
+  )}/order-history${refDate ? `?refDate=${encodeURIComponent(refDate)}` : ""}`;
+
   const tileStyle = getTileStyle(supplier);
-  console.log(tileStyle);
   const isFill =
     (supplier.tileColorMode?.trim() ?? "").toLowerCase() === "fill";
   const hasTileColor = !!supplier.tileColor?.trim();
@@ -131,7 +138,9 @@ export function SupplierTile({
             )}
             <div className="min-w-0">
               <p
-                className={`truncate text-sm font-semibold ${textContrast || "text-slate-900"}`}
+                className={`truncate text-sm font-semibold ${
+                  textContrast || "text-slate-900"
+                }`}
               >
                 {supplier.title}
               </p>
@@ -165,17 +174,17 @@ export function SupplierTile({
           )}
         </Button>
 
-        {/* Info / open link */}
+        {/* Order history link */}
         <Link
-          href={supplierHref}
+          href={orderHistoryHref}
           className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-medium md:h-9 md:w-9 ${
             isFill
               ? "border-slate-300 text-slate-900 hover:border-slate-400 hover:text-slate-900"
               : "border-slate-200 bg-white text-slate-500 hover:border-slate-400 hover:text-slate-700"
           }`}
-          aria-label={`Open ${supplier.title}`}
+          aria-label={`${t("supplier_order_history_aria")} ${supplier.title}`}
         >
-          i
+          <History className="h-4 w-4 md:h-4.5 md:w-4.5" />
         </Link>
       </div>
 

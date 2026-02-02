@@ -30,7 +30,8 @@ export default function SupplierPage() {
   );
   const productsQuery = useSupplierProducts(supplierUID, refDate ?? undefined);
 
-  const selectedDate = refDate ?? supplierInfoQuery.data?.selectedDate ?? null;
+  const selectedDate =
+    refDate ?? supplierInfoQuery.data?.selectedDate ?? undefined;
   const supplier = supplierInfoQuery.data?.supplier ?? null;
   const rawProducts = productsQuery.data?.products ?? [];
 
