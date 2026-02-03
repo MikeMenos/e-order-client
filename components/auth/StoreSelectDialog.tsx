@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import {
   Dialog,
   DialogContent,
@@ -7,6 +8,7 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { useTranslation } from "../../lib/i18n";
+import { listVariants, listItemVariants } from "../../lib/motion";
 
 type StoreRole = any;
 
@@ -29,7 +31,7 @@ export function StoreSelectDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm flex max-h-[85vh] flex-col gap-4">
+      <DialogContent className="max-w-sm flex max-h-[85vh] flex-col gap-4 bg-app-card border-slate-200/80">
         <DialogHeader>
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
@@ -55,24 +57,30 @@ export function StoreSelectDialog({
             {userName}
           </div>
         )}
-        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
+        <motion.div
+          className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1"
+          variants={listVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {roles.map((role: StoreRole, idx: number) => (
-            <Button
-              key={idx}
-              type="button"
-              onClick={() => onSelectRole(role)}
-              variant="outline"
-              className="h-fit flex w-full flex-col items-start rounded-xl border-slate-200 bg-white px-3 py-2.5 text-left text-sm shadow-sm hover:border-brand-400 hover:bg-brand-50/80"
-            >
-              <span className="block font-medium text-slate-900">
-                {role?.store?.title ?? t("store_select_store_fallback")}
-              </span>
-              <span className="block text-sm text-slate-600">
-                {role?.userType}
-              </span>
-            </Button>
+            <motion.div key={idx} variants={listItemVariants}>
+              <Button
+                type="button"
+                onClick={() => onSelectRole(role)}
+                variant="outline"
+                className="h-fit flex w-full flex-col items-start rounded-xl border-slate-200 bg-white px-3 py-2.5 text-left text-sm shadow-sm hover:border-brand-400 hover:bg-brand-50/80"
+              >
+                <span className="block font-medium text-slate-900">
+                  {role?.store?.title ?? t("store_select_store_fallback")}
+                </span>
+                <span className="block text-sm text-slate-600">
+                  {role?.userType}
+                </span>
+              </Button>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </DialogContent>
     </Dialog>
   );

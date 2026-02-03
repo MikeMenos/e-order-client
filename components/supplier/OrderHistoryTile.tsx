@@ -1,9 +1,11 @@
 "use client";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { formatOrderDate, formatMoney } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { listVariants, listItemVariants } from "@/lib/motion";
 import type {
   OrderHistoryOrder,
   OrderLineItem,
@@ -33,7 +35,7 @@ export function OrderHistoryTile({
 
   return (
     <div
-      className="flex flex-col rounded-xl border-2 border-slate-200 bg-white shadow-sm transition hover:border-slate-300"
+      className="flex flex-col rounded-xl border-2 border-slate-200 bg-app-card/95 shadow-sm transition hover:border-slate-300"
       style={borderColor ? { borderColor } : undefined}
     >
       {/* Row: logo + store/date/status + total + chevron */}
@@ -189,10 +191,16 @@ export function OrderHistoryTile({
             ) : items.length === 0 ? (
               <p className="text-xs text-slate-500">{t("order_items_empty")}</p>
             ) : (
-              <ul className="space-y-2">
+              <motion.ul
+                className="space-y-2"
+                variants={listVariants}
+                initial="hidden"
+                animate="visible"
+              >
                 {items.map((item, idx) => (
-                  <li
+                  <motion.li
                     key={item.productUID ?? idx}
+                    variants={listItemVariants}
                     className="flex items-start justify-between gap-2 rounded-md bg-slate-50 px-2 py-1.5 text-slate-700"
                   >
                     <div className="min-w-0 flex-1">
@@ -220,9 +228,9 @@ export function OrderHistoryTile({
                         ? formatMoney(item.unitPrice)
                         : "—"}
                     </span>
-                  </li>
+                  </motion.li>
                 ))}
-              </ul>
+              </motion.ul>
             )}
           </div>
         </div>

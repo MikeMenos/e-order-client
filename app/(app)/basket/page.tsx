@@ -1,7 +1,9 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { useBasketCounter, useBasketItems } from "../../../hooks/useBasket";
 import { useTranslation } from "../../../lib/i18n";
+import { listVariants, listItemVariants } from "../../../lib/motion";
 
 export default function BasketPage() {
   const { t } = useTranslation();
@@ -12,14 +14,15 @@ export default function BasketPage() {
   const totalCount = counterQuery.data?.totalBasketsCount ?? 0;
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 space-y-4 text-slate-900">
+    <main className="space-y-4 text-slate-900">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold text-slate-900">{t("basket_title")}</h1>
-        <p className="text-sm text-slate-600">
-          {t("basket_subtitle")}
-        </p>
+        <h1 className="text-2xl font-semibold text-slate-900">
+          {t("basket_title")}
+        </h1>
+        <p className="text-sm text-slate-600">{t("basket_subtitle")}</p>
         <p className="text-sm text-slate-700">
-          {t("basket_total_baskets")} <span className="font-semibold">{totalCount}</span>
+          {t("basket_total_baskets")}{" "}
+          <span className="font-semibold">{totalCount}</span>
         </p>
       </header>
 
@@ -33,10 +36,16 @@ export default function BasketPage() {
       {baskets.length === 0 && !basketQuery.isLoading ? (
         <p className="text-sm text-slate-600">{t("basket_empty")}</p>
       ) : (
-        <div className="space-y-4">
+        <motion.div
+          className="space-y-4"
+          variants={listVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {baskets.map((basket: any) => (
-            <div
+            <motion.div
               key={basket.supplierUID}
+              variants={listItemVariants}
               className="rounded-xl border border-slate-200 bg-white p-4 space-y-2 shadow-sm"
             >
               <div className="flex items-center justify-between">
@@ -55,22 +64,28 @@ export default function BasketPage() {
                   </span>
                 </p>
               </div>
-              <ul className="max-h-40 space-y-1 overflow-auto text-sm text-slate-700">
+              <motion.ul
+                className="max-h-40 space-y-1 overflow-auto text-sm text-slate-700"
+                variants={listVariants}
+                initial="hidden"
+                animate="visible"
+              >
                 {basket.items?.map((item: any) => (
-                  <li
+                  <motion.li
                     key={item.productUID}
+                    variants={listItemVariants}
                     className="flex justify-between gap-4"
                   >
                     <span className="truncate">{item.title}</span>
                     <span className="font-mono">
                       {item.qty} {item.unit ?? ""}
                     </span>
-                  </li>
+                  </motion.li>
                 ))}
-              </ul>
-            </div>
+              </motion.ul>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </main>
   );

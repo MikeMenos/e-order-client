@@ -1,7 +1,9 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { useOrdersList } from "../../../../hooks/useOrders";
 import { useTranslation } from "../../../../lib/i18n";
+import { listVariants, listItemVariants } from "../../../../lib/motion";
 
 export default function OrderRetakePage() {
   const { t } = useTranslation();
@@ -10,9 +12,11 @@ export default function OrderRetakePage() {
   const orders = ordersQuery.data?.ordersList ?? [];
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 space-y-4 text-slate-900">
+    <main className="space-y-4 text-slate-900">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold text-slate-900">{t("config_order_retake_title")}</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">
+          {t("config_order_retake_title")}
+        </h1>
         <p className="text-sm text-slate-600">
           {t("config_order_retake_subtitle")}
         </p>
@@ -28,10 +32,16 @@ export default function OrderRetakePage() {
       {orders.length === 0 && !ordersQuery.isLoading ? (
         <p className="text-sm text-slate-600">{t("config_empty_orders")}</p>
       ) : (
-        <div className="space-y-2">
+        <motion.div
+          className="space-y-2"
+          variants={listVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {orders.map((o: any) => (
-            <div
+            <motion.div
               key={o.orderUID}
+              variants={listItemVariants}
               className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-900 shadow-sm"
             >
               <div className="min-w-0">
@@ -50,9 +60,9 @@ export default function OrderRetakePage() {
                   </p>
                 )}
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </main>
   );

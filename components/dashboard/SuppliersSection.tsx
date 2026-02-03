@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import { useTranslation } from "../../lib/i18n";
+import { listVariants, listItemVariants } from "../../lib/motion";
 import type { Supplier } from "./types";
 import { SuppliersSectionHeader } from "./SuppliersSectionHeader";
 import { SuppliersSearchBar } from "./SuppliersSearchBar";
@@ -71,7 +73,7 @@ export function SuppliersSection({
   }, [suppliers, searchQuery, showCompleted, isAscending]);
 
   return (
-    <section className="space-y-4">
+    <section>
       <div className="flex flex-col gap-2 mb-2">
         <SuppliersSearchBar value={searchQuery} onChange={setSearchQuery} />
         <SuppliersSectionHeader
@@ -94,17 +96,23 @@ export function SuppliersSection({
       {filteredSuppliers.length === 0 && !isLoading ? (
         <p className="text-sm text-slate-400">{t("suppliers_empty")}</p>
       ) : (
-        <div className="space-y-3">
+        <motion.div
+          className="space-y-3"
+          variants={listVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {filteredSuppliers.map((s) => (
-            <SupplierTile
-              key={s.supplierUID}
-              supplier={s}
-              refDate={refDate}
-              isExpanded={expandedIds.has(s.supplierUID)}
-              onToggleExpanded={() => toggleExpanded(s.supplierUID)}
-            />
+            <motion.div key={s.supplierUID} variants={listItemVariants}>
+              <SupplierTile
+                supplier={s}
+                refDate={refDate}
+                isExpanded={expandedIds.has(s.supplierUID)}
+                onToggleExpanded={() => toggleExpanded(s.supplierUID)}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </section>
   );

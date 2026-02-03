@@ -1,22 +1,24 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMemo } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { format, parseISO } from "date-fns";
+import { ArrowLeft } from "lucide-react";
 import { useAuthStore } from "../../stores/auth";
 import { useTranslation } from "../../lib/i18n";
-import { api } from "../../lib/api";
-import { StoreSelectDialog } from "../auth/StoreSelectDialog";
-import { HeaderDrawer } from "./HeaderDrawer";
-import Link from "next/link";
-import { format, parseISO } from "date-fns";
+import { Button } from "../ui/button";
 
 type Props = {
   selectedDate?: string;
   embedded?: boolean;
+  showBack?: boolean;
 };
 
-export function DashboardHeader({ embedded, selectedDate }: Props) {
+export function DashboardHeader({ embedded, selectedDate, showBack }: Props) {
+  const { t } = useTranslation();
+  const pathname = usePathname();
+  const router = useRouter();
   const date =
     typeof selectedDate === "string"
       ? parseISO(selectedDate)
@@ -24,20 +26,7 @@ export function DashboardHeader({ embedded, selectedDate }: Props) {
 
   const day = format(date, "dd");
   const rest = format(date, "EEE MMM yyyy");
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const { t } = useTranslation();
-  const {
-    users,
-    selectedUser,
-    logout,
-    setSelectedUser,
-    setStoreAccessToken,
-    setLoggedIn,
-  } = useAuthStore();
-
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [storeDialogOpen, setStoreDialogOpen] = useState(false);
+  const { users, selectedUser } = useAuthStore();
 
   const fname = useMemo(
     () => users?.userInfos?.fname ?? "",
@@ -57,125 +46,61 @@ export function DashboardHeader({ embedded, selectedDate }: Props) {
     users?.role?.userTypeId ??
     users?.userInfos?.storeAccess?.[0]?.userTypeId;
 
-  const roles = useMemo(
-    () => users?.userInfos?.storeAccess ?? [],
-    [users?.userInfos?.storeAccess]
-  );
-
-  const userName = useMemo(
-    () =>
-      [users?.userInfos?.fname, users?.userInfos?.lname]
-        .filter(Boolean)
-        .join(" ") || "",
-    [users?.userInfos?.fname, users?.userInfos?.lname]
-  );
-
-  const handleGoHome = () => {
-    setDrawerOpen(false);
-    router.push("/");
-  };
-
-  const handleSwitchStore = () => {
-    setDrawerOpen(false);
-    setStoreDialogOpen(true);
-  };
-
-  const handleLogout = () => {
-    setDrawerOpen(false);
-    logout();
-    router.push("/");
-  };
-
-  const handleSelectRole = (role: any) => {
-    setStoreDialogOpen(false);
-    setSelectedUser(role);
-    // Mirror login flow: update users.role so store-scoped data stays in sync
-    if (users) {
-      setLoggedIn({
-        isLoggedIn: true,
-        isAddUser: false,
-        users: { ...users, role },
-      });
-    }
-    const storeUID = role?.store?.storeUID ?? null;
-    if (storeUID) {
-      api
-        .get("/select-store", { params: { StoreUID: storeUID } })
-        .then((res) => {
-          setStoreAccessToken(res.data?.accessToken ?? null);
-          // Invalidate store-dependent queries so supplier list, dashboard, basket, etc. refetch
-          queryClient.invalidateQueries();
-        })
-        .catch((err) => {
-          console.error("select-store failed", err);
-        });
-    }
-  };
+  const headerBg =
+    "bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90";
+  const borderCls = "border-slate-200/80";
 
   return (
-    <>
-      <header
-        className={
-          embedded
-            ? "flex items-center gap-3 border-b border-slate-200 bg-slate-50/95 px-4 py-2 backdrop-blur supports-backdrop-filter:bg-slate-50/90"
-            : "sticky top-0 z-20 -mx-5 -mt-5 flex items-center gap-3 border-b border-slate-200 bg-slate-50/95 px-5 py-3 backdrop-blur supports-backdrop-filter:bg-slate-50/90"
-        }
-      >
-        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg">
-          <Link href="/dashboard">
-            <img
-              src="/assets/logo.png"
-              alt="E-Order"
-              className="h-14 w-14 rounded-lg object-contain"
-            />
-          </Link>
-        </div>
-        <div className="min-w-0 flex-1">
-          {fname && (
-            <p className="text-sm font-medium text-slate-900">
-              {fname}
-              {role && (
-                <span className="inline-flex align-middle text-sm font-normal text-slate-500">
-                  {" "}
-                  <img
-                    src={profilePic}
-                    alt={userTypeId === 2 ? "Admin" : "Employee"}
-                    className="ml-1 inline-block h-5 w-5 object-contain"
-                    aria-hidden
-                  />
-                </span>
-              )}
-            </p>
-          )}
-          {storeTitle && (
-            <p className="truncate text-sm text-slate-500">{storeTitle}</p>
-          )}
-        </div>
-
-        {selectedDate && (
-          <p className="text-slate-900 flex items-baseline">
-            <span className="font-bold text-2xl mr-1">{day}</span>
-            <span className="text-sm font-medium text-slate-500">{rest}</span>
+    <header
+      className={`flex items-center gap-3 border-b ${borderCls} ${headerBg} px-3 py-2 w-full min-w-0`}
+    >
+      {showBack && (
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => router.back()}
+          className="inline-flex shrink-0 p-0 items-center justify-center rounded-md text-slate-700 transition-colors hover:bg-slate-200/50"
+          aria-label={t("common_back")}
+        >
+          <ArrowLeft className="h-5 w-5" aria-hidden />
+        </Button>
+      )}
+      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg">
+        <Link href="/dashboard">
+          <img
+            src="/assets/logo.png"
+            alt="E-Order"
+            className="h-14 w-14 rounded-lg object-contain"
+          />
+        </Link>
+      </div>
+      <div className="min-w-0 flex-1">
+        {fname && (
+          <p className="text-sm font-medium text-slate-900">
+            {fname}
+            {role && profilePic && (
+              <span className="ml-1 inline-flex align-middle text-sm font-normal text-slate-500">
+                <img
+                  src={profilePic}
+                  alt={userTypeId === 2 ? "Admin" : "Employee"}
+                  className="inline-block h-5 w-5 object-contain"
+                  aria-hidden
+                />
+              </span>
+            )}
           </p>
         )}
+        {storeTitle && (
+          <p className="truncate text-sm text-slate-500">{storeTitle}</p>
+        )}
+      </div>
 
-        <HeaderDrawer
-          open={drawerOpen}
-          onOpenChange={setDrawerOpen}
-          onGoHome={handleGoHome}
-          onSwitchStore={handleSwitchStore}
-          onLogout={handleLogout}
-          rolesCount={roles.length}
-        />
-      </header>
-
-      <StoreSelectDialog
-        open={storeDialogOpen}
-        onOpenChange={setStoreDialogOpen}
-        roles={roles}
-        userName={userName || undefined}
-        onSelectRole={handleSelectRole}
-      />
-    </>
+      {pathname !== "/all-suppliers" && selectedDate && (
+        <p className="flex shrink-0 items-baseline text-slate-900">
+          <span className="mr-1 text-2xl font-bold">{day}</span>
+          <span className="text-sm font-medium text-slate-500">{rest}</span>
+        </p>
+      )}
+    </header>
   );
 }

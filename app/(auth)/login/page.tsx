@@ -50,7 +50,7 @@ export default function LoginPage() {
 
       if (token && typeof document !== "undefined") {
         document.cookie = `accessToken=${encodeURIComponent(
-          token,
+          token
         )}; path=/; max-age=${60 * 60 * 24 * 7}; sameSite=lax`;
       }
 
@@ -141,14 +141,14 @@ export default function LoginPage() {
     const token = userResponse?.accessToken;
     if (token && typeof document !== "undefined") {
       document.cookie = `accessToken=${encodeURIComponent(
-        token,
+        token
       )}; path=/; max-age=${60 * 60 * 24 * 7}; sameSite=lax`;
     }
     router.push("/dashboard");
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-slate-100 pt-8 text-slate-900">
+    <main className="flex min-h-screen flex-col items-center bg-app-bg pt-8 text-slate-900">
       <div className="mb-6 flex w-full max-w-sm items-center justify-between px-4">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -166,7 +166,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm space-y-6 px-4">
         <form
           onSubmit={handleSubmit}
-          className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-lg"
+          className="space-y-4 rounded-2xl border border-slate-200/80 p-6 shadow-lg bg-app-card"
         >
           <h1 className="text-xl font-semibold text-slate-900">
             {t("login_title")}

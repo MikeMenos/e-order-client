@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { listVariants, listItemVariants } from "../../lib/motion";
 import type { SupplierSection } from "./types";
 import { SupplierProductCard } from "./SupplierProductCard";
 
@@ -19,17 +21,24 @@ export function SupplierProductSection({
       ref={sectionRef}
       data-section-id={section.id}
       style={{ scrollMarginTop: stickyOffset }}
-      className="space-y-3"
+      className="space-y-3 rounded-xl bg-app-card/95 p-3"
     >
-      <div className="border-b border-slate-200 pb-1 text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
+      <div className="border-b border-slate-200 pb-1 pl-3 text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
         {section.label}
       </div>
 
-      <div className="space-y-2">
+      <motion.div
+        className="space-y-2"
+        variants={listVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {section.products.map((product) => (
-          <SupplierProductCard key={product.id} product={product} />
+          <motion.div key={product.id} variants={listItemVariants}>
+            <SupplierProductCard product={product} />
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }

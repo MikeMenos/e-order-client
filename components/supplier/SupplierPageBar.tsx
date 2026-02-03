@@ -30,7 +30,7 @@ export function SupplierPageBar({ supplier, selectedDate }: Props) {
     (supplier?.tileColorMode?.trim() ?? "").toLowerCase() === "fill";
 
   return (
-    <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-4 py-2">
+    <div className="mx-auto flex items-center justify-between gap-4 px-4 py-2">
       <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
         {supplier?.logo && (
           <img

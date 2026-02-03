@@ -48,6 +48,7 @@ api.interceptors.request.use((config) => {
   // Endpoints that should use the store token when available (flat /api paths)
   const useStoreToken =
     url.includes("/suppliers-list") ||
+    url.includes("/supplier-basic-infos") ||
     url.includes("/suppliers") ||
     url.includes("/suppliers-products") ||
     url.includes("/suppliers-display") ||

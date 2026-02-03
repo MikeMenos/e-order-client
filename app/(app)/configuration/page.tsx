@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { listVariants, listItemVariants } from "@/lib/motion";
 
 const links = [
   { href: "/configuration/users", label: "Users management" },
@@ -11,7 +13,7 @@ const links = [
 
 export default function ConfigurationIndexPage() {
   return (
-    <main className="min-h-screen bg-slate-50 p-6 space-y-4 text-slate-900">
+    <main className="space-y-4 text-slate-900">
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold text-slate-900">Configuration</h1>
         <p className="text-sm text-slate-600">
@@ -19,20 +21,28 @@ export default function ConfigurationIndexPage() {
         </p>
       </header>
 
-      <section className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+      <motion.section
+        className="grid gap-3 md:grid-cols-2 lg:grid-cols-3"
+        variants={listVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {links.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-slate-300 transition-colors"
-          >
-            <p className="text-sm font-semibold text-slate-900">{link.label}</p>
-            <p className="mt-1 wrap-break-word text-sm text-slate-600">
-              {link.href}
-            </p>
-          </Link>
+          <motion.div key={link.href} variants={listItemVariants}>
+            <Link
+              href={link.href}
+              className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-slate-300 transition-colors block"
+            >
+              <p className="text-sm font-semibold text-slate-900">
+                {link.label}
+              </p>
+              <p className="mt-1 wrap-break-word text-sm text-slate-600">
+                {link.href}
+              </p>
+            </Link>
+          </motion.div>
         ))}
-      </section>
+      </motion.section>
     </main>
   );
 }

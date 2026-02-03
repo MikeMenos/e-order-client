@@ -10,9 +10,11 @@ export default function OrderHoursPage() {
   const schedule = scheduleQuery.data ?? null;
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 space-y-4 text-slate-900">
+    <main className="space-y-4 text-slate-900">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold text-slate-900">{t("config_order_hours_title")}</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">
+          {t("config_order_hours_title")}
+        </h1>
         <p className="text-sm text-slate-600">
           {t("config_order_hours_subtitle")}
         </p>

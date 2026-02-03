@@ -2,12 +2,14 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams, useParams } from "next/navigation";
+import { motion } from "framer-motion";
 import {
   useSupplierDisplay,
   useSupplierProducts,
 } from "../../../../hooks/useSupplier";
-import { DashboardHeader } from "../../../../components/dashboard/Header";
 import { useTranslation } from "../../../../lib/i18n";
+import { useAppHeaderHeight } from "@/app/(app)/AppHeaderContext";
+import { listVariants, listItemVariants } from "../../../../lib/motion";
 import type {
   SupplierProduct,
   SupplierSection,
@@ -15,6 +17,7 @@ import type {
 import { SupplierPageBar } from "../../../../components/supplier/SupplierPageBar";
 import { SupplierSearchAndTabs } from "../../../../components/supplier/SupplierSearchAndTabs";
 import { SupplierProductSection } from "../../../../components/supplier/SupplierProductSection";
+import { SupplierCheckoutBar } from "../../../../components/supplier/SupplierCheckoutBar";
 import { useMeasuredHeight } from "../../../../lib/utils";
 
 export default function SupplierPage() {
@@ -40,7 +43,7 @@ export default function SupplierPage() {
       rawProducts.map((p: any) => ({
         id: p.productUID,
         title: p.productTitle ?? p.productOriginalTitle,
-        subTitle: p.productPackaging ?? "",
+        subTitle: p.productDescription ?? "",
         description: p.productDescription ?? "",
         image: p.productImage ?? null,
         category: p.productCategories ?? "OTHER",
@@ -109,11 +112,16 @@ export default function SupplierPage() {
       .filter((section) => section.products.length > 0);
   }, [sections, searchQuery]);
 
-  const header = useMeasuredHeight<HTMLDivElement>();
-
+  const layoutHeaderHeight = useAppHeaderHeight();
+  const pageBar = useMeasuredHeight<HTMLDivElement>();
   const tabsBar = useMeasuredHeight<HTMLDivElement>();
 
-  const stickyOffset = header.height + (showDetails ? tabsBar.height : 0);
+  /** Fallback when page bar not yet measured so tabs don't overlap it */
+  const pageBarHeight = pageBar.height > 0 ? pageBar.height : 52;
+  const tabsStickyTop = layoutHeaderHeight + pageBarHeight;
+
+  const stickyOffset =
+    layoutHeaderHeight + pageBarHeight + (showDetails ? tabsBar.height : 0);
 
   const [activeSectionId, setActiveSectionId] = useState<string | null>(
     filteredSections[0]?.id ?? null
@@ -213,40 +221,49 @@ export default function SupplierPage() {
     window.scrollTo({ top, behavior: "smooth" });
   };
 
+  const cartItemCount = useMemo(
+    () => products.filter((p) => (p.qty ?? 0) > 0).length,
+    [products]
+  );
+  const cartTotalPcs = useMemo(
+    () => products.reduce((sum, p) => sum + (p.qty ?? 0), 0),
+    [products]
+  );
+
   return (
-    <main className="min-h-screen bg-slate-50 pb-12 text-slate-900">
-      {/* Sticky Header */}
+    <main className="pb-24 text-slate-900">
+      {/* Sticky bar below layout header */}
       <div
-        ref={header.ref}
-        className="sticky top-0 z-30 border-b border-slate-200 bg-slate-50 backdrop-blur supports-backdrop-filter:bg-slate-50/90"
+        ref={pageBar.ref}
+        className="sticky z-10 -mx-5 px-2"
+        style={{ top: layoutHeaderHeight }}
       >
-        <DashboardHeader embedded selectedDate={selectedDate} />
-        <SupplierPageBar supplier={supplier} selectedDate={selectedDate} />
+        <div className="mx-auto bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90">
+          <SupplierPageBar supplier={supplier} selectedDate={selectedDate} />
+        </div>
       </div>
 
-      <div className="mx-auto flex max-w-4xl flex-col gap-2 px-4 pt-2">
+      <div className="mx-auto flex flex-col px-1">
         {/* Sticky Tabs/Search */}
         {showDetails && (
           <div
             ref={tabsBar.ref}
-            className="sticky z-20 -mx-4"
-            style={{ top: header.height }}
+            className="sticky z-20 -mx-4 bg-app-card/95"
+            style={{ top: tabsStickyTop }}
           >
-            <div className="border-b border-slate-200 bg-slate-50 px-4 pt-0">
-              <SupplierSearchAndTabs
-                searchPlaceholder={t("supplier_search_placeholder")}
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                sections={filteredSections}
-                activeSectionId={activeSectionId}
-                onTabClick={handleTabClick}
-              />
-            </div>
+            <SupplierSearchAndTabs
+              searchPlaceholder={t("supplier_search_placeholder")}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              sections={filteredSections}
+              activeSectionId={activeSectionId}
+              onTabClick={handleTabClick}
+            />
           </div>
         )}
 
         {/* Content */}
-        <div className="space-y-4">
+        <div className="mt-2 space-y-4">
           {productsQuery.isLoading && (
             <p className="text-sm text-slate-500">
               {t("supplier_loading_products")}
@@ -264,19 +281,34 @@ export default function SupplierPage() {
               {t("supplier_empty_products")}
             </p>
           ) : (
-            filteredSections.map((section) => (
-              <SupplierProductSection
-                key={section.id}
-                section={section}
-                stickyOffset={stickyOffset}
-                sectionRef={(el) => {
-                  sectionRefs.current[section.id] = el;
-                }}
-              />
-            ))
+            <motion.div
+              className="space-y-4"
+              variants={listVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {filteredSections.map((section) => (
+                <motion.div key={section.id} variants={listItemVariants}>
+                  <SupplierProductSection
+                    section={section}
+                    stickyOffset={stickyOffset}
+                    sectionRef={(el) => {
+                      sectionRefs.current[section.id] = el;
+                    }}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
           )}
         </div>
       </div>
+
+      <SupplierCheckoutBar
+        supplierUID={supplierUID}
+        refDate={refDate}
+        cartItemCount={cartItemCount}
+        cartTotalPcs={cartTotalPcs}
+      />
     </main>
   );
 }

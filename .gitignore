@@ -21,6 +21,7 @@
 /build
 
 # misc
+/configuration
 .DS_Store
 *.pem
 /react-native

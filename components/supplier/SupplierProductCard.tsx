@@ -32,7 +32,7 @@ export function SupplierProductCard({ product }: Props) {
   return (
     <article
       key={id}
-      className="flex items-center gap-2 rounded-lg border border-slate-100 bg-white px-3 py-2 shadow-sm"
+      className="flex items-center gap-2 rounded-lg border border-slate-100 bg-app-card/95 px-3 py-2 shadow-sm"
     >
       {image && (
         <img

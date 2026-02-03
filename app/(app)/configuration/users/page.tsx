@@ -1,9 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
+import { motion } from "framer-motion";
 import { useAuthStore } from "../../../../stores/auth";
 import { useUsersForStore } from "../../../../hooks/useUsers";
 import { useTranslation } from "../../../../lib/i18n";
+import { listVariants, listItemVariants } from "../../../../lib/motion";
 
 export default function UsersManagementPage() {
   const { t } = useTranslation();
@@ -14,8 +16,8 @@ export default function UsersManagementPage() {
     return users?.hasSelectedStore === true
       ? users?.selectedStoreUID
       : selectedUser?.store?.storeUID
-        ? selectedUser.store.storeUID
-        : (users?.role?.store?.storeUID ?? null);
+      ? selectedUser.store.storeUID
+      : users?.role?.store?.storeUID ?? null;
   }, [users, selectedUser]);
 
   const usersQuery = useUsersForStore(storeUID);
@@ -23,17 +25,16 @@ export default function UsersManagementPage() {
   const userList = usersQuery.data?.usersList ?? [];
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6 space-y-4 text-slate-900">
+    <main className="space-y-4 text-slate-900">
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold text-slate-900">
           {t("config_users_title")}
         </h1>
-        <p className="text-sm text-slate-600">
-          {t("config_users_subtitle")}
-        </p>
+        <p className="text-sm text-slate-600">{t("config_users_subtitle")}</p>
         {storeUID && (
           <p className="text-sm text-slate-700">
-            {t("config_users_store_uid")} <span className="font-mono">{storeUID}</span>
+            {t("config_users_store_uid")}{" "}
+            <span className="font-mono">{storeUID}</span>
           </p>
         )}
       </header>
@@ -48,10 +49,16 @@ export default function UsersManagementPage() {
       {userList.length === 0 && !usersQuery.isLoading ? (
         <p className="text-sm text-slate-600">{t("config_empty_users")}</p>
       ) : (
-        <div className="space-y-2">
+        <motion.div
+          className="space-y-2"
+          variants={listVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {userList.map((u: any) => (
-            <div
+            <motion.div
               key={u.appUserUID}
+              variants={listItemVariants}
               className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-900 shadow-sm"
             >
               <div className="min-w-0">
@@ -65,9 +72,9 @@ export default function UsersManagementPage() {
               <span className="shrink-0 text-sm text-slate-700">
                 {u.userType}
               </span>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </main>
   );

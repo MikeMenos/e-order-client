@@ -3,6 +3,7 @@ import { useTranslation } from "../../lib/i18n";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Clock, ArrowUpNarrowWide, ArrowDownWideNarrow } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 type Props = {
   isAscending: boolean;
@@ -18,7 +19,7 @@ export function SuppliersSectionHeader({
   onShowCompletedChange,
 }: Props) {
   const { t } = useTranslation();
-
+  const pathname = usePathname();
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-1">
@@ -38,21 +39,22 @@ export function SuppliersSectionHeader({
           )}
         </Button>
       </div>
-
-      <div className="flex items-center gap-2 text-sm text-slate-500">
-        <h2 className="text-sm font-semibold text-slate-900">
-          {t("suppliers_orders_of_day")}
-        </h2>
-        <Label className="flex items-center justify-end mb-0 w-fit gap-0.5">
-          <Input
-            type="checkbox"
-            checked={showCompleted}
-            onChange={(e) => onShowCompletedChange(e.target.checked)}
-            className="h-3 w-3 rounded border-slate-300 text-brand-500 focus:ring-brand-500"
-          />
-          <span>{t("suppliers_include_completed")}</span>
-        </Label>
-      </div>
+      {pathname === "/orders-of-the-day" && (
+        <div className="flex items-center gap-2 text-sm text-slate-500">
+          <h2 className="text-sm font-semibold text-slate-900">
+            {t("suppliers_orders_of_day")}
+          </h2>
+          <Label className="flex items-center justify-end mb-0 w-fit gap-0.5">
+            <Input
+              type="checkbox"
+              checked={showCompleted}
+              onChange={(e) => onShowCompletedChange(e.target.checked)}
+              className="h-3 w-3 rounded border-slate-300 text-brand-500 focus:ring-brand-500"
+            />
+            <span>{t("suppliers_include_completed")}</span>
+          </Label>
+        </div>
+      )}
     </div>
   );
 }

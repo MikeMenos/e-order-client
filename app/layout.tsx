@@ -11,7 +11,7 @@ const queryClient = new QueryClient();
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-background text-foreground">
+      <body>
         <TranslationProvider>
           <QueryClientProvider client={queryClient}>
             {children}

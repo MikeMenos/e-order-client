@@ -11,11 +11,16 @@
   --color-brand-500: #F96C2B;
   --color-brand-600: #e55a1f;
   --color-brand-700: #c04a19;
+  /* Redesign: main app background and cards */
+  --color-app-bg: #EFE0D1;
+  --color-app-card: #F8EDE3;
 }
 
 :root {
   color-scheme: light;
   --radius: 0.625rem;
+  --color-app-bg: #EFE0D1;
+  --color-app-card: #F8EDE3;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -50,7 +55,8 @@
 }
 
 body {
-  @apply bg-slate-100 text-slate-900;
+  @apply text-slate-900;
+  background-color: var(--color-app-bg, #EFE0D1);
 }
 
 @keyframes logo-breathe {

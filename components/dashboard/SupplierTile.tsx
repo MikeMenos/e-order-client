@@ -108,8 +108,8 @@ export function SupplierTile({
 
   return (
     <div
-      className={`flex flex-col gap-0 rounded-xl border shadow-sm transition hover:border-brand-400/60 ${
-        hasTileColor && isFill ? "" : "border-slate-200 bg-white"
+      className={`flex flex-col gap-0 rounded-xl border shadow-sm transition hover:border-brand-400/60 bg-app-card/95 ${
+        hasTileColor && isFill ? "" : "border-slate-200/80"
       } ${isFill ? "text-slate-900" : ""}`}
       style={hasTileColor ? tileStyle : undefined}
     >

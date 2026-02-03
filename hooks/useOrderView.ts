@@ -1,18 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
-import type { OrderLineItem } from "./useSupplierOrderHistory";
+import type { OrderViewOrder, OrderViewResponse } from "../lib/types/order";
 
-export type OrderViewOrder = {
-  orderUID?: string;
-  items?: OrderLineItem[];
-  [key: string]: unknown;
-};
-
-export type OrderViewResponse = {
-  statusCode?: number;
-  message?: string;
-  order?: OrderViewOrder;
-};
+export type { OrderViewOrder, OrderViewResponse } from "../lib/types/order";
 
 export function useOrderView(orderUID: string | null) {
   return useQuery({
