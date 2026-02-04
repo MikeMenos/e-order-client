@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { format, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import { useTranslation } from "../../lib/i18n";
 import { listVariants, listItemVariants } from "../../lib/motion";
@@ -6,6 +7,7 @@ import type { Supplier } from "./types";
 import { SuppliersSectionHeader } from "./SuppliersSectionHeader";
 import { SuppliersSearchBar } from "./SuppliersSearchBar";
 import { SupplierTile } from "./SupplierTile";
+import { usePathname } from "next/navigation";
 
 type Props = {
   refDate: string;
@@ -25,17 +27,8 @@ export function SuppliersSection({
   const [searchQuery, setSearchQuery] = useState("");
   const [isAscending, setIsAscending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(false);
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const { t } = useTranslation();
-
-  const toggleExpanded = (supplierUID: string) => {
-    setExpandedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(supplierUID)) next.delete(supplierUID);
-      else next.add(supplierUID);
-      return next;
-    });
-  };
+  const pathname = usePathname();
 
   const filteredSuppliers = useMemo(() => {
     let data = [...suppliers];
@@ -72,9 +65,45 @@ export function SuppliersSection({
     return data;
   }, [suppliers, searchQuery, showCompleted, isAscending]);
 
+  const isToday = (() => {
+    try {
+      const ref = parseISO(refDate);
+      const today = new Date();
+      return (
+        ref.getFullYear() === today.getFullYear() &&
+        ref.getMonth() === today.getMonth() &&
+        ref.getDate() === today.getDate()
+      );
+    } catch {
+      return false;
+    }
+  })();
+
+  const dateFormatted = (() => {
+    try {
+      return format(parseISO(refDate), "EEEE d MMMM");
+    } catch {
+      return refDate;
+    }
+  })();
+
   return (
     <section>
-      <div className="flex flex-col gap-2 mb-2">
+      <div className="mb-2 flex flex-col gap-2">
+        {pathname !== "/all-suppliers" && (
+          <p className="text-xl text-slate-900 mt-2 text-center">
+            {isToday ? (
+              <>
+                <span className="font-medium text-green-600">
+                  {t("calendar_today")}
+                </span>
+                <span> – {dateFormatted}</span>
+              </>
+            ) : (
+              dateFormatted
+            )}
+          </p>
+        )}
         <SuppliersSearchBar value={searchQuery} onChange={setSearchQuery} />
         <SuppliersSectionHeader
           isAscending={isAscending}
@@ -104,12 +133,7 @@ export function SuppliersSection({
         >
           {filteredSuppliers.map((s) => (
             <motion.div key={s.supplierUID} variants={listItemVariants}>
-              <SupplierTile
-                supplier={s}
-                refDate={refDate}
-                isExpanded={expandedIds.has(s.supplierUID)}
-                onToggleExpanded={() => toggleExpanded(s.supplierUID)}
-              />
+              <SupplierTile supplier={s} refDate={refDate} />
             </motion.div>
           ))}
         </motion.div>

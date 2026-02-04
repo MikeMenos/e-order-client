@@ -4,7 +4,7 @@ import { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { useTranslation } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -25,7 +25,9 @@ export function CheckoutDeliverySection({
   );
   const [otherDate, setOtherDate] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogDateValue, setDialogDateValue] = useState("");
+  const [dialogDateValue, setDialogDateValue] = useState<Date | undefined>(
+    undefined
+  );
 
   const defaultDeliveryLabel = selectedDate ?? "";
 
@@ -42,15 +44,27 @@ export function CheckoutDeliverySection({
       : defaultDeliveryLabel;
 
   const openOtherDateDialog = () => {
-    setDialogDateValue(
-      otherDate ?? selectedDate ?? format(new Date(), "yyyy-MM-dd")
-    );
+    if (otherDate) {
+      try {
+        setDialogDateValue(parseISO(otherDate));
+      } catch {
+        setDialogDateValue(new Date());
+      }
+    } else if (selectedDate) {
+      try {
+        setDialogDateValue(parseISO(selectedDate));
+      } catch {
+        setDialogDateValue(new Date());
+      }
+    } else {
+      setDialogDateValue(new Date());
+    }
     setDialogOpen(true);
   };
 
   const confirmOtherDate = () => {
     if (dialogDateValue) {
-      setOtherDate(dialogDateValue);
+      setOtherDate(format(dialogDateValue, "yyyy-MM-dd"));
       setDeliveryOption("other");
     }
     setDialogOpen(false);
@@ -94,11 +108,10 @@ export function CheckoutDeliverySection({
             <DialogTitle>{t("checkout_select_delivery_date")}</DialogTitle>
           </DialogHeader>
           <div className="mt-4 space-y-4">
-            <Input
-              type="date"
-              value={dialogDateValue}
-              onChange={(e) => setDialogDateValue(e.target.value)}
-              className="w-full border-slate-300"
+            <Calendar
+              mode="single"
+              selected={dialogDateValue}
+              onSelect={setDialogDateValue}
             />
             <div className="flex justify-end gap-2">
               <Button

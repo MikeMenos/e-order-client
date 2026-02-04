@@ -7,6 +7,7 @@ export type Supplier = {
   orderTillText?: string | null;
   nextAvailDeliveryText?: string | null;
   basketIconStatus?: number | string;
+  basketIconStatusDescr?: string | null;
   labelStockForDays?: string | null;
   weekDeliveryDaysText?: string | null;
   tileColor?: string | null;

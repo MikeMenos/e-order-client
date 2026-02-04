@@ -75,7 +75,7 @@ export default function SettingsPage() {
   return (
     <main className="text-slate-900">
       <div className="mx-auto flex max-w-md flex-col gap-3">
-        <h1 className="mb-2 text-lg font-semibold text-slate-900">
+        <h1 className="my-2 text-lg font-semibold text-slate-900">
           {t("settings_title")}
         </h1>
 

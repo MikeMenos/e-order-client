@@ -1,8 +1,7 @@
 "use client";
 
 import { createContext, useContext, useMemo } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
-import { format } from "date-fns";
+import { usePathname } from "next/navigation";
 import { useMeasuredHeight } from "@/lib/utils";
 import { DashboardHeader } from "@/components/dashboard/Header";
 
@@ -22,14 +21,9 @@ export function useAppHeaderHeight() {
 
 export function AppHeaderProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const header = useMeasuredHeight<HTMLDivElement>();
 
   const showBack = pathname !== "/dashboard";
-  const selectedDate =
-    pathname === "/dashboard"
-      ? undefined
-      : searchParams.get("refDate") ?? format(new Date(), "yyyy-MM-dd");
 
   const value = useMemo(
     () => ({
@@ -42,11 +36,7 @@ export function AppHeaderProvider({ children }: { children: React.ReactNode }) {
     <AppHeaderContext.Provider value={value}>
       <div className="min-h-screen w-full bg-app-bg p-5">
         <div ref={header.ref} className="sticky top-0 z-10 -mx-5 -mt-5">
-          <DashboardHeader
-            embedded
-            showBack={showBack}
-            selectedDate={selectedDate}
-          />
+          <DashboardHeader embedded showBack={showBack} />
         </div>
         <div className="mx-auto max-w-4xl w-full">{children}</div>
       </div>

@@ -221,15 +221,6 @@ export default function SupplierPage() {
     window.scrollTo({ top, behavior: "smooth" });
   };
 
-  const cartItemCount = useMemo(
-    () => products.filter((p) => (p.qty ?? 0) > 0).length,
-    [products]
-  );
-  const cartTotalPcs = useMemo(
-    () => products.reduce((sum, p) => sum + (p.qty ?? 0), 0),
-    [products]
-  );
-
   return (
     <main className="pb-24 text-slate-900">
       {/* Sticky bar below layout header */}
@@ -303,12 +294,7 @@ export default function SupplierPage() {
         </div>
       </div>
 
-      <SupplierCheckoutBar
-        supplierUID={supplierUID}
-        refDate={refDate}
-        cartItemCount={cartItemCount}
-        cartTotalPcs={cartTotalPcs}
-      />
+      <SupplierCheckoutBar supplierUID={supplierUID} refDate={refDate} />
     </main>
   );
 }

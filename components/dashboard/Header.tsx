@@ -3,29 +3,20 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { format, parseISO } from "date-fns";
 import { ArrowLeft } from "lucide-react";
 import { useAuthStore } from "../../stores/auth";
 import { useTranslation } from "../../lib/i18n";
 import { Button } from "../ui/button";
 
 type Props = {
-  selectedDate?: string;
   embedded?: boolean;
   showBack?: boolean;
 };
 
-export function DashboardHeader({ embedded, selectedDate, showBack }: Props) {
+export function DashboardHeader({ embedded, showBack }: Props) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
-  const date =
-    typeof selectedDate === "string"
-      ? parseISO(selectedDate)
-      : selectedDate ?? new Date();
-
-  const day = format(date, "dd");
-  const rest = format(date, "EEE MMM yyyy");
   const { users, selectedUser } = useAuthStore();
 
   const fname = useMemo(
@@ -95,12 +86,6 @@ export function DashboardHeader({ embedded, selectedDate, showBack }: Props) {
         )}
       </div>
 
-      {pathname !== "/all-suppliers" && selectedDate && (
-        <p className="flex shrink-0 items-baseline text-slate-900">
-          <span className="mr-1 text-2xl font-bold">{day}</span>
-          <span className="text-sm font-medium text-slate-500">{rest}</span>
-        </p>
-      )}
     </header>
   );
 }

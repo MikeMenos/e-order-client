@@ -57,7 +57,7 @@ export function SupplierPageBar({ supplier, selectedDate }: Props) {
               ? "border-slate-300 text-slate-900 hover:border-slate-400 hover:text-slate-900"
               : "border-slate-200 bg-white text-slate-500 hover:border-slate-400 hover:text-slate-700"
           }`}
-          aria-label={`${t("supplier_order_history_aria")} ${
+          aria-label={`${t("supplier_order_history_title")} ${
             supplier?.title ?? ""
           }`}
         >
