@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { listVariants, listItemVariants } from "@/lib/motion";
@@ -35,20 +36,32 @@ const cards = [
 
 export default function DashboardPage() {
   const { t } = useTranslation();
+  
 
   return (
     <main className="text-slate-900">
+      <div className="flex justify-center py-6">
+        <Image
+          src="/icon0.svg"
+          alt="E-Order Logo"
+          width={120}
+          height={120}
+          priority
+        />
+      </div>
       <motion.div
-        className="mx-auto mt-2 grid w-full max-w-none grid-cols-2 auto-rows-fr gap-4 min-h-[calc(100dvh-8rem)] sm:max-w-2xl"
+        className="mx-auto grid w-full max-w-none grid-cols-2 auto-rows-fr gap-4 px-4 sm:max-w-2xl"
         variants={listVariants}
         initial="hidden"
         animate="visible"
       >
+
         {cards.map(({ href, icon: Icon, labelKey, iconColor }) => (
-          <motion.div key={labelKey} variants={listItemVariants}>
+          <motion.div key={labelKey} variants={listItemVariants} >
             <Link
               href={href}
-              className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-2xl bg-app-card/95 p-6 shadow-sm transition hover:shadow-md"
+              className="flex h-full w-full flex-col items-center justify-center
+              gap-3 rounded-2xl bg-app-card/95 p-6 shadow-sm transition hover:shadow-md"
             >
               <Icon className={`h-12 w-12 shrink-0 ${iconColor}`} aria-hidden />
               <span className="text-center text-sm font-medium text-slate-900">

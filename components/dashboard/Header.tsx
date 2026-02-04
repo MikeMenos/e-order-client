@@ -57,13 +57,13 @@ export function DashboardHeader({ embedded, showBack }: Props) {
         </Button>
       )}
       <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg">
-        <Link href="/dashboard">
+        {/* <Link href="/dashboard">
           <img
             src="/assets/logo.png"
             alt="E-Order"
             className="h-14 w-14 rounded-lg object-contain"
           />
-        </Link>
+        </Link> */}
       </div>
       <div className="min-w-0 flex-1">
         {fname && (
