@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import {
-  Store, LogOut,
+  Store, LogOut, ArrowLeft, Building2, Loader2,
   Users,
   ChevronDown,
   ChevronUp,
@@ -16,12 +16,16 @@ import {
   Clock,
   Star,
   History,
+  UserPlus,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth";
 import { useTranslation } from "@/lib/i18n";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { StoreSelectDialog } from "@/components/auth/StoreSelectDialog";
+import { useSuppliersListForToday } from "@/hooks/useDashboardData";
+import type { Supplier } from "@/components/dashboard/types";
+
 
 export default function SettingsPage() {
   const { t } = useTranslation();
@@ -29,6 +33,12 @@ export default function SettingsPage() {
   const queryClient = useQueryClient();
   const [storeDialogOpen, setStoreDialogOpen] = useState(false);
   const [suppliersOpen, setSuppliersOpen] = useState(false);
+
+  const [suppliersStep, setSuppliersStep] = useState<"list" | "menu">("list");
+  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
+
+  const { suppliers, isLoading: suppliersLoading, isError: suppliersError, errorMessage } =
+    useSuppliersListForToday();
 
   const {
     users,
@@ -110,13 +120,34 @@ export default function SettingsPage() {
         <Button
           type="button"
           variant="outline"
-          onClick={() => setSuppliersOpen((v) => !v)}
+          onClick={() => setStoreDialogOpen(true)}
+          disabled={roles.length === 0}
+          className={`${cardStyle} w-full justify-start text-slate-900 bg-app-card`}
+        >
+          <Store className="h-6 w-6 shrink-0 text-slate-600" aria-hidden />
+          <span>{t("Επιλογή Καταστήματος")}</span>
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            setSuppliersOpen((v) => {
+              const next = !v;
+              if (!next) {
+                setSuppliersStep("list");
+                setSelectedSupplier(null);
+              }
+              return next;
+            })
+          }
           className={`${cardStyle} w-full justify-between text-slate-900 bg-app-card`}
         >
           <span className="flex items-center gap-3">
             <Users className="h-6 w-6 shrink-0 text-slate-600" aria-hidden />
             <span>{t("Διαχείριση Προμηθευτών")}</span>
           </span>
+
           {suppliersOpen ? (
             <ChevronUp className="h-5 w-5 text-slate-500" aria-hidden />
           ) : (
@@ -124,58 +155,141 @@ export default function SettingsPage() {
           )}
         </Button>
 
+
         {suppliersOpen && (
-          <div className="flex flex-col gap-2 pl-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push("/suppliers/timetable")}
-              className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
-            >
-              <Clock className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
-              <span>{t("Πρόγραμμα Παραγγελιών")}</span>
-            </Button>
+          <div className="flex flex-col gap-2 pl-6 border-l border-slate-200/60">
+            {suppliersStep === "list" && (
+              <>
+                <div className="px-1 text-xs font-medium text-slate-500">
+                  {t("Όλοι οι Προμηθευτές")}
+                </div>
 
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push("/suppliers/favorites")}
-              className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
-            >
-              <Star className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
-              <span>{t("Αγαπημένα")}</span>
-            </Button>
+                {suppliersLoading && (
+                  <div className="flex items-center gap-2 px-2 text-sm text-slate-500">
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                    {t("suppliers_loading")}
+                  </div>
+                )}
 
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push("/suppliers/order-history")}
-              className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
-            >
-              <History className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
-              <span>{t("Ιστορικό Παραγγελιών")}</span>
-            </Button>
+                {suppliersError && (
+                  <div className="rounded-xl bg-red-50 p-3 text-sm text-red-700">
+                    {errorMessage ?? t("suppliers_error")}
+                  </div>
+                )}
 
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push("/suppliers/info")}
-              className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
-            >
-              <Users className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
-              <span>{t("Στοιχεία Προμηθευτή")}</span>
-            </Button>
+                {!suppliersLoading &&
+                  !suppliersError &&
+                  (suppliers?.length ?? 0) === 0 && (
+                    <div className="rounded-xl bg-slate-50 p-3 text-sm text-slate-600">
+                      {t("suppliers_empty")}
+                    </div>
+                  )}
 
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push("/suppliers/contact")}
-              className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
-            >
-              <User className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
-              <span>{t("Επικοινωνία")}</span>
-            </Button>
+                {(suppliers ?? []).map((s: Supplier) => (
+                  <Button
+                    key={s.supplierUID}
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedSupplier(s);
+                      setSuppliersStep("menu");
+                    }}
+                    className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
+                  >
+                    <Building2 className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
+                    <span className="truncate">{s.title}</span>
+                  </Button>
+                ))}
+              </>
+            )}
 
+            {suppliersStep === "menu" && selectedSupplier && (
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setSuppliersStep("list");
+                    setSelectedSupplier(null);
+                  }}
+                  className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
+                >
+                  <ArrowLeft className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
+                  <span>{t("Πίσω στους προμηθευτές")}</span>
+                </Button>
+
+                <div className="px-1">
+                  <div className="text-xs text-slate-500">
+                    {t("Επιλεγμένος Προμηθευτής")}
+                  </div>
+                  <div className="truncate text-sm font-semibold text-slate-900">
+                    {selectedSupplier.title}
+                  </div>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    router.push(`/suppliers/${selectedSupplier.supplierUID}/timetable`)
+                  }
+                  className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
+                >
+                  <Clock className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
+                  <span>{t("Πρόγραμμα Παραγγελιών")}</span>
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    router.push(`/suppliers/${selectedSupplier.supplierUID}/favorites`)
+                  }
+                  className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
+                >
+                  <Star className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
+                  <span>{t("Αγαπημένα")}</span>
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    router.push(
+                      `/suppliers/${selectedSupplier.supplierUID}/order-history`
+                    )
+                  }
+                  className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
+                >
+                  <History className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
+                  <span>{t("Ιστορικό Παραγγελιών")}</span>
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    router.push(`/suppliers/${selectedSupplier.supplierUID}/info`)
+                  }
+                  className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
+                >
+                  <Users className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
+                  <span>{t("Στοιχεία Προμηθευτή")}</span>
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    router.push(`/suppliers/${selectedSupplier.supplierUID}/contact`)
+                  }
+                  className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
+                >
+                  <User className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
+                  <span>{t("Επικοινωνία")}</span>
+                </Button>
+              </>
+            )}
           </div>
         )}
 
@@ -183,12 +297,33 @@ export default function SettingsPage() {
         <Button
           type="button"
           variant="outline"
-          onClick={() => setStoreDialogOpen(true)}
-          disabled={roles.length === 0}
+          onClick={() => router.push("/settings/language")}
           className={`${cardStyle} w-full justify-start text-slate-900 bg-app-card`}
         >
-          <Store className="h-6 w-6 shrink-0 text-slate-600" aria-hidden />
-          <span>{t("nav_switch_store")}</span>
+          <Languages className="h-6 w-6 shrink-0 text-slate-600" aria-hidden />
+          <span>{t("Aλλαγή Γλώσσας")}</span>
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          className={`${cardStyle} w-full justify-start text-slate-900 bg-app-card`}
+        >
+
+          {/* <Sun className="h-6 w-6 shrink-0 text-slate-600" aria-hidden /> */}
+          <Moon className="h-6 w-6 shrink-0 text-slate-600" aria-hidden />
+
+          <span>{t("Dark Theme")}</span>
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => router.push("/users/add")}
+          className={`${cardStyle} w-full justify-start text-slate-900 bg-app-card`}
+        >
+          <UserPlus className="h-6 w-6 shrink-0 text-slate-600" aria-hidden />
+          <span>{t("Προσθήκη Χρήστη")}</span>
         </Button>
 
         <Button
