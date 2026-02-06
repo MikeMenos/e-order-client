@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { useSupplierDisplay } from "@/hooks/useSupplier";
-import { useTranslation } from "@/lib/i18n";
 import { CheckoutPageHeader } from "@/components/checkout/CheckoutPageHeader";
 import { CheckoutDeliverySection } from "@/components/checkout/CheckoutDeliverySection";
 import { CheckoutCommentsSection } from "@/components/checkout/CheckoutCommentsSection";
@@ -11,7 +10,6 @@ import { CheckoutTotal } from "@/components/checkout/CheckoutTotal";
 import { CheckoutActionBar } from "@/components/checkout/CheckoutActionBar";
 
 export default function SupplierCheckoutPage() {
-  const { t } = useTranslation();
   const params = useParams<{ supplierUID: string }>();
   const searchParams = useSearchParams();
   const supplierUID = params.supplierUID;
@@ -49,8 +47,8 @@ export default function SupplierCheckoutPage() {
       <CheckoutTotal labelKey="checkout_total" amount="€0.00" />
 
       <CheckoutActionBar
-        temporarySaveLabel={t("checkout_temporary_save")}
-        submitOrderLabel={t("checkout_submit_order")}
+        temporarySaveLabelKey="checkout_temporary_save"
+        submitOrderLabelKey="checkout_submit_order"
         onTemporarySave={handleTemporarySave}
         onSubmitOrder={handleSubmitOrder}
       />

@@ -17,7 +17,7 @@ export type {
 
 export const useSupplierDisplay = (
   supplierUID: string | undefined,
-  refDate?: string
+  refDate?: string,
 ) => {
   return useQuery({
     queryKey: ["supplier-display", supplierUID, refDate],
@@ -27,7 +27,7 @@ export const useSupplierDisplay = (
         {
           supplierUID,
           refDate,
-        }
+        },
       );
       return res.data;
     },
@@ -37,7 +37,7 @@ export const useSupplierDisplay = (
 
 export const useSupplierProducts = (
   supplierUID: string | undefined,
-  refDate?: string
+  refDate?: string,
 ) => {
   return useQuery({
     queryKey: ["supplier-products", supplierUID, refDate],
@@ -51,7 +51,7 @@ export const useSupplierProducts = (
           page: 0,
           search: null,
           favoritesOnly: false,
-        }
+        },
       );
       return res.data;
     },

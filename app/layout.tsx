@@ -15,7 +15,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <TranslationProvider>
           <QueryClientProvider client={queryClient}>
             {children}
-            <Toaster />
+            <Toaster
+              position="bottom-center"
+              containerStyle={{
+                position: "fixed",
+                bottom: 0,
+                left: 0,
+                right: 0,
+              }}
+            />
           </QueryClientProvider>
         </TranslationProvider>
       </body>

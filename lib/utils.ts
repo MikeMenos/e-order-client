@@ -53,3 +53,23 @@ export function formatMoney(value: unknown): string {
   if (Number.isNaN(n)) return String(value);
   return `${n.toFixed(2)} €`;
 }
+
+/** Format an ISO date string for display (e.g. "EEE, d MMM yyyy"). Returns raw string or empty on parse failure. */
+export function formatDeliveryDateDisplay(iso: string | null): string {
+  if (iso == null || iso === "") return "";
+  try {
+    return format(parseISO(iso), "EEE, d MMM yyyy");
+  } catch {
+    return iso;
+  }
+}
+
+/** Parse an ISO date for a date picker initial value. Falls back to today. */
+export function parseDateForPicker(iso: string | null): Date {
+  if (iso == null || iso === "") return new Date();
+  try {
+    return parseISO(iso);
+  } catch {
+    return new Date();
+  }
+}

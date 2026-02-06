@@ -9,6 +9,7 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { useTranslation } from "../../../lib/i18n";
 import { api } from "../../../lib/api";
+import { getApiErrorMessage } from "../../../lib/api-error";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -39,16 +40,12 @@ export default function SignupPage() {
       return res.data;
     },
     onSuccess: (data: any) => {
-      if (data?.statusCode === 200) {
-        toast.success(data?.message ?? "Account created");
-        router.push("/login");
-      } else {
-        toast.error(data?.message ?? "Registration failed");
-      }
+      toast.success(data?.message ?? "Account created");
+      router.push("/login");
     },
     onError: (err: unknown) => {
       console.error(err);
-      toast.error("Registration failed");
+      toast.error(getApiErrorMessage(err, "Registration failed"));
     },
   });
 

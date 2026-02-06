@@ -67,16 +67,17 @@ function getStatusStyle(descr: string | null | undefined): {
 export function SupplierTile({ supplier, refDate }: Props) {
   const { t } = useTranslation();
   const supplierHref = `/suppliers/${encodeURIComponent(
-    supplier.supplierUID
+    supplier.supplierUID,
   )}?refDate=${encodeURIComponent(refDate)}`;
 
   const statusDescr = supplier.basketIconStatusDescr ?? "";
   const statusStyle = getStatusStyle(statusDescr);
-  const isPending = (statusDescr ?? "").includes(STATUS_PENDING);
-  const actionLabel = isPending ? t("supplier_continue") : t("supplier_open");
 
   return (
-    <div className="flex flex-col rounded-2xl border border-slate-200/80 bg-app-card/95 shadow-sm">
+    <Link
+      href={supplierHref}
+      className="flex flex-col rounded-2xl border border-slate-200/80 bg-app-card/95 shadow-sm cursor-pointer transition hover:border-brand-400/70 hover:shadow-md"
+    >
       {/* Top: logo + title + next delivery */}
       <div className="flex items-start gap-3 p-4 pb-2">
         {supplier.logo && (
@@ -87,7 +88,7 @@ export function SupplierTile({ supplier, refDate }: Props) {
           />
         )}
         <div className="min-w-0 flex-1">
-          <p className="truncate  font-bold uppercase tracking-wide text-slate-900">
+          <p className="truncate font-bold uppercase tracking-wide text-slate-900">
             {supplier.title}
           </p>
           {supplier.nextAvailDeliveryText && (
@@ -98,31 +99,25 @@ export function SupplierTile({ supplier, refDate }: Props) {
         </div>
       </div>
 
-      {/* Middle: status + action button */}
+      {/* Middle: status pill */}
       <div className="flex items-center gap-2 px-4 py-2">
         <span
-          className={`inline-flex flex-1 items-center gap-2 rounded-lg px-2 py-1.5  font-medium ${statusStyle.bg} ${statusStyle.text}`}
+          className={`inline-flex w-full items-center gap-2 rounded-lg px-2 py-1.5 font-medium ${statusStyle.bg} ${statusStyle.text}`}
         >
           {statusStyle.icon}
           <span className="truncate">{statusDescr || "—"}</span>
         </span>
-        <Link
-          href={supplierHref}
-          className="shrink-0 rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5  font-medium text-slate-700 transition-colors hover:bg-slate-100"
-        >
-          {actionLabel}
-        </Link>
       </div>
 
       {/* Bottom: order days */}
       {supplier.weekDeliveryDaysText && (
-        <div className="flex items-center gap-2 border-t border-slate-100 px-4 py-2 justify-center">
+        <div className="flex items-center justify-center gap-2 border-t border-slate-100 px-4 py-2">
           <Calendar className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
-          <span className=" text-slate-600">
+          <span className="text-slate-600">
             {supplier.weekDeliveryDaysText}
           </span>
         </div>
       )}
-    </div>
+    </Link>
   );
 }

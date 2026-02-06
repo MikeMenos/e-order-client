@@ -1,16 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { backend } from "../../../lib/backend";
+import { getBackendHeaders } from "../../../lib/backend-headers";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const apiKey = req.headers.get("x-eorderapikey") ?? "key1";
-
     const res = await backend.post("Account/Register", body, {
-      headers: {
-        "Content-Type": "application/json",
-        "X-EORDERAPIKEY": apiKey,
-      },
+      headers: { ...getBackendHeaders(req, { includeAuth: false }), "Content-Type": "application/json" },
     });
 
     return NextResponse.json(res.data, { status: res.status });

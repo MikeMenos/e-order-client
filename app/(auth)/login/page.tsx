@@ -11,11 +11,11 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { StoreSelectDialog } from "../../../components/auth/StoreSelectDialog";
 import { useTranslation } from "../../../lib/i18n";
+import { getApiErrorMessage } from "../../../lib/api-error";
 
 export default function LoginPage() {
   const router = useRouter();
   const { t } = useTranslation();
-  const { users } = useAuthStore();
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
   const setLoggedIn = useAuthStore((s) => s.setLoggedIn);
   const setSelectedUser = useAuthStore((s) => s.setSelectedUser);
@@ -40,17 +40,12 @@ export default function LoginPage() {
       return res.data;
     },
     onSuccess: (data: any) => {
-      if (data?.statusCode !== 200) {
-        toast.error(data?.message ?? "Login failed");
-        return;
-      }
-
-      const token = data.accessToken ?? null;
+      const token = data?.accessToken ?? null;
       setAccessToken(token);
 
       if (token && typeof document !== "undefined") {
         document.cookie = `accessToken=${encodeURIComponent(
-          token
+          token,
         )}; path=/; max-age=${60 * 60 * 24 * 7}; sameSite=lax`;
       }
 
@@ -91,6 +86,7 @@ export default function LoginPage() {
           })
           .catch((err) => {
             console.error("select-store (single store) failed", err);
+            toast.error(getApiErrorMessage(err, t("login_toast_error")));
           })
           .finally(() => {
             finishLogin();
@@ -101,7 +97,7 @@ export default function LoginPage() {
     },
     onError: (err: unknown) => {
       console.error(err);
-      toast.error(t("login_toast_error"));
+      toast.error(getApiErrorMessage(err, t("login_toast_error")));
     },
   });
 
@@ -136,12 +132,13 @@ export default function LoginPage() {
         })
         .catch((err) => {
           console.error("select-store (multi store) failed", err);
+          toast.error(getApiErrorMessage(err, t("login_toast_error")));
         });
     }
     const token = userResponse?.accessToken;
     if (token && typeof document !== "undefined") {
       document.cookie = `accessToken=${encodeURIComponent(
-        token
+        token,
       )}; path=/; max-age=${60 * 60 * 24 * 7}; sameSite=lax`;
     }
     router.push("/dashboard");
@@ -195,7 +192,7 @@ export default function LoginPage() {
             disabled={loginMutation.isPending}
             className="w-full"
           >
-            {loginMutation.isPending ? "Signing in..." : t("login_submit")}
+            {loginMutation.isPending ? t("login_signing_in") : t("login_submit")}
           </Button>
         </form>
 

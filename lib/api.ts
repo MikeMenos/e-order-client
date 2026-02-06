@@ -58,6 +58,8 @@ api.interceptors.request.use((config) => {
     url.includes("/store-pref-schedule") ||
     url.includes("/basket-items") ||
     url.includes("/basket-counter") ||
+    url.includes("/basket-suggest-qty") ||
+    url.includes("/basket-add-or-update") ||
     url.includes("/wishlist-items");
 
   const token = useStoreToken ? storeAccessToken || accessToken : accessToken;
@@ -65,7 +67,7 @@ api.interceptors.request.use((config) => {
   // Ensure config.headers is always present (basic object, Axios can handle it)
   config.headers = config.headers || {};
 
-  (config.headers as any)["X-EORDERAPIKEY"] = "key1";
+  (config.headers as any)["X-EORDERAPIKEY"] = "e2026order-pro";
 
   // Add Authorization header if token exists
   if (token) {
@@ -75,13 +77,16 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Treat body statusCode !== 200 as error (API returns HTTP 200 with statusCode/message in body)
+const SUCCESS_STATUS = 200;
+
 api.interceptors.response.use(
   (response) => {
     const data: any = response?.data;
     if (
       data &&
       typeof data.statusCode === "number" &&
-      data.statusCode === 500
+      data.statusCode !== SUCCESS_STATUS
     ) {
       const message =
         typeof data.message === "string" && data.message.trim().length > 0
@@ -101,5 +106,5 @@ api.interceptors.response.use(
       clearAuthAndRedirect();
     }
     return Promise.reject(error);
-  }
+  },
 );

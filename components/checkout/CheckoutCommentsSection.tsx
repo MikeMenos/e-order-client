@@ -1,7 +1,7 @@
 "use client";
 
-import { useTranslation } from "@/lib/i18n";
 import { Textarea } from "@/components/ui/textarea";
+import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
 
 export type CheckoutCommentsSectionProps = {
   labelKey: string;
@@ -16,12 +16,9 @@ export function CheckoutCommentsSection({
   onChange,
   placeholder = "",
 }: CheckoutCommentsSectionProps) {
-  const { t } = useTranslation();
   return (
     <section className="mb-6">
-      <h2 className="mb-2 text-sm font-semibold text-brand-600">
-        {t(labelKey)}
-      </h2>
+      <CheckoutSectionHeading labelKey={labelKey} />
       <Textarea
         placeholder={placeholder}
         value={value}

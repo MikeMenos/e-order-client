@@ -2,9 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 import {
-  Store, LogOut, ArrowLeft, Building2, Loader2,
+  Store,
+  LogOut,
+  ArrowLeft,
+  Building2,
+  Loader2,
   Users,
   ChevronDown,
   ChevronUp,
@@ -21,11 +26,11 @@ import {
 import { useAuthStore } from "@/stores/auth";
 import { useTranslation } from "@/lib/i18n";
 import { api } from "@/lib/api";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { Button } from "@/components/ui/button";
 import { StoreSelectDialog } from "@/components/auth/StoreSelectDialog";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
 import type { Supplier } from "@/components/dashboard/types";
-
 
 export default function SettingsPage() {
   const { t } = useTranslation();
@@ -35,23 +40,23 @@ export default function SettingsPage() {
   const [suppliersOpen, setSuppliersOpen] = useState(false);
 
   const [suppliersStep, setSuppliersStep] = useState<"list" | "menu">("list");
-  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
-
-  const { suppliers, isLoading: suppliersLoading, isError: suppliersError, errorMessage } =
-    useSuppliersListForToday();
+  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(
+    null,
+  );
 
   const {
-    users,
-    selectedUser,
-    logout,
-    setSelectedUser,
-    setStoreAccessToken,
-    setLoggedIn,
-  } = useAuthStore();
+    suppliers,
+    isLoading: suppliersLoading,
+    isError: suppliersError,
+    errorMessage,
+  } = useSuppliersListForToday();
+
+  const { users, logout, setSelectedUser, setStoreAccessToken, setLoggedIn } =
+    useAuthStore();
 
   const roles = useMemo(
     () => users?.userInfos?.storeAccess ?? [],
-    [users?.userInfos?.storeAccess]
+    [users?.userInfos?.storeAccess],
   );
 
   const userName = useMemo(
@@ -59,7 +64,7 @@ export default function SettingsPage() {
       [users?.userInfos?.fname, users?.userInfos?.lname]
         .filter(Boolean)
         .join(" ") || "",
-    [users?.userInfos?.fname, users?.userInfos?.lname]
+    [users?.userInfos?.fname, users?.userInfos?.lname],
   );
 
   const handleSelectRole = (role: { store?: { storeUID?: string } }) => {
@@ -83,6 +88,7 @@ export default function SettingsPage() {
         })
         .catch((err) => {
           console.error("select-store failed", err);
+          toast.error(getApiErrorMessage(err, "Failed to select store"));
         });
     }
     router.push("/dashboard");
@@ -98,7 +104,6 @@ export default function SettingsPage() {
 
   const subItemStyle =
     "flex items-center gap-3 rounded-xl px-4 py-3 text-sm shadow-sm transition hover:shadow-md";
-
 
   return (
     <main className="text-slate-900">
@@ -155,7 +160,6 @@ export default function SettingsPage() {
           )}
         </Button>
 
-
         {suppliersOpen && (
           <div className="flex flex-col gap-2 pl-6 border-l border-slate-200/60">
             {suppliersStep === "list" && (
@@ -196,7 +200,10 @@ export default function SettingsPage() {
                     }}
                     className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
                   >
-                    <Building2 className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
+                    <Building2
+                      className="h-5 w-5 shrink-0 text-slate-600"
+                      aria-hidden
+                    />
                     <span className="truncate">{s.title}</span>
                   </Button>
                 ))}
@@ -214,7 +221,10 @@ export default function SettingsPage() {
                   }}
                   className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
                 >
-                  <ArrowLeft className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
+                  <ArrowLeft
+                    className="h-5 w-5 shrink-0 text-slate-600"
+                    aria-hidden
+                  />
                   <span>{t("Πίσω στους προμηθευτές")}</span>
                 </Button>
 
@@ -231,11 +241,16 @@ export default function SettingsPage() {
                   type="button"
                   variant="outline"
                   onClick={() =>
-                    router.push(`/suppliers/${selectedSupplier.supplierUID}/timetable`)
+                    router.push(
+                      `/suppliers/${selectedSupplier.supplierUID}/timetable`,
+                    )
                   }
                   className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
                 >
-                  <Clock className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
+                  <Clock
+                    className="h-5 w-5 shrink-0 text-slate-600"
+                    aria-hidden
+                  />
                   <span>{t("Πρόγραμμα Παραγγελιών")}</span>
                 </Button>
 
@@ -243,11 +258,16 @@ export default function SettingsPage() {
                   type="button"
                   variant="outline"
                   onClick={() =>
-                    router.push(`/suppliers/${selectedSupplier.supplierUID}/favorites`)
+                    router.push(
+                      `/suppliers/${selectedSupplier.supplierUID}/favorites`,
+                    )
                   }
                   className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
                 >
-                  <Star className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
+                  <Star
+                    className="h-5 w-5 shrink-0 text-slate-600"
+                    aria-hidden
+                  />
                   <span>{t("Αγαπημένα")}</span>
                 </Button>
 
@@ -256,12 +276,15 @@ export default function SettingsPage() {
                   variant="outline"
                   onClick={() =>
                     router.push(
-                      `/suppliers/${selectedSupplier.supplierUID}/order-history`
+                      `/suppliers/${selectedSupplier.supplierUID}/order-history`,
                     )
                   }
                   className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
                 >
-                  <History className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
+                  <History
+                    className="h-5 w-5 shrink-0 text-slate-600"
+                    aria-hidden
+                  />
                   <span>{t("Ιστορικό Παραγγελιών")}</span>
                 </Button>
 
@@ -269,11 +292,16 @@ export default function SettingsPage() {
                   type="button"
                   variant="outline"
                   onClick={() =>
-                    router.push(`/suppliers/${selectedSupplier.supplierUID}/info`)
+                    router.push(
+                      `/suppliers/${selectedSupplier.supplierUID}/info`,
+                    )
                   }
                   className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
                 >
-                  <Users className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
+                  <Users
+                    className="h-5 w-5 shrink-0 text-slate-600"
+                    aria-hidden
+                  />
                   <span>{t("Στοιχεία Προμηθευτή")}</span>
                 </Button>
 
@@ -281,18 +309,22 @@ export default function SettingsPage() {
                   type="button"
                   variant="outline"
                   onClick={() =>
-                    router.push(`/suppliers/${selectedSupplier.supplierUID}/contact`)
+                    router.push(
+                      `/suppliers/${selectedSupplier.supplierUID}/contact`,
+                    )
                   }
                   className={`${subItemStyle} w-full justify-start bg-app-card text-slate-800`}
                 >
-                  <User className="h-5 w-5 shrink-0 text-slate-600" aria-hidden />
+                  <User
+                    className="h-5 w-5 shrink-0 text-slate-600"
+                    aria-hidden
+                  />
                   <span>{t("Επικοινωνία")}</span>
                 </Button>
               </>
             )}
           </div>
         )}
-
 
         <Button
           type="button"
@@ -309,7 +341,6 @@ export default function SettingsPage() {
           variant="outline"
           className={`${cardStyle} w-full justify-start text-slate-900 bg-app-card`}
         >
-
           {/* <Sun className="h-6 w-6 shrink-0 text-slate-600" aria-hidden /> */}
           <Moon className="h-6 w-6 shrink-0 text-slate-600" aria-hidden />
 

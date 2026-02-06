@@ -1,16 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { backend } from "../../../lib/backend";
+import { getBackendHeaders } from "../../../lib/backend-headers";
 
 export async function GET(req: NextRequest) {
   try {
-    const authHeader = req.headers.get("authorization") ?? undefined;
-    const apiKey = req.headers.get("x-eorderapikey") ?? "key1";
-
     const res = await backend.get("Basket/Basket_GetCounter", {
-      headers: {
-        Authorization: authHeader,
-        "X-EORDERAPIKEY": apiKey,
-      },
+      headers: getBackendHeaders(req),
       params: Object.fromEntries(new URL(req.url).searchParams.entries()),
     });
 

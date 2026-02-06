@@ -40,7 +40,7 @@ export function SuppliersSection({
 
     if (showCompleted) {
       const completed = suppliers.filter(
-        (s) => String(s.basketIconStatus) === "2"
+        (s) => String(s.basketIconStatus) === "2",
       );
       const map = new Map<string, Supplier>();
       [...data, ...completed].forEach((s) => {

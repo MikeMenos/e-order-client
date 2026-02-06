@@ -4,16 +4,17 @@ import { getBackendHeaders } from "../../../lib/backend-headers";
 
 export async function POST(req: NextRequest) {
   try {
-    const res = await backend.post("MyStore/PrefSchedule_Get", null, {
+    const body = await req.json();
+    const res = await backend.post("Basket/Basket_SuggestQty", body, {
       headers: getBackendHeaders(req),
     });
 
     return NextResponse.json(res.data, { status: res.status });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("Error in /api/store-pref-schedule:", message);
+    console.error("Error in /api/basket-suggest-qty:", message);
     return NextResponse.json(
-      { message: "Failed to load store preferences" },
+      { message: "Failed to suggest basket quantity" },
       { status: 500 },
     );
   }

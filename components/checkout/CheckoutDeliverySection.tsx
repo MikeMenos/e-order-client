@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { useTranslation } from "@/lib/i18n";
+import { formatDeliveryDateDisplay, parseDateForPicker } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -11,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
 
 export type CheckoutDeliverySectionProps = {
   selectedDate: string | null;
@@ -21,44 +23,24 @@ export function CheckoutDeliverySection({
 }: CheckoutDeliverySectionProps) {
   const { t } = useTranslation();
   const [deliveryOption, setDeliveryOption] = useState<"selected" | "other">(
-    "selected"
+    "selected",
   );
   const [otherDate, setOtherDate] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogDateValue, setDialogDateValue] = useState<Date | undefined>(
-    undefined
+    undefined,
   );
 
-  const defaultDeliveryLabel = selectedDate ?? "";
+  const defaultDeliveryLabel =
+    formatDeliveryDateDisplay(selectedDate) || (selectedDate ?? "");
 
   const deliveryLabel =
     deliveryOption === "other" && otherDate
-      ? (() => {
-          try {
-            const d = parseISO(otherDate);
-            return format(d, "EEE, d MMM yyyy");
-          } catch {
-            return otherDate;
-          }
-        })()
+      ? formatDeliveryDateDisplay(otherDate) || otherDate
       : defaultDeliveryLabel;
 
   const openOtherDateDialog = () => {
-    if (otherDate) {
-      try {
-        setDialogDateValue(parseISO(otherDate));
-      } catch {
-        setDialogDateValue(new Date());
-      }
-    } else if (selectedDate) {
-      try {
-        setDialogDateValue(parseISO(selectedDate));
-      } catch {
-        setDialogDateValue(new Date());
-      }
-    } else {
-      setDialogDateValue(new Date());
-    }
+    setDialogDateValue(parseDateForPicker(otherDate ?? selectedDate));
     setDialogOpen(true);
   };
 
@@ -72,9 +54,7 @@ export function CheckoutDeliverySection({
 
   return (
     <section className="mb-4">
-      <h2 className="mb-2 text-sm font-semibold text-brand-600">
-        {t("checkout_delivery")}
-      </h2>
+      <CheckoutSectionHeading labelKey="checkout_delivery" />
       <div className="flex flex-wrap gap-2">
         <Button
           type="button"

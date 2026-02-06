@@ -77,6 +77,7 @@ const resources: Resources = {
     common_supplier: "Supplier",
     login_toast_success: "Logged in",
     login_toast_error: "Login failed",
+    login_signing_in: "Signing in…",
     config_fav_title: "Favorite suppliers / products",
     config_fav_subtitle:
       "Read-only view of wishlist items from Basket/Wishlist_GetItems.",
@@ -108,6 +109,7 @@ const resources: Resources = {
     basket_error: "Failed to load basket items.",
     basket_empty: "No items in your baskets.",
     basket_items_label: "Items:",
+    basket_toast_success: "Basket updated",
     aria_decrease_reserve: "Decrease reserve quantity",
     aria_reserve_quantity: "Reserve quantity",
     aria_increase_reserve: "Increase reserve quantity",
@@ -221,6 +223,7 @@ const resources: Resources = {
     common_supplier: "Προμηθευτής",
     login_toast_success: "Συνδεθήκατε",
     login_toast_error: "Αποτυχία σύνδεσης",
+    login_signing_in: "Σύνδεση…",
     config_fav_title: "Αγαπημένοι προμηθευτές / προϊόντα",
     config_fav_subtitle:
       "Μόνο για ανάγνωση: στοιχεία λίστας ευχών από Basket/Wishlist_GetItems.",
@@ -253,6 +256,7 @@ const resources: Resources = {
     basket_error: "Αποτυχία φόρτωσης στοιχείων καλαθιού.",
     basket_empty: "Δεν υπάρχουν στοιχεία στα καλάθια σας.",
     basket_items_label: "Στοιχεία:",
+    basket_toast_success: "Το καλάθι ενημερώθηκε",
     aria_decrease_reserve: "Μείωση ποσότητας απόθεματος",
     aria_reserve_quantity: "Ποσότητα απόθεματος",
     aria_increase_reserve: "Αύξηση ποσότητας απόθεματος",

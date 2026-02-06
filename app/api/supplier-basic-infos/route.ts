@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { backend } from "../../../lib/backend";
+import { getBackendHeaders } from "../../../lib/backend-headers";
 
 /**
  * GET Shop/Supplier_BasicInfos
@@ -9,16 +10,10 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const supplierUID = searchParams.get("SupplierUID");
-    const authHeader = req.headers.get("authorization") ?? undefined;
-    const apiKey = req.headers.get("x-eorderapikey") ?? "key1";
-
     const params = supplierUID ? { SupplierUID: supplierUID } : {};
     const res = await backend.get("Shop/Supplier_BasicInfos", {
       params,
-      headers: {
-        Authorization: authHeader,
-        "X-EORDERAPIKEY": apiKey,
-      },
+      headers: getBackendHeaders(req),
     });
 
     return NextResponse.json(res.data, { status: res.status });
@@ -27,7 +22,7 @@ export async function GET(req: NextRequest) {
     console.error("Error in /api/supplier-basic-infos:", message);
     return NextResponse.json(
       { message: "Failed to load supplier info" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

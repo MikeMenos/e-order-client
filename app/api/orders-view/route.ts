@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { backend } from "../../../lib/backend";
+import { getBackendHeaders } from "../../../lib/backend-headers";
 
 export async function GET(req: NextRequest) {
   try {
@@ -8,18 +9,12 @@ export async function GET(req: NextRequest) {
     if (!orderUID) {
       return NextResponse.json(
         { message: "OrderUID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
-    const authHeader = req.headers.get("authorization") ?? undefined;
-    const apiKey = req.headers.get("x-eorderapikey") ?? "key1";
-
     const res = await backend.get("Orders/Order_View", {
       params: { OrderUID: orderUID },
-      headers: {
-        Authorization: authHeader,
-        "X-EORDERAPIKEY": apiKey,
-      },
+      headers: getBackendHeaders(req),
     });
 
     return NextResponse.json(res.data, { status: res.status });
@@ -28,7 +23,7 @@ export async function GET(req: NextRequest) {
     console.error("Error in /api/orders-view:", message);
     return NextResponse.json(
       { message: "Failed to load order details" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
