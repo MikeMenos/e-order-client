@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/", "/login", "/signup"];
+const PUBLIC_PATHS = ["/"];
 
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.includes(pathname);
@@ -29,8 +29,6 @@ export const config = {
   // Run only on page routes we need for auth; avoid interfering with internal routes
   matcher: [
     "/",
-    "/login",
-    "/signup",
     "/dashboard",
     "/basket",
     "/configuration",

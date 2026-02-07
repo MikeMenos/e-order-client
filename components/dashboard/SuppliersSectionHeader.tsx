@@ -1,58 +1,72 @@
-import { Button } from "../ui/button";
+import { ChevronDown } from "lucide-react";
 import { useTranslation } from "../../lib/i18n";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Clock, ArrowUpNarrowWide, ArrowDownWideNarrow } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { Button } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 type Props = {
   isAscending: boolean;
   onSortToggle: () => void;
-  showCompleted: boolean;
-  onShowCompletedChange: (checked: boolean) => void;
+  statusOptions: string[];
+  selectedStatus: string;
+  onStatusChange: (value: string) => void;
 };
 
 export function SuppliersSectionHeader({
   isAscending,
   onSortToggle,
-  showCompleted,
-  onShowCompletedChange,
+  statusOptions,
+  selectedStatus,
+  onStatusChange,
 }: Props) {
   const { t } = useTranslation();
   const pathname = usePathname();
+
+  const triggerLabel = selectedStatus
+    ? selectedStatus
+    : t("suppliers_filter_all");
+
   return (
     <div className="flex items-center justify-between">
-      <div className="flex items-center gap-1">
-        <Clock className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          onClick={onSortToggle}
-          className="h-7 w-7 shrink-0 text-sm"
-          aria-label={isAscending ? "Sort latest first" : "Sort earliest first"}
-        >
-          {isAscending ? (
-            <ArrowUpNarrowWide className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-          ) : (
-            <ArrowDownWideNarrow className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-          )}
-        </Button>
-      </div>
       {pathname === "/orders-of-the-day" && (
         <div className="flex items-center gap-2 text-sm text-slate-500">
           <h2 className="text-sm font-semibold text-slate-900">
             {t("suppliers_orders_of_day")}
           </h2>
-          <Label className="flex items-center justify-end mb-0 w-fit gap-0.5">
-            <Input
-              type="checkbox"
-              checked={showCompleted}
-              onChange={(e) => onShowCompletedChange(e.target.checked)}
-              className="h-3 w-3 rounded border-slate-300 text-brand-500 focus:ring-brand-500"
-            />
-            <span>{t("suppliers_include_completed")}</span>
-          </Label>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 gap-1 border-slate-300 text-slate-700"
+                aria-label={t("suppliers_filter_by_status")}
+              >
+                {triggerLabel}
+                <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-40">
+              <DropdownMenuRadioGroup
+                value={selectedStatus}
+                onValueChange={onStatusChange}
+              >
+                <DropdownMenuRadioItem value="">
+                  {t("suppliers_filter_all")}
+                </DropdownMenuRadioItem>
+                {statusOptions.map((opt) => (
+                  <DropdownMenuRadioItem key={opt} value={opt}>
+                    {opt}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       )}
     </div>

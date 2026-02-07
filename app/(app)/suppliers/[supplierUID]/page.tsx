@@ -29,7 +29,7 @@ export default function SupplierPage() {
 
   const supplierInfoQuery = useSupplierDisplay(
     supplierUID,
-    refDate ?? undefined
+    refDate ?? undefined,
   );
   const productsQuery = useSupplierProducts(supplierUID, refDate ?? undefined);
 
@@ -54,7 +54,7 @@ export default function SupplierPage() {
         favIconColor: p.favIconColor ?? "#9CBDFA",
         favIconMode: p.favIconMode ?? "border",
       })),
-    [rawProducts]
+    [rawProducts],
   );
 
   const sections: SupplierSection[] = useMemo(() => {
@@ -106,7 +106,7 @@ export default function SupplierPage() {
           (p) =>
             p.title?.toLowerCase().includes(q) ||
             p.subTitle?.toLowerCase().includes(q) ||
-            p.description?.toLowerCase().includes(q)
+            p.description?.toLowerCase().includes(q),
         ),
       }))
       .filter((section) => section.products.length > 0);
@@ -124,7 +124,7 @@ export default function SupplierPage() {
     layoutHeaderHeight + pageBarHeight + (showDetails ? tabsBar.height : 0);
 
   const [activeSectionId, setActiveSectionId] = useState<string | null>(
-    filteredSections[0]?.id ?? null
+    filteredSections[0]?.id ?? null,
   );
 
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -165,13 +165,13 @@ export default function SupplierPage() {
           })
           .filter(
             (
-              x
+              x,
             ): x is {
               id: string;
               top: number;
               bottom: number;
               ratio: number;
-            } => !!x.id
+            } => !!x.id,
           );
 
         if (visible.length === 0) return;
@@ -184,11 +184,11 @@ export default function SupplierPage() {
 
         if (started.length > 0) {
           activeId = started.reduce((best, curr) =>
-            curr.top > best.top ? curr : best
+            curr.top > best.top ? curr : best,
           ).id;
         } else {
           activeId = visible.reduce((best, curr) =>
-            curr.top < best.top ? curr : best
+            curr.top < best.top ? curr : best,
           ).id;
         }
 
@@ -198,7 +198,7 @@ export default function SupplierPage() {
         root: null,
         rootMargin: `-${stickyOffset}px 0px -60% 0px`,
         threshold: [0, 0.01, 0.1, 0.25, 0.5, 1],
-      }
+      },
     );
 
     filteredSections.forEach((section) => {
@@ -222,7 +222,7 @@ export default function SupplierPage() {
   };
 
   return (
-    <main className="pb-24 text-slate-900">
+    <main className="pb-16 text-slate-900">
       {/* Sticky bar below layout header */}
       <div
         ref={pageBar.ref}
@@ -254,7 +254,7 @@ export default function SupplierPage() {
         )}
 
         {/* Content */}
-        <div className="mt-2 space-y-4">
+        <div className="mt-2 space-y-3">
           {productsQuery.isLoading && (
             <p className="text-sm text-slate-500">
               {t("supplier_loading_products")}
@@ -273,7 +273,7 @@ export default function SupplierPage() {
             </p>
           ) : (
             <motion.div
-              className="space-y-4"
+              className="space-y-3"
               variants={listVariants}
               initial="hidden"
               animate="visible"

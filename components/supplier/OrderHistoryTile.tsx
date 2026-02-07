@@ -204,7 +204,7 @@ export function OrderHistoryTile({
                     className="flex items-start justify-between gap-2 rounded-md bg-slate-50 px-2 py-1.5 text-slate-700"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900">
                         {item.productTitle ?? item.productOriginalTitle ?? "—"}
                       </p>
                       {(item.productPackaging || item.quantity != null) && (

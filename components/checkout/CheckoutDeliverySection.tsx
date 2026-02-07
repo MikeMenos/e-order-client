@@ -87,7 +87,7 @@ export function CheckoutDeliverySection({
           <DialogHeader>
             <DialogTitle>{t("checkout_select_delivery_date")}</DialogTitle>
           </DialogHeader>
-          <div className="mt-4 space-y-4">
+          <div className="mt-4 space-y-3">
             <Calendar
               mode="single"
               selected={dialogDateValue}

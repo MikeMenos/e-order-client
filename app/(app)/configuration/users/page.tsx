@@ -16,8 +16,8 @@ export default function UsersManagementPage() {
     return users?.hasSelectedStore === true
       ? users?.selectedStoreUID
       : selectedUser?.store?.storeUID
-      ? selectedUser.store.storeUID
-      : users?.role?.store?.storeUID ?? null;
+        ? selectedUser.store.storeUID
+        : (users?.role?.store?.storeUID ?? null);
   }, [users, selectedUser]);
 
   const usersQuery = useUsersForStore(storeUID);
@@ -25,7 +25,7 @@ export default function UsersManagementPage() {
   const userList = usersQuery.data?.usersList ?? [];
 
   return (
-    <main className="space-y-4 text-slate-900">
+    <main className="space-y-3 text-slate-900">
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold text-slate-900">
           {t("config_users_title")}
@@ -62,10 +62,10 @@ export default function UsersManagementPage() {
               className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-900 shadow-sm"
             >
               <div className="min-w-0">
-                <p className="truncate font-semibold">
+                <p className="font-semibold">
                   {u.fname} {u.lname}
                 </p>
-                <p className="truncate text-sm text-slate-600">
+                <p className="text-sm text-slate-600">
                   {u.email ?? u.username}
                 </p>
               </div>

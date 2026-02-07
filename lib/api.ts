@@ -60,6 +60,7 @@ api.interceptors.request.use((config) => {
     url.includes("/basket-counter") ||
     url.includes("/basket-suggest-qty") ||
     url.includes("/basket-add-or-update") ||
+    url.includes("/basket-remove-item") ||
     url.includes("/wishlist-items");
 
   const token = useStoreToken ? storeAccessToken || accessToken : accessToken;

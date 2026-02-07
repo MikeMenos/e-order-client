@@ -13,7 +13,7 @@ export default function FavouriteSuppliersPage() {
     wishlistQuery.data?.items ?? wishlistQuery.data?.wishlistItems ?? [];
 
   return (
-    <main className="space-y-4 text-slate-900">
+    <main className="space-y-3 text-slate-900">
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold text-slate-900">
           {t("config_fav_title")}
@@ -46,11 +46,9 @@ export default function FavouriteSuppliersPage() {
               className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-900 shadow-sm"
             >
               <div className="min-w-0">
-                <p className="truncate font-semibold">{item.title}</p>
+                <p className="font-semibold">{item.title}</p>
                 {item.supplierTitle && (
-                  <p className="truncate text-sm text-slate-600">
-                    {item.supplierTitle}
-                  </p>
+                  <p className="text-sm text-slate-600">{item.supplierTitle}</p>
                 )}
               </div>
               {typeof item.price === "number" && (

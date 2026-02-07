@@ -4,15 +4,15 @@ import { useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { useSupplierDisplay } from "@/hooks/useSupplier";
 import { CheckoutPageHeader } from "@/components/checkout/CheckoutPageHeader";
+import { CheckoutBasketSection } from "@/components/checkout/CheckoutBasketSection";
 import { CheckoutDeliverySection } from "@/components/checkout/CheckoutDeliverySection";
 import { CheckoutCommentsSection } from "@/components/checkout/CheckoutCommentsSection";
-import { CheckoutTotal } from "@/components/checkout/CheckoutTotal";
 import { CheckoutActionBar } from "@/components/checkout/CheckoutActionBar";
 
 export default function SupplierCheckoutPage() {
   const params = useParams<{ supplierUID: string }>();
   const searchParams = useSearchParams();
-  const supplierUID = params.supplierUID;
+  const supplierUID = params.supplierUID ?? "";
   const refDate = searchParams.get("refDate") ?? undefined;
 
   const supplierInfoQuery = useSupplierDisplay(supplierUID, refDate);
@@ -36,6 +36,8 @@ export default function SupplierCheckoutPage() {
         supplierName={supplier?.title ?? null}
       />
 
+      <CheckoutBasketSection supplierUID={supplierUID} />
+
       <CheckoutDeliverySection selectedDate={selectedDate ?? null} />
 
       <CheckoutCommentsSection
@@ -43,8 +45,6 @@ export default function SupplierCheckoutPage() {
         value={comments}
         onChange={setComments}
       />
-
-      <CheckoutTotal labelKey="checkout_total" amount="€0.00" />
 
       <CheckoutActionBar
         temporarySaveLabelKey="checkout_temporary_save"

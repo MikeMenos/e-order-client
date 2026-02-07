@@ -48,6 +48,8 @@ const resources: Resources = {
     suppliers_orders_of_day: "Orders of the day",
     suppliers_sort_by_time: "By time",
     suppliers_include_completed: "Completed",
+    suppliers_filter_all: "All",
+    suppliers_filter_by_status: "Filter by status",
     suppliers_search_placeholder: "Search…",
     suppliers_loading: "Loading suppliers…",
     suppliers_error: "Failed to load suppliers list.",
@@ -61,6 +63,7 @@ const resources: Resources = {
     supplier_search_placeholder: "Search: Supplier, Product, Category...",
     supplier_order_by: "Order by:",
     supplier_reserve: "Reserve:",
+    supplier_basket: "Basket:",
     supplier_loading_products: "Loading products…",
     supplier_error_products: "Failed to load products.",
     supplier_empty_products: "No products found for this supplier.",
@@ -157,6 +160,11 @@ const resources: Resources = {
     checkout_total: "Total:",
     checkout_temporary_save: "Temporary Save",
     checkout_submit_order: "Submit Order",
+    checkout_basket_items: "Basket items",
+    checkout_basket_empty: "No items in basket",
+    checkout_quantity: "Quantity",
+    checkout_remove_item: "Remove",
+    checkout_removing: "Removing…",
   },
   gr: {
     login_with_email: "Σύνδεση μέλους",
@@ -194,6 +202,8 @@ const resources: Resources = {
     suppliers_orders_of_day: "Παραγγελίες ημέρας",
     suppliers_sort_by_time: "Κατά ώρα",
     suppliers_include_completed: "Ολοκληρωμένες",
+    suppliers_filter_all: "Όλα",
+    suppliers_filter_by_status: "Φίλτρο κατά κατάσταση",
     suppliers_search_placeholder: "Αναζήτηση…",
     suppliers_loading: "Φόρτωση προμηθευτών…",
     suppliers_error: "Αποτυχία φόρτωσης λίστας προμηθευτών.",
@@ -207,6 +217,7 @@ const resources: Resources = {
     supplier_search_placeholder: "Αναζήτηση: Προμηθευτής, Προϊόν, Κατηγορία...",
     supplier_order_by: "Παραγγελία έως:",
     supplier_reserve: "Απόθεμα:",
+    supplier_basket: "Καλάθι:",
     supplier_loading_products: "Φόρτωση προϊόντων…",
     supplier_error_products: "Αποτυχία φόρτωσης προϊόντων.",
     supplier_empty_products: "Δεν βρέθηκαν προϊόντα για αυτόν τον προμηθευτή.",
@@ -305,6 +316,11 @@ const resources: Resources = {
     checkout_total: "Σύνολο:",
     checkout_temporary_save: "Προσωρινή Αποθήκευση",
     checkout_submit_order: "Αποστολή Παραγγελίας",
+    checkout_basket_items: "Στοιχεία καλαθιού",
+    checkout_basket_empty: "Δεν υπάρχουν στοιχεία στο καλάθι",
+    checkout_quantity: "Ποσότητα",
+    checkout_remove_item: "Το προϊόν αφαιρέθηκε",
+    checkout_removing: "Αφαιρείται…",
   },
 };
 
@@ -332,7 +348,7 @@ export function TranslationProvider({
       const table = resources[language] ?? resources.gr;
       return table[key] ?? resources.gr[key] ?? key;
     },
-    [language]
+    [language],
   );
 
   const value = useMemo(
@@ -341,7 +357,7 @@ export function TranslationProvider({
       setLanguage,
       t,
     }),
-    [language, setLanguage, t]
+    [language, setLanguage, t],
   );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

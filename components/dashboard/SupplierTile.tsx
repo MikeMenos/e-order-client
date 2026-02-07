@@ -88,7 +88,7 @@ export function SupplierTile({ supplier, refDate }: Props) {
           />
         )}
         <div className="min-w-0 flex-1">
-          <p className="truncate font-bold uppercase tracking-wide text-slate-900">
+          <p className="font-bold uppercase tracking-wide text-slate-900">
             {supplier.title}
           </p>
           {supplier.nextAvailDeliveryText && (
@@ -105,7 +105,7 @@ export function SupplierTile({ supplier, refDate }: Props) {
           className={`inline-flex w-full items-center gap-2 rounded-lg px-2 py-1.5 font-medium ${statusStyle.bg} ${statusStyle.text}`}
         >
           {statusStyle.icon}
-          <span className="truncate">{statusDescr || "—"}</span>
+          <span>{statusDescr || "—"}</span>
         </span>
       </div>
 

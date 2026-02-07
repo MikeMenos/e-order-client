@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useAuthStore } from "../../stores/auth";
 import { useTranslation } from "../../lib/i18n";
@@ -15,13 +15,12 @@ type Props = {
 
 export function DashboardHeader({ embedded, showBack }: Props) {
   const { t } = useTranslation();
-  const pathname = usePathname();
   const router = useRouter();
   const { users, selectedUser } = useAuthStore();
 
   const fname = useMemo(
     () => users?.userInfos?.fname ?? "",
-    [users?.userInfos?.fname]
+    [users?.userInfos?.fname],
   );
 
   const storeTitle =
@@ -57,13 +56,13 @@ export function DashboardHeader({ embedded, showBack }: Props) {
         </Button>
       )}
       <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg">
-        {/* <Link href="/dashboard">
+        <Link href="/dashboard">
           <img
             src="/assets/logo.png"
             alt="E-Order"
             className="h-14 w-14 rounded-lg object-contain"
           />
-        </Link> */}
+        </Link>
       </div>
       <div className="min-w-0 flex-1">
         {fname && (
@@ -82,10 +81,9 @@ export function DashboardHeader({ embedded, showBack }: Props) {
           </p>
         )}
         {storeTitle && (
-          <p className="truncate text-sm text-slate-500">{storeTitle}</p>
+          <p className="text-sm text-slate-500">{storeTitle}</p>
         )}
       </div>
-
     </header>
   );
 }

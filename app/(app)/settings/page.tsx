@@ -204,7 +204,7 @@ export default function SettingsPage() {
                       className="h-5 w-5 shrink-0 text-slate-600"
                       aria-hidden
                     />
-                    <span className="truncate">{s.title}</span>
+                    <span>{s.title}</span>
                   </Button>
                 ))}
               </>
@@ -232,7 +232,7 @@ export default function SettingsPage() {
                   <div className="text-xs text-slate-500">
                     {t("Επιλεγμένος Προμηθευτής")}
                   </div>
-                  <div className="truncate text-sm font-semibold text-slate-900">
+                  <div className="text-sm font-semibold text-slate-900">
                     {selectedSupplier.title}
                   </div>
                 </div>

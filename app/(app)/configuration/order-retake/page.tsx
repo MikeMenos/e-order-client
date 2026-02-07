@@ -12,7 +12,7 @@ export default function OrderRetakePage() {
   const orders = ordersQuery.data?.ordersList ?? [];
 
   return (
-    <main className="space-y-4 text-slate-900">
+    <main className="space-y-3 text-slate-900">
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold text-slate-900">
           {t("config_order_retake_title")}
@@ -45,10 +45,10 @@ export default function OrderRetakePage() {
               className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-900 shadow-sm"
             >
               <div className="min-w-0">
-                <p className="truncate font-semibold">
+                <p className="font-semibold">
                   {o.supplierTitle ?? t("config_order_fallback")}
                 </p>
-                <p className="truncate text-sm text-slate-600">{o.orderUID}</p>
+                <p className="text-sm text-slate-600">{o.orderUID}</p>
               </div>
               <div className="text-right shrink-0">
                 <p className="text-sm text-slate-700">

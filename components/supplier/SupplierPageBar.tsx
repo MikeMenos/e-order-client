@@ -41,7 +41,7 @@ export function SupplierPageBar({ supplier, selectedDate }: Props) {
         )}
         <div className="min-w-0 flex-1 overflow-hidden">
           <p
-            className="truncate text-sm font-semibold text-slate-900"
+            className="text-sm font-semibold text-slate-900"
             title={supplierLabel}
           >
             {supplierLabel}

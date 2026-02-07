@@ -26,9 +26,18 @@ export function SuppliersSection({
 }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAscending, setIsAscending] = useState(true);
-  const [showCompleted, setShowCompleted] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("");
   const { t } = useTranslation();
   const pathname = usePathname();
+
+  const statusOptions = useMemo(() => {
+    const set = new Set<string>();
+    suppliers.forEach((s) => {
+      const d = s.basketIconStatusDescr?.trim();
+      if (d) set.add(d);
+    });
+    return Array.from(set).sort();
+  }, [suppliers]);
 
   const filteredSuppliers = useMemo(() => {
     let data = [...suppliers];
@@ -38,15 +47,10 @@ export function SuppliersSection({
       data = data.filter((s) => s.title?.toLowerCase().includes(q));
     }
 
-    if (showCompleted) {
-      const completed = suppliers.filter(
-        (s) => String(s.basketIconStatus) === "2",
+    if (statusFilter) {
+      data = data.filter(
+        (s) => (s.basketIconStatusDescr?.trim() ?? "") === statusFilter,
       );
-      const map = new Map<string, Supplier>();
-      [...data, ...completed].forEach((s) => {
-        map.set(s.supplierUID, s);
-      });
-      data = Array.from(map.values());
     }
 
     const getTimeValue = (time?: string | null) => {
@@ -63,7 +67,7 @@ export function SuppliersSection({
     });
 
     return data;
-  }, [suppliers, searchQuery, showCompleted, isAscending]);
+  }, [suppliers, searchQuery, statusFilter, isAscending]);
 
   const isToday = (() => {
     try {
@@ -108,8 +112,9 @@ export function SuppliersSection({
         <SuppliersSectionHeader
           isAscending={isAscending}
           onSortToggle={() => setIsAscending((v) => !v)}
-          showCompleted={showCompleted}
-          onShowCompletedChange={setShowCompleted}
+          statusOptions={statusOptions}
+          selectedStatus={statusFilter}
+          onStatusChange={setStatusFilter}
         />
       </div>
 

@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               position="bottom-center"
               containerStyle={{
                 position: "fixed",
-                bottom: 0,
+                bottom: 10,
                 left: 0,
                 right: 0,
               }}
