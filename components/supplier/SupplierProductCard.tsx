@@ -170,15 +170,15 @@ export function SupplierProductCard({ product }: Props) {
           {title}
         </p>
         <div className="flex flex-col gap-1.5 md:justify-center">
-          {/* Reserve row: label + controls (same h-5, w-7 buttons, w-10 input) */}
+          {/* Reserve row: label + controls (larger buttons and input) */}
           <div className="flex items-center gap-1.5 text-xs text-slate-500 md:mb-0">
-            <span className="w-16 ">{t("supplier_reserve")}</span>
-            <div className="inline-flex items-center gap-0.5 rounded border border-slate-200 bg-slate-50 px-1 py-1">
+            <span className="w-16">{t("supplier_reserve")}</span>
+            <div className="inline-flex items-center gap-0.5 rounded border border-slate-200 bg-slate-50 px-1.5 py-1">
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="h-5 w-7"
+                className="h-7 w-9 text-base"
                 aria-label={t("aria_decrease_reserve")}
                 onClick={() => setReserveClamped(-1)}
                 disabled={isLoading}
@@ -191,7 +191,7 @@ export function SupplierProductCard({ product }: Props) {
                 value={reserveQtyDisplay}
                 onChange={(e) => setReserveFromUser(e.target.value)}
                 placeholder="0"
-                className="h-5 w-10 border-0 bg-transparent p-0 text-center [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                className="h-7 w-12 border-0 bg-transparent p-0 text-center text-sm [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                 aria-label={t("aria_reserve_quantity")}
                 disabled={isLoading}
               />
@@ -199,7 +199,7 @@ export function SupplierProductCard({ product }: Props) {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="h-5 w-7"
+                className="h-7 w-9 text-base"
                 aria-label={t("aria_increase_reserve")}
                 onClick={() => setReserveClamped(1)}
                 disabled={isLoading}
@@ -211,12 +211,12 @@ export function SupplierProductCard({ product }: Props) {
           {/* Basket row: label + controls (same sizes) */}
           <div className="flex items-center gap-1.5 text-xs font-medium text-slate-900">
             <span className="w-16">{t("supplier_basket")}</span>
-            <div className="inline-flex items-center gap-0.5 rounded border border-brand-200 bg-brand-50 px-1 py-1">
+            <div className="inline-flex items-center gap-0.5 rounded border border-brand-200 bg-brand-50 px-1.5 py-1">
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="h-5 w-7"
+                className="h-7 w-9 text-base"
                 aria-label={t("aria_decrease_basket")}
                 onClick={() => setBasketClamped(-1)}
                 disabled={isLoading}
@@ -229,7 +229,7 @@ export function SupplierProductCard({ product }: Props) {
                 value={basketQtyDisplay}
                 onChange={(e) => setBasketFromUser(e.target.value)}
                 placeholder="0"
-                className="h-5 w-10 border-0 bg-transparent p-0 text-center [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                className="h-7 w-12 border-0 bg-transparent p-0 text-center text-sm [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                 aria-label={t("aria_basket_quantity")}
                 disabled={isLoading}
               />
@@ -237,7 +237,7 @@ export function SupplierProductCard({ product }: Props) {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="h-5 w-7"
+                className="h-7 w-9 text-base"
                 aria-label={t("aria_increase_basket")}
                 onClick={() => setBasketClamped(1)}
                 disabled={isLoading}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { format } from "date-fns";
 import { useTranslation } from "@/lib/i18n";
 import { formatDeliveryDateDisplay, parseDateForPicker } from "@/lib/utils";
@@ -16,10 +16,12 @@ import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
 
 export type CheckoutDeliverySectionProps = {
   selectedDate: string | null;
+  onEffectiveDateChange?: (isoDate: string | null) => void;
 };
 
 export function CheckoutDeliverySection({
   selectedDate,
+  onEffectiveDateChange,
 }: CheckoutDeliverySectionProps) {
   const { t } = useTranslation();
   const [deliveryOption, setDeliveryOption] = useState<"selected" | "other">(
@@ -39,6 +41,23 @@ export function CheckoutDeliverySection({
       ? formatDeliveryDateDisplay(otherDate) || otherDate
       : defaultDeliveryLabel;
 
+  const notifyEffectiveDate = useCallback(
+    (date: string | null) => {
+      onEffectiveDateChange?.(date);
+    },
+    [onEffectiveDateChange],
+  );
+
+  useEffect(() => {
+    if (deliveryOption === "selected") {
+      notifyEffectiveDate(selectedDate ?? null);
+    } else if (otherDate) {
+      notifyEffectiveDate(otherDate);
+    } else {
+      notifyEffectiveDate(selectedDate ?? null);
+    }
+  }, [deliveryOption, otherDate, selectedDate, notifyEffectiveDate]);
+
   const openOtherDateDialog = () => {
     setDialogDateValue(parseDateForPicker(otherDate ?? selectedDate));
     setDialogOpen(true);
@@ -46,10 +65,17 @@ export function CheckoutDeliverySection({
 
   const confirmOtherDate = () => {
     if (dialogDateValue) {
-      setOtherDate(format(dialogDateValue, "yyyy-MM-dd"));
+      const iso = format(dialogDateValue, "yyyy-MM-dd");
+      setOtherDate(iso);
       setDeliveryOption("other");
+      onEffectiveDateChange?.(iso);
     }
     setDialogOpen(false);
+  };
+
+  const selectDefault = () => {
+    setDeliveryOption("selected");
+    onEffectiveDateChange?.(selectedDate ?? null);
   };
 
   return (
@@ -64,7 +90,7 @@ export function CheckoutDeliverySection({
               ? "border-brand-400 text-brand-600"
               : "bg-brand-50 text-brand-600"
           }
-          onClick={() => setDeliveryOption("selected")}
+          onClick={selectDefault}
         >
           {deliveryLabel || "—"}
         </Button>

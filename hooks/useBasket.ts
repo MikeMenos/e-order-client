@@ -1,12 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 
-export const useBasketItems = () => {
+export type BasketItemsData = {
+  basketsList?: Array<{
+    supplierUID: string;
+    totalItems?: number;
+    items: unknown[];
+  }>;
+  totalBasketsCount?: number;
+  totalBasketsCost?: number;
+};
+
+export const useBasketItems = (params?: { SupplierUID?: string }) => {
   return useQuery({
-    queryKey: ["basket-items"],
+    queryKey: ["basket-items", params?.SupplierUID],
     queryFn: async () => {
-      const res = await api.get("/basket-items", {
-        params: {},
+      const res = await api.get<BasketItemsData>("/basket-items", {
+        params: params ?? {},
       });
       return res.data;
     },

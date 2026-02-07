@@ -15,10 +15,13 @@ export type BasketGetItemsBasket = {
   supplierTitle: string;
   supplierLogo: string;
   supplierSubtitle: string;
+  totalItems?: number;
   items: BasketGetItemsProduct[];
 };
 
 export type BasketGetItemsResponse = {
   statusCode?: number;
   basketsList?: BasketGetItemsBasket[];
+  totalBasketsCount?: number;
+  totalBasketsCost?: number;
 };

@@ -23,7 +23,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       }
     >
       <AppHeaderProvider>
-        <main className="h-[100dvh] flex flex-col text-slate-900">
+        <main className="min-h-[100dvh] flex flex-col text-slate-900">
           {/* CONTENT */}
           <div className="flex-1 animate-in fade-in duration-300">
             {children}

@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { History } from "lucide-react";
+import { History, ShoppingCart } from "lucide-react";
 import { useTranslation } from "../../lib/i18n";
+import { useBasketItems } from "../../hooks/useBasket";
 
 type SupplierInfo = {
   supplierUID?: string;
@@ -18,14 +19,30 @@ type Props = {
 
 export function SupplierPageBar({ supplier, selectedDate }: Props) {
   const { t } = useTranslation();
-  const supplierLabel = supplier?.title ?? t("common_supplier");
   const supplierUID = supplier?.supplierUID;
+  const { data: basketData } = useBasketItems(
+    supplierUID ? { SupplierUID: supplierUID } : undefined,
+  );
+  const supplierBasket = basketData?.basketsList?.find(
+    (b) => b.supplierUID === supplierUID,
+  ) ?? basketData?.basketsList?.[0];
+  const basketItemCount = supplierBasket?.totalItems ?? 0;
+
+  const supplierLabel = supplier?.title ?? t("common_supplier");
   const orderHistoryHref =
     supplierUID != null
       ? `/suppliers/${encodeURIComponent(supplierUID)}/order-history${
           selectedDate ? `?refDate=${encodeURIComponent(selectedDate)}` : ""
         }`
       : "#";
+
+  const checkoutHref =
+    supplierUID != null
+      ? `/suppliers/${encodeURIComponent(supplierUID)}/checkout${
+          selectedDate ? `?refDate=${encodeURIComponent(selectedDate)}` : ""
+        }`
+      : "#";
+
   const isFill =
     (supplier?.tileColorMode?.trim() ?? "").toLowerCase() === "fill";
 
@@ -49,6 +66,19 @@ export function SupplierPageBar({ supplier, selectedDate }: Props) {
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-2 text-sm text-slate-500">
+        {/* Cart / Checkout link */}
+        <Link
+          href={checkoutHref}
+          className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-brand-200 bg-brand-50 text-brand-600 hover:bg-brand-100 md:h-9 md:w-9"
+          aria-label={t("checkout_button")}
+        >
+          <ShoppingCart className="h-4 w-4 md:h-4.5 md:w-4.5" />
+          {basketItemCount > 0 && (
+            <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-white">
+              {basketItemCount > 99 ? "99+" : basketItemCount}
+            </span>
+          )}
+        </Link>
         {/* Order history link */}
         <Link
           href={orderHistoryHref}

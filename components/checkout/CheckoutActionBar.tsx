@@ -1,5 +1,6 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 
@@ -8,6 +9,7 @@ export type CheckoutActionBarProps = {
   submitOrderLabelKey: string;
   onTemporarySave: () => void;
   onSubmitOrder: () => void;
+  isSubmitting?: boolean;
 };
 
 export function CheckoutActionBar({
@@ -15,6 +17,7 @@ export function CheckoutActionBar({
   submitOrderLabelKey,
   onTemporarySave,
   onSubmitOrder,
+  isSubmitting = false,
 }: CheckoutActionBarProps) {
   const { t } = useTranslation();
   return (
@@ -24,11 +27,24 @@ export function CheckoutActionBar({
         variant="outline"
         className="w-full border-brand-400 text-brand-600 hover:bg-brand-50"
         onClick={onTemporarySave}
+        disabled={isSubmitting}
       >
         {t(temporarySaveLabelKey)}
       </Button>
-      <Button type="button" className="w-full" onClick={onSubmitOrder}>
-        {t(submitOrderLabelKey)}
+      <Button
+        type="button"
+        className="w-full"
+        onClick={onSubmitOrder}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            {t("checkout_submitting")}
+          </>
+        ) : (
+          t(submitOrderLabelKey)
+        )}
       </Button>
     </div>
   );
