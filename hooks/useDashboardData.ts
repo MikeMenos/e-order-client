@@ -26,7 +26,10 @@ export const useDashboardCalendar = (refDate: string, enabled: boolean) => {
   });
 };
 
-export const useSuppliersForDate = (refDate: string, enabled: boolean) => {
+export const useSuppliersForDate = (
+  refDate: string | undefined,
+  enabled: boolean,
+) => {
   return useQuery({
     queryKey: ["suppliers", refDate],
     queryFn: async () => {
@@ -57,8 +60,8 @@ export function useSuppliersListForToday() {
     return users?.hasSelectedStore === true
       ? users?.selectedStoreUID
       : selectedUser?.store?.storeUID
-      ? selectedUser.store.storeUID
-      : users?.role?.store?.storeUID ?? null;
+        ? selectedUser.store.storeUID
+        : (users?.role?.store?.storeUID ?? null);
   }, [users, selectedUser]);
 
   const selectStoreMutation = useMutation({
@@ -81,7 +84,7 @@ export function useSuppliersListForToday() {
 
   const hasStoreToken = !!storeAccessToken;
   const enabled = !!users && hasStoreToken;
-  const suppliersListQuery = useSuppliersForDate(refDate, enabled);
+  const suppliersListQuery = useSuppliersForDate(undefined, enabled);
   const suppliers = suppliersListQuery.data?.listSuppliers ?? [];
   const errorMessage = (suppliersListQuery.error as Error)?.message;
 
@@ -100,14 +103,14 @@ export function useSuppliersListForToday() {
  */
 export const useSupplierBasicInfos = (
   supplierUID: string | null | undefined,
-  enabled: boolean
+  enabled: boolean,
 ) => {
   return useQuery({
     queryKey: ["supplier-basic-infos", supplierUID],
     queryFn: async (): Promise<SupplierBasicInfoResponse> => {
       const res = await api.get<SupplierBasicInfoResponse>(
         "/supplier-basic-infos",
-        supplierUID ? { params: { SupplierUID: supplierUID } } : {}
+        supplierUID ? { params: { SupplierUID: supplierUID } } : {},
       );
       return res.data;
     },

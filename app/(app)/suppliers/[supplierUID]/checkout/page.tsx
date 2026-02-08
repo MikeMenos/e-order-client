@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useSupplierDisplay } from "@/hooks/useSupplier";
 import { api } from "@/lib/api";
@@ -25,6 +25,7 @@ function toISOOrNull(dateStr: string | null): string | null {
 
 export default function SupplierCheckoutPage() {
   const { t } = useTranslation();
+  const router = useRouter();
   const params = useParams<{ supplierUID: string }>();
   const searchParams = useSearchParams();
   const supplierUID = params.supplierUID ?? "";
@@ -43,8 +44,10 @@ export default function SupplierCheckoutPage() {
   };
 
   const handleSubmitOrder = async () => {
-    const orderRefDate = toISOOrNull(selectedDate ?? null) ?? new Date().toISOString();
-    const desiredDeliveryDate = toISOOrNull(deliveryDate ?? selectedDate) ?? orderRefDate;
+    const orderRefDate =
+      toISOOrNull(selectedDate ?? null) ?? new Date().toISOString();
+    const desiredDeliveryDate =
+      toISOOrNull(deliveryDate ?? selectedDate) ?? orderRefDate;
     setIsSubmitting(true);
     try {
       const res = await api.post<{ message?: string }>("/order-add", {
@@ -55,7 +58,7 @@ export default function SupplierCheckoutPage() {
       });
       const msg = res.data?.message?.trim();
       toast.success(msg || t("checkout_submit_order"));
-      // Could navigate back to supplier or dashboard
+      router.replace("/dashboard");
     } catch (err: unknown) {
       toast.error(getApiErrorMessage(err, t("basket_error")));
     } finally {

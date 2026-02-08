@@ -60,7 +60,7 @@ export default function SettingsPage() {
         })
         .catch((err) => {
           console.error("select-store failed", err);
-          toast.error(getApiErrorMessage(err, "Failed to select store"));
+          toast.error(getApiErrorMessage(err, t("settings_select_store_error")));
         });
     }
 
@@ -80,7 +80,7 @@ export default function SettingsPage() {
             type="button"
             onClick={() => router.back?.()}
             className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100/70"
-            aria-label="Back"
+            aria-label={t("aria_back")}
           >
             <ArrowLeft className="h-5 w-5 text-slate-700" aria-hidden />
           </button>
@@ -99,7 +99,7 @@ export default function SettingsPage() {
           >
             <Store className="h-12 w-12 shrink-0 text-slate-700" aria-hidden />
             <span className="text-center text-sm font-medium text-slate-900">
-              {t("Επιλογή Καταστήματος")}
+              {t("settings_switch_store")}
             </span>
           </button>
 
@@ -110,7 +110,7 @@ export default function SettingsPage() {
           >
             <Users className="h-12 w-12 shrink-0 text-orange-500" aria-hidden />
             <span className="text-center text-sm font-medium text-slate-900">
-              {t("Διαχείριση Προμηθευτών")}
+              {t("settings_manage_suppliers")}
             </span>
           </button>
 
@@ -121,7 +121,7 @@ export default function SettingsPage() {
           >
             <User className="h-12 w-12 shrink-0 text-slate-700" aria-hidden />
             <span className="text-center text-sm font-medium text-slate-900">
-              {t("Edit Account")}
+              {t("settings_edit_account")}
             </span>
           </button>
 
@@ -132,7 +132,7 @@ export default function SettingsPage() {
           >
             <UserPlus className="h-12 w-12 shrink-0 text-blue-600" aria-hidden />
             <span className="text-center text-sm font-medium text-slate-900">
-              {t("Δημιουργία Χρήστη")}
+              {t("settings_create_user")}
             </span>
           </button>
         </div>

@@ -9,12 +9,16 @@ type Props = {
   section: SupplierSection;
   sectionRef: (el: HTMLDivElement | null) => void;
   stickyOffset?: number;
+  supplierUID?: string;
+  refDate?: string;
 };
 
 export function SupplierProductSection({
   section,
   sectionRef,
   stickyOffset = 0,
+  supplierUID,
+  refDate,
 }: Props) {
   return (
     <section
@@ -35,7 +39,11 @@ export function SupplierProductSection({
       >
         {section.products.map((product) => (
           <motion.div key={product.id} variants={listItemVariants}>
-            <SupplierProductCard product={product} />
+            <SupplierProductCard
+              product={product}
+              supplierUID={supplierUID}
+              refDate={refDate}
+            />
           </motion.div>
         ))}
       </motion.div>

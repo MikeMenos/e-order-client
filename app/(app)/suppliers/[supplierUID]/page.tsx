@@ -7,6 +7,8 @@ import {
   useSupplierDisplay,
   useSupplierProducts,
 } from "../../../../hooks/useSupplier";
+import { useBasketItems } from "../../../../hooks/useBasket";
+import type { BasketGetItemsResponse } from "../../../../components/checkout/checkout-basket-types";
 import { useTranslation } from "../../../../lib/i18n";
 import { useAppHeaderHeight } from "@/app/(app)/AppHeaderContext";
 import { listVariants, listItemVariants } from "../../../../lib/motion";
@@ -27,34 +29,55 @@ export default function SupplierPage() {
   const supplierUID = params.supplierUID;
   const refDate = searchParams.get("refDate") ?? undefined;
 
-  const supplierInfoQuery = useSupplierDisplay(
-    supplierUID,
-    refDate ?? undefined,
-  );
+  const supplierInfoQuery = useSupplierDisplay(supplierUID, undefined);
   const productsQuery = useSupplierProducts(supplierUID, refDate ?? undefined);
+  const basketQuery = useBasketItems(
+    supplierUID ? { SupplierUID: supplierUID } : undefined,
+  );
 
   const selectedDate =
     refDate ?? supplierInfoQuery.data?.selectedDate ?? undefined;
   const supplier = supplierInfoQuery.data?.supplier ?? null;
   const rawProducts = productsQuery.data?.products ?? [];
 
+  /** productUID -> qty from basket-items (Basket_GetItems), so we show existing in-cart qty per product */
+  const basketQtyByProductUID = useMemo(() => {
+    const data = basketQuery.data as BasketGetItemsResponse | undefined;
+    const list = data?.basketsList ?? [];
+    const basket = list.find((b) => b.supplierUID === supplierUID);
+    const items = basket?.items ?? [];
+    const map = new Map<string, number>();
+    for (const item of items) {
+      if (item?.productUID != null) {
+        const existing = map.get(item.productUID) ?? 0;
+        map.set(item.productUID, existing + (Number(item.qty) || 0));
+      }
+    }
+    return map;
+  }, [basketQuery.data, supplierUID]);
+
   const products = useMemo(
     (): SupplierProduct[] =>
-      rawProducts.map((p: any) => ({
-        id: p.productUID,
-        title: p.productTitle ?? p.productOriginalTitle,
-        subTitle: p.productDescription ?? "",
-        description: p.productDescription ?? "",
-        image: p.productImage ?? null,
-        category: p.productCategories ?? "OTHER",
-        price: p.price,
-        qty: p.basketQty ?? 0,
-        isFavorite:
-          p.isFavByShopper || p.isFavBySupplier || p.isFavByPlatform || false,
-        favIconColor: p.favIconColor ?? "#9CBDFA",
-        favIconMode: p.favIconMode ?? "border",
-      })),
-    [rawProducts],
+      rawProducts.map((p: any) => {
+        const productUID = p.productUID;
+        const inCartQty =
+          basketQtyByProductUID.get(productUID) ?? p.basketQty ?? 0;
+        return {
+          id: productUID,
+          title: p.productTitle ?? p.productOriginalTitle,
+          subTitle: p.productDescription ?? "",
+          description: p.productDescription ?? "",
+          image: p.productImage ?? null,
+          category: p.productCategories ?? "OTHER",
+          price: p.price,
+          qty: inCartQty,
+          isFavorite:
+            p.isFavByShopper || p.isFavBySupplier || p.isFavByPlatform || false,
+          favIconColor: p.favIconColor ?? "#9CBDFA",
+          favIconMode: p.favIconMode ?? "border",
+        };
+      }),
+    [rawProducts, basketQtyByProductUID],
   );
 
   const sections: SupplierSection[] = useMemo(() => {
@@ -243,7 +266,7 @@ export default function SupplierPage() {
             style={{ top: tabsStickyTop }}
           >
             <SupplierSearchAndTabs
-              searchPlaceholder={t("supplier_search_placeholder")}
+              searchPlaceholder={t("suppliers_search_placeholder")}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
               sections={filteredSections}
@@ -283,6 +306,8 @@ export default function SupplierPage() {
                   <SupplierProductSection
                     section={section}
                     stickyOffset={stickyOffset}
+                    supplierUID={supplierUID}
+                    refDate={selectedDate}
                     sectionRef={(el) => {
                       sectionRefs.current[section.id] = el;
                     }}

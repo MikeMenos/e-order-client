@@ -48,14 +48,14 @@ export default function ManageSuppliersPage() {
             type="button"
             onClick={() => router.push("/settings")}
             className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100/70"
-            aria-label="Back"
+            aria-label={t("aria_back")}
           >
             <ArrowLeft className="h-5 w-5 text-slate-700" aria-hidden />
           </button>
 
           <div className="min-w-0">
             <h1 className="truncate text-xl font-semibold text-slate-900">
-              {t("Διαχείριση Προμηθευτών")}
+              {t("settings_manage_suppliers")}
             </h1>
 
             {suppliersStep === "menu" && selectedSupplier ? (
@@ -64,7 +64,7 @@ export default function ManageSuppliersPage() {
               </div>
             ) : (
               <div className="mt-1 text-sm font-medium text-slate-600">
-                {t("Όλοι οι Προμηθευτές")}
+                {t("settings_all_suppliers")}
               </div>
             )}
           </div>
@@ -142,12 +142,12 @@ export default function ManageSuppliersPage() {
               className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-slate-100/70 px-3 py-2 text-sm font-semibold text-slate-800"
             >
               <ArrowLeft className="h-4 w-4" aria-hidden />
-              {t("Πίσω στους προμηθευτές")}
+              {t("settings_back_to_suppliers")}
             </button>
 
             <div className="grid grid-cols-2 auto-rows-fr gap-4">
               <MenuTile
-                label={t("Πρόγραμμα Παραγγελιών")}
+                label={t("settings_order_schedule")}
                 icon={Clock}
                 iconColor="text-green-600"
                 onClick={() =>
@@ -157,7 +157,7 @@ export default function ManageSuppliersPage() {
                 }
               />
               <MenuTile
-                label={t("Αγαπημένα")}
+                label={t("settings_favorites")}
                 icon={Star}
                 iconColor="text-orange-500"
                 onClick={() =>
@@ -167,7 +167,7 @@ export default function ManageSuppliersPage() {
                 }
               />
               <MenuTile
-                label={t("Ιστορικό Παραγγελιών")}
+                label={t("settings_order_history")}
                 icon={History}
                 iconColor="text-blue-600"
                 onClick={() =>
@@ -177,7 +177,7 @@ export default function ManageSuppliersPage() {
                 }
               />
               <MenuTile
-                label={t("Στοιχεία Προμηθευτή")}
+                label={t("settings_supplier_details")}
                 icon={Users}
                 iconColor="text-slate-700"
                 onClick={() =>
@@ -185,7 +185,7 @@ export default function ManageSuppliersPage() {
                 }
               />
               <MenuTile
-                label={t("Επικοινωνία")}
+                label={t("settings_contact")}
                 icon={User}
                 iconColor="text-slate-700"
                 onClick={() =>
@@ -195,7 +195,7 @@ export default function ManageSuppliersPage() {
                 }
               />
               <MenuTile
-                label={t("Αξιολογήσεις")}
+                label={t("settings_reviews")}
                 icon={MessageSquare}
                 iconColor="text-yellow-500"
                 onClick={() =>

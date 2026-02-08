@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useTranslation } from "../../lib/i18n";
 import { api } from "../../lib/api";
@@ -13,6 +14,8 @@ const DEBOUNCE_MS = 800;
 
 type Props = {
   product: SupplierProduct;
+  supplierUID?: string;
+  refDate?: string;
 };
 
 function toNonNegativeNum(s: string): number {
@@ -20,20 +23,20 @@ function toNonNegativeNum(s: string): number {
   return Number.isNaN(n) || n < 0 ? 0 : Math.floor(n);
 }
 
-export function SupplierProductCard({ product }: Props) {
-  const { id, title, subTitle, image, qty: initialQty } = product;
+export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
+  const { id, title, image, qty: initialQty } = product;
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   const [reserveQtyDisplay, setReserveQtyDisplay] = useState("");
+  /** Basket input = total qty in basket for this product (from basket-items). User can increment or decrement; we send this total. */
   const [basketQtyDisplay, setBasketQtyDisplay] = useState(() => {
-    const q = initialQty ?? 0;
+    const q = Math.max(0, Number(initialQty) || 0);
     return q === 0 ? "" : String(q);
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const lastSuggestedQtyRef = useRef<number>(
-    toNonNegativeNum(String(initialQty ?? "")),
-  );
+  const lastSuggestedQtyRef = useRef<number>(0);
   const reserveDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const basketDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const skipNextBasketDebounceRef = useRef(false);
@@ -83,44 +86,51 @@ export function SupplierProductCard({ product }: Props) {
           stock,
         },
       );
-      const suggestedQty = data?.suggestedQty ?? 0;
-      lastSuggestedQtyRef.current = suggestedQty;
-      setBasketQtyDisplay(suggestedQty === 0 ? "" : String(suggestedQty));
+      const suggestedTotal = data?.suggestedQty ?? 0;
+      lastSuggestedQtyRef.current = suggestedTotal;
+      setBasketQtyDisplay(suggestedTotal === 0 ? "" : String(suggestedTotal));
       skipNextBasketDebounceRef.current = true;
 
       const addRes = await api.post<{ message?: string }>(
         "/basket-add-or-update",
         {
           productUID: id,
-          qty: suggestedQty,
+          qty: suggestedTotal,
           stock,
-          suggestedQty,
+          suggestedQty: suggestedTotal,
           comments: "",
         },
       );
       const msg = addRes.data?.message?.trim();
       toast.success(msg || t("basket_toast_success"));
+      if (supplierUID != null) {
+        void queryClient.invalidateQueries({
+          queryKey: ["supplier-products", supplierUID, refDate],
+        });
+      }
+      void queryClient.invalidateQueries({ queryKey: ["basket-items"] });
+      void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });
     } catch (err: unknown) {
       toast.error(getApiErrorMessage(err, t("basket_error")));
     } finally {
       setIsLoading(false);
     }
-  }, [id, reserveQtyNum, t]);
+  }, [id, reserveQtyNum, supplierUID, refDate, queryClient, t]);
 
   const syncFromBasket = useCallback(async () => {
     if (skipNextBasketDebounceRef.current) {
       skipNextBasketDebounceRef.current = false;
       return;
     }
-    const qty = basketQtyNum;
+    const qtyToSend = basketQtyNum;
     setIsLoading(true);
     try {
-      const suggestedQty = lastSuggestedQtyRef.current ?? qty;
+      const suggestedQty = lastSuggestedQtyRef.current ?? qtyToSend;
       const res = await api.post<{ message?: string }>(
         "/basket-add-or-update",
         {
           productUID: id,
-          qty,
+          qty: qtyToSend,
           stock: reserveQtyNum,
           suggestedQty,
           comments: "",
@@ -128,30 +138,52 @@ export function SupplierProductCard({ product }: Props) {
       );
       const msg = res.data?.message?.trim();
       toast.success(msg || t("basket_toast_success"));
+      if (supplierUID != null) {
+        void queryClient.invalidateQueries({
+          queryKey: ["supplier-products", supplierUID, refDate],
+        });
+      }
+      void queryClient.invalidateQueries({ queryKey: ["basket-items"] });
+      void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });
     } catch (err: unknown) {
       toast.error(getApiErrorMessage(err, t("basket_error")));
     } finally {
       setIsLoading(false);
     }
-  }, [id, basketQtyNum, reserveQtyNum, t]);
+  }, [id, basketQtyNum, reserveQtyNum, supplierUID, refDate, queryClient, t]);
+
+  const syncFromReserveRef = useRef(syncFromReserve);
+  const syncFromBasketRef = useRef(syncFromBasket);
+  syncFromReserveRef.current = syncFromReserve;
+  syncFromBasketRef.current = syncFromBasket;
 
   useEffect(() => {
     if (!reserveTouchedRef.current) return;
     if (reserveDebounceRef.current) clearTimeout(reserveDebounceRef.current);
-    reserveDebounceRef.current = setTimeout(syncFromReserve, DEBOUNCE_MS);
+    reserveDebounceRef.current = setTimeout(() => {
+      syncFromReserveRef.current();
+    }, DEBOUNCE_MS);
     return () => {
       if (reserveDebounceRef.current) clearTimeout(reserveDebounceRef.current);
     };
-  }, [reserveQtyDisplay, syncFromReserve]);
+  }, [reserveQtyDisplay]);
 
   useEffect(() => {
     if (!basketTouchedRef.current) return;
     if (basketDebounceRef.current) clearTimeout(basketDebounceRef.current);
-    basketDebounceRef.current = setTimeout(syncFromBasket, DEBOUNCE_MS);
+    basketDebounceRef.current = setTimeout(() => {
+      syncFromBasketRef.current();
+    }, DEBOUNCE_MS);
     return () => {
       if (basketDebounceRef.current) clearTimeout(basketDebounceRef.current);
     };
-  }, [basketQtyDisplay, syncFromBasket]);
+  }, [basketQtyDisplay]);
+
+  useEffect(() => {
+    const q = Math.max(0, Number(initialQty) || 0);
+    setBasketQtyDisplay(q === 0 ? "" : String(q));
+    skipNextBasketDebounceRef.current = true;
+  }, [initialQty]);
 
   return (
     <article
@@ -208,7 +240,7 @@ export function SupplierProductCard({ product }: Props) {
               </Button>
             </div>
           </div>
-          {/* Basket row: label + controls (same sizes) */}
+          {/* Basket row: total qty in basket (user can increment or decrement) */}
           <div className="flex items-center gap-1.5 text-xs font-medium text-slate-900">
             <span className="w-16">{t("supplier_basket")}</span>
             <div className="inline-flex items-center gap-0.5 rounded border border-brand-200 bg-brand-50 px-1.5 py-1">
