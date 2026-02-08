@@ -50,9 +50,9 @@ export function SupplierSearchAndTabs({
                     key={section.id}
                     value={section.id}
                     className={[
-                      "shrink-0 rounded px-0 p-1 text-sm font-semibold tracking-[0.18em] whitespace-nowrap",
-                      "border-b-2 border-transparent text-slate-400",
-                      "data-[state=active]:border-brand-600 data-[state=active]:text-brand-600",
+                      "shrink-0 rounded-full px-4 py-2 text-sm font-semibold tracking-[0.18em] whitespace-nowrap",
+                      "text-slate-500 transition",
+                      "data-[state=active]:bg-brand-500 data-[state=active]:text-white",
                       "hover:text-slate-700",
                     ].join(" ")}
                   >

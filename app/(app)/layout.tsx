@@ -30,19 +30,17 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     >
       <AppHeaderProvider>
         <main className="min-h-dvh flex flex-col text-slate-900">
-          {/* CONTENT */}
           <div className="flex-1 animate-in fade-in duration-300">
             {children}
           </div>
 
-          {/* FOOTER – only on /settings, sticky at bottom */}
           {showSettingsFooter && (
             <footer className="sticky bottom-0 left-0 right-0 mt-auto px-4 pb-4 pt-2 bg-app-bg">
               <button
                 type="button"
                 onClick={handleLogout}
                 className="inline-flex w-full items-center justify-center rounded-2xl
-                           bg-[#E77A43] px-4 py-4 text-base font-semibold text-white
+                           bg-brand-500 px-4 py-4 text-base font-semibold text-white
                            shadow-sm transition active:scale-[0.99]"
               >
                 {t("logout")}

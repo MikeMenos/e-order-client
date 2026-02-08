@@ -36,7 +36,7 @@ const cards = [
 
 export default function DashboardPage() {
   const { t } = useTranslation();
-  
+
 
   return (
     <main className="text-slate-900">
