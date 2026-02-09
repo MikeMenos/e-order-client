@@ -156,3 +156,34 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Ergastirio delivery calendar: align day columns and prevent nav clip */
+.ergastirio-delivery-calendar.rdp-root {
+  width: 100%;
+}
+.ergastirio-delivery-calendar .rdp-month {
+  width: 100%;
+}
+.ergastirio-delivery-calendar .rdp-month_grid {
+  table-layout: fixed;
+  width: 100%;
+}
+.ergastirio-delivery-calendar .rdp-weekday,
+.ergastirio-delivery-calendar .rdp-day {
+  width: 1%;
+  text-align: center;
+  box-sizing: border-box;
+}
+.ergastirio-delivery-calendar .rdp-day_button {
+  margin-inline: auto;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}

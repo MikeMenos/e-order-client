@@ -1,4 +1,9 @@
-import { ChevronDown } from "lucide-react";
+import {
+  ChevronDown,
+  Clock,
+  ArrowUpNarrowWide,
+  ArrowDownNarrowWide,
+} from "lucide-react";
 import { useTranslation } from "../../lib/i18n";
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
@@ -36,9 +41,32 @@ export function SuppliersSectionHeader({
     <div className="flex items-center justify-between">
       {pathname === "/orders-of-the-day" && (
         <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div
+            className="flex items-center gap-0.5 ml-2"
+            role="group"
+            aria-label={t("suppliers_sort_by_time")}
+          >
+            <Clock className="h-4 w-4 text-slate-400 shrink-0" aria-hidden />
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 border-slate-300 text-slate-700"
+              aria-label={
+                isAscending ? t("suppliers_sort_asc") : t("suppliers_sort_desc")
+              }
+              onClick={onSortToggle}
+            >
+              {isAscending ? (
+                <ArrowUpNarrowWide className="h-4 w-4" aria-hidden />
+              ) : (
+                <ArrowDownNarrowWide className="h-4 w-4" aria-hidden />
+              )}
+            </Button>
+          </div>
           <h2 className="text-sm font-semibold text-slate-900">
             {t("suppliers_orders_of_day")}
           </h2>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button

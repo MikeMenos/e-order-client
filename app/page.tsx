@@ -6,11 +6,16 @@ import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { api } from "../lib/api";
 import { useAuthStore } from "../stores/auth";
+import { ergastirioStore } from "../stores/ergastirioStore";
+import { useGetClientData } from "../hooks/useGetClientData";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { StoreSelectDialog } from "../components/auth/StoreSelectDialog";
 import { useTranslation } from "../lib/i18n";
 import { getApiErrorMessage } from "../lib/api-error";
+
+const ERGASTIRIO_SESSION_COOKIE = "ergastirio_session";
+const ERGASTIRIO_SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
 export default function HomePage() {
   const router = useRouter();
@@ -24,6 +29,8 @@ export default function HomePage() {
   const [roles, setRoles] = useState<any[]>([]);
   const [userResponse, setUserResponse] = useState<any | null>(null);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
+
+  const getClientDataMutation = useGetClientData();
 
   const loginMutation = useMutation({
     mutationFn: async () => {
@@ -102,7 +109,46 @@ export default function HomePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    loginMutation.mutate();
+    getClientDataMutation.mutate(
+      { AFM: username.trim(), PIN: password },
+      {
+        onSuccess: (data) => {
+          if (data?.success && data?.data?.length > 0) {
+            const stores = data.data;
+            const count = stores.length;
+            const first = stores[0];
+
+            ergastirioStore.getState().setVat(username.trim());
+            ergastirioStore.getState().setClientData(stores);
+
+            if (count === 1) {
+              // Single store: preselect branch and carry basket id (if any)
+              ergastirioStore.getState().setCurrentBranch(first);
+              if (first?.BASKET_KEY && first.BASKET_KEY !== "0") {
+                ergastirioStore.getState().setBasketId(first.BASKET_KEY);
+              } else {
+                ergastirioStore.getState().setBasketId(undefined);
+              }
+            } else {
+              // Multiple stores: force user to pick a branch explicitly
+              ergastirioStore.getState().setCurrentBranch(undefined);
+              ergastirioStore.getState().setBasketId(undefined);
+            }
+
+            if (typeof document !== "undefined") {
+              document.cookie = `${ERGASTIRIO_SESSION_COOKIE}=1; path=/; max-age=${ERGASTIRIO_SESSION_MAX_AGE}; sameSite=lax`;
+            }
+            toast.success(t("login_toast_success"));
+            router.replace("/ergastirio");
+            return;
+          }
+          loginMutation.mutate();
+        },
+        onError: () => {
+          loginMutation.mutate();
+        },
+      },
+    );
   };
 
   const handleSelectRole = (role: any) => {
@@ -195,10 +241,12 @@ export default function HomePage() {
           </div>
           <Button
             type="submit"
-            disabled={loginMutation.isPending}
+            disabled={
+              getClientDataMutation.isPending || loginMutation.isPending
+            }
             className="w-full"
           >
-            {loginMutation.isPending
+            {getClientDataMutation.isPending || loginMutation.isPending
               ? t("login_signing_in")
               : t("login_submit")}
           </Button>

@@ -6,6 +6,7 @@ import { AppHeaderProvider } from "./AppHeaderContext";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
 import { useAuthStore } from "@/stores/auth";
+import { Button } from "@/components/ui/button";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -38,15 +39,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           {/* FOOTER – only on /settings, sticky at bottom */}
           {showSettingsFooter && (
             <footer className="sticky bottom-0 left-0 right-0 mt-auto px-4 pb-4 pt-2 bg-app-bg">
-              <button
+              <Button
                 type="button"
                 onClick={handleLogout}
                 className="inline-flex w-full items-center justify-center rounded-2xl
-                           bg-[#E77A43] px-4 py-4 text-base font-semibold text-white
+                           bg-red-500 hover:bg-red-600 px-4 py-4 text-base font-semibold text-white
                            shadow-sm transition active:scale-[0.99]"
               >
                 {t("logout")}
-              </button>
+              </Button>
             </footer>
           )}
         </main>

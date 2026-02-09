@@ -53,21 +53,23 @@ export function SuppliersSection({
       );
     }
 
-    const getTimeValue = (time?: string | null) => {
-      if (!time) return 0;
-      const [hours, minutes] = time.split(":").map(Number);
-      if (Number.isNaN(hours) || Number.isNaN(minutes)) return 0;
-      return hours * 60 + minutes;
-    };
-
-    data.sort((a, b) => {
-      const av = getTimeValue(a.labelOrderTimeExpiresAt ?? undefined);
-      const bv = getTimeValue(b.labelOrderTimeExpiresAt ?? undefined);
-      return isAscending ? av - bv : bv - av;
-    });
+    // Sort by order-deadline time only on orders-of-the-day
+    if (pathname === "/orders-of-the-day") {
+      const getTimeValue = (time?: string | null) => {
+        if (!time) return 0;
+        const [hours, minutes] = time.split(":").map(Number);
+        if (Number.isNaN(hours) || Number.isNaN(minutes)) return 0;
+        return hours * 60 + minutes;
+      };
+      data.sort((a, b) => {
+        const av = getTimeValue(a.labelOrderTimeExpiresAt ?? undefined);
+        const bv = getTimeValue(b.labelOrderTimeExpiresAt ?? undefined);
+        return isAscending ? av - bv : bv - av;
+      });
+    }
 
     return data;
-  }, [suppliers, searchQuery, statusFilter, isAscending]);
+  }, [suppliers, searchQuery, statusFilter, isAscending, pathname]);
 
   const isToday = (() => {
     try {
@@ -138,7 +140,11 @@ export function SuppliersSection({
         >
           {filteredSuppliers.map((s) => (
             <motion.div key={s.supplierUID} variants={listItemVariants}>
-              <SupplierTile supplier={s} refDate={refDate} />
+              <SupplierTile
+                supplier={s}
+                refDate={refDate}
+                showDeliveryInfo={pathname !== "/all-suppliers"}
+              />
             </motion.div>
           ))}
         </motion.div>
