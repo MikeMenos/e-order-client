@@ -33,7 +33,7 @@ export function StoreSelectDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm flex max-h-[85vh] flex-col gap-4 bg-app-card border-slate-200/80">
         <DialogHeader>
-          <div className="flex items-start justify-between gap-2">
+          <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
               <DialogTitle>{t("store_select_title")}</DialogTitle>
               <DialogDescription>
@@ -46,7 +46,7 @@ export function StoreSelectDialog({
               size="icon"
               aria-label={t("store_select_close")}
               onClick={() => onOpenChange(false)}
-              className="h-8 w-8 shrink-0 rounded-full"
+              className="h-8 w-8 shrink-0 rounded-full text-slate-500 hover:text-slate-700"
             >
               ×
             </Button>
@@ -58,7 +58,7 @@ export function StoreSelectDialog({
           </div>
         )}
         <motion.div
-          className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1"
+          className="min-h-0 flex-1 space-y-2 overflow-y-auto -mx-1 px-1"
           variants={listVariants}
           initial="hidden"
           animate="visible"

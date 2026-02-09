@@ -37,7 +37,7 @@ export function DialogContent({ className, children }: DialogContentProps) {
   return (
     <div
       className={cn(
-        "my-auto w-full max-w-md rounded-2xl border border-slate-200 bg-white p-4 shadow-xl max-h-[85vh] flex flex-col",
+        "my-auto w-full max-w-md rounded-2xl border border-slate-200 bg-white shadow-xl max-h-[85vh] flex flex-col p-5",
         className,
       )}
     >

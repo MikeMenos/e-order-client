@@ -16,7 +16,8 @@ type Props = {
   supplier: Supplier;
   refDate: string;
   isExpanded?: boolean;
-  onToggleExpanded?: () => void;
+  /** When false, hide delivery date line and week delivery days (e.g. on all-suppliers). */
+  showDeliveryInfo?: boolean;
 };
 
 const STATUS_COMPLETED = "Ολοκληρώθηκε";
@@ -64,7 +65,11 @@ function getStatusStyle(descr: string | null | undefined): {
   };
 }
 
-export function SupplierTile({ supplier, refDate }: Props) {
+export function SupplierTile({
+  supplier,
+  refDate,
+  showDeliveryInfo = true,
+}: Props) {
   const { t } = useTranslation();
   const supplierHref = `/suppliers/${encodeURIComponent(
     supplier.supplierUID,
@@ -78,8 +83,8 @@ export function SupplierTile({ supplier, refDate }: Props) {
       href={supplierHref}
       className="flex flex-col rounded-2xl border border-slate-200/80 bg-app-card/95 shadow-sm cursor-pointer transition hover:border-brand-400/70 hover:shadow-md"
     >
-      {/* Top: logo + title + next delivery */}
-      <div className="flex items-start gap-3 p-4 pb-2">
+      {/* Top: logo + title + next delivery (hidden on all-suppliers) */}
+      <div className="flex items-center gap-3 p-4 pb-2">
         {supplier.logo && (
           <img
             src={supplier.logo}
@@ -91,7 +96,7 @@ export function SupplierTile({ supplier, refDate }: Props) {
           <p className="font-bold uppercase tracking-wide text-slate-900">
             {supplier.title}
           </p>
-          {supplier.nextAvailDeliveryText && (
+          {showDeliveryInfo && supplier.nextAvailDeliveryText && (
             <p className="mt-0.5 text-sm text-slate-500">
               {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
             </p>
@@ -109,8 +114,8 @@ export function SupplierTile({ supplier, refDate }: Props) {
         </span>
       </div>
 
-      {/* Bottom: order days */}
-      {supplier.weekDeliveryDaysText && (
+      {/* Bottom: order days (hidden on all-suppliers) */}
+      {showDeliveryInfo && supplier.weekDeliveryDaysText && (
         <div className="flex items-center justify-center gap-2 border-t border-slate-100 px-4 py-2">
           <Calendar className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
           <span className="text-slate-600">
