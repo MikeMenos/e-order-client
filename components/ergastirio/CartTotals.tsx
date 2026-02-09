@@ -69,18 +69,33 @@ export function ErgastirioCartTotals({
   }, [currentBranch]);
 
   const disabledMatchers = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const matchers: Array<{ before: Date } | { dayOfWeek: number[] }> = [
-      { before: today },
-    ];
-    if (programmatismos) {
-      const disabledWeekdays = [0, 1, 2, 3, 4, 5, 6].filter(
-        (d) => !programmatismos.allowed.has(d),
-      );
-      if (disabledWeekdays.length > 0) {
-        matchers.push({ dayOfWeek: disabledWeekdays });
-      }
+    const now = new Date();
+    const todayStart = new Date(now);
+    todayStart.setHours(0, 0, 0, 0);
+    const todayDisabledAfter10 =
+      now.getHours() >= 10;
+    const disabledWeekdays = programmatismos
+      ? [0, 1, 2, 3, 4, 5, 6].filter(
+          (d) => !programmatismos!.allowed.has(d),
+        )
+      : [];
+
+    const matchers: Array<
+      | { before: Date }
+      | { dayOfWeek: number[] }
+      | ((date: Date) => boolean)
+    > = [{ before: todayStart }];
+    if (todayDisabledAfter10) {
+      const todayEnd = new Date(todayStart);
+      todayEnd.setDate(todayEnd.getDate() + 1);
+      matchers.push((date: Date) => {
+        const t = new Date(date);
+        t.setHours(0, 0, 0, 0);
+        return t.getTime() === todayStart.getTime();
+      });
+    }
+    if (disabledWeekdays.length > 0) {
+      matchers.push({ dayOfWeek: disabledWeekdays });
     }
     return matchers;
   }, [programmatismos]);

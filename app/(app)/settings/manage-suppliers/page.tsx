@@ -1,234 +1,127 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
-import {
-  Star,
-  ArrowLeft,
-  Users,
-  User,
-  History,
-  Clock,
-  Loader2,
-  Building2,
-  StarHalf,
-  MessageSquare,
-} from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Star, Users, User, History, Clock, MessageSquare } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
+import { SuppliersSection } from "@/components/dashboard/SuppliersSection";
 import type { Supplier } from "@/components/dashboard/types";
-
-const tileClass =
-  "flex h-full w-full flex-col items-center justify-center gap-3 rounded-2xl bg-app-card/95 p-6 shadow-sm transition hover:shadow-md active:scale-[0.99]";
+import { TileCard } from "@/components/ui/tile-card";
 
 export default function ManageSuppliersPage() {
   const { t } = useTranslation();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const menuUid = searchParams.get("menu");
 
-  const [suppliersStep, setSuppliersStep] = React.useState<"list" | "menu">(
-    "list",
+  const { refDate, suppliers, isLoading, isError, errorMessage } =
+    useSuppliersListForToday();
+
+  const selectedSupplier = React.useMemo(
+    () =>
+      menuUid && suppliers?.length
+        ? (suppliers.find((s: Supplier) => s.supplierUID === menuUid) ?? null)
+        : null,
+    [menuUid, suppliers],
   );
-  const [selectedSupplier, setSelectedSupplier] =
-    React.useState<Supplier | null>(null);
+  const isMenuStep = Boolean(menuUid && selectedSupplier);
 
-  const {
-    suppliers,
-    isLoading: suppliersLoading,
-    isError: suppliersError,
-    errorMessage,
-  } = useSuppliersListForToday();
+  const handleSupplierClick = React.useCallback(
+    (s: Supplier) => {
+      router.push(`/settings/manage-suppliers?menu=${s.supplierUID}`);
+    },
+    [router],
+  );
 
   return (
     <main className="text-slate-900">
-      <div className="mx-auto flex max-w-md flex-col px-4 pb-8 pt-6">
-        {/* Header */}
-        <div className="mb-5 flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => router.push("/settings")}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100/70"
-            aria-label={t("aria_back")}
-          >
-            <ArrowLeft className="h-5 w-5 text-slate-700" aria-hidden />
-          </button>
-
-          <div className="min-w-0">
-            <h1 className="truncate text-xl font-semibold text-slate-900">
-              {t("settings_manage_suppliers")}
-            </h1>
-
-            {suppliersStep === "menu" && selectedSupplier ? (
-              <div className="mt-1 truncate text-sm font-medium text-slate-600">
-                {selectedSupplier.title}
+      {!isMenuStep ? (
+        <SuppliersSection
+          refDate={refDate}
+          suppliers={suppliers}
+          isLoading={isLoading}
+          isError={isError}
+          errorMessage={errorMessage}
+          onSupplierClick={handleSupplierClick}
+        />
+      ) : (
+        <div className="mx-auto flex max-w-xl flex-col mt-2">
+          {selectedSupplier && (
+            <>
+              <div className="mb-4 flex items-center gap-3">
+                <p className="min-w-0 flex-1 truncate text-sm font-medium text-slate-600">
+                  {selectedSupplier.title}
+                </p>
               </div>
-            ) : (
-              <div className="mt-1 text-sm font-medium text-slate-600">
-                {t("settings_all_suppliers")}
+
+              <div className="grid grid-cols-2 auto-rows-fr gap-4">
+                <TileCard
+                  icon={Clock}
+                  label={t("settings_order_schedule")}
+                  iconColor="text-green-600"
+                  onClick={() =>
+                    router.push(
+                      `/suppliers/${selectedSupplier.supplierUID}/timetable`,
+                    )
+                  }
+                />
+                <TileCard
+                  icon={Star}
+                  label={t("settings_favorites")}
+                  iconColor="text-orange-500"
+                  onClick={() =>
+                    router.push(
+                      `/suppliers/${selectedSupplier.supplierUID}/favorites`,
+                    )
+                  }
+                />
+                <TileCard
+                  icon={History}
+                  label={t("settings_order_history")}
+                  iconColor="text-blue-600"
+                  onClick={() =>
+                    router.push(
+                      `/suppliers/${selectedSupplier.supplierUID}/order-history`,
+                    )
+                  }
+                />
+                <TileCard
+                  icon={Users}
+                  label={t("settings_supplier_details")}
+                  iconColor="text-slate-700"
+                  onClick={() =>
+                    router.push(
+                      `/suppliers/${selectedSupplier.supplierUID}/info`,
+                    )
+                  }
+                />
+                <TileCard
+                  icon={User}
+                  label={t("settings_contact")}
+                  iconColor="text-slate-700"
+                  onClick={() =>
+                    router.push(
+                      `/suppliers/${selectedSupplier.supplierUID}/contact`,
+                    )
+                  }
+                />
+                <TileCard
+                  icon={MessageSquare}
+                  label={t("settings_reviews")}
+                  iconColor="text-yellow-500"
+                  onClick={() =>
+                    router.push(
+                      `/suppliers/${selectedSupplier.supplierUID}/reviews`,
+                    )
+                  }
+                />
               </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
-
-        {/* STEP: list */}
-        {suppliersStep === "list" && (
-          <>
-            {suppliersLoading && (
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                {t("suppliers_loading")}
-              </div>
-            )}
-
-            {suppliersError && (
-              <div className="rounded-xl bg-red-50 p-3 text-sm text-red-700">
-                {errorMessage ?? t("suppliers_error")}
-              </div>
-            )}
-
-            {!suppliersLoading &&
-              !suppliersError &&
-              (suppliers?.length ?? 0) === 0 && (
-                <div className="rounded-xl bg-slate-50 p-3 text-sm text-slate-600">
-                  {t("suppliers_empty")}
-                </div>
-              )}
-
-            {!suppliersLoading && !suppliersError && (
-              <div className="grid grid-cols-1 auto-rows-fr gap-4">
-                {(suppliers ?? []).map((s: Supplier) => (
-                  <button
-                    key={s.supplierUID}
-                    type="button"
-                    onClick={() => {
-                      setSelectedSupplier(s);
-                      setSuppliersStep("menu");
-                    }}
-                    className={tileClass}
-                  >
-                    {s.logo ? (
-                      <span className="inline-flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-white/80">
-                        <img
-                          src={s.logo}
-                          alt={s.title ?? ""}
-                          className="h-full w-full object-contain"
-                        />
-                      </span>
-                    ) : (
-                      <Building2
-                        className="h-12 w-12 shrink-0 text-slate-700"
-                        aria-hidden
-                      />
-                    )}
-
-                    <span className="max-w-37.5 truncate text-center text-sm font-medium text-slate-900">
-                      {s.title}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </>
-        )}
-
-        {suppliersStep === "menu" && selectedSupplier && (
-          <>
-            <button
-              type="button"
-              onClick={() => {
-                setSuppliersStep("list");
-                setSelectedSupplier(null);
-              }}
-              className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-slate-100/70 px-3 py-2 text-sm font-semibold text-slate-800"
-            >
-              <ArrowLeft className="h-4 w-4" aria-hidden />
-              {t("settings_back_to_suppliers")}
-            </button>
-
-            <div className="grid grid-cols-2 auto-rows-fr gap-4">
-              <MenuTile
-                label={t("settings_order_schedule")}
-                icon={Clock}
-                iconColor="text-green-600"
-                onClick={() =>
-                  router.push(
-                    `/suppliers/${selectedSupplier.supplierUID}/timetable`,
-                  )
-                }
-              />
-              <MenuTile
-                label={t("settings_favorites")}
-                icon={Star}
-                iconColor="text-orange-500"
-                onClick={() =>
-                  router.push(
-                    `/suppliers/${selectedSupplier.supplierUID}/favorites`,
-                  )
-                }
-              />
-              <MenuTile
-                label={t("settings_order_history")}
-                icon={History}
-                iconColor="text-blue-600"
-                onClick={() =>
-                  router.push(
-                    `/suppliers/${selectedSupplier.supplierUID}/order-history`,
-                  )
-                }
-              />
-              <MenuTile
-                label={t("settings_supplier_details")}
-                icon={Users}
-                iconColor="text-slate-700"
-                onClick={() =>
-                  router.push(`/suppliers/${selectedSupplier.supplierUID}/info`)
-                }
-              />
-              <MenuTile
-                label={t("settings_contact")}
-                icon={User}
-                iconColor="text-slate-700"
-                onClick={() =>
-                  router.push(
-                    `/suppliers/${selectedSupplier.supplierUID}/contact`,
-                  )
-                }
-              />
-              <MenuTile
-                label={t("settings_reviews")}
-                icon={MessageSquare}
-                iconColor="text-yellow-500"
-                onClick={() =>
-                  router.push(
-                    `/suppliers/${selectedSupplier.supplierUID}/reviews`,
-                  )
-                }
-              />
-            </div>
-          </>
-        )}
-      </div>
+      )}
     </main>
-  );
-}
-
-function MenuTile({
-  label,
-  icon: Icon,
-  iconColor,
-  onClick,
-}: {
-  label: string;
-  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
-  iconColor: string;
-  onClick: () => void;
-}) {
-  return (
-    <button type="button" onClick={onClick} className={tileClass}>
-      <Icon className={`h-12 w-12 shrink-0 ${iconColor}`} aria-hidden />
-      <span className="max-w-37.5 truncate text-center text-sm font-medium text-slate-900">
-        {label}
-      </span>
-    </button>
   );
 }

@@ -3,13 +3,14 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ShoppingCart, Trash2 } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
+import { Trash2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import type { IProductItem } from "@/lib/ergastirio-interfaces";
 import { ERGASTIRIO_BASE } from "@/lib/ergastirio-constants";
 import { useTranslation } from "@/lib/i18n";
+
+const DEBOUNCE_MS = 800;
 
 export const placeholderImage: Record<string, string> = {
   DONUT: "/categories/donuts.jpg",
@@ -23,13 +24,11 @@ interface ErgastirioProductCardProps {
   onSubmitProducts?: (
     product: IProductItem,
     qty: number,
-    isDelete?: boolean
+    isDelete?: boolean,
   ) => void;
   onQtyChange?: (product: IProductItem, qty: number) => void;
   isPending?: boolean;
   showWholesalePrice?: boolean;
-  showCartVatPricing?: boolean;
-  isPricingLoading?: boolean;
 }
 
 export default function ErgastirioProductCard({
@@ -38,8 +37,6 @@ export default function ErgastirioProductCard({
   isPending,
   onQtyChange,
   showWholesalePrice,
-  showCartVatPricing,
-  isPricingLoading,
 }: ErgastirioProductCardProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
@@ -47,13 +44,40 @@ export default function ErgastirioProductCard({
   const [error, setError] = useState("");
   const [isItemPending, setIsItemPending] = useState(false);
   const prevQty2Ref = useRef(product.Qty2);
+  const lastSentQtyRef = useRef(Number(product.Qty2) ?? 0);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const isProductsPage =
+    pathname.startsWith(`${ERGASTIRIO_BASE}/products`) &&
+    pathname !== `${ERGASTIRIO_BASE}/cart`;
 
   useEffect(() => {
     if (product.Qty2 !== prevQty2Ref.current) {
       prevQty2Ref.current = product.Qty2;
+      const num = Number(product.Qty2) ?? 0;
       setQty(product.Qty2);
+      lastSentQtyRef.current = num;
     }
   }, [product.Qty2]);
+
+  useEffect(() => {
+    if (!isProductsPage || !onSubmitProducts) return;
+    const num = typeof qty === "number" ? qty : qty === "" ? 0 : Number(qty);
+    if (Number.isNaN(num) || num === lastSentQtyRef.current) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      debounceRef.current = null;
+      lastSentQtyRef.current = num;
+      setIsItemPending(true);
+      const isDelete = num <= 0;
+      Promise.resolve(
+        onSubmitProducts(product, isDelete ? 0 : num, isDelete),
+      ).finally(() => setIsItemPending(false));
+    }, DEBOUNCE_MS);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [qty, isProductsPage, product, onSubmitProducts]);
 
   const IMAGE_BASE_URL = "https://ergastiri.oncloud.gr/s1services?filename=";
   const wholesalePrice = showWholesalePrice
@@ -70,24 +94,11 @@ export default function ErgastirioProductCard({
     ? `${IMAGE_BASE_URL}${product.IMAGE.trim()}`
     : (placeholderImage[categoryKey] ?? "/categories/allo.jpg");
 
-  const onAddProductToBasket = () => {
-    if (typeof qty === "number" && qty <= 0) {
-      setError(t("erg_quantity_error_negative"));
-      return;
-    }
-    if (onSubmitProducts && qty) {
-      setIsItemPending(true);
-      Promise.resolve(onSubmitProducts(product, qty)).finally(() =>
-        setIsItemPending(false)
-      );
-    }
-  };
-
   const handleRemove = () => {
     if (onSubmitProducts && qty) {
       setIsItemPending(true);
       Promise.resolve(onSubmitProducts(product, qty, true)).finally(() =>
-        setIsItemPending(false)
+        setIsItemPending(false),
       );
     }
   };
@@ -130,39 +141,12 @@ export default function ErgastirioProductCard({
           </div>
           {wholesalePrice != null && (
             <div className="mt-1 text-sm">
-              <span className="font-bold text-slate-900">{wholesalePrice}€</span>{" "}
-              <span className="text-slate-500">{t("erg_wholesale_no_vat")}</span>
-            </div>
-          )}
-          {showCartVatPricing && (
-            <div className="mt-1 text-sm space-y-0.5">
-              {isPricingLoading ? (
-                <>
-                  <div>
-                    {t("erg_price_without_vat")}{" "}
-                    <span className="inline-block h-4 w-12 bg-slate-200 rounded animate-pulse" />
-                  </div>
-                  <div>
-                    {t("erg_price_with_vat")}{" "}
-                    <span className="inline-block h-4 w-12 bg-slate-200 rounded animate-pulse" />
-                  </div>
-                </>
-              ) : (
-                <>
-                  {product.LINEVAL != null && (
-                    <div>
-                      {t("erg_price_without_vat")}{" "}
-                      <span className="font-bold">{product.LINEVAL}€</span>
-                    </div>
-                  )}
-                  {product.SXPERC != null && (
-                    <div>
-                      {t("erg_price_with_vat")}{" "}
-                      <span className="font-bold">{product.SXPERC}€</span>
-                    </div>
-                  )}
-                </>
-              )}
+              <span className="font-bold text-slate-900">
+                {wholesalePrice}€
+              </span>{" "}
+              <span className="text-slate-500">
+                {t("erg_wholesale_no_vat")}
+              </span>
             </div>
           )}
         </div>
@@ -189,17 +173,9 @@ export default function ErgastirioProductCard({
               {wholesalePrice != null && (
                 <div className="text-xs">
                   <span className="font-bold">{wholesalePrice}€</span>{" "}
-                  <span className="text-slate-500">{t("erg_wholesale_no_vat")}</span>
-                </div>
-              )}
-              {showCartVatPricing && product.LINEVAL != null && (
-                <div className="text-xs">
-                  Χωρίς ΦΠΑ: <span className="font-bold">{product.LINEVAL}€</span>
-                </div>
-              )}
-              {showCartVatPricing && product.SXPERC != null && (
-                <div className="text-xs">
-                  Με ΦΠΑ: <span className="font-bold">{product.SXPERC}€</span>
+                  <span className="text-slate-500">
+                    {t("erg_wholesale_no_vat")}
+                  </span>
                 </div>
               )}
             </div>
@@ -216,23 +192,9 @@ export default function ErgastirioProductCard({
             {wholesalePrice != null && (
               <div className="text-sm">
                 <span className="font-bold">{wholesalePrice}€</span>{" "}
-                <span className="text-slate-500">{t("erg_wholesale_no_vat")}</span>
-              </div>
-            )}
-            {showCartVatPricing && (
-              <div className="text-sm space-y-0.5">
-                {product.LINEVAL != null && (
-                  <div>
-                    {t("erg_price_without_vat")}{" "}
-                    <span className="font-bold">{product.LINEVAL}€</span>
-                  </div>
-                )}
-                {product.SXPERC != null && (
-                  <div>
-                    {t("erg_price_with_vat")}{" "}
-                    <span className="font-bold">{product.SXPERC}€</span>
-                  </div>
-                )}
+                <span className="text-slate-500">
+                  {t("erg_wholesale_no_vat")}
+                </span>
               </div>
             )}
           </div>
@@ -244,7 +206,7 @@ export default function ErgastirioProductCard({
                   <div className="flex items-center rounded-xl border border-slate-200 overflow-hidden bg-white">
                     <Button
                       type="button"
-                      variant="secondary"
+                      variant="ghost"
                       onClick={decrementQty}
                       className="px-2.5 py-1.5 text-slate-700 hover:bg-slate-100 disabled:opacity-40"
                       disabled={showItemLoading || Number(qty || 0) <= 0}
@@ -253,7 +215,7 @@ export default function ErgastirioProductCard({
                       −
                     </Button>
                     <Input
-                      className="w-12 min-w-12 text-center border-0 focus-visible:ring-0 text-sm font-medium tabular-nums"
+                      className="w-12 min-w-12 text-center border-0 focus-visible:ring-0 text-sm font-medium tabular-nums [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       value={qty}
                       type="number"
                       onChange={(e) => handleQtyChange(e.target.value, setQty)}
@@ -261,7 +223,7 @@ export default function ErgastirioProductCard({
                     />
                     <Button
                       type="button"
-                      variant="secondary"
+                      variant="ghost"
                       onClick={incrementQty}
                       className="px-2.5 py-1.5 text-slate-700 hover:bg-slate-100 disabled:opacity-40"
                       disabled={showItemLoading}
@@ -276,53 +238,18 @@ export default function ErgastirioProductCard({
                     </p>
                   )}
                 </div>
-                {pathname !== `${ERGASTIRIO_BASE}/cart` && (
+                {pathname === `${ERGASTIRIO_BASE}/cart` && (
                   <Button
+                    type="button"
+                    variant="ghost"
                     size="sm"
-                    className="whitespace-nowrap gap-1 cursor-pointer bg-brand-500 hover:bg-brand-600 text-white min-w-9"
-                    onClick={onAddProductToBasket}
-                    disabled={showItemLoading || product.Qty2 === qty || !qty}
+                    className="gap-1 text-red-500 hover:text-red-700 hover:bg-red-50"
+                    onClick={handleRemove}
+                    disabled={showItemLoading}
                   >
-{showItemLoading ? (
-                        <Spinner size={16} className="shrink-0" />
-                      ) : (
-                        <ShoppingCart className="h-4 w-4 shrink-0" />
-                      )}
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 )}
-                {showCartVatPricing &&
-                  typeof qty === "number" &&
-                  Number(qty) > 0 &&
-                  Number(qty) !== Number(product.Qty2) && (
-                    <Button
-                      type="button"
-                      size="sm"
-                      className="whitespace-nowrap gap-1 cursor-pointer bg-brand-500 hover:bg-brand-600 text-white min-w-9"
-                      onClick={onAddProductToBasket}
-                      disabled={showItemLoading}
-                      aria-label={t("erg_apply_quantity")}
-                    >
-                      {showItemLoading ? (
-                        <Spinner size={16} className="shrink-0" />
-                      ) : (
-                        <ShoppingCart className="h-4 w-4 shrink-0" />
-                      )}
-                    </Button>
-                  )}
-                {pathname === `${ERGASTIRIO_BASE}/cart` &&
-                  (!showCartVatPricing ||
-                    Number(qty) === Number(product.Qty2)) && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="gap-1 text-red-500 hover:text-red-700 hover:bg-red-50"
-                      onClick={handleRemove}
-                      disabled={showItemLoading}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
               </div>
             </div>
           </div>

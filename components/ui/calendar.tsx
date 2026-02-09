@@ -14,12 +14,7 @@ export function Calendar({
   ...props
 }: CalendarProps) {
   return (
-    <div
-      className={cn(
-        "rdp-root rounded-lg border border-slate-200 p-3 [--rdp-accent-color:var(--color-brand-500)] [--rdp-accent-background-color:var(--color-brand-100)] [--rdp-today-color:var(--color-brand-600)]",
-        className
-      )}
-    >
+    <div className={className}>
       <DayPicker showOutsideDays={showOutsideDays} {...props} />
     </div>
   );

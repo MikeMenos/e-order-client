@@ -16,9 +16,6 @@ export default function BasketPage() {
   return (
     <main className="space-y-3 text-slate-900">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold text-slate-900">
-          {t("basket_title")}
-        </h1>
         <p className="text-sm text-slate-600">{t("basket_subtitle")}</p>
         <p className="text-sm text-slate-700">
           {t("basket_total_baskets")}{" "}

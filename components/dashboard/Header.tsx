@@ -2,21 +2,17 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useAuthStore } from "../../stores/auth";
-import { useTranslation } from "../../lib/i18n";
-import { Button } from "../ui/button";
 
 type Props = {
   embedded?: boolean;
-  showBack?: boolean;
 };
 
-export function DashboardHeader({ embedded, showBack }: Props) {
-  const { t } = useTranslation();
-  const router = useRouter();
+export function DashboardHeader({ embedded }: Props) {
+  const pathname = usePathname();
   const { users, selectedUser } = useAuthStore();
+  const isDashboard = pathname === "/dashboard";
 
   const fname = useMemo(
     () => users?.userInfos?.fname ?? "",
@@ -42,34 +38,27 @@ export function DashboardHeader({ embedded, showBack }: Props) {
 
   return (
     <header
-      className={`flex items-center gap-3 border-b ${borderCls} ${headerBg} px-3 py-2 w-full min-w-0`}
+      className={`flex items-center gap-3 border-b ${borderCls} ${headerBg} px-3 py-2.5 w-full min-w-0`}
     >
-      {showBack && (
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => router.back()}
-          className="inline-flex shrink-0 p-0 items-center justify-center rounded-md text-slate-700 transition-colors hover:bg-slate-200/50"
-          aria-label={t("common_back")}
-        >
-          <ArrowLeft className="h-5 w-5" aria-hidden />
-        </Button>
+      {!isDashboard && (
+        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg">
+          <Link href="/dashboard">
+            <img
+              src="/assets/logo.png"
+              alt="E-Order"
+              className="h-14 w-14 rounded-lg object-contain"
+            />
+          </Link>
+        </div>
       )}
-      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg">
-        <Link href="/dashboard">
-          <img
-            src="/assets/logo.png"
-            alt="E-Order"
-            className="h-14 w-14 rounded-lg object-contain"
-          />
-        </Link>
-      </div>
-      <div className="min-w-0 flex-1">
+      <div
+        className={`min-w-0 flex-1 ${isDashboard ? "flex flex-col items-center justify-center text-center" : ""}`}
+      >
         {fname && (
-          <p className="text-sm font-medium text-slate-900">
+          <p className="text-base font-semibold text-slate-900">
             {fname}
             {role && profilePic && (
-              <span className="ml-1 inline-flex align-middle text-sm font-normal text-slate-500">
+              <span className="ml-1.5 inline-flex align-middle">
                 <img
                   src={profilePic}
                   alt={userTypeId === 2 ? "Admin" : "Employee"}
@@ -81,7 +70,7 @@ export function DashboardHeader({ embedded, showBack }: Props) {
           </p>
         )}
         {storeTitle && (
-          <p className="text-sm text-slate-500">{storeTitle}</p>
+          <p className="text-base font-medium text-slate-600">{storeTitle}</p>
         )}
       </div>
     </header>

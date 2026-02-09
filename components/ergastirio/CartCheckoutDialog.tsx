@@ -12,9 +12,6 @@ interface ErgastirioCartCheckoutDialogProps {
   onOpenChange: (open: boolean) => void;
   children: ReactNode;
   headingTitle?: string;
-  showVatPricing?: boolean;
-  sumAmnt?: string;
-  isPricingLoading?: boolean;
 }
 
 export function ErgastirioCartCheckoutDialog({
@@ -22,9 +19,6 @@ export function ErgastirioCartCheckoutDialog({
   onOpenChange,
   children,
   headingTitle,
-  showVatPricing,
-  sumAmnt,
-  isPricingLoading,
 }: ErgastirioCartCheckoutDialogProps) {
   const { t } = useTranslation();
   return (
@@ -43,9 +37,6 @@ export function ErgastirioCartCheckoutDialog({
           <div className="relative pr-10">
             <ErgastirioHeading
               title={headingTitle ?? t("erg_order_details")}
-              showVatPricing={showVatPricing}
-              sumAmnt={sumAmnt}
-              isPricingLoading={isPricingLoading}
             />
             <Button
               variant="ghost"

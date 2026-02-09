@@ -3,22 +3,23 @@
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { getFirstBasketKey, useAddToCart } from "@/hooks/ergastirio/useAddToCart";
+import {
+  getFirstBasketKey,
+  useAddToCart,
+} from "@/hooks/ergastirio/useAddToCart";
 import { useGetCart } from "@/hooks/ergastirio/useGetCart";
-import type { AddToCartPayload, IProductItem } from "@/lib/ergastirio-interfaces";
+import type {
+  AddToCartPayload,
+  IProductItem,
+} from "@/lib/ergastirio-interfaces";
 import { buildUpdatedLines } from "@/lib/ergastirio-utils";
-import { useGetClientsAll } from "@/hooks/ergastirio/useGetClientsAll";
 import { ergastirioStore } from "@/stores/ergastirioStore";
 import { useTranslation } from "@/lib/i18n";
 
 export function useHandleOnSubmitProducts() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const { basketId, vat, currentBranch, setBasketId, setCurrentBranch } =
-    ergastirioStore();
-
-  const isSpecialAfm = vat === "999999999" || vat === "987654321";
-  const { refetch: refetchClientsAll } = useGetClientsAll(isSpecialAfm);
+  const { currentBranch, setBasketId } = ergastirioStore();
 
   const trdr = currentBranch?.TRDR;
   const branch = currentBranch?.BRANCH;
@@ -31,17 +32,18 @@ export function useHandleOnSubmitProducts() {
     qty: number,
     isDelete?: boolean
   ) => {
-    let effectiveBasketId = basketId;
+    // Read latest basketId from store so we reuse an already-fetched key (e.g. from a previous add in the same session)
+    let effectiveBasketId = ergastirioStore.getState().basketId;
 
-    if (currentBranch?.BASKET_KEY === "0") {
-      const t = Number(currentBranch.TRDR);
+    if (currentBranch?.BASKET_KEY === "0" && !effectiveBasketId) {
+      const trdrNum = Number(currentBranch.TRDR);
       const b = Number(currentBranch.BRANCH);
-      if (Number.isNaN(t) || Number.isNaN(b)) {
+      if (Number.isNaN(trdrNum) || Number.isNaN(b)) {
         toast.error(t("erg_toast_wrong_store"));
         return;
       }
       try {
-        const id = await getFirstBasketKey({ trdr: t, branch: b });
+        const id = await getFirstBasketKey({ trdr: trdrNum, branch: b });
         if (!id) {
           toast.error(t("erg_toast_basket_not_created"));
           return;
@@ -49,15 +51,6 @@ export function useHandleOnSubmitProducts() {
         setBasketId(id);
         effectiveBasketId = id;
         queryClient.invalidateQueries({ queryKey: ["ergastirio", "cart"] });
-        if (isSpecialAfm) {
-          const { data: res } = await refetchClientsAll();
-          const updated = res?.data?.find(
-            (x) =>
-              String(x.TRDR) === String(currentBranch.TRDR) &&
-              String(x.BRANCH) === String(currentBranch.BRANCH)
-          );
-          if (updated) setCurrentBranch(updated);
-        }
       } catch {
         toast.error(t("erg_toast_basket_create_error"));
         return;
@@ -92,9 +85,6 @@ export function useHandleOnSubmitProducts() {
 
     try {
       await addToCartMutation(payload);
-      if (vat === "999999999") {
-        queryClient.invalidateQueries({ queryKey: ["ergastirio", "cart-pricing"] });
-      }
       toast.success(
         isDelete ? t("erg_toast_removed_from_cart") : t("erg_toast_cart_updated")
       );

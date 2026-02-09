@@ -1,24 +1,33 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
+import { useAuthStore } from "@/stores/auth";
 import { listVariants, listItemVariants } from "@/lib/motion";
-import { Truck, ClipboardList, BarChart3, Settings } from "lucide-react";
+import {
+  Truck,
+  ClipboardList,
+  BarChart3,
+  Settings,
+  LogOut,
+} from "lucide-react";
+import { TileCard } from "@/components/ui/tile-card";
+import { Button } from "@/components/ui/button";
 
 const cards = [
-  {
-    href: "/all-suppliers",
-    icon: Truck,
-    labelKey: "dashboard_card_suppliers",
-    iconColor: "text-orange-500",
-  },
   {
     href: "/orders-of-the-day",
     icon: ClipboardList,
     labelKey: "dashboard_card_orders_of_day",
     iconColor: "text-green-600",
+  },
+  {
+    href: "/all-suppliers",
+    icon: Truck,
+    labelKey: "dashboard_card_suppliers",
+    iconColor: "text-orange-500",
   },
   {
     href: "#",
@@ -36,7 +45,13 @@ const cards = [
 
 export default function DashboardPage() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const logout = useAuthStore((s) => s.logout);
 
+  const handleLogout = () => {
+    logout();
+    router.replace("/");
+  };
 
   return (
     <main className="text-slate-900">
@@ -50,26 +65,43 @@ export default function DashboardPage() {
         />
       </div>
       <motion.div
-        className="mx-auto grid w-full max-w-none grid-cols-2 auto-rows-fr gap-4 px-4 sm:max-w-2xl"
+        className="mx-auto grid grid-cols-2 auto-rows-fr gap-4 max-w-xl"
         variants={listVariants}
         initial="hidden"
         animate="visible"
       >
-
-        {cards.map(({ href, icon: Icon, labelKey, iconColor }) => (
-          <motion.div key={labelKey} variants={listItemVariants} >
-            <Link
+        {cards.map(({ href, icon, labelKey, iconColor }) => (
+          <motion.div key={labelKey} variants={listItemVariants}>
+            <TileCard
               href={href}
-              className="flex h-full w-full flex-col items-center justify-center
-              gap-3 rounded-2xl bg-app-card/95 p-6 shadow-sm transition hover:shadow-md"
-            >
-              <Icon className={`h-12 w-12 shrink-0 ${iconColor}`} aria-hidden />
-              <span className="text-center text-sm font-medium text-slate-900">
-                {t(labelKey)}
-              </span>
-            </Link>
+              icon={icon}
+              label={t(labelKey)}
+              iconColor={iconColor}
+            />
           </motion.div>
         ))}
+      </motion.div>
+
+      <motion.div
+        className="mx-auto mt-8 w-full max-w-xl"
+        variants={listItemVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <Button
+          onClick={handleLogout}
+          className="group flex w-full items-center justify-center gap-3 rounded-2xl
+            border border-slate-200/80 bg-app-card/95 px-6 py-4 text-sm font-medium
+            text-slate-600 shadow-sm transition hover:border-red-200 hover:bg-red-50
+            hover:text-red-700 active:scale-[0.99]"
+          aria-label={t("logout")}
+        >
+          <LogOut
+            className="h-5 w-5 shrink-0 text-slate-500 transition-colors group-hover:text-red-600"
+            aria-hidden
+          />
+          {t("logout")}
+        </Button>
       </motion.div>
     </main>
   );

@@ -44,7 +44,6 @@ export function ErgastirioLogo({ pathname, clientData }: LogoProps) {
 
   if (
     pathname === "/ergastirio/stores" ||
-    pathname.startsWith("/ergastirio/clients") ||
     (currentBranch?.GROUP_CHAIN === "L'ARTIGIANO" &&
       pathname.startsWith("/ergastirio/products"))
   ) {

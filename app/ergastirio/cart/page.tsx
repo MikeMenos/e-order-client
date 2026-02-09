@@ -8,7 +8,6 @@ import { ErgastirioOrderSummary } from "@/components/ergastirio/OrderSummary";
 import Loading from "@/components/ui/loading";
 import { useAddToCart } from "@/hooks/ergastirio/useAddToCart";
 import { useGetCart } from "@/hooks/ergastirio/useGetCart";
-import { useGetCartPricing } from "@/hooks/ergastirio/useGetCartPricing";
 import type { AddToCartPayload, IProductItem } from "@/lib/ergastirio-interfaces";
 import { ergastirioStore } from "@/stores/ergastirioStore";
 import toast from "react-hot-toast";
@@ -18,7 +17,7 @@ const BASE_LINENUM = 9000001;
 
 export default function ErgastirioCartPage() {
   const { t } = useTranslation();
-  const { basketId, vat, currentBranch } = ergastirioStore();
+  const { basketId, currentBranch } = ergastirioStore();
   const [editedQuantities, setEditedQuantities] = useState<
     Record<number, number>
   >({});
@@ -32,45 +31,20 @@ export default function ErgastirioCartPage() {
     : undefined;
 
   const { data, isLoading } = useGetCart({ trdr, branch });
-  const isVat999999999 = vat === "999999999";
-  const { data: pricingData, isLoading: isPricingLoading } = useGetCartPricing({
-    basketId: basketId ?? undefined,
-    enabled: isVat999999999,
-  });
-
-  const enrichedCart = useMemo(() => {
-    if (!data?.data) return data;
-    if (!isVat999999999 || !pricingData?.data?.ITELINES) return data;
-    const itelines = pricingData.data.ITELINES;
-    const enriched = data.data.map((item: IProductItem) => {
-      const match = itelines.find(
-        (line: { MTRL: string }) => String(line.MTRL) === String(item.MTRL)
-      );
-      if (!match) return item;
-      return {
-        ...item,
-        LINEVAL: match.LINEVAL,
-        SXPERC: match.SXPERC,
-      };
-    });
-    return { ...data, data: enriched };
-  }, [data, isVat999999999, pricingData?.data?.ITELINES]);
-
-  const sumAmnt = pricingData?.data?.SALDOC?.[0]?.SUMAMNT;
 
   const cartForDisplay = useMemo(() => {
-    if (!enrichedCart?.data) return enrichedCart;
+    if (!data?.data) return data;
     const hasEdits = Object.keys(editedQuantities).length > 0;
-    if (!hasEdits) return enrichedCart;
+    if (!hasEdits) return data;
     return {
-      ...enrichedCart,
-      data: enrichedCart.data.map((item: IProductItem) => {
+      ...data,
+      data: data.data.map((item: IProductItem) => {
         const edited = editedQuantities[Number(item.MTRL)];
         if (edited === undefined) return item;
         return { ...item, Qty2: edited };
       }),
     };
-  }, [enrichedCart, editedQuantities]);
+  }, [data, editedQuantities]);
 
   const { mutateAsync: addToCart, isPending } = useAddToCart();
 
@@ -98,12 +72,7 @@ export default function ErgastirioCartPage() {
 
       const series =
         currentBranch.GROUP_CHAIN === "L'ARTIGIANO" ? "7020" : "7024";
-      const orderComments =
-        vat === "999999999"
-          ? `Order16: ${c}`
-          : vat === "987654321"
-            ? `FromC: ${c}`
-            : c;
+      const orderComments = c;
 
       const orderPayload: AddToCartPayload = {
         service: "setData",
@@ -170,14 +139,7 @@ export default function ErgastirioCartPage() {
         // toast handled by useAddToCart
       }
     },
-    [
-      addToCart,
-      basketId,
-      currentBranch,
-      data?.data,
-      editedQuantities,
-      vat,
-    ]
+    [addToCart, basketId, currentBranch, data?.data, editedQuantities]
   );
 
   const handleQtyEdit = useCallback((product: IProductItem, newQty: number) => {
@@ -211,18 +173,9 @@ export default function ErgastirioCartPage() {
         <ErgastirioOrderSummary
           items={cartForDisplay}
           onQtyChange={handleQtyEdit}
-          showVatPricing={isVat999999999}
-          isPricingLoading={isPricingLoading}
-          sumAmnt={sumAmnt}
         />
       </div>
-      <ErgastirioCartCheckoutDialog
-        open={checkoutOpen}
-        onOpenChange={setCheckoutOpen}
-        showVatPricing={isVat999999999}
-        sumAmnt={sumAmnt}
-        isPricingLoading={isPricingLoading}
-      >
+      <ErgastirioCartCheckoutDialog open={checkoutOpen} onOpenChange={setCheckoutOpen}>
         {orderDetailsContent}
       </ErgastirioCartCheckoutDialog>
     </>
