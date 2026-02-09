@@ -7,6 +7,7 @@ import Loading from "@/components/ui/loading";
 import { ergastirioStore } from "@/stores/ergastirioStore";
 import { useGetFamilies } from "@/hooks/ergastirio/useGetFamilies";
 import { ERGASTIRIO_BASE } from "@/lib/ergastirio-constants";
+import "../../app/globals.css";
 
 export default function ErgastirioHomePage() {
   const router = useRouter();

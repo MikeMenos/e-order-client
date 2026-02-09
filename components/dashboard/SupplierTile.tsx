@@ -18,6 +18,14 @@ type Props = {
   isExpanded?: boolean;
   /** When false, hide delivery date line and week delivery days (e.g. on all-suppliers). */
   showDeliveryInfo?: boolean;
+  /** When false, hide basket status pill and show subTitle under title (e.g. on all-suppliers). */
+  showBasketStatus?: boolean;
+  /** When provided, tile is a link to this href (default: /suppliers/[uid]?refDate=). */
+  href?: string;
+  /** When provided, tile is a button and this is called on click (e.g. manage-suppliers menu). */
+  onClick?: () => void;
+  /** When "settings", use same card style as /settings (centered, rounded-2xl bg-app-card/95 p-6). */
+  tileStyle?: "default" | "settings";
 };
 
 const STATUS_COMPLETED = "Ολοκληρώθηκε";
@@ -65,26 +73,55 @@ function getStatusStyle(descr: string | null | undefined): {
   };
 }
 
+const tileClassNameDefault =
+  "flex flex-col rounded-2xl border border-slate-200/80 bg-app-card/95 shadow-sm cursor-pointer transition hover:border-brand-400/70 hover:shadow-md";
+const tileClassNameSettings =
+  "flex h-full w-full flex-col items-center justify-center gap-3 rounded-2xl bg-app-card/95 p-6 shadow-sm transition hover:shadow-md cursor-pointer";
+
 export function SupplierTile({
   supplier,
   refDate,
   showDeliveryInfo = true,
+  showBasketStatus = true,
+  href: hrefProp,
+  onClick,
+  tileStyle = "default",
 }: Props) {
   const { t } = useTranslation();
-  const supplierHref = `/suppliers/${encodeURIComponent(
+  const defaultHref = `/suppliers/${encodeURIComponent(
     supplier.supplierUID,
   )}?refDate=${encodeURIComponent(refDate)}`;
+  const href = hrefProp ?? defaultHref;
 
   const statusDescr = supplier.basketIconStatusDescr ?? "";
   const statusStyle = getStatusStyle(statusDescr);
+  const isSettingsStyle = tileStyle === "settings";
 
-  return (
-    <Link
-      href={supplierHref}
-      className="flex flex-col rounded-2xl border border-slate-200/80 bg-app-card/95 shadow-sm cursor-pointer transition hover:border-brand-400/70 hover:shadow-md"
-    >
-      {/* Top: logo + title + next delivery (hidden on all-suppliers) */}
-      <div className="flex items-center gap-3 p-4 pb-2">
+  const content = isSettingsStyle ? (
+    <>
+      {supplier.logo ? (
+        <span className="inline-flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-white/80">
+          <img
+            src={supplier.logo}
+            alt={supplier.title ?? ""}
+            className="h-full w-full object-contain"
+          />
+        </span>
+      ) : (
+        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
+          <span className="text-lg font-semibold text-slate-500">
+            {(supplier.title ?? "").charAt(0).toUpperCase()}
+          </span>
+        </span>
+      )}
+      <span className="text-center text-sm font-medium text-slate-900 line-clamp-2">
+        {supplier.title}
+      </span>
+    </>
+  ) : (
+    <>
+      {/* Top: logo + title + subTitle or delivery (delivery hidden on all-suppliers) */}
+      <div className="flex items-center gap-3 px-4 py-2 pb-2">
         {supplier.logo && (
           <img
             src={supplier.logo}
@@ -101,18 +138,25 @@ export function SupplierTile({
               {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
             </p>
           )}
+          {!showBasketStatus && supplier.subTitle && (
+            <p className="mt-0.5 text-sm text-slate-500">
+              {supplier.subTitle}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Middle: status pill */}
-      <div className="flex items-center gap-2 px-4 py-2">
-        <span
-          className={`inline-flex w-full items-center gap-2 rounded-lg px-2 py-1.5 font-medium ${statusStyle.bg} ${statusStyle.text}`}
-        >
-          {statusStyle.icon}
-          <span>{statusDescr || "—"}</span>
-        </span>
-      </div>
+      {/* Middle: status pill (hidden on all-suppliers) */}
+      {showBasketStatus && (
+        <div className="flex items-center gap-2 px-4 py-2">
+          <span
+            className={`inline-flex w-full items-center gap-2 rounded-lg px-2 py-1.5 font-medium ${statusStyle.bg} ${statusStyle.text}`}
+          >
+            {statusStyle.icon}
+            <span>{statusDescr || "—"}</span>
+          </span>
+        </div>
+      )}
 
       {/* Bottom: order days (hidden on all-suppliers) */}
       {showDeliveryInfo && supplier.weekDeliveryDaysText && (
@@ -123,6 +167,22 @@ export function SupplierTile({
           </span>
         </div>
       )}
-    </Link>
+    </>
   );
+
+  const tileClassName = isSettingsStyle ? tileClassNameSettings : tileClassNameDefault;
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className={`w-full text-left ${tileClassName}`}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return <Link href={href} className={tileClassName}>{content}</Link>;
 }

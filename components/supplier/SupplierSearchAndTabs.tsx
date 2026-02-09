@@ -35,7 +35,7 @@ export function SupplierSearchAndTabs({
           className="h-9 w-full border border-slate-200 bg-white px-3 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
         />
       </div>
-      {sections.length > 0 && (
+      {sections.length > 1 && (
         <div className="-mx-4 flex flex-col gap-0 bg-app-card/95">
           <Tabs value={value} onValueChange={onTabClick}>
             <motion.div

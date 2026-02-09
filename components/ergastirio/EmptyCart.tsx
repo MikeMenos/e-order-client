@@ -29,7 +29,7 @@ export default function ErgastirioEmptyCart() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex justify-center">
-        <Button asChild className="rounded-xl bg-brand-500 hover:bg-brand-600">
+        <Button className="rounded-xl bg-brand-500 hover:bg-brand-600">
           <Link href={ERGASTIRIO_BASE}>{t("erg_cart_back_home")}</Link>
         </Button>
       </CardContent>

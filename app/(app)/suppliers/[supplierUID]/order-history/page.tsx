@@ -61,9 +61,6 @@ export default function SupplierOrderHistoryPage() {
             {t("supplier_order_history_empty")}
           </p>
         )}
-        <h1 className="text-lg font-semibold text-slate-900 my-2">
-          {t("supplier_order_history_title")}
-        </h1>
         {orders.length > 0 && (
           <motion.div
             className="space-y-2"

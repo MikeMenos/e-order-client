@@ -1,12 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Store, ArrowLeft, Users, User, UserPlus } from "lucide-react";
+import { Store, Users, User, UserPlus } from "lucide-react";
 
 import { useAuthStore } from "@/stores/auth";
 import { useTranslation } from "@/lib/i18n";
@@ -14,7 +13,7 @@ import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { listVariants, listItemVariants } from "@/lib/motion";
 import { StoreSelectDialog } from "@/components/auth/StoreSelectDialog";
-import { Button } from "@/components/ui/button";
+import { TileCard } from "@/components/ui/tile-card";
 
 export default function SettingsPage() {
   const { t } = useTranslation();
@@ -72,95 +71,49 @@ export default function SettingsPage() {
 
   return (
     <main className="text-slate-900">
-      <div className="mx-auto flex max-w-md flex-col px-4 pb-8 pt-6">
-        <div className="mb-5 flex items-center gap-3">
-          <Button
-            type="button"
-            onClick={() => router.back?.()}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100/70 hover:bg-slate-100 p-0"
-            aria-label={t("aria_back")}
-          >
-            <ArrowLeft className="h-5 w-5 text-slate-700" aria-hidden />
-          </Button>
-
-          <h1 className="text-xl font-semibold text-slate-900">
-            {t("settings_title")}
-          </h1>
-        </div>
-
+      <div className="mx-auto flex max-w-xl flex-col p-4">
         <motion.div
           className="grid grid-cols-2 auto-rows-fr gap-4"
           variants={listVariants}
           initial="hidden"
           animate="visible"
         >
-          <motion.div variants={listItemVariants}>
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={() => roles.length > 0 && setStoreDialogOpen(true)}
-              onKeyDown={(e) => {
-                if ((e.key === "Enter" || e.key === " ") && roles.length > 0) {
-                  e.preventDefault();
-                  setStoreDialogOpen(true);
-                }
-              }}
-              className={`flex h-full w-full flex-col items-center justify-center gap-3 rounded-2xl bg-app-card/95 p-6 shadow-sm transition hover:shadow-md ${
-                roles.length === 0
-                  ? "cursor-not-allowed opacity-50"
-                  : "cursor-pointer"
-              }`}
-            >
-              <Store
-                className="h-12 w-12 shrink-0 text-slate-700"
-                aria-hidden
+          {roles.length > 1 && (
+            <motion.div variants={listItemVariants}>
+              <TileCard
+                icon={Store}
+                label={t("settings_switch_store")}
+                iconColor="text-slate-700"
+                onClick={() => setStoreDialogOpen(true)}
               />
-              <span className="text-center text-sm font-medium text-slate-900">
-                {t("settings_switch_store")}
-              </span>
-            </div>
-          </motion.div>
+            </motion.div>
+          )}
 
           <motion.div variants={listItemVariants}>
-            <Link
+            <TileCard
               href="/settings/manage-suppliers"
-              className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-2xl bg-app-card/95 p-6 shadow-sm transition hover:shadow-md"
-            >
-              <Users
-                className="h-12 w-12 shrink-0 text-orange-500"
-                aria-hidden
-              />
-              <span className="text-center text-sm font-medium text-slate-900">
-                {t("settings_manage_suppliers")}
-              </span>
-            </Link>
+              icon={Users}
+              label={t("settings_manage_suppliers")}
+              iconColor="text-orange-500"
+            />
           </motion.div>
 
           <motion.div variants={listItemVariants}>
-            <Link
+            <TileCard
               href="/settings/account"
-              className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-2xl bg-app-card/95 p-6 shadow-sm transition hover:shadow-md"
-            >
-              <User className="h-12 w-12 shrink-0 text-slate-700" aria-hidden />
-              <span className="text-center text-sm font-medium text-slate-900">
-                {t("settings_edit_account")}
-              </span>
-            </Link>
+              icon={User}
+              label={t("settings_edit_account")}
+              iconColor="text-slate-700"
+            />
           </motion.div>
 
           <motion.div variants={listItemVariants}>
-            <Link
+            <TileCard
               href="/users/add"
-              className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-2xl bg-app-card/95 p-6 shadow-sm transition hover:shadow-md"
-            >
-              <UserPlus
-                className="h-12 w-12 shrink-0 text-blue-600"
-                aria-hidden
-              />
-              <span className="text-center text-sm font-medium text-slate-900">
-                {t("settings_create_user")}
-              </span>
-            </Link>
+              icon={UserPlus}
+              label={t("settings_create_user")}
+              iconColor="text-blue-600"
+            />
           </motion.div>
         </motion.div>
       </div>

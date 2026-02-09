@@ -205,8 +205,8 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
           {/* Reserve row: label + controls (larger buttons and input) */}
           <div className="flex items-center gap-1.5 text-xs text-slate-500 md:mb-0">
             <span className="w-16">{t("supplier_reserve")}</span>
-            <div className="inline-flex items-center gap-0.5 rounded border border-slate-200 bg-slate-50 px-1.5 py-1">
-              <Button
+            {/* <div className="inline-flex items-center gap-0.5 rounded border border-slate-200 bg-slate-50 px-1.5 py-1"> */}
+            {/* <Button
                 type="button"
                 variant="ghost"
                 size="icon"
@@ -216,18 +216,18 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
                 disabled={isLoading}
               >
                 -
-              </Button>
-              <Input
-                type="number"
-                min={0}
-                value={reserveQtyDisplay}
-                onChange={(e) => setReserveFromUser(e.target.value)}
-                placeholder="0"
-                className="h-7 w-12 border-0 bg-transparent p-0 text-center text-sm [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                aria-label={t("aria_reserve_quantity")}
-                disabled={isLoading}
-              />
-              <Button
+              </Button> */}
+            <Input
+              type="number"
+              min={0}
+              value={reserveQtyDisplay}
+              onChange={(e) => setReserveFromUser(e.target.value)}
+              placeholder="0"
+              className="h-7 w-12 border-brand-200 bg-transparent p-0 rounded text-center text-sm [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              aria-label={t("aria_reserve_quantity")}
+              disabled={isLoading}
+            />
+            {/* <Button
                 type="button"
                 variant="ghost"
                 size="icon"
@@ -237,8 +237,8 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
                 disabled={isLoading}
               >
                 +
-              </Button>
-            </div>
+              </Button> */}
+            {/* </div> */}
           </div>
           {/* Basket row: total qty in basket (user can increment or decrement) */}
           <div className="flex items-center gap-1.5 text-xs font-medium text-slate-900">
@@ -261,7 +261,7 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
                 value={basketQtyDisplay}
                 onChange={(e) => setBasketFromUser(e.target.value)}
                 placeholder="0"
-                className="h-7 w-12 border-0 bg-transparent p-0 text-center text-sm [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                className="h-7 w-12 border-0 bg-transparent p-0 text-center text-sm rounded [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                 aria-label={t("aria_basket_quantity")}
                 disabled={isLoading}
               />

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "../../lib/i18n";
 import { listVariants, listItemVariants } from "../../lib/motion";
 import type { Supplier } from "./types";
+import { Button } from "../ui/button";
 import { SuppliersSectionHeader } from "./SuppliersSectionHeader";
 import { SuppliersSearchBar } from "./SuppliersSearchBar";
 import { SupplierTile } from "./SupplierTile";
@@ -15,6 +16,8 @@ type Props = {
   isLoading: boolean;
   isError: boolean;
   errorMessage?: string;
+  /** When provided, each tile is a button and this is called instead of linking (e.g. manage-suppliers). */
+  onSupplierClick?: (supplier: Supplier) => void;
 };
 
 export function SuppliersSection({
@@ -23,6 +26,7 @@ export function SuppliersSection({
   isLoading,
   isError,
   errorMessage,
+  onSupplierClick,
 }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAscending, setIsAscending] = useState(true);
@@ -44,7 +48,11 @@ export function SuppliersSection({
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      data = data.filter((s) => s.title?.toLowerCase().includes(q));
+      data = data.filter(
+        (s) =>
+          s.title?.toLowerCase().includes(q) ||
+          s.subTitle?.toLowerCase().includes(q),
+      );
     }
 
     if (statusFilter) {
@@ -65,6 +73,19 @@ export function SuppliersSection({
         const av = getTimeValue(a.labelOrderTimeExpiresAt ?? undefined);
         const bv = getTimeValue(b.labelOrderTimeExpiresAt ?? undefined);
         return isAscending ? av - bv : bv - av;
+      });
+    }
+
+    // Alphabetical by title on all-suppliers and manage-suppliers
+    if (
+      pathname === "/all-suppliers" ||
+      pathname === "/settings/manage-suppliers"
+    ) {
+      data.sort((a, b) => {
+        const na = (a.title ?? "").toLowerCase();
+        const nb = (b.title ?? "").toLowerCase();
+        const cmp = na.localeCompare(nb);
+        return isAscending ? cmp : -cmp;
       });
     }
 
@@ -96,21 +117,41 @@ export function SuppliersSection({
   return (
     <section>
       <div className="mb-2 flex flex-col gap-2">
-        {pathname !== "/all-suppliers" && (
-          <p className="text-xl text-slate-900 mt-2 text-center">
-            {isToday ? (
-              <>
-                <span className="font-medium text-green-600">
-                  {t("calendar_today")}
-                </span>
-                <span> – {dateFormatted}</span>
-              </>
-            ) : (
-              dateFormatted
-            )}
-          </p>
-        )}
-        <SuppliersSearchBar value={searchQuery} onChange={setSearchQuery} />
+        {pathname !== "/all-suppliers" &&
+          pathname !== "/settings/manage-suppliers" && (
+            <p className="text-xl text-slate-900 mt-2 text-center">
+              {isToday ? (
+                <>
+                  <span className="font-medium text-green-600">
+                    {t("calendar_today")}
+                  </span>
+                  <span> – {dateFormatted}</span>
+                </>
+              ) : (
+                dateFormatted
+              )}
+            </p>
+          )}
+        <div className="flex h-9 items-center gap-2 mt-2">
+          <SuppliersSearchBar value={searchQuery} onChange={setSearchQuery} />
+          {(pathname === "/all-suppliers" ||
+            pathname === "/settings/manage-suppliers") && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-9 shrink-0 gap-1 border-slate-300 text-slate-700"
+              aria-label={
+                isAscending
+                  ? t("suppliers_sort_alpha_asc")
+                  : t("suppliers_sort_alpha_desc")
+              }
+              onClick={() => setIsAscending((v) => !v)}
+            >
+              {isAscending ? "A → Z" : "Z → A"}
+            </Button>
+          )}
+        </div>
         <SuppliersSectionHeader
           isAscending={isAscending}
           onSortToggle={() => setIsAscending((v) => !v)}
@@ -133,7 +174,7 @@ export function SuppliersSection({
         <p className="text-sm text-slate-400">{t("suppliers_empty")}</p>
       ) : (
         <motion.div
-          className="space-y-3"
+          className="space-y-2"
           variants={listVariants}
           initial="hidden"
           animate="visible"
@@ -143,7 +184,21 @@ export function SuppliersSection({
               <SupplierTile
                 supplier={s}
                 refDate={refDate}
-                showDeliveryInfo={pathname !== "/all-suppliers"}
+                showDeliveryInfo={
+                  pathname !== "/all-suppliers" &&
+                  pathname !== "/settings/manage-suppliers"
+                }
+                showBasketStatus={
+                  pathname !== "/all-suppliers" &&
+                  pathname !== "/settings/manage-suppliers"
+                }
+                tileStyle="default"
+                href={
+                  onSupplierClick
+                    ? undefined
+                    : `/suppliers/${encodeURIComponent(s.supplierUID)}?refDate=${encodeURIComponent(refDate)}`
+                }
+                onClick={onSupplierClick ? () => onSupplierClick(s) : undefined}
               />
             </motion.div>
           ))}

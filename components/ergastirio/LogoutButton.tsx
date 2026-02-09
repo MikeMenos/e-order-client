@@ -18,7 +18,7 @@ export function ErgastirioLogoutButton({
   const { t } = useTranslation();
   const showMobile =
     variant === "mobile" || variant === "both"
-      ? pathname === "/ergastirio" || pathname === "/ergastirio/stores"
+      ? pathname === "/ergastirio/stores"
       : false;
   const showDesktop = variant === "desktop" || variant === "both";
 

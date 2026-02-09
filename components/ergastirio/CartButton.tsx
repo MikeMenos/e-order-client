@@ -13,7 +13,7 @@ interface CartButtonProps {
 export function ErgastirioCartButton({ cartCount }: CartButtonProps) {
   const { t } = useTranslation();
   return (
-    <Button variant="ghost" size="icon" asChild>
+    <Button variant="ghost" size="icon">
       <Link
         href={`${ERGASTIRIO_BASE}/cart`}
         aria-label={t("erg_cart_aria")}

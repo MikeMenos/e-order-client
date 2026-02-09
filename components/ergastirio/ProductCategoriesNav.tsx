@@ -27,7 +27,6 @@ export function ErgastirioProductCategoriesNav({
         return (
           <Button
             key={family.FAMILY}
-            asChild
             variant="ghost"
             size="sm"
             className={`whitespace-nowrap text-xs font-medium transition-colors duration-300 ${

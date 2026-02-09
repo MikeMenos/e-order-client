@@ -22,7 +22,6 @@ export default function ErgastirioProductsFamilyPage() {
   const router = useRouter();
   const family = decodeURIComponent(String(params?.family ?? "")).trim();
   const currentBranch = ergastirioStore((s) => s.currentBranch);
-  const vat = ergastirioStore((s) => s.vat);
   const trdr = currentBranch?.TRDR ? String(currentBranch.TRDR) : undefined;
   const branch = currentBranch?.BRANCH
     ? String(currentBranch.BRANCH)
@@ -46,7 +45,7 @@ export default function ErgastirioProductsFamilyPage() {
     return data?.map((product) => {
       const productId = Number(product.ITEMUID);
       const matchingCartLine = cartData?.data?.find(
-        (line: IProductItem) => Number(line.MTRL) === productId
+        (line: IProductItem) => Number(line.MTRL) === productId,
       );
       return {
         ...product,
@@ -62,7 +61,7 @@ export default function ErgastirioProductsFamilyPage() {
     const q = filter.trim().toLowerCase();
     if (!q) return productsWithQty;
     return productsWithQty.filter((p) =>
-      (p.TITLE ?? "").toLowerCase().includes(q)
+      (p.TITLE ?? "").toLowerCase().includes(q),
     );
   }, [productsWithQty, filter]);
 
@@ -107,7 +106,6 @@ export default function ErgastirioProductsFamilyPage() {
                     product={item}
                     key={item.CODE}
                     onSubmitProducts={onSubmitProducts}
-                    showWholesalePrice={vat === "999999999"}
                   />
                 ))}
               </div>
@@ -127,7 +125,6 @@ export default function ErgastirioProductsFamilyPage() {
                     product={item}
                     key={item.CODE}
                     onSubmitProducts={onSubmitProducts}
-                    showWholesalePrice={vat === "999999999"}
                   />
                 ))}
               </div>
