@@ -294,4 +294,20 @@ export function SupplierTile({
       {content}
     </Link>
   );
+
+  const tileClassName = isSettingsStyle ? tileClassNameSettings : tileClassNameDefault;
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className={`w-full text-left ${tileClassName}`}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return <Link href={href} className={tileClassName}>{content}</Link>;
 }
