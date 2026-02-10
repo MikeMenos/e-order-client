@@ -24,11 +24,20 @@ function toNonNegativeNum(s: string): number {
 }
 
 export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
-  const { id, title, image, qty: initialQty } = product;
+  const {
+    id,
+    title,
+    image,
+    qty: initialQty,
+    suggestedQty: initialSuggestedQty,
+  } = product;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const [reserveQtyDisplay, setReserveQtyDisplay] = useState("");
+  const [reserveQtyDisplay, setReserveQtyDisplay] = useState(() => {
+    const q = Math.max(0, Number(initialSuggestedQty) || 0);
+    return q === 0 ? "" : String(q);
+  });
   /** Basket input = total qty in basket for this product (from basket-items). User can increment or decrement; we send this total. */
   const [basketQtyDisplay, setBasketQtyDisplay] = useState(() => {
     const q = Math.max(0, Number(initialQty) || 0);
@@ -36,7 +45,7 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const lastSuggestedQtyRef = useRef<number>(0);
+  const lastSuggestedQtyRef = useRef<number>(initialSuggestedQty ?? 0);
   const reserveDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const basketDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const skipNextBasketDebounceRef = useRef(false);
@@ -49,14 +58,6 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
   const setReserveFromUser = useCallback((value: string) => {
     reserveTouchedRef.current = true;
     setReserveQtyDisplay(value);
-  }, []);
-
-  const setReserveClamped = useCallback((delta: number) => {
-    reserveTouchedRef.current = true;
-    setReserveQtyDisplay((prev) => {
-      const n = toNonNegativeNum(prev) + delta;
-      return n <= 0 ? "" : String(n);
-    });
   }, []);
 
   const setBasketFromUser = useCallback((value: string) => {
@@ -184,6 +185,10 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
     setBasketQtyDisplay(q === 0 ? "" : String(q));
     skipNextBasketDebounceRef.current = true;
   }, [initialQty]);
+
+  useEffect(() => {
+    lastSuggestedQtyRef.current = initialSuggestedQty ?? 0;
+  }, [initialSuggestedQty]);
 
   return (
     <article

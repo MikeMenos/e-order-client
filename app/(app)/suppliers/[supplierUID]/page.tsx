@@ -48,6 +48,7 @@ export default function SupplierPage() {
           category: p.productCategories ?? "OTHER",
           price: p.price,
           qty: p.basketQty ?? 0,
+          suggestedQty: p.basketSuggestedQty ?? null,
           isFavorite:
             p.isFavByShopper || p.isFavBySupplier || p.isFavByPlatform || false,
           favIconColor: p.favIconColor ?? "#9CBDFA",

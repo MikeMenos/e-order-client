@@ -16,6 +16,7 @@ import type {
 
 type Props = {
   supplierUID: string;
+  onHasItemsChange?: (hasItems: boolean) => void;
 };
 
 const BASKET_ITEMS_QUERY_KEY = "basket-items";
@@ -45,7 +46,7 @@ function BasketItemRow({
   const { t } = useTranslation();
   return (
     <li className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2">
-      {item.productImage ? (
+      {/* {item.productImage ? (
         <img
           src={item.productImage}
           alt=""
@@ -53,7 +54,7 @@ function BasketItemRow({
         />
       ) : (
         <div className="h-12 w-12 shrink-0 rounded bg-slate-200" />
-      )}
+      )} */}
       <div className="min-w-0 flex-1">
         <p className="font-medium text-slate-900">{item.productTitle || "—"}</p>
         <div className="mt-0.5 flex items-center gap-2 text-sm text-slate-600">
@@ -82,7 +83,10 @@ function BasketItemRow({
   );
 }
 
-export function CheckoutBasketSection({ supplierUID }: Props) {
+export function CheckoutBasketSection({
+  supplierUID,
+  onHasItemsChange,
+}: Props) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { data, isLoading, isError, error } = useBasketItems(supplierUID);
@@ -94,6 +98,11 @@ export function CheckoutBasketSection({ supplierUID }: Props) {
     data?.basketsList?.find((b) => b.supplierUID === supplierUID) ??
     data?.basketsList?.[0];
   const items = basket?.items ?? [];
+  const hasItems = items.length > 0;
+
+  if (onHasItemsChange) {
+    onHasItemsChange(hasItems);
+  }
 
   const handleRemove = async (basketUID: string) => {
     setRemovingBasketUID(basketUID);

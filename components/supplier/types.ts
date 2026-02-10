@@ -7,6 +7,7 @@ export type SupplierProduct = {
   category: string;
   price: number;
   qty: number;
+  suggestedQty: number | null;
   isFavorite: boolean;
   favIconColor: string;
   favIconMode: string;

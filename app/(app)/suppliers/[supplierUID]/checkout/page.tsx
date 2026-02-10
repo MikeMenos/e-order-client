@@ -38,6 +38,7 @@ export default function SupplierCheckoutPage() {
   const [comments, setComments] = useState("");
   const [deliveryDate, setDeliveryDate] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasBasketItems, setHasBasketItems] = useState(false);
 
   const handleTemporarySave = () => {
     // Placeholder: API will be added later
@@ -73,7 +74,10 @@ export default function SupplierCheckoutPage() {
         supplierName={supplier?.title ?? null}
       />
 
-      <CheckoutBasketSection supplierUID={supplierUID} />
+      <CheckoutBasketSection
+        supplierUID={supplierUID}
+        onHasItemsChange={setHasBasketItems}
+      />
 
       <CheckoutDeliverySection
         selectedDate={selectedDate ?? null}
@@ -92,6 +96,7 @@ export default function SupplierCheckoutPage() {
         onTemporarySave={handleTemporarySave}
         onSubmitOrder={handleSubmitOrder}
         isSubmitting={isSubmitting}
+        isSubmitDisabled={!hasBasketItems}
       />
     </main>
   );

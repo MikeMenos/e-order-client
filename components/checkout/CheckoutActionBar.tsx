@@ -10,6 +10,7 @@ export type CheckoutActionBarProps = {
   onTemporarySave: () => void;
   onSubmitOrder: () => void;
   isSubmitting?: boolean;
+  isSubmitDisabled?: boolean;
 };
 
 export function CheckoutActionBar({
@@ -18,6 +19,7 @@ export function CheckoutActionBar({
   onTemporarySave,
   onSubmitOrder,
   isSubmitting = false,
+  isSubmitDisabled = false,
 }: CheckoutActionBarProps) {
   const { t } = useTranslation();
   return (
@@ -35,7 +37,7 @@ export function CheckoutActionBar({
         type="button"
         className="w-full"
         onClick={onSubmitOrder}
-        disabled={isSubmitting}
+        disabled={isSubmitting || isSubmitDisabled}
       >
         {isSubmitting ? (
           <>
