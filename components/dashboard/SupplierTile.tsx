@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTranslation } from "../../lib/i18n";
 import {
   Calendar,
@@ -9,8 +10,10 @@ import {
   AlertCircle,
   Clock,
   MoreHorizontal,
+  ChevronDown,
 } from "lucide-react";
 import type { Supplier } from "./types";
+import { Button } from "../ui/button";
 
 type Props = {
   supplier: Supplier;
@@ -88,6 +91,16 @@ export function SupplierTile({
   tileStyle = "default",
 }: Props) {
   const { t } = useTranslation();
+  const pathname = usePathname();
+  const isAllSuppliersPage = pathname === "/all-suppliers";
+  const isOrdersOfDayPage = pathname === "/orders-of-the-day";
+  const [isMobileExtraOpen, setIsMobileExtraOpen] = useState(false);
+
+  const hasExtraCounters =
+    isAllSuppliersPage &&
+    ((supplier.counterOpenBaskets ?? null) !== null ||
+      (supplier.counterTodayOrders ?? null) !== null);
+
   const defaultHref = `/suppliers/${encodeURIComponent(
     supplier.supplierUID,
   )}?refDate=${encodeURIComponent(refDate)}`;
@@ -121,30 +134,120 @@ export function SupplierTile({
   ) : (
     <>
       {/* Top: logo + title + subTitle or delivery (delivery hidden on all-suppliers) */}
-      <div className="flex items-center gap-3 px-4 py-2 pb-2">
-        {supplier.logo && (
-          <img
-            src={supplier.logo}
-            alt={supplier.title ?? ""}
-            className="h-10 w-10 shrink-0 rounded-full bg-slate-100 object-contain"
-          />
-        )}
-        <div className="min-w-0 flex-1">
-          <p className="font-bold uppercase tracking-wide text-slate-900">
-            {supplier.title}
-          </p>
-          {showDeliveryInfo && supplier.nextAvailDeliveryText && (
-            <p className="mt-0.5 text-sm text-slate-500">
-              {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
-            </p>
+      <div
+        className={`flex items-center gap-3 px-4 py-2 pb-2 ${
+          hasExtraCounters ? "md:items-center md:justify-between" : ""
+        }`}
+      >
+        <div className="flex items-start gap-3 flex-1">
+          {supplier.logo && (
+            <img
+              src={supplier.logo}
+              alt={supplier.title ?? ""}
+              className="h-10 w-10 shrink-0 rounded-full bg-slate-100 object-contain"
+            />
           )}
-          {!showBasketStatus && supplier.subTitle && (
-            <p className="mt-0.5 text-sm text-slate-500">
-              {supplier.subTitle}
-            </p>
-          )}
+          <div className="min-w-0 flex-1">
+            {!showBasketStatus && supplier.subTitle && (
+              <p className="font-bold uppercase tracking-wide text-slate-900">
+                {supplier.subTitle}
+              </p>
+            )}
+
+            {/* Title + delivery info ordering:
+                - On orders-of-the-day: show title first, then delivery (as before).
+                - Elsewhere: keep delivery first, then title. */}
+            {isOrdersOfDayPage ? (
+              <>
+                <p className="font-bold uppercase tracking-wide text-slate-900">
+                  {supplier.title}
+                </p>
+                {showDeliveryInfo && supplier.nextAvailDeliveryText && (
+                  <p className="mt-0.5 text-sm text-slate-500">
+                    {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
+                  </p>
+                )}
+              </>
+            ) : (
+              <>
+                {showDeliveryInfo && supplier.nextAvailDeliveryText && (
+                  <p className="mt-0.5 text-sm text-slate-500">
+                    {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
+                  </p>
+                )}
+                <p className="mt-0.5 text-sm text-slate-500 ">
+                  {supplier.title}
+                </p>
+              </>
+            )}
+          </div>
         </div>
+
+        {/* Desktop extra counters (only on all-suppliers) */}
+        {hasExtraCounters && (
+          <div className="hidden md:flex flex-col items-end gap-0.5 text-sm text-slate-600 ml-3">
+            {supplier.counterOpenBaskets !== null &&
+              supplier.counterOpenBaskets !== undefined && (
+                <span>
+                  {t("suppliers_baskets")} ({supplier.counterOpenBaskets})
+                </span>
+              )}
+            {supplier.counterTodayOrders !== null &&
+              supplier.counterTodayOrders !== undefined && (
+                <span>
+                  {t("suppliers_orders")} ({supplier.counterTodayOrders})
+                </span>
+              )}
+          </div>
+        )}
+
+        {/* Mobile expand arrow (only on all-suppliers) */}
+        {hasExtraCounters && (
+          <Button
+            type="button"
+            variant="ghost"
+            className="ml-2 inline-flex items-center justify-center rounded-full p-1 text-slate-500 hover:text-slate-700 md:hidden"
+            onClick={(e) => {
+              // Prevent navigating the link when toggling the extra info
+              e.preventDefault();
+              e.stopPropagation();
+              setIsMobileExtraOpen((v) => !v);
+            }}
+            aria-label={
+              isMobileExtraOpen ? "Hide supplier info" : "Show supplier info"
+            }
+          >
+            <ChevronDown
+              className={`h-6 w-6 transform transition-transform ${
+                isMobileExtraOpen ? "rotate-180" : ""
+              }`}
+              aria-hidden
+            />
+          </Button>
+        )}
       </div>
+
+      {/* Mobile extra counters (expandable, only on all-suppliers) */}
+      {hasExtraCounters && (
+        <div
+          className={`border-t border-slate-100 px-4 py-2 text-sm text-slate-600 space-y-1 md:hidden ${
+            isMobileExtraOpen ? "block" : "hidden"
+          }`}
+        >
+          {supplier.counterOpenBaskets !== null &&
+            supplier.counterOpenBaskets !== undefined && (
+              <p>
+                {t("suppliers_baskets")} ({supplier.counterOpenBaskets})
+              </p>
+            )}
+          {supplier.counterTodayOrders !== null &&
+            supplier.counterTodayOrders !== undefined && (
+              <p>
+                {t("suppliers_orders")} ({supplier.counterTodayOrders})
+              </p>
+            )}
+        </div>
+      )}
 
       {/* Middle: status pill (hidden on all-suppliers) */}
       {showBasketStatus && (
@@ -170,7 +273,9 @@ export function SupplierTile({
     </>
   );
 
-  const tileClassName = isSettingsStyle ? tileClassNameSettings : tileClassNameDefault;
+  const tileClassName = isSettingsStyle
+    ? tileClassNameSettings
+    : tileClassNameDefault;
 
   if (onClick) {
     return (
@@ -184,5 +289,9 @@ export function SupplierTile({
     );
   }
 
-  return <Link href={href} className={tileClassName}>{content}</Link>;
+  return (
+    <Link href={href} className={tileClassName}>
+      {content}
+    </Link>
+  );
 }

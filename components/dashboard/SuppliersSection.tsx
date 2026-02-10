@@ -158,6 +158,7 @@ export function SuppliersSection({
           statusOptions={statusOptions}
           selectedStatus={statusFilter}
           onStatusChange={setStatusFilter}
+          ordersOfTheDayCount={suppliers.length}
         />
       </div>
 

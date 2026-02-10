@@ -21,6 +21,7 @@ type Props = {
   statusOptions: string[];
   selectedStatus: string;
   onStatusChange: (value: string) => void;
+  ordersOfTheDayCount: number;
 };
 
 export function SuppliersSectionHeader({
@@ -29,6 +30,7 @@ export function SuppliersSectionHeader({
   statusOptions,
   selectedStatus,
   onStatusChange,
+  ordersOfTheDayCount,
 }: Props) {
   const { t } = useTranslation();
   const pathname = usePathname();
@@ -64,7 +66,7 @@ export function SuppliersSectionHeader({
             </Button>
           </div>
           <h2 className="text-sm font-semibold text-slate-900">
-            {t("suppliers_orders_of_day")}
+            {t("suppliers_orders_of_day")} ({ordersOfTheDayCount})
           </h2>
 
           <DropdownMenu>

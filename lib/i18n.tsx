@@ -244,6 +244,8 @@ const resources: Resources = {
     erg_prev_page: "Previous",
     erg_next_page: "Next",
     erg_page: "Page {current} / {total}",
+    suppliers_baskets: "Baskets",
+    suppliers_orders: "Orders",
   },
   gr: {
     login_with_email: "Σύνδεση μέλους",
@@ -481,6 +483,8 @@ const resources: Resources = {
     erg_prev_page: "Προηγούμενο",
     erg_next_page: "Επόμενο",
     erg_page: "Σελίδα {current} / {total}",
+    suppliers_baskets: "Καλάθια",
+    suppliers_orders: "Παραγγελίες",
   },
 };
 
