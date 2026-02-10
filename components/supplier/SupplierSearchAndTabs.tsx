@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Input } from "../ui/input";
+import { SearchInput } from "../ui/search-input";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { listItemVariants } from "../../lib/motion";
 import type { SupplierSection } from "./types";
@@ -28,10 +28,10 @@ export function SupplierSearchAndTabs({
   return (
     <div className="flex flex-col gap-0 bg-app-card/95 px-4">
       <div className="border-b border-slate-200/80 pb-3">
-        <Input
+        <SearchInput
           placeholder={searchPlaceholder}
           value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={onSearchChange}
           className="h-9 w-full border border-slate-200 bg-white px-3 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
         />
       </div>

@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { Star } from "lucide-react";
 import { useTranslation } from "../../lib/i18n";
 import { api } from "../../lib/api";
 import { getApiErrorMessage } from "../../lib/api-error";
@@ -27,7 +28,11 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
   const {
     id,
     title,
+    subTitle,
     image,
+    price,
+    isFavorite,
+    favIconColor,
     qty: initialQty,
     suggestedQty: initialSuggestedQty,
   } = product;
@@ -64,6 +69,14 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
     basketTouchedRef.current = true;
     skipNextBasketDebounceRef.current = false;
     setBasketQtyDisplay(value);
+  }, []);
+
+  const setReserveClamped = useCallback((delta: number) => {
+    reserveTouchedRef.current = true;
+    setReserveQtyDisplay((prev) => {
+      const n = toNonNegativeNum(prev) + delta;
+      return n <= 0 ? "" : String(n);
+    });
   }, []);
 
   const setBasketClamped = useCallback((delta: number) => {
@@ -190,38 +203,70 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
     lastSuggestedQtyRef.current = initialSuggestedQty ?? 0;
   }, [initialSuggestedQty]);
 
+  const priceFormatted =
+    typeof price === "number" && !Number.isNaN(price)
+      ? `${price.toFixed(2)} €`
+      : null;
+
   return (
     <article
       key={id}
-      className="flex gap-2 items-center rounded-lg border border-slate-100 bg-app-card/95 p-2 shadow-sm"
+      className="flex flex-col gap-3 rounded-lg border border-slate-100 bg-app-card/95 p-3 shadow-sm"
     >
-      {image && (
-        <img
-          src={image}
-          alt={title}
-          className="h-12 w-12  rounded bg-slate-50 object-contain"
-        />
-      )}
-      <div className="min-w-0 flex-1 flex flex-col gap-1.5 md:flex-row md:items-center md:gap-4">
-        <p className="text-sm font-medium text-slate-900 md:flex-1 md:min-w-0">
-          {title}
-        </p>
-        <div className="flex flex-col gap-1.5 md:justify-center">
-          {/* Reserve row: label + controls (larger buttons and input) */}
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 md:mb-0">
-            <span className="w-16">{t("supplier_reserve")}</span>
-            {/* <div className="inline-flex items-center gap-0.5 rounded border border-slate-200 bg-slate-50 px-1.5 py-1"> */}
-            {/* <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-7 w-9 text-base"
-                aria-label={t("aria_decrease_reserve")}
-                onClick={() => setReserveClamped(-1)}
-                disabled={isLoading}
-              >
-                -
-              </Button> */}
+      {/* Title, subtitle, price (left) | Image, star (right) */}
+      <div className="flex gap-3 items-start">
+        <div className="min-w-0 flex-1">
+          <p className="text-base font-bold text-slate-900 leading-tight">
+            {title}
+          </p>
+          {subTitle ? (
+            <p className="mt-0.5 text-sm text-slate-700 leading-snug">
+              {subTitle}
+            </p>
+          ) : null}
+          {priceFormatted ? (
+            <p className="mt-1 text-sm text-slate-900">{priceFormatted}</p>
+          ) : null}
+        </div>
+        <div className="flex shrink-0 items-center gap-1.5">
+          {image ? (
+            <img
+              src={image}
+              alt={title}
+              className="h-20 w-[100px] rounded border border-slate-200 bg-white object-contain object-left"
+            />
+          ) : null}
+          <span
+            className="flex shrink-0 items-center justify-center text-slate-400"
+            title={isFavorite ? "Favorite" : undefined}
+            aria-hidden
+          >
+            <Star
+              className="h-5 w-5"
+              fill={isFavorite ? (favIconColor ?? "#9CBDFA") : "transparent"}
+              stroke={isFavorite ? (favIconColor ?? "#9CBDFA") : "currentColor"}
+              strokeWidth={1.5}
+            />
+          </span>
+        </div>
+      </div>
+
+      {/* Value inputs below: Reserve, then Basket */}
+      <div className="flex gap-1.5 border-t border-slate-100 pt-2 justify-between">
+        <div className="flex flex-col items-start gap-1.5 text-xs text-slate-500">
+          <span className="w-16">{t("supplier_reserve")}</span>
+          <div className="inline-flex items-center gap-0.5 rounded border border-slate-200 bg-slate-50 px-1.5 py-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-9 text-base"
+              aria-label={t("aria_decrease_reserve")}
+              onClick={() => setReserveClamped(-1)}
+              disabled={isLoading}
+            >
+              -
+            </Button>
             <Input
               type="number"
               min={0}
@@ -232,56 +277,54 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
               aria-label={t("aria_reserve_quantity")}
               disabled={isLoading}
             />
-            {/* <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-7 w-9 text-base"
-                aria-label={t("aria_increase_reserve")}
-                onClick={() => setReserveClamped(1)}
-                disabled={isLoading}
-              >
-                +
-              </Button> */}
-            {/* </div> */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-9 text-base"
+              aria-label={t("aria_increase_reserve")}
+              onClick={() => setReserveClamped(1)}
+              disabled={isLoading}
+            >
+              +
+            </Button>
           </div>
-          {/* Basket row: total qty in basket (user can increment or decrement) */}
-          <div className="flex items-center gap-1.5 text-xs font-medium text-slate-900">
-            <span className="w-16">{t("supplier_basket")}</span>
-            <div className="inline-flex items-center gap-0.5 rounded border border-brand-200 bg-brand-50 px-1.5 py-1">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-7 w-9 text-base"
-                aria-label={t("aria_decrease_basket")}
-                onClick={() => setBasketClamped(-1)}
-                disabled={isLoading}
-              >
-                -
-              </Button>
-              <Input
-                type="number"
-                min={0}
-                value={basketQtyDisplay}
-                onChange={(e) => setBasketFromUser(e.target.value)}
-                placeholder="0"
-                className="h-7 w-12 border-0 bg-transparent p-0 text-center text-sm rounded [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                aria-label={t("aria_basket_quantity")}
-                disabled={isLoading}
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-7 w-9 text-base"
-                aria-label={t("aria_increase_basket")}
-                onClick={() => setBasketClamped(1)}
-                disabled={isLoading}
-              >
-                +
-              </Button>
-            </div>
+        </div>
+        <div className="flex flex-col items-start gap-1.5 text-xs text-slate-500">
+          <span className="w-16">{t("supplier_basket")}</span>
+          <div className="inline-flex items-center gap-0.5 rounded border border-brand-200 bg-brand-50 px-1.5 py-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-9 text-base"
+              aria-label={t("aria_decrease_basket")}
+              onClick={() => setBasketClamped(-1)}
+              disabled={isLoading}
+            >
+              -
+            </Button>
+            <Input
+              type="number"
+              min={0}
+              value={basketQtyDisplay}
+              onChange={(e) => setBasketFromUser(e.target.value)}
+              placeholder="0"
+              className="h-7 w-12 border-0 bg-transparent p-0 text-center text-sm rounded [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              aria-label={t("aria_basket_quantity")}
+              disabled={isLoading}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-9 text-base"
+              aria-label={t("aria_increase_basket")}
+              onClick={() => setBasketClamped(1)}
+              disabled={isLoading}
+            >
+              +
+            </Button>
           </div>
         </div>
       </div>

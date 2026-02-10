@@ -4,15 +4,13 @@ import { useParams, useRouter } from "next/navigation";
 import { useMemo, useState, useEffect } from "react";
 import ErgastirioProductCard from "@/components/ergastirio/ProductCard";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { SearchInput } from "@/components/ui/search-input";
 import Loading from "@/components/ui/loading";
 import { useGetProductsPerFamily } from "@/hooks/ergastirio/useGetProductsPerFamily";
 import { useGetCart } from "@/hooks/ergastirio/useGetCart";
 import { useHandleOnSubmitProducts } from "@/hooks/ergastirio/useHandleOnSubmitProducts";
 import { ergastirioStore } from "@/stores/ergastirioStore";
 import type { IProductItem } from "@/lib/ergastirio-interfaces";
-import { X } from "lucide-react";
 import { ERGASTIRIO_BASE } from "@/lib/ergastirio-constants";
 import { useTranslation } from "@/lib/i18n";
 
@@ -72,23 +70,13 @@ export default function ErgastirioProductsFamilyPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2 flex-row sm:items-center mb-1">
-        <Input
+      <div className="flex gap-2 flex-row sm:items-center mb-1 sm:max-w-xs">
+        <SearchInput
           placeholder={t("erg_search_placeholder")}
           value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="sm:max-w-xs border-slate-200 bg-white"
+          onChange={setFilter}
+          className="border-slate-200 bg-white"
         />
-        {filter && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setFilter("")}
-            className="text-slate-700"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
       </div>
 
       <Card className="shadow-none rounded-2xl border-slate-200 bg-app-card">
