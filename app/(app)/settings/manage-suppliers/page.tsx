@@ -7,8 +7,8 @@ import { Star, Users, User, History, Clock, MessageSquare } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
 import { SuppliersSection } from "@/components/dashboard/SuppliersSection";
-import type { Supplier } from "@/components/dashboard/types";
 import { TileCard } from "@/components/ui/tile-card";
+import { SuppliersListItem } from "@/lib/types/dashboard";
 
 export default function ManageSuppliersPage() {
   const { t } = useTranslation();
@@ -22,14 +22,16 @@ export default function ManageSuppliersPage() {
   const selectedSupplier = React.useMemo(
     () =>
       menuUid && suppliers?.length
-        ? (suppliers.find((s: Supplier) => s.supplierUID === menuUid) ?? null)
+        ? (suppliers.find(
+            (s: SuppliersListItem) => s.supplierUID === menuUid,
+          ) ?? null)
         : null,
     [menuUid, suppliers],
   );
   const isMenuStep = Boolean(menuUid && selectedSupplier);
 
   const handleSupplierClick = React.useCallback(
-    (s: Supplier) => {
+    (s: SuppliersListItem) => {
       router.push(`/settings/manage-suppliers?menu=${s.supplierUID}`);
     },
     [router],
@@ -50,10 +52,10 @@ export default function ManageSuppliersPage() {
         <div className="mx-auto flex max-w-xl flex-col mt-2">
           {selectedSupplier && (
             <>
-              <div className="mb-4 flex items-center gap-3">
-                <p className="min-w-0 flex-1 truncate text-sm font-medium text-slate-600">
+              <div className="my-4 rounded-xl border border-slate-200 bg-app-card/95 p-4 shadow-sm">
+                <h1 className="text-xl font-bold text-slate-900">
                   {selectedSupplier.title}
-                </p>
+                </h1>
               </div>
 
               <div className="grid grid-cols-2 auto-rows-fr gap-4">
@@ -63,7 +65,7 @@ export default function ManageSuppliersPage() {
                   iconColor="text-green-600"
                   onClick={() =>
                     router.push(
-                      `/suppliers/${selectedSupplier.supplierUID}/timetable`,
+                      `/suppliers/${selectedSupplier.supplierUID}/timetable?from=settings`,
                     )
                   }
                 />
@@ -73,7 +75,7 @@ export default function ManageSuppliersPage() {
                   iconColor="text-orange-500"
                   onClick={() =>
                     router.push(
-                      `/suppliers/${selectedSupplier.supplierUID}/favorites`,
+                      `/suppliers/${selectedSupplier.supplierUID}/favorites?from=settings`,
                     )
                   }
                 />
@@ -83,7 +85,7 @@ export default function ManageSuppliersPage() {
                   iconColor="text-blue-600"
                   onClick={() =>
                     router.push(
-                      `/suppliers/${selectedSupplier.supplierUID}/order-history`,
+                      `/suppliers/${selectedSupplier.supplierUID}/order-history?from=settings`,
                     )
                   }
                 />
@@ -93,7 +95,7 @@ export default function ManageSuppliersPage() {
                   iconColor="text-slate-700"
                   onClick={() =>
                     router.push(
-                      `/suppliers/${selectedSupplier.supplierUID}/info`,
+                      `/suppliers/${selectedSupplier.supplierUID}/info?from=settings`,
                     )
                   }
                 />
@@ -103,7 +105,7 @@ export default function ManageSuppliersPage() {
                   iconColor="text-slate-700"
                   onClick={() =>
                     router.push(
-                      `/suppliers/${selectedSupplier.supplierUID}/contact`,
+                      `/suppliers/${selectedSupplier.supplierUID}/contact?from=settings`,
                     )
                   }
                 />
@@ -113,7 +115,7 @@ export default function ManageSuppliersPage() {
                   iconColor="text-yellow-500"
                   onClick={() =>
                     router.push(
-                      `/suppliers/${selectedSupplier.supplierUID}/reviews`,
+                      `/suppliers/${selectedSupplier.supplierUID}/reviews?from=settings`,
                     )
                   }
                 />

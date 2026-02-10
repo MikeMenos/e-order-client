@@ -1,7 +1,7 @@
 export type Supplier = {
   supplierUID: string;
   title: string;
-  subTitle?: string;
+  subTitle?: string | null;
   logo?: string | null;
   counterOpenBaskets?: number | null;
   counterTodayOrders?: number | null;

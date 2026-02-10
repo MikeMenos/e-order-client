@@ -9,15 +9,16 @@ import { SuppliersSectionHeader } from "./SuppliersSectionHeader";
 import { SuppliersSearchBar } from "./SuppliersSearchBar";
 import { SupplierTile } from "./SupplierTile";
 import { usePathname } from "next/navigation";
+import { SuppliersListItem } from "@/lib/types/dashboard";
 
 type Props = {
   refDate: string;
-  suppliers: Supplier[];
+  suppliers: SuppliersListItem[];
   isLoading: boolean;
   isError: boolean;
   errorMessage?: string;
   /** When provided, each tile is a button and this is called instead of linking (e.g. manage-suppliers). */
-  onSupplierClick?: (supplier: Supplier) => void;
+  onSupplierClick?: (supplier: SuppliersListItem) => void;
 };
 
 export function SuppliersSection({

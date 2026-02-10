@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "../../lib/i18n";
@@ -10,13 +10,11 @@ import {
   AlertCircle,
   Clock,
   MoreHorizontal,
-  ChevronDown,
 } from "lucide-react";
-import type { Supplier } from "./types";
-import { Button } from "../ui/button";
+import { SuppliersListItem } from "@/lib/types/dashboard";
 
 type Props = {
-  supplier: Supplier;
+  supplier: SuppliersListItem;
   refDate: string;
   isExpanded?: boolean;
   /** When false, hide delivery date line and week delivery days (e.g. on all-suppliers). */
@@ -94,12 +92,12 @@ export function SupplierTile({
   const pathname = usePathname();
   const isAllSuppliersPage = pathname === "/all-suppliers";
   const isOrdersOfDayPage = pathname === "/orders-of-the-day";
-  const [isMobileExtraOpen, setIsMobileExtraOpen] = useState(false);
 
-  const hasExtraCounters =
-    isAllSuppliersPage &&
-    ((supplier.counterOpenBaskets ?? null) !== null ||
-      (supplier.counterTodayOrders ?? null) !== null);
+  const openBaskets = supplier.counterOpenBaskets ?? 0;
+  const todayOrders = supplier.counterTodayOrders ?? 0;
+  const showDotArea = isAllSuppliersPage || isOrdersOfDayPage;
+  const showOrangeDot = isAllSuppliersPage && openBaskets > 0;
+  const greenDotCount = Math.min(todayOrders, 10);
 
   const defaultHref = `/suppliers/${encodeURIComponent(
     supplier.supplierUID,
@@ -133,13 +131,13 @@ export function SupplierTile({
     </>
   ) : (
     <>
-      {/* Top: logo + title + subTitle or delivery (delivery hidden on all-suppliers) */}
+      {/* Top: logo + title + delivery (or subTitle on all-suppliers) + dots (all-suppliers / orders-of-the-day) */}
       <div
         className={`flex items-center gap-3 px-4 py-2 pb-2 ${
-          hasExtraCounters ? "md:items-center md:justify-between" : ""
+          showDotArea ? "md:items-center md:justify-between" : ""
         }`}
       >
-        <div className="flex items-start gap-3 flex-1">
+        <div className="flex items-start gap-3 flex-1 min-w-0">
           {supplier.logo && (
             <img
               src={supplier.logo}
@@ -154,9 +152,6 @@ export function SupplierTile({
               </p>
             )}
 
-            {/* Title + delivery info ordering:
-                - On orders-of-the-day: show title first, then delivery (as before).
-                - Elsewhere: keep delivery first, then title. */}
             {isOrdersOfDayPage ? (
               <>
                 <p className="font-bold uppercase tracking-wide text-slate-900">
@@ -183,71 +178,25 @@ export function SupplierTile({
           </div>
         </div>
 
-        {/* Desktop extra counters (only on all-suppliers) */}
-        {hasExtraCounters && (
-          <div className="hidden md:flex flex-col items-end gap-0.5 text-sm text-slate-600 ml-3">
-            {supplier.counterOpenBaskets !== null &&
-              supplier.counterOpenBaskets !== undefined && (
-                <span>
-                  {t("suppliers_baskets")} ({supplier.counterOpenBaskets})
-                </span>
-              )}
-            {supplier.counterTodayOrders !== null &&
-              supplier.counterTodayOrders !== undefined && (
-                <span>
-                  {t("suppliers_orders")} ({supplier.counterTodayOrders})
-                </span>
-              )}
+        {/* Dots: all-suppliers = orange (blink if open baskets) + green (today orders); orders-of-the-day = green only */}
+        {showDotArea && (
+          <div className="flex items-center gap-1 shrink-0 ml-2" aria-hidden>
+            {showOrangeDot && (
+              <span
+                className="h-2 w-2 rounded-full bg-orange-500 animate-pulse-strong"
+                title={t("suppliers_baskets")}
+              />
+            )}
+            {Array.from({ length: greenDotCount }, (_, i) => (
+              <span
+                key={i}
+                className="h-2 w-2 rounded-full bg-green-500"
+                title={t("suppliers_orders")}
+              />
+            ))}
           </div>
         )}
-
-        {/* Mobile expand arrow (only on all-suppliers) */}
-        {hasExtraCounters && (
-          <Button
-            type="button"
-            variant="ghost"
-            className="ml-2 inline-flex items-center justify-center rounded-full p-1 text-slate-500 hover:text-slate-700 md:hidden"
-            onClick={(e) => {
-              // Prevent navigating the link when toggling the extra info
-              e.preventDefault();
-              e.stopPropagation();
-              setIsMobileExtraOpen((v) => !v);
-            }}
-            aria-label={
-              isMobileExtraOpen ? "Hide supplier info" : "Show supplier info"
-            }
-          >
-            <ChevronDown
-              className={`h-6 w-6 transform transition-transform ${
-                isMobileExtraOpen ? "rotate-180" : ""
-              }`}
-              aria-hidden
-            />
-          </Button>
-        )}
       </div>
-
-      {/* Mobile extra counters (expandable, only on all-suppliers) */}
-      {hasExtraCounters && (
-        <div
-          className={`border-t border-slate-100 px-4 py-2 text-sm text-slate-600 space-y-1 md:hidden ${
-            isMobileExtraOpen ? "block" : "hidden"
-          }`}
-        >
-          {supplier.counterOpenBaskets !== null &&
-            supplier.counterOpenBaskets !== undefined && (
-              <p>
-                {t("suppliers_baskets")} ({supplier.counterOpenBaskets})
-              </p>
-            )}
-          {supplier.counterTodayOrders !== null &&
-            supplier.counterTodayOrders !== undefined && (
-              <p>
-                {t("suppliers_orders")} ({supplier.counterTodayOrders})
-              </p>
-            )}
-        </div>
-      )}
 
       {/* Middle: status pill (hidden on all-suppliers) */}
       {showBasketStatus && (

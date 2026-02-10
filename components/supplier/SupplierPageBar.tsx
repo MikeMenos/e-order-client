@@ -32,7 +32,9 @@ export function SupplierPageBar({ supplier, selectedDate }: Props) {
   const orderHistoryHref =
     supplierUID != null
       ? `/suppliers/${encodeURIComponent(supplierUID)}/order-history${
-          selectedDate ? `?refDate=${encodeURIComponent(selectedDate)}` : ""
+          selectedDate
+            ? `?refDate=${encodeURIComponent(selectedDate)}&from=suppliers`
+            : "?from=suppliers"
         }`
       : "#";
 

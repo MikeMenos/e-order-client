@@ -102,7 +102,7 @@ export default function SettingsPage() {
             <TileCard
               href="/settings/account"
               icon={User}
-              label={t("settings_edit_account")}
+              label={t("settings_edit_account_button")}
               iconColor="text-slate-700"
             />
           </motion.div>

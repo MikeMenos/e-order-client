@@ -73,6 +73,20 @@ body {
   animation: logo-breathe 2s ease-in-out infinite;
 }
 
+@keyframes pulse-strong {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.animate-pulse-strong {
+  animation: pulse-strong 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 .rdp-chevron {
   fill: var(--color-brand-500) !important;
 }
