@@ -26,15 +26,15 @@ export function AppHeaderProvider({ children }: { children: React.ReactNode }) {
     () => ({
       headerHeight: header.height > 0 ? header.height : FALLBACK_HEADER_HEIGHT,
     }),
-    [header.height]
+    [header.height],
   );
 
   return (
     <AppHeaderContext.Provider value={value}>
-      <div className="min-h-screen w-full bg-app-bg p-5">
+      <div className="min-h-screen w-full p-5">
         <div
           ref={header.ref}
-          className="sticky top-0 z-10 -mx-5 -mt-5 rounded-b-2xl bg-app-card/95 shadow-sm backdrop-blur supports-backdrop-filter:bg-app-card/90"
+          className="sticky top-0 z-10 -mx-5 -mt-5 rounded-b-2xl border-b-0 bg-app-card shadow-sm"
         >
           <DashboardHeader embedded />
           <AppBreadcrumb />

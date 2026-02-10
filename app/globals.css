@@ -54,9 +54,19 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+html {
+  min-height: 100dvh;
+}
+
 body {
   @apply text-slate-900;
+  min-height: 100dvh;
   background-color: var(--color-app-bg, #EFE0D1);
+  background-image: url("/assets/dashboard-bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 @keyframes logo-breathe {
