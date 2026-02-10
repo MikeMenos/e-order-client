@@ -6,6 +6,8 @@ import { useAuthStore } from "../stores/auth";
 import type {
   SupplierBasicInfoResponse,
   SupplierBasicInfoSupplier,
+  SuppliersListResponse,
+  SelectStoreResponse,
 } from "../lib/types/dashboard";
 
 export type {
@@ -32,8 +34,8 @@ export const useSuppliersForDate = (
 ) => {
   return useQuery({
     queryKey: ["suppliers", refDate],
-    queryFn: async () => {
-      const res = await api.post("/suppliers-list", {
+    queryFn: async (): Promise<SuppliersListResponse> => {
+      const res = await api.post<SuppliersListResponse>("/suppliers-list", {
         refDate,
         setCategories: true,
         setLastOrders: true,
@@ -64,17 +66,19 @@ export function useSuppliersListForToday() {
         : (users?.role?.store?.storeUID ?? null);
   }, [users, selectedUser]);
 
-  const selectStoreMutation = useMutation({
-    mutationFn: async (storeID: string) => {
-      const res = await api.get("/select-store", {
+  const selectStoreMutation = useMutation<SelectStoreResponse, unknown, string>(
+    {
+      mutationFn: async (storeID: string) => {
+        const res = await api.get<SelectStoreResponse>("/select-store", {
         params: { StoreUID: storeID },
       });
-      return res.data;
+        return res.data;
+      },
+      onSuccess: (data) => {
+        setStoreAccessToken(data?.accessToken ?? null);
+      },
     },
-    onSuccess: (data: { accessToken?: string | null }) => {
-      setStoreAccessToken(data?.accessToken ?? null);
-    },
-  });
+  );
 
   useEffect(() => {
     if (storeUID) {
