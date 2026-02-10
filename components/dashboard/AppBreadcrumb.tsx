@@ -58,9 +58,8 @@ export function AppBreadcrumb() {
 
   // Special-case: manage-suppliers menu step
   // Dashboard -> Settings -> Manage suppliers -> [Supplier title] (active)
-  const menuSupplierUID = pathname === "/settings/manage-suppliers"
-    ? searchParams.get("menu")
-    : null;
+  const menuSupplierUID =
+    pathname === "/settings/manage-suppliers" ? searchParams.get("menu") : null;
   if (menuSupplierUID) {
     const selectedSupplier = suppliers?.find(
       (s) => s.supplierUID === menuSupplierUID,
@@ -68,8 +67,7 @@ export function AppBreadcrumb() {
     const lastLabel = selectedSupplier?.title ?? t("settings_manage_suppliers");
 
     const manageSuppliersBase = "/settings/manage-suppliers";
-    const manageSuppliersWithMenu =
-      `/settings/manage-suppliers?menu=${encodeURIComponent(menuSupplierUID)}`;
+    const manageSuppliersWithMenu = `/settings/manage-suppliers?menu=${encodeURIComponent(menuSupplierUID)}`;
 
     const segments = [
       {
@@ -95,13 +93,13 @@ export function AppBreadcrumb() {
     ];
 
     return (
-      <Breadcrumb className="rounded-b-2xl bg-slate-50/60 py-2.5">
+      <Breadcrumb className="bg-slate-50/60 py-2.5 z-10 ">
         <div className="min-w-0 overflow-x-auto">
           <BreadcrumbList className="gap-2 text-slate-500 flex-nowrap w-max px-4 [&>span]:shrink-0">
             {segments.map((seg, idx) => (
               <span key={seg.href + String(idx)} className="contents">
                 {idx > 0 && (
-                  <BreadcrumbSeparator className="text-slate-300 [&>svg]:size-4" />
+                  <BreadcrumbSeparator className="text-slate-500 [&>svg]:size-4" />
                 )}
                 <BreadcrumbItem>
                   {seg.isLast ? (
@@ -135,7 +133,10 @@ export function AppBreadcrumb() {
   const fromParam = searchParams.get("from");
   const refDateParam = searchParams.get("refDate");
 
-  if (supplierSubpageMatch && (fromParam === "settings" || fromParam === "suppliers" || refDateParam)) {
+  if (
+    supplierSubpageMatch &&
+    (fromParam === "settings" || fromParam === "suppliers" || refDateParam)
+  ) {
     const supplierUID = supplierSubpageMatch[1];
     const section = supplierSubpageMatch[2] as
       | "info"
@@ -184,7 +185,11 @@ export function AppBreadcrumb() {
     const segments =
       fromParam === "settings"
         ? [
-            { href: "/dashboard", label: t("breadcrumb_dashboard"), isLast: false },
+            {
+              href: "/dashboard",
+              label: t("breadcrumb_dashboard"),
+              isLast: false,
+            },
             { href: "/settings", label: t("settings_title"), isLast: false },
             {
               href: "/settings/manage-suppliers",
@@ -199,7 +204,11 @@ export function AppBreadcrumb() {
             { href: currentHref, label: sectionLabel, isLast: true },
           ]
         : [
-            { href: "/dashboard", label: t("breadcrumb_dashboard"), isLast: false },
+            {
+              href: "/dashboard",
+              label: t("breadcrumb_dashboard"),
+              isLast: false,
+            },
             {
               href: `/all-suppliers${queryRef}`,
               label: t("dashboard_card_suppliers"),
@@ -220,7 +229,7 @@ export function AppBreadcrumb() {
             {segments.map((seg, idx) => (
               <span key={seg.href + String(idx)} className="contents">
                 {idx > 0 && (
-                  <BreadcrumbSeparator className="text-slate-300 [&>svg]:size-4" />
+                  <BreadcrumbSeparator className="text-slate-500 [&>svg]:size-4" />
                 )}
                 <BreadcrumbItem>
                   {seg.isLast ? (
@@ -268,7 +277,9 @@ export function AppBreadcrumb() {
         isLast: false,
       },
       {
-        href: pathname + (refDateParam ? `?refDate=${encodeURIComponent(refDateParam)}` : ""),
+        href:
+          pathname +
+          (refDateParam ? `?refDate=${encodeURIComponent(refDateParam)}` : ""),
         label: supplierTitle,
         isLast: true,
       },
@@ -281,7 +292,7 @@ export function AppBreadcrumb() {
             {segments.map((seg, idx) => (
               <span key={seg.href + String(idx)} className="contents">
                 {idx > 0 && (
-                  <BreadcrumbSeparator className="text-slate-300 [&>svg]:size-4" />
+                  <BreadcrumbSeparator className="text-slate-500 [&>svg]:size-4" />
                 )}
                 <BreadcrumbItem>
                   {seg.isLast ? (
@@ -320,8 +331,7 @@ export function AppBreadcrumb() {
     ? ["menu"]
     : [];
   const hasStepParams =
-    stepParams.length > 0 &&
-    stepParams.some((key) => searchParams.has(key));
+    stepParams.length > 0 && stepParams.some((key) => searchParams.has(key));
 
   const segments: {
     href: string;
@@ -356,31 +366,31 @@ export function AppBreadcrumb() {
       <div className="min-w-0 overflow-x-auto">
         <BreadcrumbList className="gap-2 text-slate-500 flex-nowrap w-max px-4 [&>span]:shrink-0">
           {segments.map((seg, idx) => (
-          <span
-            key={seg.href + (seg.linkEvenIfLast ? "?reset" : "")}
-            className="contents"
-          >
-            {idx > 0 && (
-              <BreadcrumbSeparator className="text-slate-300 [&>svg]:size-4" />
-            )}
-            <BreadcrumbItem>
-              {seg.isLast && !seg.linkEvenIfLast ? (
-                <BreadcrumbPage className="font-medium text-slate-800">
-                  {seg.label}
-                </BreadcrumbPage>
-              ) : (
-                <BreadcrumbLink asChild>
-                  <Link
-                    href={seg.href}
-                    className="rounded-md px-1.5 py-0.5 transition-colors hover:text-slate-800 hover:bg-slate-200/50"
-                  >
-                    {seg.label}
-                  </Link>
-                </BreadcrumbLink>
+            <span
+              key={seg.href + (seg.linkEvenIfLast ? "?reset" : "")}
+              className="contents"
+            >
+              {idx > 0 && (
+                <BreadcrumbSeparator className="text-slate-500 [&>svg]:size-4" />
               )}
-            </BreadcrumbItem>
-          </span>
-        ))}
+              <BreadcrumbItem>
+                {seg.isLast && !seg.linkEvenIfLast ? (
+                  <BreadcrumbPage className="font-medium text-slate-800">
+                    {seg.label}
+                  </BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink asChild>
+                    <Link
+                      href={seg.href}
+                      className="rounded-md px-1.5 py-0.5 transition-colors hover:text-slate-800 hover:bg-slate-200/50"
+                    >
+                      {seg.label}
+                    </Link>
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+            </span>
+          ))}
         </BreadcrumbList>
       </div>
     </Breadcrumb>

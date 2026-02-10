@@ -32,13 +32,9 @@ export function DashboardHeader({ embedded }: Props) {
     users?.role?.userTypeId ??
     users?.userInfos?.storeAccess?.[0]?.userTypeId;
 
-  const headerBg =
-    "bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90";
-  const borderCls = "border-slate-200/80";
-
   return (
     <header
-      className={`flex items-center gap-3 border-b ${borderCls} ${headerBg} px-3 py-2.5 w-full min-w-0`}
+      className={`flex items-center gap-3 bg-transparent px-3 py-2.5 w-full min-w-0 border-b-0`}
     >
       {!isDashboard && (
         <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg">

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useMemo } from "react";
+import { usePathname } from "next/navigation";
 import { useMeasuredHeight } from "@/lib/utils";
 import { DashboardHeader } from "@/components/dashboard/Header";
 import { AppBreadcrumb } from "@/components/dashboard/AppBreadcrumb";
@@ -20,25 +21,30 @@ export function useAppHeaderHeight() {
 }
 
 export function AppHeaderProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const header = useMeasuredHeight<HTMLDivElement>();
+  const isDashboard = pathname === "/dashboard";
 
   const value = useMemo(
     () => ({
-      headerHeight: header.height > 0 ? header.height : FALLBACK_HEADER_HEIGHT,
+      headerHeight:
+        isDashboard || header.height <= 0 ? 0 : header.height || FALLBACK_HEADER_HEIGHT,
     }),
-    [header.height]
+    [header.height, isDashboard],
   );
 
   return (
     <AppHeaderContext.Provider value={value}>
-      <div className="min-h-screen w-full bg-app-bg p-5">
-        <div
-          ref={header.ref}
-          className="sticky top-0 z-10 -mx-5 -mt-5 rounded-b-2xl bg-app-card/95 shadow-sm backdrop-blur supports-backdrop-filter:bg-app-card/90"
-        >
-          <DashboardHeader embedded />
-          <AppBreadcrumb />
-        </div>
+      <div className="min-h-screen w-full p-5">
+        {!isDashboard && (
+          <div
+            ref={header.ref}
+            className="sticky top-0 z-10 -mx-5 -mt-5 rounded-b-2xl border-b-0 bg-app-card shadow-sm"
+          >
+            <DashboardHeader embedded />
+            <AppBreadcrumb />
+          </div>
+        )}
         <div className="mx-auto max-w-4xl w-full">{children}</div>
       </div>
     </AppHeaderContext.Provider>

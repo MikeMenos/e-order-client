@@ -47,9 +47,16 @@ export default function ErgastirioLayout({
     router.replace("/");
   };
 
+  const bgClass =
+    "min-h-dvh bg-cover bg-center bg-no-repeat text-slate-900";
+  const bgStyle = { backgroundImage: "url(/assets/dashboard-bg.png)" };
+
   if (allowed === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-app-bg">
+      <div
+        className={`flex items-center justify-center ${bgClass}`}
+        style={bgStyle}
+      >
         <p className="text-slate-500">Loading…</p>
       </div>
     );
@@ -60,7 +67,7 @@ export default function ErgastirioLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-app-bg text-slate-900">
+    <div className={`flex flex-col ${bgClass}`} style={bgStyle}>
       <ErgastirioAppShell>{children}</ErgastirioAppShell>
     </div>
   );
