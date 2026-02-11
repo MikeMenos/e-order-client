@@ -37,7 +37,7 @@ export function AppHeaderProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AppHeaderContext.Provider value={value}>
-      <div className="min-h-screen w-full p-5">
+      <div className="min-h-screen w-full py-5 px-3">
         {!isDashboard && (
           <div
             ref={header.ref}

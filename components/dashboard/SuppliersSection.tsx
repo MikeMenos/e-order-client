@@ -3,7 +3,6 @@ import { format, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import { useTranslation } from "../../lib/i18n";
 import { listVariants, listItemVariants } from "../../lib/motion";
-import type { Supplier } from "./types";
 import { Button } from "../ui/button";
 import { SuppliersSectionHeader } from "./SuppliersSectionHeader";
 import { SuppliersSearchBar } from "./SuppliersSearchBar";
@@ -62,18 +61,13 @@ export function SuppliersSection({
       );
     }
 
-    // Sort by order-deadline time only on orders-of-the-day
+    // Sort by nextAvailDeliveryText on orders-of-the-day
     if (pathname === "/orders-of-the-day") {
-      const getTimeValue = (time?: string | null) => {
-        if (!time) return 0;
-        const [hours, minutes] = time.split(":").map(Number);
-        if (Number.isNaN(hours) || Number.isNaN(minutes)) return 0;
-        return hours * 60 + minutes;
-      };
       data.sort((a, b) => {
-        const av = getTimeValue(a.labelOrderTimeExpiresAt ?? undefined);
-        const bv = getTimeValue(b.labelOrderTimeExpiresAt ?? undefined);
-        return isAscending ? av - bv : bv - av;
+        const na = (a.nextAvailDeliveryText ?? "").toLowerCase();
+        const nb = (b.nextAvailDeliveryText ?? "").toLowerCase();
+        const cmp = na.localeCompare(nb);
+        return isAscending ? cmp : -cmp;
       });
     }
 

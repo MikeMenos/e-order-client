@@ -47,6 +47,7 @@ export default function SupplierPage() {
           image: p.productImage ?? null,
           category: p.productCategories ?? "OTHER",
           price: p.price,
+          productPackaging: p.productPackaging ?? "",
           qty: p.basketQty ?? 0,
           suggestedQty: p.basketSuggestedQty ?? null,
           isFavorite:
@@ -230,12 +231,12 @@ export default function SupplierPage() {
         className="sticky z-10 -mx-5 px-2"
         style={{ top: layoutHeaderHeight }}
       >
-        <div className="mx-auto bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90 rounded-t-lg">
+        <div className="mx-auto bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90">
           <SupplierPageBar supplier={supplier} selectedDate={selectedDate} />
         </div>
       </div>
 
-      <div className="mx-auto flex flex-col px-1">
+      <div className="mx-auto flex flex-col">
         {/* Sticky Tabs/Search */}
         {showDetails && (
           <div
@@ -255,7 +256,7 @@ export default function SupplierPage() {
         )}
 
         {/* Content */}
-        <div className="mt-2 space-y-3">
+        <div className="space-y-3">
           {productsQuery.isLoading && (
             <p className="text-sm text-slate-500">
               {t("supplier_loading_products")}

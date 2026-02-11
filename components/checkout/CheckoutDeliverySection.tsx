@@ -58,6 +58,12 @@ export function CheckoutDeliverySection({
     }
   }, [deliveryOption, otherDate, selectedDate, notifyEffectiveDate]);
 
+  const startOfToday = (() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  })();
+
   const openOtherDateDialog = () => {
     setDialogDateValue(parseDateForPicker(otherDate ?? selectedDate));
     setDialogOpen(true);
@@ -118,6 +124,7 @@ export function CheckoutDeliverySection({
               mode="single"
               selected={dialogDateValue}
               onSelect={setDialogDateValue}
+              disabled={{ before: startOfToday }}
             />
             <div className="flex justify-end gap-2">
               <Button

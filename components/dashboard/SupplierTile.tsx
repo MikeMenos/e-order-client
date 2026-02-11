@@ -7,11 +7,11 @@ import { useTranslation } from "../../lib/i18n";
 import {
   Calendar,
   CheckCircle2,
-  AlertCircle,
-  Clock,
+  CircleAlert,
   MoreHorizontal,
 } from "lucide-react";
 import { SuppliersListItem } from "@/lib/types/dashboard";
+import { Button } from "../ui/button";
 
 type Props = {
   supplier: SuppliersListItem;
@@ -29,55 +29,10 @@ type Props = {
   tileStyle?: "default" | "settings";
 };
 
-const STATUS_COMPLETED = "Ολοκληρώθηκε";
-const STATUS_PENDING = "Σε αναμονή";
-const STATUS_PENDING_SHIPMENT = "Σε αναμονή αποστολής";
-
-function getStatusStyle(descr: string | null | undefined): {
-  text: string;
-  bg: string;
-  icon: React.ReactNode;
-} {
-  const d = descr ?? "";
-  if (d === STATUS_COMPLETED) {
-    return {
-      text: "text-green-600",
-      bg: "bg-green-200",
-      icon: (
-        <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" aria-hidden />
-      ),
-    };
-  }
-  if (d === STATUS_PENDING) {
-    return {
-      text: "text-orange-600",
-      bg: "bg-orange-200",
-      icon: (
-        <MoreHorizontal
-          className="h-4 w-4 text-orange-500 shrink-0"
-          aria-hidden
-        />
-      ),
-    };
-  }
-  if (d === STATUS_PENDING_SHIPMENT) {
-    return {
-      text: "text-slate-500",
-      bg: "bg-slate-200",
-      icon: <Clock className="h-4 w-4 text-slate-400 shrink-0" aria-hidden />,
-    };
-  }
-  return {
-    text: "text-red-600",
-    bg: "bg-red-100",
-    icon: <AlertCircle className="h-4 w-4 text-red-500 shrink-0" aria-hidden />,
-  };
-}
-
 const tileClassNameDefault =
-  "flex flex-col rounded-2xl border border-slate-200/80 bg-app-card/95 shadow-sm cursor-pointer transition hover:border-brand-400/70 hover:shadow-md";
+  "flex flex-col rounded-lg border border-slate-200/80 bg-app-card/95 shadow-sm cursor-pointer transition hover:border-brand-400/70 hover:shadow-md";
 const tileClassNameSettings =
-  "flex h-full w-full flex-col items-center justify-center gap-3 rounded-2xl bg-app-card/95 p-6 shadow-sm transition hover:shadow-md cursor-pointer";
+  "flex h-full w-full flex-col items-center justify-center gap-3 rounded-lg bg-app-card/95 p-6 shadow-sm transition hover:shadow-md cursor-pointer";
 
 export function SupplierTile({
   supplier,
@@ -105,7 +60,23 @@ export function SupplierTile({
   const href = hrefProp ?? defaultHref;
 
   const statusDescr = supplier.basketIconStatusDescr ?? "";
-  const statusStyle = getStatusStyle(statusDescr);
+  const pillStyle = supplier.basketIconColor
+    ? {
+        color: supplier.basketIconColor,
+        backgroundColor:
+          supplier.basketIconColor.startsWith("#") &&
+          supplier.basketIconColor.length === 7
+            ? `${supplier.basketIconColor}1A`
+            : supplier.basketIconColor,
+      }
+    : undefined;
+  const iconStyle = supplier.basketIconColor
+    ? {
+        color: "white",
+        backgroundColor: supplier.basketIconColor,
+        borderRadius: "50%",
+      }
+    : undefined;
   const isSettingsStyle = tileStyle === "settings";
 
   const content = isSettingsStyle ? (
@@ -155,13 +126,21 @@ export function SupplierTile({
             {isOrdersOfDayPage ? (
               <>
                 <p className="font-bold uppercase tracking-wide text-slate-900">
-                  {supplier.title}
+                  {supplier.customTitle ?? supplier.subTitle ?? supplier.title}
                 </p>
                 {showDeliveryInfo && supplier.nextAvailDeliveryText && (
                   <p className="mt-0.5 text-sm text-slate-500">
                     {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
                   </p>
                 )}
+                {showDeliveryInfo &&
+                  supplier.labelOrderTimeExpiresAt != null &&
+                  supplier.labelOrderTimeExpiresAt !== "" && (
+                    <p className="mt-0.5 text-sm text-slate-500">
+                      {t("order_delivery_until")}{" "}
+                      {supplier.labelOrderTimeExpiresAt}
+                    </p>
+                  )}
               </>
             ) : (
               <>
@@ -198,14 +177,80 @@ export function SupplierTile({
         )}
       </div>
 
-      {/* Middle: status pill (hidden on all-suppliers) */}
+      {/* Middle: status pill (hidden on all-suppliers); colored by basketIconColor */}
       {showBasketStatus && (
         <div className="flex items-center gap-2 px-4 py-2">
           <span
-            className={`inline-flex w-full items-center gap-2 rounded-lg px-2 py-1.5 font-medium ${statusStyle.bg} ${statusStyle.text}`}
+            className="inline-flex w-full items-center gap-2 rounded-lg px-2 py-1.5 font-medium bg-slate-100 text-slate-800"
+            style={pillStyle}
           >
-            {statusStyle.icon}
+            {supplier.basketIconStatus === 1 && (
+              <CheckCircle2
+                className="h-5 w-5 shrink-0"
+                style={iconStyle}
+                aria-hidden
+              />
+            )}
+            {supplier.basketIconStatus === 0 && (
+              <CircleAlert
+                className="h-5 w-5 shrink-0"
+                style={iconStyle}
+                aria-hidden
+              />
+            )}
+            {supplier.basketIconStatus === 2 && (
+              <MoreHorizontal
+                className="h-5 w-5 shrink-0"
+                style={iconStyle}
+                aria-hidden
+              />
+            )}
             <span>{statusDescr || "—"}</span>
+            {supplier.basketIconStatus === 2 && (
+              <span className="ml-auto">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-sm bg-white px-2 py-0.5 font-medium text-red-600"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                >
+                  {t("supplier_continue")}
+                </Button>
+              </span>
+            )}
+            {supplier.basketIconStatus === 0 && (
+              <span className="ml-auto">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-sm bg-white px-2 py-0.5 font-medium text-red-600"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                >
+                  {t("supplier_open")}
+                </Button>
+              </span>
+            )}
+            {supplier.basketIconStatus === 1 && (
+              <span className="ml-auto">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-sm bg-white px-2 py-0.5 font-medium text-slate-500"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                >
+                  {t("supplier_open")}
+                </Button>
+              </span>
+            )}
           </span>
         </div>
       )}
@@ -214,7 +259,7 @@ export function SupplierTile({
       {showDeliveryInfo && supplier.weekDeliveryDaysText && (
         <div className="flex items-center justify-center gap-2 border-t border-slate-100 px-4 py-2">
           <Calendar className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
-          <span className="text-slate-600">
+          <span className="font-semibold text-green-600">
             {supplier.weekDeliveryDaysText}
           </span>
         </div>

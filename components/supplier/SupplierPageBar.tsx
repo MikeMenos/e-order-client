@@ -9,6 +9,8 @@ type SupplierInfo = {
   supplierUID?: string;
   logo?: string | null;
   title?: string | null;
+  customTitle?: string | null;
+  subTitle?: string | null;
   tileColorMode?: string | null;
 };
 
@@ -23,12 +25,16 @@ export function SupplierPageBar({ supplier, selectedDate }: Props) {
   const { data: basketData } = useBasketItems(
     supplierUID ? { SupplierUID: supplierUID } : undefined,
   );
-  const supplierBasket = basketData?.basketsList?.find(
-    (b) => b.supplierUID === supplierUID,
-  ) ?? basketData?.basketsList?.[0];
+  const supplierBasket =
+    basketData?.basketsList?.find((b) => b.supplierUID === supplierUID) ??
+    basketData?.basketsList?.[0];
   const basketItemCount = supplierBasket?.totalItems ?? 0;
 
-  const supplierLabel = supplier?.title ?? t("common_supplier");
+  const supplierLabel =
+    supplier?.customTitle ??
+    supplier?.subTitle ??
+    supplier?.title ??
+    t("common_supplier");
   const orderHistoryHref =
     supplierUID != null
       ? `/suppliers/${encodeURIComponent(supplierUID)}/order-history${
