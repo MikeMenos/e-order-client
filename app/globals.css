@@ -61,12 +61,6 @@ html {
 body {
   @apply text-slate-900;
   min-height: 100dvh;
-  background-color: var(--color-app-bg, #EFE0D1);
-  background-image: url("/assets/dashboard-bg.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
 }
 
 @keyframes logo-breathe {
@@ -181,7 +175,13 @@ body {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: var(--color-app-bg, #EFE0D1);
+    background-image: url("/assets/dashboard-bg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
   }
 }
 
