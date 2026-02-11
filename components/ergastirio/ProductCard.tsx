@@ -215,7 +215,7 @@ export default function ErgastirioProductCard({
                       −
                     </Button>
                     <Input
-                      className="w-12 min-w-12 text-center border-0 focus-visible:ring-0 text-sm font-medium tabular-nums [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      className="w-12 min-w-12 text-center border-0 focus-visible:ring-0 text-base font-medium tabular-nums [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       value={qty}
                       type="number"
                       onChange={(e) => handleQtyChange(e.target.value, setQty)}

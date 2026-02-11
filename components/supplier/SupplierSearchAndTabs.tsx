@@ -26,13 +26,13 @@ export function SupplierSearchAndTabs({
   const value = activeSectionId ?? sections[0]?.id ?? "";
 
   return (
-    <div className="flex flex-col gap-0 bg-app-card/95 px-4">
+    <div className="flex flex-col gap-0 bg-app-card/95 px-4 rounded-b-lg">
       <div className="border-b border-slate-200/80 pb-3">
         <SearchInput
           placeholder={searchPlaceholder}
           value={searchQuery}
           onChange={onSearchChange}
-          className="h-9 w-full border border-slate-200 bg-white px-3 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+          className="h-9 w-full border border-slate-200 bg-white px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
         />
       </div>
       {sections.length > 1 && (

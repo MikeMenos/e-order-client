@@ -18,7 +18,7 @@ const cards = [
     labelKey: "dashboard_card_suppliers",
   },
   {
-    href: "#",
+    href: "/statistics",
     iconSrc: "/assets/statistics.png",
     labelKey: "dashboard_card_statistics",
   },
@@ -33,7 +33,7 @@ export default function DashboardPage() {
   const { t } = useTranslation();
 
   return (
-    <main className="text-slate-900">
+    <main className="text-slate-900 overflow-hidden">
       <div className="flex justify-center py-6">
         <Image
           src="/icon0.svg"

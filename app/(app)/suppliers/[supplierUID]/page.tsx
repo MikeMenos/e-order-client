@@ -230,7 +230,7 @@ export default function SupplierPage() {
         className="sticky z-10 -mx-5 px-2"
         style={{ top: layoutHeaderHeight }}
       >
-        <div className="mx-auto bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90">
+        <div className="mx-auto bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90 rounded-t-lg">
           <SupplierPageBar supplier={supplier} selectedDate={selectedDate} />
         </div>
       </div>
@@ -240,7 +240,7 @@ export default function SupplierPage() {
         {showDetails && (
           <div
             ref={tabsBar.ref}
-            className="sticky z-20 -mx-4 bg-app-card/95"
+            className="sticky z-20 -mx-4 bg-app-card/95 rounded-b-lg"
             style={{ top: tabsStickyTop }}
           >
             <SupplierSearchAndTabs

@@ -46,7 +46,7 @@ export function StoreSelectDialog({
               size="icon"
               aria-label={t("store_select_close")}
               onClick={() => onOpenChange(false)}
-              className="h-8 w-8 shrink-0 rounded-full text-slate-500 hover:text-slate-700"
+              className="h-8 w-8 shrink-0 rounded-full text-2xl text-slate-500 hover:text-slate-700"
             >
               ×
             </Button>

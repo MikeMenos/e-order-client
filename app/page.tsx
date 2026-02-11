@@ -192,7 +192,7 @@ export default function HomePage() {
   return (
     <main
       className="flex min-h-dvh flex-col items-center bg-cover bg-center bg-no-repeat pt-8 text-slate-900"
-      style={{ backgroundImage: "url(/assets/dashboard-bg.png)" }}
+      style={{ backgroundImage: "url(/assets/background.png)" }}
     >
       <div className="mb-6 flex w-full max-w-sm items-center justify-center px-4">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -254,7 +254,6 @@ export default function HomePage() {
               : t("login_submit")}
           </Button>
         </form>
-
         <StoreSelectDialog
           open={showRoleDialog && !!userResponse}
           onOpenChange={setShowRoleDialog}

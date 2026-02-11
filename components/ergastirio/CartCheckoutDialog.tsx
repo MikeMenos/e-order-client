@@ -45,7 +45,7 @@ export function ErgastirioCartCheckoutDialog({
               className="absolute top-0 right-0 text-slate-700"
               onClick={() => onOpenChange(false)}
             >
-              <X className="size-5" />
+              <X className="size-6" />
             </Button>
           </div>
           {children}

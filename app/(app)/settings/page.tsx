@@ -94,7 +94,7 @@ export default function SettingsPage() {
 
           <motion.div variants={listItemVariants}>
             <TileCard
-              href="#"
+              href="/settings/partner-suppliers"
               iconSrc="/assets/collab-suppliers.png"
               label={t("dashboard_card_partner_suppliers")}
             />
