@@ -14,7 +14,7 @@ export function SuppliersSearchBar({ value, onChange }: Props) {
       placeholder={t("suppliers_search_placeholder")}
       value={value}
       onChange={onChange}
-      className="h-9 border border-slate-300 bg-app-card/95 px-3 py-2 text-sm shadow-sm focus-visible:ring-0"
+      className="h-9 border border-slate-300 bg-app-card/95 px-3 py-2 shadow-sm focus-visible:ring-0"
     />
   );
 }

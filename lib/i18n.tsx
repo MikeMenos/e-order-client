@@ -91,6 +91,19 @@ const resources: Resources = {
     login_toast_success: "Logged in",
     login_toast_error: "Login failed",
     login_signing_in: "Signing in…",
+    pwa_ios_install_title: "Enable app",
+    pwa_ios_install_subtitle:
+      "To use e-order on this device, add it to your Home Screen.",
+    pwa_ios_install_step1: "Tap the Share button",
+    pwa_ios_install_step2: 'Select "Add to Home Screen"',
+    pwa_ios_install_done: "I did it",
+    pwa_android_install_title: "Install e-order",
+    pwa_android_install_subtitle:
+      "Install the app on your device for a full-screen, app-like experience.",
+    pwa_android_install_button: "Install on device",
+    pwa_android_install_fallback:
+      'If you don\'t see the install button, open your browser menu and choose "Install app" or "Add to Home Screen".',
+    pwa_update_available: "New version available. Refresh?",
     config_fav_title: "Favorite suppliers / products",
     config_fav_subtitle:
       "Read-only view of wishlist items from Basket/Wishlist_GetItems.",
@@ -258,6 +271,10 @@ const resources: Resources = {
     erg_page: "Page {current} / {total}",
     suppliers_baskets: "Baskets",
     suppliers_orders: "Orders",
+    under_construction_title: "Under construction",
+    under_construction_message:
+      "This section is not available yet. We are working on it and will have it ready soon.",
+    under_construction_back: "Back to dashboard",
   },
   gr: {
     login_with_email: "Σύνδεση μέλους",
@@ -338,6 +355,20 @@ const resources: Resources = {
     login_toast_success: "Συνδεθήκατε",
     login_toast_error: "Αποτυχία σύνδεσης",
     login_signing_in: "Σύνδεση…",
+    pwa_ios_install_title: "Ενεργοποίηση εφαρμογής",
+    pwa_ios_install_subtitle:
+      "Για να χρησιμοποιήσετε το e-order σε αυτή τη συσκευή, προσθέστε το στην αρχική οθόνη.",
+    pwa_ios_install_step1: "Πατήστε το κουμπί Κοινοποίηση (Share)",
+    pwa_ios_install_step2:
+      'Επιλέξτε "Add to Home Screen" (Προσθήκη στην αρχική οθόνη)',
+    pwa_ios_install_done: "Το έκανα",
+    pwa_android_install_title: "Εγκατάσταση e-order",
+    pwa_android_install_subtitle:
+      "Εγκαταστήστε την εφαρμογή στη συσκευή σας για καλύτερη εμπειρία πλήρους οθόνης.",
+    pwa_android_install_button: "Εγκατάσταση εφαρμογής",
+    pwa_android_install_fallback:
+      'Αν δεν βλέπετε το κουμπί εγκατάστασης, ανοίξτε το μενού του browser και επιλέξτε "Install app" ή "Add to Home Screen".',
+    pwa_update_available: "Νέα έκδοση διαθέσιμη. Ανανέωση;",
     config_fav_title: "Αγαπημένοι προμηθευτές / προϊόντα",
     config_fav_subtitle:
       "Μόνο για ανάγνωση: στοιχεία λίστας ευχών από Basket/Wishlist_GetItems.",
@@ -511,6 +542,10 @@ const resources: Resources = {
     erg_page: "Σελίδα {current} / {total}",
     suppliers_baskets: "Καλάθια",
     suppliers_orders: "Παραγγελίες",
+    under_construction_title: "Σε ανάπτυξη",
+    under_construction_message:
+      "Αυτή η ενότητα δεν είναι ακόμα διαθέσιμη. Δουλεύουμε πάνω της και θα είναι σύντομα έτοιμη.",
+    under_construction_back: "Επιστροφή στην αρχική",
   },
 };
 

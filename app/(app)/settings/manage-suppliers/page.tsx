@@ -109,7 +109,7 @@ export default function ManageSuppliersPage() {
                     )
                   }
                 />
-                <TileCard
+                {/* <TileCard
                   icon={MessageSquare}
                   label={t("settings_reviews")}
                   iconColor="text-yellow-500"
@@ -118,7 +118,7 @@ export default function ManageSuppliersPage() {
                       `/suppliers/${selectedSupplier.supplierUID}/reviews?from=settings`,
                     )
                   }
-                />
+                /> */}
               </div>
             </>
           )}

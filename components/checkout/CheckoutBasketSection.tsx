@@ -159,7 +159,7 @@ function BasketItemRow({
               onBlur={handleInputBlur}
               onKeyDown={handleInputKeyDown}
               placeholder="0"
-              className="h-7 w-12 border-0 bg-transparent p-0 text-center text-sm [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              className="h-7 w-12 border-0 bg-transparent p-0 text-center text-base [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               aria-label={t("aria_basket_quantity")}
               disabled={isBusy}
             />

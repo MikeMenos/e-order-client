@@ -47,9 +47,8 @@ export default function ErgastirioLayout({
     router.replace("/");
   };
 
-  const bgClass =
-    "min-h-dvh bg-cover bg-center bg-no-repeat text-slate-900";
-  const bgStyle = { backgroundImage: "url(/assets/dashboard-bg.png)" };
+  const bgClass = "min-h-dvh bg-cover bg-center bg-no-repeat text-slate-900";
+  const bgStyle = { backgroundImage: "url(/assets/background.png)" };
 
   if (allowed === null) {
     return (

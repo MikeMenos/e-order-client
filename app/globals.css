@@ -63,6 +63,14 @@ body {
   min-height: 100dvh;
 }
 
+/* iOS safe area for notch / home indicator */
+.safe-area-insets {
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
+}
+
 @keyframes logo-breathe {
   0%,
   100% {
@@ -177,7 +185,7 @@ body {
   body {
     @apply text-foreground;
     background-color: var(--color-app-bg, #EFE0D1);
-    background-image: url("/assets/dashboard-bg.png");
+    background-image: url("/assets/background.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

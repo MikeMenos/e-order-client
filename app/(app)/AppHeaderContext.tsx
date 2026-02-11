@@ -28,7 +28,9 @@ export function AppHeaderProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo(
     () => ({
       headerHeight:
-        isDashboard || header.height <= 0 ? 0 : header.height || FALLBACK_HEADER_HEIGHT,
+        isDashboard || header.height <= 0
+          ? 0
+          : header.height || FALLBACK_HEADER_HEIGHT,
     }),
     [header.height, isDashboard],
   );
@@ -39,7 +41,7 @@ export function AppHeaderProvider({ children }: { children: React.ReactNode }) {
         {!isDashboard && (
           <div
             ref={header.ref}
-            className="sticky top-0 z-10 -mx-5 -mt-5 rounded-b-2xl border-b-0 bg-app-card shadow-sm"
+            className="sticky top-0 z-10 -mx-5 -mt-5 rounded-b-lg border-b-0 bg-app-card shadow-sm"
           >
             <DashboardHeader embedded />
             <AppBreadcrumb />

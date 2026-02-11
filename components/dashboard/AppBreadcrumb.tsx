@@ -30,6 +30,8 @@ const SEGMENT_LABEL_KEYS: Record<string, string> = {
   checkout: "breadcrumb_checkout",
   "order-history": "supplier_order_history_title",
   info: "breadcrumb_supplier_info",
+  statistics: "dashboard_card_statistics",
+  "partner-suppliers": "dashboard_card_partner_suppliers",
 };
 
 function getLabelKey(
@@ -223,7 +225,7 @@ export function AppBreadcrumb() {
           ];
 
     return (
-      <Breadcrumb className="rounded-b-2xl bg-slate-50/60 py-2.5">
+      <Breadcrumb className="rounded-b-lg bg-slate-50/60 py-2.5">
         <div className="min-w-0 overflow-x-auto">
           <BreadcrumbList className="gap-2 text-slate-500 flex-nowrap w-max px-4 [&>span]:shrink-0">
             {segments.map((seg, idx) => (
@@ -286,7 +288,7 @@ export function AppBreadcrumb() {
     ];
 
     return (
-      <Breadcrumb className="rounded-b-2xl bg-slate-50/60 py-2.5">
+      <Breadcrumb className="rounded-b-lg bg-slate-50/60 py-2.5">
         <div className="min-w-0 overflow-x-auto">
           <BreadcrumbList className="gap-2 text-slate-500 flex-nowrap w-max px-4 [&>span]:shrink-0">
             {segments.map((seg, idx) => (
@@ -362,7 +364,7 @@ export function AppBreadcrumb() {
   }
 
   return (
-    <Breadcrumb className="rounded-b-2xl bg-slate-50/60 py-2.5">
+    <Breadcrumb className="rounded-b-lg bg-slate-50/60 py-2.5">
       <div className="min-w-0 overflow-x-auto">
         <BreadcrumbList className="gap-2 text-slate-500 flex-nowrap w-max px-4 [&>span]:shrink-0">
           {segments.map((seg, idx) => (

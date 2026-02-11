@@ -273,7 +273,7 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
               value={reserveQtyDisplay}
               onChange={(e) => setReserveFromUser(e.target.value)}
               placeholder="0"
-              className="h-7 w-12 border-brand-200 bg-transparent p-0 rounded text-center text-sm [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              className="h-7 w-12 border-brand-200 bg-transparent p-0 rounded text-center text-base [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               aria-label={t("aria_reserve_quantity")}
               disabled={isLoading}
             />
@@ -310,7 +310,7 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
               value={basketQtyDisplay}
               onChange={(e) => setBasketFromUser(e.target.value)}
               placeholder="0"
-              className="h-7 w-12 border-0 bg-transparent p-0 text-center text-sm rounded [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              className="h-7 w-12 border-0 bg-transparent p-0 text-center text-base rounded [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               aria-label={t("aria_basket_quantity")}
               disabled={isLoading}
             />
