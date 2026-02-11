@@ -33,7 +33,7 @@ export default function DashboardPage() {
   const { t } = useTranslation();
 
   return (
-    <main className="text-slate-900 overflow-hidden">
+    <main className="text-slate-900 overflow-hidden px-2">
       <div className="flex justify-center py-6">
         <Image
           src="/icon0.svg"
