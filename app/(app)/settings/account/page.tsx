@@ -1,33 +1,30 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useTranslation } from "@/lib/i18n";
-import { api } from "@/lib/api";
-import type {
-  MyProfileResponse,
-  MyProfileUpdateRequest,
-} from "@/lib/types/dashboard";
+import type { MyProfileUpdateRequest } from "@/lib/types/dashboard";
+import { useMyProfile, useMyProfileUpdate } from "@/hooks/useMyProfile";
 import { DetailSection } from "@/components/ui/detail-section";
-import { DetailRow } from "@/components/ui/detail-row";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { getApiErrorMessage } from "@/lib/api-error";
 
 export default function AccountSettingsPage() {
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
 
-  const profileQuery = useQuery<MyProfileResponse>({
-    queryKey: ["my-profile"],
-    queryFn: async () => {
-      const res = await api.get<MyProfileResponse>("/my-profile");
-      return res.data;
+  const profileQuery = useMyProfile();
+  const user = profileQuery.data?.userInfos ?? null;
+
+  const updateMutation = useMyProfileUpdate({
+    onSuccess: (data) => {
+      const msg = (data.message ?? "").toString().trim();
+      toast.success(msg || t("config_loading_users"));
+    },
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err, t("basket_error")));
     },
   });
-
-  const user = profileQuery.data?.userInfos ?? null;
 
   const [form, setForm] = useState<MyProfileUpdateRequest>({
     email: "",
@@ -53,25 +50,6 @@ export default function AccountSettingsPage() {
       }));
     }
   }, [user]);
-
-  const updateMutation = useMutation<
-    { statusCode?: number; message?: string; detailedMessage?: string },
-    unknown,
-    MyProfileUpdateRequest
-  >({
-    mutationFn: async (payload) => {
-      const res = await api.post("/my-profile-update", payload);
-      return res.data;
-    },
-    onSuccess: (data) => {
-      const msg = (data.message ?? "").toString().trim();
-      toast.success(msg || t("config_loading_users")); // reuse a generic success if message empty
-      void queryClient.invalidateQueries({ queryKey: ["my-profile"] });
-    },
-    onError: (err) => {
-      toast.error(getApiErrorMessage(err, t("basket_error")));
-    },
-  });
 
   const handleChange = (field: keyof MyProfileUpdateRequest, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));

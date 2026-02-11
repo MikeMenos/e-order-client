@@ -13,6 +13,9 @@ export const api = axios.create({
 // Skip auth-clear for login/register so failed login doesn't redirect
 const AUTH_ENDPOINTS = ["/auth-login", "/register"];
 
+// Don't treat as global auth failure: 401/500 here should not log the user out (e.g. select-store can 401 when re-calling while navigating)
+const NO_LOGOUT_ON_AUTH_FAIL = ["/select-store"];
+
 function isAuthFailure(error: any): boolean {
   const status = error?.response?.status;
   const data = error?.response?.data;
@@ -63,6 +66,7 @@ api.interceptors.request.use((config) => {
     url.includes("/basket-add-or-update") ||
     url.includes("/basket-remove-item") ||
     url.includes("/wishlist-items") ||
+    url.includes("/wishlist-toggle") ||
     url.includes("/my-profile");
 
   const token = useStoreToken ? storeAccessToken || accessToken : accessToken;
@@ -104,8 +108,13 @@ api.interceptors.response.use(
   (error) => {
     const url = error?.config?.url ?? "";
     const isAuthEndpoint = AUTH_ENDPOINTS.some((p) => url.includes(p));
+    const skipLogout = NO_LOGOUT_ON_AUTH_FAIL.some((p) => url.includes(p));
 
-    if (!isAuthEndpoint && isAuthFailure(error)) {
+    if (
+      !isAuthEndpoint &&
+      !skipLogout &&
+      isAuthFailure(error)
+    ) {
       clearAuthAndRedirect();
     }
     return Promise.reject(error);

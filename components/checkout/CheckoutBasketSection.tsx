@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Trash2, Loader2 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
-import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api-error";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
+import {
+  useBasketItems,
+  useBasketRemoveItem,
+  useBasketAddOrUpdate,
+} from "@/hooks/useBasket";
 import type {
   BasketGetItemsResponse,
   BasketGetItemsProduct,
@@ -25,21 +28,7 @@ type Props = {
   onHasItemsChange?: (hasItems: boolean) => void;
 };
 
-const BASKET_ITEMS_QUERY_KEY = "basket-items";
 const DEBOUNCE_MS = 800;
-
-function useBasketItems(supplierUID: string) {
-  return useQuery({
-    queryKey: [BASKET_ITEMS_QUERY_KEY, supplierUID],
-    queryFn: async () => {
-      const res = await api.get<BasketGetItemsResponse>("/basket-items", {
-        params: { SupplierUID: supplierUID },
-      });
-      return res.data;
-    },
-    enabled: !!supplierUID,
-  });
-}
 
 function BasketItemRow({
   item,
@@ -201,43 +190,59 @@ export function CheckoutBasketSection({
   onHasItemsChange,
 }: Props) {
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
-  const { data, isLoading, isError, error } = useBasketItems(supplierUID);
+  const { data, isLoading, isError, error } = useBasketItems({
+    SupplierUID: supplierUID,
+    enabled: !!supplierUID,
+  });
+  const typedData = data as BasketGetItemsResponse | undefined;
+  const basket =
+    typedData?.basketsList?.find((b) => b.supplierUID === supplierUID) ??
+    typedData?.basketsList?.[0];
+  const items = (basket?.items ?? []) as BasketGetItemsProduct[];
+
   const [removingBasketUID, setRemovingBasketUID] = useState<string | null>(
     null,
   );
   const [updatingProductUID, setUpdatingProductUID] = useState<string | null>(
     null,
   );
-
-  const basket =
-    data?.basketsList?.find((b) => b.supplierUID === supplierUID) ??
-    data?.basketsList?.[0];
-  const items = basket?.items ?? [];
   const hasItems = items.length > 0;
 
-  if (onHasItemsChange) {
-    onHasItemsChange(hasItems);
-  }
-
-  const handleRemove = async (basketUID: string) => {
-    setRemovingBasketUID(basketUID);
-    try {
-      const res = await api.post<{ message?: string }>("/basket-remove-item", {
-        basketUID,
-      });
-      const msg = res.data?.message?.trim();
-      toast.success(msg || t("checkout_remove_item"));
-      await queryClient.refetchQueries({
-        queryKey: [BASKET_ITEMS_QUERY_KEY, supplierUID],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });
-    } catch (err: unknown) {
-      toast.error(getApiErrorMessage(err, t("basket_error")));
-    } finally {
+  const removeItemMutation = useBasketRemoveItem({
+    supplierUID,
+    onSuccess: (d) => {
+      toast.success(d?.message?.trim() || t("checkout_remove_item"));
       setRemovingBasketUID(null);
-    }
-  };
+    },
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err, t("basket_error")));
+      setRemovingBasketUID(null);
+    },
+  });
+
+  const addOrUpdateMutation = useBasketAddOrUpdate({
+    supplierUID,
+    onSuccess: (d) => {
+      toast.success(d?.message?.trim() || t("basket_toast_success"));
+      setUpdatingProductUID(null);
+    },
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err, t("basket_error")));
+      setUpdatingProductUID(null);
+    },
+  });
+
+  useEffect(() => {
+    onHasItemsChange?.(hasItems);
+  }, [hasItems, onHasItemsChange]);
+
+  const handleRemove = useCallback(
+    (basketUID: string) => {
+      setRemovingBasketUID(basketUID);
+      removeItemMutation.mutate(basketUID);
+    },
+    [removeItemMutation],
+  );
 
   const handleQtyChange = useCallback(
     async (item: BasketGetItemsProduct, newQty: number) => {
@@ -247,29 +252,18 @@ export function CheckoutBasketSection({
       }
       setUpdatingProductUID(item.productUID);
       try {
-        const res = await api.post<{ message?: string }>(
-          "/basket-add-or-update",
-          {
-            productUID: item.productUID,
-            qty: newQty,
-            stock: 0,
-            suggestedQty: 0,
-            comments: item.comments ?? "",
-          },
-        );
-        const msg = res.data?.message?.trim();
-        toast.success(msg || t("basket_toast_success"));
-        await queryClient.refetchQueries({
-          queryKey: [BASKET_ITEMS_QUERY_KEY, supplierUID],
+        await addOrUpdateMutation.mutateAsync({
+          productUID: item.productUID,
+          qty: newQty,
+          stock: 0,
+          suggestedQty: 0,
+          comments: item.comments ?? "",
         });
-        void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });
-      } catch (err: unknown) {
-        toast.error(getApiErrorMessage(err, t("basket_error")));
       } finally {
         setUpdatingProductUID(null);
       }
     },
-    [supplierUID, queryClient, t],
+    [handleRemove, addOrUpdateMutation],
   );
 
   return (

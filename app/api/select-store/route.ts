@@ -14,11 +14,24 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(res.data, { status: res.status });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Unknown error";
+    const axiosError = error as {
+      response?: { status: number; data?: unknown };
+    };
+    const status = axiosError.response?.status ?? 500;
+    const body = axiosError.response?.data;
+    const message =
+      body &&
+      typeof body === "object" &&
+      "message" in body &&
+      typeof (body as { message: unknown }).message === "string"
+        ? (body as { message: string }).message
+        : error instanceof Error
+          ? error.message
+          : "Failed to select store";
     console.error("Error in /api/select-store:", message);
     return NextResponse.json(
-      { message: "Failed to select store" },
-      { status: 500 },
+      body && typeof body === "object" ? body : { message },
+      { status },
     );
   }
 }

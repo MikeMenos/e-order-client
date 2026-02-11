@@ -3,10 +3,11 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { Star } from "lucide-react";
+import { Star, Loader2 } from "lucide-react";
 import { useTranslation } from "../../lib/i18n";
 import { api } from "../../lib/api";
 import { getApiErrorMessage } from "../../lib/api-error";
+import { useWishlistToggle } from "../../hooks/useWishlistToggle";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import type { SupplierProduct } from "./types";
@@ -50,6 +51,18 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
   });
   const [isLoading, setIsLoading] = useState(false);
 
+  const wishlistToggle = useWishlistToggle({
+    supplierUID: supplierUID ?? undefined,
+    onSuccess: (data) => {
+      const msg = data?.message?.trim();
+      if (msg) toast.success(msg);
+    },
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err, t("basket_error")));
+    },
+  });
+  const isTogglingFavorite = wishlistToggle.isPending;
+
   const lastSuggestedQtyRef = useRef<number>(initialSuggestedQty ?? 0);
   const reserveDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const basketDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -87,6 +100,14 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
       return n <= 0 ? "" : String(n);
     });
   }, []);
+
+  const handleToggleFavorite = useCallback(
+    (e: React.MouseEvent) => {
+      if (e?.nativeEvent && !(e.nativeEvent as MouseEvent).isTrusted) return;
+      wishlistToggle.mutate(id);
+    },
+    [id, wishlistToggle],
+  );
 
   const syncFromReserve = useCallback(async () => {
     const stock = reserveQtyNum;
@@ -233,18 +254,30 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
               className="h-20 w-[100px] rounded border border-slate-200 bg-white object-contain object-left"
             />
           ) : null}
-          <span
-            className="flex shrink-0 items-center justify-center text-slate-400"
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={handleToggleFavorite}
+            disabled={isTogglingFavorite}
+            className="flex shrink-0 items-center justify-center text-slate-400 hover:text-slate-600 disabled:pointer-events-none"
             title={isFavorite ? "Favorite" : undefined}
-            aria-hidden
+            aria-label={
+              isFavorite ? "Remove from favorites" : "Add to favorites"
+            }
           >
-            <Star
-              className="h-5 w-5"
-              fill={isFavorite ? (favIconColor ?? "#9CBDFA") : "transparent"}
-              stroke={isFavorite ? (favIconColor ?? "#9CBDFA") : "currentColor"}
-              strokeWidth={1.5}
-            />
-          </span>
+            {isTogglingFavorite ? (
+              <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
+            ) : (
+              <Star
+                className="h-5 w-5"
+                fill={isFavorite ? (favIconColor ?? "#9CBDFA") : "transparent"}
+                stroke={
+                  isFavorite ? (favIconColor ?? "#9CBDFA") : "currentColor"
+                }
+                strokeWidth={1.5}
+              />
+            )}
+          </Button>
         </div>
       </div>
 

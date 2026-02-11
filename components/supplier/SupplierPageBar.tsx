@@ -35,21 +35,9 @@ export function SupplierPageBar({ supplier, selectedDate }: Props) {
     supplier?.subTitle ??
     supplier?.title ??
     t("common_supplier");
-  const orderHistoryHref =
-    supplierUID != null
-      ? `/suppliers/${encodeURIComponent(supplierUID)}/order-history${
-          selectedDate
-            ? `?refDate=${encodeURIComponent(selectedDate)}&from=suppliers`
-            : "?from=suppliers"
-        }`
-      : "#";
+  const orderHistoryHref = `/suppliers/${encodeURIComponent(supplierUID as string)}/order-history`;
 
-  const checkoutHref =
-    supplierUID != null
-      ? `/suppliers/${encodeURIComponent(supplierUID)}/checkout${
-          selectedDate ? `?refDate=${encodeURIComponent(selectedDate)}` : ""
-        }`
-      : "#";
+  const checkoutHref = `/suppliers/${encodeURIComponent(supplierUID as string)}/checkout`;
 
   const isFill =
     (supplier?.tileColorMode?.trim() ?? "").toLowerCase() === "fill";

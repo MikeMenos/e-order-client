@@ -50,8 +50,7 @@ export default function SupplierPage() {
           productPackaging: p.productPackaging ?? "",
           qty: p.basketQty ?? 0,
           suggestedQty: p.basketSuggestedQty ?? null,
-          isFavorite:
-            p.isFavByShopper || p.isFavBySupplier || p.isFavByPlatform || false,
+          isFavorite: p.isFavByShopper,
           favIconColor: p.favIconColor ?? "#9CBDFA",
           favIconMode: p.favIconMode ?? "border",
         };
