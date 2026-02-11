@@ -365,7 +365,7 @@ const resources: Resources = {
     pwa_android_install_title: "Εγκατάσταση e-order",
     pwa_android_install_subtitle:
       "Εγκαταστήστε την εφαρμογή στη συσκευή σας για καλύτερη εμπειρία πλήρους οθόνης.",
-    pwa_android_install_button: "Εγκατάσταση εφαρμογής",
+    pwa_android_install_button: "Εγκατάσταση στο κινητό",
     pwa_android_install_fallback:
       'Αν δεν βλέπετε το κουμπί εγκατάστασης, ανοίξτε το μενού του browser και επιλέξτε "Install app" ή "Add to Home Screen".',
     pwa_update_available: "Νέα έκδοση διαθέσιμη. Ανανέωση;",

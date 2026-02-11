@@ -1,9 +1,12 @@
 "use client";
 
 import { useTranslation } from "@/lib/i18n";
+import { usePwaInstall } from "@/components/pwa/PwaInstallContext";
+import { Button } from "@/components/ui/button";
 
 export function AndroidInstallScreen() {
   const { t } = useTranslation();
+  const { showInstallButton, promptInstall } = usePwaInstall();
 
   return (
     <div
@@ -32,9 +35,20 @@ export function AndroidInstallScreen() {
         <p className="mb-4 text-center text-sm text-slate-600">
           {t("pwa_android_install_subtitle")}
         </p>
-        <p className="mt-2 text-center text-xs text-slate-500">
-          {t("pwa_android_install_fallback")}
-        </p>
+
+        {showInstallButton ? (
+          <Button
+            type="button"
+            className="mt-2 w-full"
+            onClick={() => void promptInstall()}
+          >
+            {t("pwa_android_install_button")}
+          </Button>
+        ) : (
+          <p className="mt-2 text-center text-xs text-slate-500">
+            {t("pwa_android_install_fallback")}
+          </p>
+        )}
       </div>
     </div>
   );
