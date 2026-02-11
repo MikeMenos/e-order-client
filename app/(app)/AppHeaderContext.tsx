@@ -3,7 +3,7 @@
 import { createContext, useContext, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { useMeasuredHeight } from "@/lib/utils";
-import { DashboardHeader } from "@/components/dashboard/Header";
+import { Header } from "@/components/dashboard/Header";
 import { AppBreadcrumb } from "@/components/dashboard/AppBreadcrumb";
 
 type AppHeaderContextValue = { headerHeight: number };
@@ -37,13 +37,13 @@ export function AppHeaderProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AppHeaderContext.Provider value={value}>
-      <div className="min-h-screen w-full py-5 px-3">
+      <div className="min-h-screen w-full py-5">
         {!isDashboard && (
           <div
             ref={header.ref}
-            className="sticky top-0 z-10 -mx-5 -mt-5 rounded-b-lg border-b-0 bg-app-card shadow-sm"
+            className="sticky top-0 z-30 -mt-5 rounded-b-lg border-b-0 bg-app-card shadow-sm"
           >
-            <DashboardHeader embedded />
+            <Header />
             <AppBreadcrumb />
           </div>
         )}

@@ -225,77 +225,76 @@ export default function SupplierPage() {
 
   return (
     <main className="pb-16 text-slate-900">
-      {/* Sticky bar below layout header */}
+      {/* Sticky bar below layout header: full width on mobile, same width as content on desktop */}
       <div
         ref={pageBar.ref}
-        className="sticky z-10 -mx-5 px-2"
+        className="sticky z-10 w-full"
         style={{ top: layoutHeaderHeight }}
       >
-        <div className="mx-auto bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90">
+        <div className="w-full bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90 rounded-t-lg mt-2">
           <SupplierPageBar supplier={supplier} selectedDate={selectedDate} />
         </div>
       </div>
 
-      <div className="mx-auto flex flex-col">
-        {/* Sticky Tabs/Search */}
+      <div className="flex flex-col">
+        {/* Sticky Tabs/Search: full width on mobile, same width as content on desktop */}
         {showDetails && (
           <div
             ref={tabsBar.ref}
-            className="sticky z-20 -mx-4 bg-app-card/95 rounded-b-lg"
+            className="sticky z-20 w-full bg-app-card/95 rounded-b-lg"
             style={{ top: tabsStickyTop }}
           >
-            <SupplierSearchAndTabs
-              searchPlaceholder={t("suppliers_search_placeholder")}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              sections={filteredSections}
-              activeSectionId={activeSectionId}
-              onTabClick={handleTabClick}
-            />
+            <div className="mx-auto max-w-4xl">
+              <SupplierSearchAndTabs
+                searchPlaceholder={t("suppliers_search_placeholder")}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                sections={filteredSections}
+                activeSectionId={activeSectionId}
+                onTabClick={handleTabClick}
+              />
+            </div>
           </div>
         )}
 
         {/* Content */}
-        <div className="space-y-3">
-          {productsQuery.isLoading && (
-            <p className="text-sm text-slate-500">
-              {t("supplier_loading_products")}
-            </p>
-          )}
 
-          {productsQuery.error && (
-            <p className="text-sm text-red-400">
-              {t("supplier_error_products")}
-            </p>
-          )}
+        {productsQuery.isLoading && (
+          <p className="text-sm text-slate-500">
+            {t("supplier_loading_products")}
+          </p>
+        )}
 
-          {filteredSections.length === 0 && !productsQuery.isLoading ? (
-            <p className="text-sm text-slate-600">
-              {t("supplier_empty_products")}
-            </p>
-          ) : (
-            <motion.div
-              className="space-y-3"
-              variants={listVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              {filteredSections.map((section) => (
-                <motion.div key={section.id} variants={listItemVariants}>
-                  <SupplierProductSection
-                    section={section}
-                    stickyOffset={stickyOffset}
-                    supplierUID={supplierUID}
-                    refDate={selectedDate}
-                    sectionRef={(el) => {
-                      sectionRefs.current[section.id] = el;
-                    }}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-        </div>
+        {productsQuery.error && (
+          <p className="text-sm text-red-400">{t("supplier_error_products")}</p>
+        )}
+
+        {filteredSections.length === 0 && !productsQuery.isLoading ? (
+          <p className="text-sm text-slate-600">
+            {t("supplier_empty_products")}
+          </p>
+        ) : (
+          <motion.div
+            className="space-y-3"
+            variants={listVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {filteredSections.map((section) => (
+              <motion.div key={section.id} variants={listItemVariants}>
+                <SupplierProductSection
+                  section={section}
+                  stickyOffset={stickyOffset}
+                  supplierUID={supplierUID}
+                  refDate={selectedDate}
+                  sectionRef={(el) => {
+                    sectionRefs.current[section.id] = el;
+                  }}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
       </div>
 
       <SupplierCheckoutBar supplierUID={supplierUID} refDate={refDate} />

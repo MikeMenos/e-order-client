@@ -44,7 +44,7 @@ export function SupplierSearchAndTabs({
               initial="hidden"
               animate="visible"
             >
-              <TabsList className="h-auto w-max gap-4 bg-app-card/95">
+              <TabsList className="h-auto w-max gap-2 bg-app-card/95">
                 {sections.map((section) => (
                   <TabsTrigger
                     key={section.id}
