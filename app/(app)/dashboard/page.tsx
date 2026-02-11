@@ -27,16 +27,6 @@ const cards = [
     iconSrc: "/assets/settings.png",
     labelKey: "dashboard_card_settings",
   },
-  {
-    href: "/settings/manage-suppliers",
-    iconSrc: "/assets/manage-suppliers.png",
-    labelKey: "settings_manage_suppliers",
-  },
-  {
-    href: "#",
-    iconSrc: "/assets/collab-suppliers.png",
-    labelKey: "dashboard_card_partner_suppliers",
-  },
 ] as const;
 
 export default function DashboardPage() {

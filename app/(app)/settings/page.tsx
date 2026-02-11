@@ -84,6 +84,22 @@ export default function SettingsPage() {
           initial="hidden"
           animate="visible"
         >
+          <motion.div variants={listItemVariants}>
+            <TileCard
+              href="/settings/manage-suppliers"
+              iconSrc="/assets/manage-suppliers.png"
+              label={t("settings_manage_suppliers")}
+            />
+          </motion.div>
+
+          <motion.div variants={listItemVariants}>
+            <TileCard
+              href="#"
+              iconSrc="/assets/collab-suppliers.png"
+              label={t("dashboard_card_partner_suppliers")}
+            />
+          </motion.div>
+
           {roles.length > 1 && (
             <motion.div variants={listItemVariants}>
               <TileCard
