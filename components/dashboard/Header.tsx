@@ -5,11 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuthStore } from "../../stores/auth";
 
-type Props = {
-  embedded?: boolean;
-};
-
-export function DashboardHeader({ embedded }: Props) {
+export function Header() {
   const pathname = usePathname();
   const { users, selectedUser } = useAuthStore();
   const isDashboard = pathname === "/dashboard";

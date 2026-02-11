@@ -8,7 +8,7 @@ export default function AllSuppliersPage() {
     useSuppliersListForToday();
 
   return (
-    <main className="text-slate-900">
+    <main className="text-slate-900p px-2">
       <SuppliersSection
         refDate={refDate}
         suppliers={suppliers}
