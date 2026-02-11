@@ -24,7 +24,7 @@ export default function SupplierInfoPage() {
     "";
 
   return (
-    <main className="pb-16 text-slate-900">
+    <main className=" text-slate-900 px-2">
       <div className="mx-auto max-w-2xl">
         <div className="my-4 rounded-xl border border-slate-200 bg-app-card/95 p-4 shadow-sm">
           <h1 className="text-xl font-bold text-slate-900">
