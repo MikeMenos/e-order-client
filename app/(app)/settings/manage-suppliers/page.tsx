@@ -38,7 +38,7 @@ export default function ManageSuppliersPage() {
   );
 
   return (
-    <main className="text-slate-900">
+    <main className="text-slate-900 px-2">
       {!isMenuStep ? (
         <SuppliersSection
           refDate={refDate}
