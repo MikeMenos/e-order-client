@@ -1,6 +1,9 @@
 import { api } from "@/lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { AddToCartPayload, CartResponse } from "@/lib/ergastirio-interfaces";
+import type {
+  AddToCartPayload,
+  CartResponse,
+} from "@/lib/ergastirio-interfaces";
 import { buildFirstBasketKeyPayload } from "@/lib/ergastirio-utils";
 import toast from "react-hot-toast";
 import { useTranslation } from "@/lib/i18n";
@@ -10,7 +13,10 @@ export async function getFirstBasketKey(params: {
   branch: number;
 }): Promise<string | undefined> {
   const payload = buildFirstBasketKeyPayload(params);
-  const { data } = await api.post<CartResponse>("/ergastirio/add-to-cart", payload);
+  const { data } = await api.post<CartResponse>(
+    "/ergastirio/add-to-cart",
+    payload,
+  );
   if (data && (data as { success?: boolean }).success === false) {
     throw new Error((data as { error?: string }).error);
   }
@@ -18,7 +24,10 @@ export async function getFirstBasketKey(params: {
 }
 
 async function postCart(payload: AddToCartPayload): Promise<CartResponse> {
-  const { data } = await api.post<CartResponse>("/ergastirio/add-to-cart", payload);
+  const { data } = await api.post<CartResponse>(
+    "/ergastirio/add-to-cart",
+    payload,
+  );
   if (data && (data as { success?: boolean }).success === false) {
     throw new Error((data as { error?: string }).error);
   }

@@ -30,7 +30,7 @@ export function useHandleOnSubmitProducts() {
   const onSubmitProducts = async (
     product: IProductItem,
     qty: number,
-    isDelete?: boolean
+    isDelete?: boolean,
   ) => {
     // Read latest basketId from store so we reuse an already-fetched key (e.g. from a previous add in the same session)
     let effectiveBasketId = ergastirioStore.getState().basketId;
@@ -86,7 +86,9 @@ export function useHandleOnSubmitProducts() {
     try {
       await addToCartMutation(payload);
       toast.success(
-        isDelete ? t("erg_toast_removed_from_cart") : t("erg_toast_cart_updated")
+        isDelete
+          ? t("erg_toast_removed_from_cart")
+          : t("erg_toast_cart_updated"),
       );
     } catch {
       // errorToast in mutation
