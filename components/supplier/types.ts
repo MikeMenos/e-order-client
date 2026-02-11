@@ -11,6 +11,7 @@ export type SupplierProduct = {
   isFavorite: boolean;
   favIconColor: string;
   favIconMode: string;
+  productPackaging: string;
 };
 
 export type SupplierSection = {

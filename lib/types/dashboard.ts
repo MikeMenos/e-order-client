@@ -54,6 +54,7 @@ export type SupplierBasicInfoResponse = {
 /** Response shape from Shop/Suppliers_GetList */
 export type SuppliersListItem = {
   title: string;
+  customTitle: string | null;
   supplierUID: string;
   logo: string | null;
   bgImage: string | null;

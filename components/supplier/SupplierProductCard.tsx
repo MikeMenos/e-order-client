@@ -30,10 +30,10 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
     title,
     subTitle,
     image,
-    price,
     isFavorite,
     favIconColor,
     qty: initialQty,
+    productPackaging,
     suggestedQty: initialSuggestedQty,
   } = product;
   const { t } = useTranslation();
@@ -203,11 +203,6 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
     lastSuggestedQtyRef.current = initialSuggestedQty ?? 0;
   }, [initialSuggestedQty]);
 
-  const priceFormatted =
-    typeof price === "number" && !Number.isNaN(price)
-      ? `${price.toFixed(2)} €`
-      : null;
-
   return (
     <article
       key={id}
@@ -224,8 +219,10 @@ export function SupplierProductCard({ product, supplierUID, refDate }: Props) {
               {subTitle}
             </p>
           ) : null}
-          {priceFormatted ? (
-            <p className="mt-1 text-sm text-slate-900">{priceFormatted}</p>
+          {productPackaging ? (
+            <p className="mt-0.5 text-sm text-slate-700 leading-snug">
+              {t("product_packaging")} {productPackaging}
+            </p>
           ) : null}
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
