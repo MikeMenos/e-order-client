@@ -46,12 +46,12 @@ export function TileCard({
     </div>
   ) : null;
 
-  /* Fixed-height label area so text aligns across the grid */
+  /* Label area: min height, can grow so wrapped text is visible */
   const content = (
     <>
       {iconContent}
-      <div className="flex h-11 shrink-0 items-center justify-center">
-        <span className="text-center text-lg font-medium text-slate-900 leading-tight line-clamp-2 px-0.5">
+      <div className="flex min-h-11 flex-1 items-center justify-center px-0.5">
+        <span className="text-center text-lg font-medium text-slate-900 leading-tight wrap-break-word text-wrap">
           {label}
         </span>
       </div>
