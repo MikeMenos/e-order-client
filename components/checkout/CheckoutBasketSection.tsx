@@ -228,7 +228,7 @@ export function CheckoutBasketSection({
       });
       const msg = res.data?.message?.trim();
       toast.success(msg || t("checkout_remove_item"));
-      await queryClient.invalidateQueries({
+      await queryClient.refetchQueries({
         queryKey: [BASKET_ITEMS_QUERY_KEY, supplierUID],
       });
       void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });
@@ -259,7 +259,7 @@ export function CheckoutBasketSection({
         );
         const msg = res.data?.message?.trim();
         toast.success(msg || t("basket_toast_success"));
-        await queryClient.invalidateQueries({
+        await queryClient.refetchQueries({
           queryKey: [BASKET_ITEMS_QUERY_KEY, supplierUID],
         });
         void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });

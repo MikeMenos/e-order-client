@@ -17,10 +17,13 @@ export function ClientApp({ children }: { children: ReactNode }) {
           <PwaGate>
             {children}
             <Toaster
+              toastOptions={{
+                duration: 4000,
+              }}
               position="bottom-center"
               containerStyle={{
                 position: "fixed",
-                bottom: 10,
+                bottom: 30,
                 left: 0,
                 right: 0,
               }}

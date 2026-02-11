@@ -8,7 +8,10 @@ import { ErgastirioOrderSummary } from "@/components/ergastirio/OrderSummary";
 import Loading from "@/components/ui/loading";
 import { useAddToCart } from "@/hooks/ergastirio/useAddToCart";
 import { useGetCart } from "@/hooks/ergastirio/useGetCart";
-import type { AddToCartPayload, IProductItem } from "@/lib/ergastirio-interfaces";
+import type {
+  AddToCartPayload,
+  IProductItem,
+} from "@/lib/ergastirio-interfaces";
 import { ergastirioStore } from "@/stores/ergastirioStore";
 import toast from "react-hot-toast";
 import { useTranslation } from "@/lib/i18n";
@@ -58,11 +61,13 @@ export default function ErgastirioCartPage() {
     }) => {
       if (!data?.data?.length || !basketId || !currentBranch) return;
 
-      const existingLines = data.data.map((line: IProductItem, index: number) => ({
-        LINENUM: BASE_LINENUM + index,
-        MTRL: Number(line.MTRL),
-        QTY2: Number(line.Qty2),
-      }));
+      const existingLines = data.data.map(
+        (line: IProductItem, index: number) => ({
+          LINENUM: BASE_LINENUM + index,
+          MTRL: Number(line.MTRL),
+          QTY2: Number(line.Qty2),
+        }),
+      );
 
       const updatedLines = existingLines.map((line) => {
         const delta = editedQuantities[line.MTRL];
@@ -139,7 +144,7 @@ export default function ErgastirioCartPage() {
         // toast handled by useAddToCart
       }
     },
-    [addToCart, basketId, currentBranch, data?.data, editedQuantities]
+    [addToCart, basketId, currentBranch, data?.data, editedQuantities],
   );
 
   const handleQtyEdit = useCallback((product: IProductItem, newQty: number) => {
@@ -175,7 +180,10 @@ export default function ErgastirioCartPage() {
           onQtyChange={handleQtyEdit}
         />
       </div>
-      <ErgastirioCartCheckoutDialog open={checkoutOpen} onOpenChange={setCheckoutOpen}>
+      <ErgastirioCartCheckoutDialog
+        open={checkoutOpen}
+        onOpenChange={setCheckoutOpen}
+      >
         {orderDetailsContent}
       </ErgastirioCartCheckoutDialog>
     </>
