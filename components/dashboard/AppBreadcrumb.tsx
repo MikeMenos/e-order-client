@@ -26,6 +26,7 @@ const SEGMENT_LABEL_KEYS: Record<string, string> = {
   "order-hours": "config_link_order_hours",
   "order-retake": "config_link_order_retake",
   users: "config_link_users",
+  add: "breadcrumb_user_add",
   suppliers: "dashboard_card_suppliers",
   checkout: "breadcrumb_checkout",
   "order-history": "supplier_order_history_title",
