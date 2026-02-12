@@ -64,8 +64,8 @@ export function useSuppliersListForToday() {
     {
       mutationFn: async (storeID: string) => {
         const res = await api.get<SelectStoreResponse>("/select-store", {
-        params: { StoreUID: storeID },
-      });
+          params: { StoreUID: storeID },
+        });
         return res.data;
       },
       onSuccess: (data) => {
@@ -75,10 +75,10 @@ export function useSuppliersListForToday() {
   );
 
   useEffect(() => {
-    if (storeUID) {
+    if (storeUID && !storeAccessToken) {
       selectStoreMutation.mutate(storeUID);
     }
-  }, [storeUID]);
+  }, [storeUID, storeAccessToken]);
 
   const hasStoreToken = !!storeAccessToken;
   const enabled = !!users && hasStoreToken;
