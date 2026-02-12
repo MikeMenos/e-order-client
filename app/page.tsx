@@ -47,13 +47,7 @@ export default function HomePage() {
     },
     onSuccess: (data: any) => {
       const token = data?.accessToken ?? null;
-      setAccessToken(token);
-
-      if (token && typeof document !== "undefined") {
-        document.cookie = `accessToken=${encodeURIComponent(
-          token,
-        )}; path=/; max-age=${60 * 60 * 24 * 7}; sameSite=lax`;
-      }
+      setAccessToken(token); // This will also set the cookie via the store setter
 
       // Multiple stores: let user pick a role/store first
       if (
@@ -88,7 +82,7 @@ export default function HomePage() {
             params: { StoreUID: singleStoreUID },
           })
           .then((res) => {
-            setStoreAccessToken(res.data?.accessToken ?? null);
+            setStoreAccessToken(res.data?.accessToken ?? null); // This will also set the cookie via the store setter
           })
           .catch((err) => {
             console.error("select-store (single store) failed", err);

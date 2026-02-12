@@ -56,7 +56,7 @@ export default function SettingsPage() {
       api
         .get("/select-store", { params: { StoreUID: storeUID } })
         .then((res) => {
-          setStoreAccessToken(res.data?.accessToken ?? null);
+          setStoreAccessToken(res.data?.accessToken ?? null); // This will also set the cookie via the store setter
           queryClient.invalidateQueries();
         })
         .catch((err) => {

@@ -31,7 +31,7 @@ export function useStoreTokenInit() {
         return res.data;
       },
       onSuccess: (data) => {
-        setStoreAccessToken(data?.accessToken ?? null);
+        setStoreAccessToken(data?.accessToken ?? null); // This will also set the cookie via the store setter
       },
       onError: (error) => {
         // If select-store fails, clear the store token to prevent using stale token
@@ -41,10 +41,15 @@ export function useStoreTokenInit() {
   );
 
   useEffect(() => {
-    if (storeUID && accessToken && !storeAccessToken) {
-      selectStoreMutation.mutate(storeUID);
+    // Always refresh store token when returning to app if we have storeUID and accessToken
+    // This ensures we get a fresh token even if one exists in cookies
+    if (storeUID && accessToken) {
+      // Only skip if we're already initializing or if we just initialized
+      if (!selectStoreMutation.isPending && !selectStoreMutation.isSuccess) {
+        selectStoreMutation.mutate(storeUID);
+      }
     }
-  }, [storeUID, accessToken, storeAccessToken]);
+  }, [storeUID, accessToken]);
 
   return {
     isInitializing: selectStoreMutation.isPending,
