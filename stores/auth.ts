@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { setCookie } from "../lib/cookies";
 
 type AnyObject = Record<string, any>;
 
@@ -43,22 +44,31 @@ export const useAuthStore = create<AuthState>()(
         set(() => ({
           selectedUser: user,
         })),
-      setAccessToken: (token) =>
+      setAccessToken: (token) => {
+        // Always sync to cookie when token changes
+        if (typeof window !== "undefined") {
+          setCookie("accessToken", token);
+        }
         set(() => ({
           accessToken: token,
-        })),
-      setStoreAccessToken: (token) =>
+        }));
+      },
+      setStoreAccessToken: (token) => {
+        // Always sync to cookie when token changes
+        if (typeof window !== "undefined") {
+          setCookie("storeAccessToken", token);
+        }
         set(() => ({
           storeAccessToken: token,
-        })),
+        }));
+      },
       setRefreshToken: (token) =>
         set(() => ({
           refreshToken: token,
         })),
       logout: () => {
-        if (typeof document !== "undefined") {
-          document.cookie = "accessToken=; path=/; max-age=0; sameSite=lax";
-        }
+        setCookie("accessToken", null);
+        setCookie("storeAccessToken", null);
         set(() => ({
           isLoggedIn: false,
           accessToken: null,

@@ -6,8 +6,14 @@ import { Toaster } from "react-hot-toast";
 import { TranslationProvider } from "../lib/i18n";
 import { PwaGate } from "@/components/pwa/PwaGate";
 import { PwaInstallProvider } from "@/components/pwa/PwaInstallContext";
+import { initAuthFromCookies } from "../lib/cookies";
 
 const queryClient = new QueryClient();
+
+// Initialize auth from cookies synchronously before React renders
+if (typeof window !== "undefined") {
+  initAuthFromCookies();
+}
 
 export function ClientApp({ children }: { children: ReactNode }) {
   return (

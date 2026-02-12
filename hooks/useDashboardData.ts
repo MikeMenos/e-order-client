@@ -69,19 +69,26 @@ export function useSuppliersListForToday() {
         return res.data;
       },
       onSuccess: (data) => {
-        setStoreAccessToken(data?.accessToken ?? null);
+        setStoreAccessToken(data?.accessToken ?? null); // This will also set the cookie via the store setter
       },
     },
   );
 
   useEffect(() => {
-    if (storeUID && !storeAccessToken) {
+    // Always refresh store token when we have storeUID
+    // This ensures we get a fresh token even if one exists
+    if (storeUID && !selectStoreMutation.isPending) {
       selectStoreMutation.mutate(storeUID);
     }
-  }, [storeUID, storeAccessToken]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storeUID]);
 
   const hasStoreToken = !!storeAccessToken;
-  const enabled = !!users && hasStoreToken;
+  const isInitializingStoreToken = selectStoreMutation.isPending;
+  // Enable query when we have users and either:
+  // 1. We have a store token, OR
+  // 2. We're in the process of getting one (initializing)
+  const enabled = !!users && (hasStoreToken || isInitializingStoreToken);
   const suppliersListQuery = useSuppliersForDate(enabled);
   const suppliers = suppliersListQuery.data?.listSuppliers ?? [];
   const errorMessage = (suppliersListQuery.error as Error)?.message;
