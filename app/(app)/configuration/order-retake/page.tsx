@@ -27,7 +27,7 @@ export default function OrderRetakePage() {
       )}
 
       {orders.length === 0 && !ordersQuery.isLoading ? (
-        <p className="text-sm text-slate-600">{t("config_empty_orders")}</p>
+        <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">{t("config_empty_orders")}</p>
       ) : (
         <motion.div
           className="space-y-2"

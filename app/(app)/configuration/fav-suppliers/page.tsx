@@ -28,7 +28,7 @@ export default function FavouriteSuppliersPage() {
       )}
 
       {items.length === 0 && !wishlistQuery.isLoading ? (
-        <p className="text-sm text-slate-600">{t("config_empty_favorites")}</p>
+        <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">{t("config_empty_favorites")}</p>
       ) : (
         <motion.div
           className="space-y-2"

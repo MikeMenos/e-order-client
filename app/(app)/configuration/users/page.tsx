@@ -44,7 +44,7 @@ export default function UsersManagementPage() {
       )}
 
       {userList.length === 0 && !usersQuery.isLoading ? (
-        <p className="text-sm text-slate-600">{t("config_empty_users")}</p>
+        <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">{t("config_empty_users")}</p>
       ) : (
         <motion.div
           className="space-y-2"

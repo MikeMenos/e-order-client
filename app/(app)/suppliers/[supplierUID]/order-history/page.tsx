@@ -57,7 +57,7 @@ export default function SupplierOrderHistoryPage() {
           </p>
         )}
         {orders.length === 0 && !ordersQuery.isLoading && (
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
             {t("supplier_order_history_empty")}
           </p>
         )}

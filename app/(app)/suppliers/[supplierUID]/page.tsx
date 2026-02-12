@@ -274,7 +274,7 @@ export default function SupplierPage() {
         )}
 
         {filteredSections.length === 0 && !productsQuery.isLoading ? (
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
             {t("supplier_empty_products")}
           </p>
         ) : (

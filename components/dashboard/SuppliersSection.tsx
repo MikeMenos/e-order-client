@@ -167,7 +167,7 @@ export function SuppliersSection({
       )}
 
       {filteredSuppliers.length === 0 && !isLoading ? (
-        <p className="text-sm text-slate-400">{t("suppliers_empty")}</p>
+        <p className="text-sm text-slate-400 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">{t("suppliers_empty")}</p>
       ) : (
         <motion.div
           className="space-y-2"
