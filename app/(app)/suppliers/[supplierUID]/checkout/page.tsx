@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useSupplierDisplay } from "@/hooks/useSupplier";
-import { api } from "@/lib/api";
+import { useOrderAdd } from "@/hooks/useOrderAdd";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { CheckoutPageHeader } from "@/components/checkout/CheckoutPageHeader";
 import { CheckoutBasketSection } from "@/components/checkout/CheckoutBasketSection";
@@ -27,44 +27,43 @@ export default function SupplierCheckoutPage() {
   const { t } = useTranslation();
   const router = useRouter();
   const params = useParams<{ supplierUID: string }>();
-  const searchParams = useSearchParams();
   const supplierUID = params.supplierUID ?? "";
-  const refDate = searchParams.get("refDate") ?? undefined;
 
-  const supplierInfoQuery = useSupplierDisplay(supplierUID, refDate);
+  const supplierInfoQuery = useSupplierDisplay(supplierUID);
   const supplier = supplierInfoQuery.data?.supplier ?? null;
   const selectedDate = supplierInfoQuery.data?.selectedDate ?? null;
 
   const [comments, setComments] = useState("");
   const [deliveryDate, setDeliveryDate] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasBasketItems, setHasBasketItems] = useState(false);
+
+  const orderAddMutation = useOrderAdd({
+    onSuccess: (data) => {
+      const msg = data?.message?.trim();
+      toast.success(msg || t("checkout_submit_order"));
+      router.replace("/dashboard");
+    },
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err, t("basket_error")));
+    },
+  });
+  const isSubmitting = orderAddMutation.isPending;
 
   const handleTemporarySave = () => {
     // Placeholder: API will be added later
   };
 
-  const handleSubmitOrder = async () => {
+  const handleSubmitOrder = () => {
     const orderRefDate =
       toISOOrNull(selectedDate ?? null) ?? new Date().toISOString();
     const desiredDeliveryDate =
       toISOOrNull(deliveryDate ?? selectedDate) ?? orderRefDate;
-    setIsSubmitting(true);
-    try {
-      const res = await api.post<{ message?: string }>("/order-add", {
-        orderRefDate,
-        supplierUID,
-        extraComments: comments,
-        desiredDeliveryDate,
-      });
-      const msg = res.data?.message?.trim();
-      toast.success(msg || t("checkout_submit_order"));
-      router.replace("/dashboard");
-    } catch (err: unknown) {
-      toast.error(getApiErrorMessage(err, t("basket_error")));
-    } finally {
-      setIsSubmitting(false);
-    }
+    orderAddMutation.mutate({
+      orderRefDate,
+      supplierUID,
+      extraComments: comments,
+      desiredDeliveryDate,
+    });
   };
 
   return (

@@ -23,15 +23,12 @@ import { useMeasuredHeight } from "../../../../lib/utils";
 export default function SupplierPage() {
   const { t } = useTranslation();
   const params = useParams<{ supplierUID: string }>();
-  const searchParams = useSearchParams();
   const supplierUID = params.supplierUID;
-  const refDate = searchParams.get("refDate") ?? undefined;
 
-  const supplierInfoQuery = useSupplierDisplay(supplierUID, undefined);
-  const productsQuery = useSupplierProducts(supplierUID, refDate ?? undefined);
+  const supplierInfoQuery = useSupplierDisplay(supplierUID);
+  const productsQuery = useSupplierProducts(supplierUID);
 
-  const selectedDate =
-    refDate ?? supplierInfoQuery.data?.selectedDate ?? undefined;
+  const selectedDate = supplierInfoQuery.data?.selectedDate ?? undefined;
   const supplier = supplierInfoQuery.data?.supplier ?? null;
   const rawProducts = productsQuery.data?.products ?? [];
 
@@ -50,8 +47,7 @@ export default function SupplierPage() {
           productPackaging: p.productPackaging ?? "",
           qty: p.basketQty ?? 0,
           suggestedQty: p.basketSuggestedQty ?? null,
-          isFavorite:
-            p.isFavByShopper || p.isFavBySupplier || p.isFavByPlatform || false,
+          isFavorite: p.isFavByShopper,
           favIconColor: p.favIconColor ?? "#9CBDFA",
           favIconMode: p.favIconMode ?? "border",
         };
@@ -286,7 +282,6 @@ export default function SupplierPage() {
                   section={section}
                   stickyOffset={stickyOffset}
                   supplierUID={supplierUID}
-                  refDate={selectedDate}
                   sectionRef={(el) => {
                     sectionRefs.current[section.id] = el;
                   }}
@@ -297,7 +292,7 @@ export default function SupplierPage() {
         )}
       </div>
 
-      <SupplierCheckoutBar supplierUID={supplierUID} refDate={refDate} />
+      <SupplierCheckoutBar supplierUID={supplierUID} />
     </main>
   );
 }

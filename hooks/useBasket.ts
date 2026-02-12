@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
 
 export type BasketItemsData = {
@@ -11,15 +11,83 @@ export type BasketItemsData = {
   totalBasketsCost?: number;
 };
 
-export const useBasketItems = (params?: { SupplierUID?: string }) => {
+export const useBasketItems = (params?: {
+  SupplierUID?: string;
+  enabled?: boolean;
+}) => {
+  const { SupplierUID, enabled = true } = params ?? {};
   return useQuery({
-    queryKey: ["basket-items", params?.SupplierUID],
+    queryKey: ["basket-items", SupplierUID],
     queryFn: async () => {
       const res = await api.get<BasketItemsData>("/basket-items", {
-        params: params ?? {},
+        params: SupplierUID != null ? { SupplierUID } : {},
       });
       return res.data;
     },
+    enabled: enabled !== false,
+  });
+};
+
+export const useBasketRemoveItem = (options?: {
+  supplierUID?: string;
+  onSuccess?: (data: { message?: string }) => void;
+  onError?: (err: unknown) => void;
+}) => {
+  const queryClient = useQueryClient();
+  const { supplierUID, onSuccess, onError } = options ?? {};
+  return useMutation({
+    mutationFn: async (basketUID: string) => {
+      const res = await api.post<{ message?: string }>("/basket-remove-item", {
+        basketUID,
+      });
+      return res.data;
+    },
+    onSuccess: (data, _basketUID) => {
+      onSuccess?.(data);
+      if (supplierUID != null) {
+        void queryClient.refetchQueries({
+          queryKey: ["basket-items", supplierUID],
+        });
+      }
+      void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });
+    },
+    onError,
+  });
+};
+
+export type BasketAddOrUpdatePayload = {
+  productUID: string;
+  qty: number;
+  stock: number;
+  suggestedQty: number;
+  comments: string;
+};
+
+export const useBasketAddOrUpdate = (options?: {
+  supplierUID?: string;
+  onSuccess?: (data: { message?: string }) => void;
+  onError?: (err: unknown) => void;
+}) => {
+  const queryClient = useQueryClient();
+  const { supplierUID, onSuccess, onError } = options ?? {};
+  return useMutation({
+    mutationFn: async (payload: BasketAddOrUpdatePayload) => {
+      const res = await api.post<{ message?: string }>(
+        "/basket-add-or-update",
+        payload,
+      );
+      return res.data;
+    },
+    onSuccess: (data, _payload) => {
+      onSuccess?.(data);
+      if (supplierUID != null) {
+        void queryClient.refetchQueries({
+          queryKey: ["basket-items", supplierUID],
+        });
+      }
+      void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });
+    },
+    onError,
   });
 };
 

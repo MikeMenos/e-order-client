@@ -12,3 +12,16 @@ export const useWishlistItems = () => {
     },
   });
 };
+
+export const useWishlistItemsBySupplier = (supplierUID: string | undefined) => {
+  return useQuery({
+    queryKey: ["wishlist-items", supplierUID],
+    queryFn: async () => {
+      const res = await api.get("/wishlist-items", {
+        params: supplierUID ? { SupplierUID: supplierUID } : {},
+      });
+      return res.data;
+    },
+    enabled: !!supplierUID,
+  });
+};

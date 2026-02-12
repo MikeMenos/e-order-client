@@ -179,7 +179,6 @@ export function SuppliersSection({
             <motion.div key={s.supplierUID} variants={listItemVariants}>
               <SupplierTile
                 supplier={s}
-                refDate={refDate}
                 showDeliveryInfo={
                   pathname !== "/all-suppliers" &&
                   pathname !== "/settings/manage-suppliers"
@@ -192,7 +191,12 @@ export function SuppliersSection({
                 href={
                   onSupplierClick
                     ? undefined
-                    : `/suppliers/${encodeURIComponent(s.supplierUID)}?refDate=${encodeURIComponent(refDate)}`
+                    : (() => {
+                        if (pathname === "/orders-of-the-day") {
+                          return `/suppliers/${encodeURIComponent(s.supplierUID)}?from=orders-of-the-day`;
+                        }
+                        return `/suppliers/${encodeURIComponent(s.supplierUID)}`;
+                      })()
                 }
                 onClick={onSupplierClick ? () => onSupplierClick(s) : undefined}
               />

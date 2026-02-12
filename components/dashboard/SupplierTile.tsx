@@ -15,13 +15,12 @@ import { Button } from "../ui/button";
 
 type Props = {
   supplier: SuppliersListItem;
-  refDate: string;
   isExpanded?: boolean;
   /** When false, hide delivery date line and week delivery days (e.g. on all-suppliers). */
   showDeliveryInfo?: boolean;
   /** When false, hide basket status pill and show subTitle under title (e.g. on all-suppliers). */
   showBasketStatus?: boolean;
-  /** When provided, tile is a link to this href (default: /suppliers/[uid]?refDate=). */
+  /** When provided, tile is a link to this href (default: /suppliers/[uid]). */
   href?: string;
   /** When provided, tile is a button and this is called on click (e.g. manage-suppliers menu). */
   onClick?: () => void;
@@ -36,7 +35,6 @@ const tileClassNameSettings =
 
 export function SupplierTile({
   supplier,
-  refDate,
   showDeliveryInfo = true,
   showBasketStatus = true,
   href: hrefProp,
@@ -54,9 +52,9 @@ export function SupplierTile({
   const showOrangeDot = isAllSuppliersPage && openBaskets > 0;
   const greenDotCount = Math.min(todayOrders, 10);
 
-  const defaultHref = `/suppliers/${encodeURIComponent(
-    supplier.supplierUID,
-  )}?refDate=${encodeURIComponent(refDate)}`;
+  const defaultHref = isOrdersOfDayPage
+    ? `/suppliers/${encodeURIComponent(supplier.supplierUID)}?from=orders-of-the-day`
+    : `/suppliers/${encodeURIComponent(supplier.supplierUID)}`;
   const href = hrefProp ?? defaultHref;
 
   const statusDescr = supplier.basketIconStatusDescr ?? "";

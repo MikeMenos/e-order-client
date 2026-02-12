@@ -46,6 +46,8 @@ export default function ErgastirioProductCard({
   const prevQty2Ref = useRef(product.Qty2);
   const lastSentQtyRef = useRef(Number(product.Qty2) ?? 0);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const originalValueOnFocusRef = useRef<number | "">(product.Qty2);
+  const wasClearedOnFocusRef = useRef(false);
 
   const isProductsPage =
     pathname.startsWith(`${ERGASTIRIO_BASE}/products`) &&
@@ -59,25 +61,6 @@ export default function ErgastirioProductCard({
       lastSentQtyRef.current = num;
     }
   }, [product.Qty2]);
-
-  useEffect(() => {
-    if (!isProductsPage || !onSubmitProducts) return;
-    const num = typeof qty === "number" ? qty : qty === "" ? 0 : Number(qty);
-    if (Number.isNaN(num) || num === lastSentQtyRef.current) return;
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      debounceRef.current = null;
-      lastSentQtyRef.current = num;
-      setIsItemPending(true);
-      const isDelete = num <= 0;
-      Promise.resolve(
-        onSubmitProducts(product, isDelete ? 0 : num, isDelete),
-      ).finally(() => setIsItemPending(false));
-    }, DEBOUNCE_MS);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [qty, isProductsPage, product, onSubmitProducts]);
 
   const IMAGE_BASE_URL = "https://ergastiri.oncloud.gr/s1services?filename=";
   const wholesalePrice = showWholesalePrice
@@ -103,9 +86,103 @@ export default function ErgastirioProductCard({
     }
   };
 
+  const handleQtyFocus = () => {
+    originalValueOnFocusRef.current = qty;
+    wasClearedOnFocusRef.current = false;
+  };
+
+  const handleQtyBlur = () => {
+    // If value is empty and was cleared on focus, restore original via API call
+    if (wasClearedOnFocusRef.current && qty === "") {
+      // Cancel any pending debounced calls
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = null;
+      }
+
+      // Restore the original value locally
+      const originalNum =
+        typeof originalValueOnFocusRef.current === "number"
+          ? originalValueOnFocusRef.current
+          : originalValueOnFocusRef.current === ""
+            ? 0
+            : Number(originalValueOnFocusRef.current);
+
+      setQty(originalValueOnFocusRef.current);
+      lastSentQtyRef.current = originalNum;
+
+      // Call API to restore the value on the server
+      if (isProductsPage && onSubmitProducts) {
+        setIsItemPending(true);
+        const isDelete = originalNum <= 0;
+        Promise.resolve(
+          onSubmitProducts(product, isDelete ? 0 : originalNum, isDelete),
+        ).finally(() => setIsItemPending(false));
+      }
+
+      wasClearedOnFocusRef.current = false;
+      originalValueOnFocusRef.current = product.Qty2;
+      return;
+    }
+
+    // Only trigger API call if value actually changed from original
+    if (!isProductsPage || !onSubmitProducts) {
+      wasClearedOnFocusRef.current = false;
+      return;
+    }
+
+    const currentNum =
+      typeof qty === "number" ? qty : qty === "" ? 0 : Number(qty);
+    if (Number.isNaN(currentNum)) {
+      wasClearedOnFocusRef.current = false;
+      return;
+    }
+
+    const originalNum =
+      typeof originalValueOnFocusRef.current === "number"
+        ? originalValueOnFocusRef.current
+        : originalValueOnFocusRef.current === ""
+          ? 0
+          : Number(originalValueOnFocusRef.current);
+
+    // Only call API if value changed from original
+    if (currentNum !== originalNum && currentNum !== lastSentQtyRef.current) {
+      // Cancel any pending debounced calls
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = null;
+      }
+
+      lastSentQtyRef.current = currentNum;
+      setIsItemPending(true);
+      const isDelete = currentNum <= 0;
+      Promise.resolve(
+        onSubmitProducts(product, isDelete ? 0 : currentNum, isDelete),
+      ).finally(() => setIsItemPending(false));
+    }
+
+    wasClearedOnFocusRef.current = false;
+    originalValueOnFocusRef.current = product.Qty2;
+  };
+
   const handleQtyChange = (value: string, setter: (v: number | "") => void) => {
     setError("");
     const numberValue = value === "" ? "" : Number(value);
+
+    // If value becomes empty and we had a value on focus, mark as cleared on focus
+    // Don't trigger API calls in this case - wait until user types something or blurs
+    if (originalValueOnFocusRef.current !== "" && numberValue === "") {
+      wasClearedOnFocusRef.current = true;
+      setter(numberValue);
+      // Don't call onQtyChange for cart - this is just clearing on focus
+      return;
+    }
+
+    // User typed something, so it's a real change
+    if (numberValue !== "") {
+      wasClearedOnFocusRef.current = false;
+    }
+
     setter(numberValue);
     if (
       pathname === `${ERGASTIRIO_BASE}/cart` &&
@@ -117,11 +194,54 @@ export default function ErgastirioProductCard({
   };
 
   const incrementQty = () => {
-    handleQtyChange(String(Number(qty || 0) + 1), setQty);
+    const currentNum = typeof qty === "number" ? qty : qty === "" ? 0 : Number(qty);
+    const nextNum = currentNum + 1;
+    setQty(nextNum);
+    
+    // Debounce API call for button clicks (800ms delay)
+    if (isProductsPage && onSubmitProducts) {
+      // Cancel any pending debounced calls
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = null;
+      }
+      debounceRef.current = setTimeout(() => {
+        debounceRef.current = null;
+        lastSentQtyRef.current = nextNum;
+        setIsItemPending(true);
+        Promise.resolve(onSubmitProducts(product, nextNum, false)).finally(() =>
+          setIsItemPending(false),
+        );
+      }, DEBOUNCE_MS);
+    } else if (pathname === `${ERGASTIRIO_BASE}/cart` && onQtyChange) {
+      onQtyChange(product, nextNum);
+    }
   };
 
   const decrementQty = () => {
-    handleQtyChange(String(Math.max(0, Number(qty || 0) - 1)), setQty);
+    const currentNum = typeof qty === "number" ? qty : qty === "" ? 0 : Number(qty);
+    const nextNum = Math.max(0, currentNum - 1);
+    setQty(nextNum);
+    
+    // Debounce API call for button clicks (800ms delay)
+    if (isProductsPage && onSubmitProducts) {
+      // Cancel any pending debounced calls
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = null;
+      }
+      debounceRef.current = setTimeout(() => {
+        debounceRef.current = null;
+        lastSentQtyRef.current = nextNum;
+        setIsItemPending(true);
+        const isDelete = nextNum <= 0;
+        Promise.resolve(
+          onSubmitProducts(product, isDelete ? 0 : nextNum, isDelete),
+        ).finally(() => setIsItemPending(false));
+      }, DEBOUNCE_MS);
+    } else if (pathname === `${ERGASTIRIO_BASE}/cart` && onQtyChange) {
+      onQtyChange(product, nextNum);
+    }
   };
 
   const isCart = pathname === `${ERGASTIRIO_BASE}/cart`;
@@ -219,6 +339,8 @@ export default function ErgastirioProductCard({
                       value={qty}
                       type="number"
                       onChange={(e) => handleQtyChange(e.target.value, setQty)}
+                      onFocus={handleQtyFocus}
+                      onBlur={handleQtyBlur}
                       min={0}
                     />
                     <Button

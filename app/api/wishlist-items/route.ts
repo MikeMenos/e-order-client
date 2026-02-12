@@ -4,9 +4,25 @@ import { getBackendHeaders } from "../../../lib/backend-headers";
 
 export async function GET(req: NextRequest) {
   try {
+    const searchParams = new URL(req.url).searchParams;
+    const params: Record<string, string> = {};
+    
+    // Extract SupplierUID if provided
+    const supplierUID = searchParams.get("SupplierUID");
+    if (supplierUID) {
+      params.SupplierUID = supplierUID;
+    }
+    
+    // Include any other query parameters
+    searchParams.forEach((value, key) => {
+      if (key !== "SupplierUID") {
+        params[key] = value;
+      }
+    });
+
     const res = await backend.get("Basket/Wishlist_GetItems", {
       headers: getBackendHeaders(req),
-      params: Object.fromEntries(new URL(req.url).searchParams.entries()),
+      params,
     });
 
     return NextResponse.json(res.data, { status: res.status });

@@ -15,28 +15,22 @@ export type {
   SupplierBasicInfoResponse,
 } from "../lib/types/dashboard";
 
-export const useDashboardCalendar = (refDate: string, enabled: boolean) => {
+export const useDashboardCalendar = (enabled: boolean) => {
   return useQuery({
-    queryKey: ["dashboardCalendar", refDate],
+    queryKey: ["dashboardCalendar"],
     queryFn: async () => {
-      const res = await api.post("/dashboard-calendar", {
-        refDate,
-      });
+      const res = await api.post("/dashboard-calendar", {});
       return res.data;
     },
     enabled,
   });
 };
 
-export const useSuppliersForDate = (
-  refDate: string | undefined,
-  enabled: boolean,
-) => {
+export const useSuppliersForDate = (enabled: boolean) => {
   return useQuery({
-    queryKey: ["suppliers", refDate],
+    queryKey: ["suppliers"],
     queryFn: async (): Promise<SuppliersListResponse> => {
       const res = await api.post<SuppliersListResponse>("/suppliers-list", {
-        refDate,
         setCategories: true,
         setLastOrders: true,
         setDeliverySchedule: true,
@@ -88,7 +82,7 @@ export function useSuppliersListForToday() {
 
   const hasStoreToken = !!storeAccessToken;
   const enabled = !!users && hasStoreToken;
-  const suppliersListQuery = useSuppliersForDate(undefined, enabled);
+  const suppliersListQuery = useSuppliersForDate(enabled);
   const suppliers = suppliersListQuery.data?.listSuppliers ?? [];
   const errorMessage = (suppliersListQuery.error as Error)?.message;
 

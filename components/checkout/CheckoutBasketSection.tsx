@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Trash2, Loader2 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
-import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api-error";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
+import {
+  useBasketItems,
+  useBasketRemoveItem,
+  useBasketAddOrUpdate,
+} from "@/hooks/useBasket";
 import type {
   BasketGetItemsResponse,
   BasketGetItemsProduct,
@@ -25,21 +28,7 @@ type Props = {
   onHasItemsChange?: (hasItems: boolean) => void;
 };
 
-const BASKET_ITEMS_QUERY_KEY = "basket-items";
 const DEBOUNCE_MS = 800;
-
-function useBasketItems(supplierUID: string) {
-  return useQuery({
-    queryKey: [BASKET_ITEMS_QUERY_KEY, supplierUID],
-    queryFn: async () => {
-      const res = await api.get<BasketGetItemsResponse>("/basket-items", {
-        params: { SupplierUID: supplierUID },
-      });
-      return res.data;
-    },
-    enabled: !!supplierUID,
-  });
-}
 
 function BasketItemRow({
   item,
@@ -61,6 +50,8 @@ function BasketItemRow({
   const isBusy = isRemoving || isUpdating;
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingQtyRef = useRef<number>(item.qty);
+  const originalValueOnFocusRef = useRef<string>("");
+  const wasClearedOnFocusRef = useRef(false);
 
   useEffect(() => {
     setInputValue(item.qty <= 0 ? "" : String(item.qty));
@@ -96,6 +87,7 @@ function BasketItemRow({
     }
     const next = n - 1;
     setInputValue(String(next));
+    // Debounce API call for button clicks (800ms delay)
     scheduleQtyUpdate(next);
   };
 
@@ -103,10 +95,71 @@ function BasketItemRow({
     const n = toNonNegativeNum(inputValue || String(item.qty));
     const next = n + 1;
     setInputValue(String(next));
+    // Debounce API call for button clicks (800ms delay)
     scheduleQtyUpdate(next);
   };
 
+  const handleInputFocus = () => {
+    // Store original value when focus happens (before Input component clears it)
+    if (inputValue !== "" && originalValueOnFocusRef.current === "") {
+      originalValueOnFocusRef.current = inputValue;
+    }
+    // Note: Input component calls onChange("") BEFORE onFocus
+    // So by the time this runs, inputValue might already be ""
+    // The original value is captured in handleInputChange when onChange("") is called
+    // Don't reset wasClearedOnFocusRef here - it's set in handleInputChange
+  };
+
+  const handleInputChange = (value: string) => {
+    // If value becomes empty, we're likely clearing on focus
+    // Capture the original value BEFORE it gets cleared (React state updates are async)
+    if (value === "") {
+      // Always capture the current display value if we don't have one stored yet
+      // This handles the case where Input clears the value before onFocus runs
+      if (originalValueOnFocusRef.current === "" && inputValue !== "") {
+        originalValueOnFocusRef.current = inputValue;
+      }
+      // Only proceed if we successfully captured a non-empty original value
+      if (originalValueOnFocusRef.current !== "") {
+        wasClearedOnFocusRef.current = true;
+        // Don't schedule update - this is just clearing on focus
+        setInputValue(value);
+        return;
+      }
+    }
+
+    // User typed something, so it's a real change
+    if (value !== "") {
+      wasClearedOnFocusRef.current = false;
+      // Reset original value ref since user is making a real change
+      originalValueOnFocusRef.current = "";
+    }
+
+    setInputValue(value);
+  };
+
   const handleInputBlur = () => {
+    // If value is empty and was cleared on focus, restore original without API call
+    // Use refs to avoid stale closure issues
+    if (
+      wasClearedOnFocusRef.current &&
+      originalValueOnFocusRef.current !== ""
+    ) {
+      const currentValue = inputValue;
+      // Only restore if current value is empty (user didn't type anything)
+      if (currentValue === "") {
+        // Cancel any pending debounced calls
+        if (debounceRef.current) {
+          clearTimeout(debounceRef.current);
+          debounceRef.current = null;
+        }
+        setInputValue(originalValueOnFocusRef.current);
+        wasClearedOnFocusRef.current = false;
+        originalValueOnFocusRef.current = "";
+        return;
+      }
+    }
+
     const n = toNonNegativeNum(inputValue);
     if (n === 0) {
       if (debounceRef.current) {
@@ -116,13 +169,28 @@ function BasketItemRow({
       onRemove();
       return;
     }
+
+    // Normalize the display value
     setInputValue(String(n));
-    if (n !== item.qty) {
+
+    // Only trigger API call if value actually changed from original
+    const originalNum = toNonNegativeNum(
+      originalValueOnFocusRef.current || String(item.qty),
+    );
+    if (n !== originalNum) {
+      // Cancel any pending debounced calls
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = null;
+      }
       scheduleQtyUpdate(n);
     } else if (debounceRef.current) {
       clearTimeout(debounceRef.current);
       debounceRef.current = null;
     }
+
+    wasClearedOnFocusRef.current = false;
+    originalValueOnFocusRef.current = "";
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -155,7 +223,8 @@ function BasketItemRow({
               type="number"
               min={0}
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => handleInputChange(e.target.value)}
+              onFocus={handleInputFocus}
               onBlur={handleInputBlur}
               onKeyDown={handleInputKeyDown}
               placeholder="0"
@@ -201,43 +270,59 @@ export function CheckoutBasketSection({
   onHasItemsChange,
 }: Props) {
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
-  const { data, isLoading, isError, error } = useBasketItems(supplierUID);
+  const { data, isLoading, isError, error } = useBasketItems({
+    SupplierUID: supplierUID,
+    enabled: !!supplierUID,
+  });
+  const typedData = data as BasketGetItemsResponse | undefined;
+  const basket =
+    typedData?.basketsList?.find((b) => b.supplierUID === supplierUID) ??
+    typedData?.basketsList?.[0];
+  const items = (basket?.items ?? []) as BasketGetItemsProduct[];
+
   const [removingBasketUID, setRemovingBasketUID] = useState<string | null>(
     null,
   );
   const [updatingProductUID, setUpdatingProductUID] = useState<string | null>(
     null,
   );
-
-  const basket =
-    data?.basketsList?.find((b) => b.supplierUID === supplierUID) ??
-    data?.basketsList?.[0];
-  const items = basket?.items ?? [];
   const hasItems = items.length > 0;
 
-  if (onHasItemsChange) {
-    onHasItemsChange(hasItems);
-  }
-
-  const handleRemove = async (basketUID: string) => {
-    setRemovingBasketUID(basketUID);
-    try {
-      const res = await api.post<{ message?: string }>("/basket-remove-item", {
-        basketUID,
-      });
-      const msg = res.data?.message?.trim();
-      toast.success(msg || t("checkout_remove_item"));
-      await queryClient.refetchQueries({
-        queryKey: [BASKET_ITEMS_QUERY_KEY, supplierUID],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });
-    } catch (err: unknown) {
-      toast.error(getApiErrorMessage(err, t("basket_error")));
-    } finally {
+  const removeItemMutation = useBasketRemoveItem({
+    supplierUID,
+    onSuccess: (d) => {
+      toast.success(d?.message?.trim() || t("checkout_remove_item"));
       setRemovingBasketUID(null);
-    }
-  };
+    },
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err, t("basket_error")));
+      setRemovingBasketUID(null);
+    },
+  });
+
+  const addOrUpdateMutation = useBasketAddOrUpdate({
+    supplierUID,
+    onSuccess: (d) => {
+      toast.success(d?.message?.trim() || t("basket_toast_success"));
+      setUpdatingProductUID(null);
+    },
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err, t("basket_error")));
+      setUpdatingProductUID(null);
+    },
+  });
+
+  useEffect(() => {
+    onHasItemsChange?.(hasItems);
+  }, [hasItems, onHasItemsChange]);
+
+  const handleRemove = useCallback(
+    (basketUID: string) => {
+      setRemovingBasketUID(basketUID);
+      removeItemMutation.mutate(basketUID);
+    },
+    [removeItemMutation],
+  );
 
   const handleQtyChange = useCallback(
     async (item: BasketGetItemsProduct, newQty: number) => {
@@ -247,29 +332,18 @@ export function CheckoutBasketSection({
       }
       setUpdatingProductUID(item.productUID);
       try {
-        const res = await api.post<{ message?: string }>(
-          "/basket-add-or-update",
-          {
-            productUID: item.productUID,
-            qty: newQty,
-            stock: 0,
-            suggestedQty: 0,
-            comments: item.comments ?? "",
-          },
-        );
-        const msg = res.data?.message?.trim();
-        toast.success(msg || t("basket_toast_success"));
-        await queryClient.refetchQueries({
-          queryKey: [BASKET_ITEMS_QUERY_KEY, supplierUID],
+        await addOrUpdateMutation.mutateAsync({
+          productUID: item.productUID,
+          qty: newQty,
+          stock: 0,
+          suggestedQty: 0,
+          comments: item.comments ?? "",
         });
-        void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });
-      } catch (err: unknown) {
-        toast.error(getApiErrorMessage(err, t("basket_error")));
       } finally {
         setUpdatingProductUID(null);
       }
     },
-    [supplierUID, queryClient, t],
+    [handleRemove, addOrUpdateMutation],
   );
 
   return (
