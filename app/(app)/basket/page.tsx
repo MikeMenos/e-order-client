@@ -31,7 +31,7 @@ export default function BasketPage() {
       )}
 
       {baskets.length === 0 && !basketQuery.isLoading ? (
-        <p className="text-sm text-slate-600">{t("basket_empty")}</p>
+        <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">{t("basket_empty")}</p>
       ) : (
         <motion.div
           className="space-y-3"

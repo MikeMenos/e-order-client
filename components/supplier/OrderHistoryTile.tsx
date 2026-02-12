@@ -189,7 +189,7 @@ export function OrderHistoryTile({
                 {t("supplier_order_history_loading")}
               </p>
             ) : items.length === 0 ? (
-              <p className="text-xs text-slate-500">{t("order_items_empty")}</p>
+              <p className="text-xs text-slate-500 bg-white/80 backdrop-blur-sm rounded px-2 py-1 inline-block">{t("order_items_empty")}</p>
             ) : (
               <motion.ul
                 className="space-y-2"

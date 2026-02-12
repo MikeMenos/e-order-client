@@ -356,7 +356,7 @@ export function CheckoutBasketSection({
         </p>
       )}
       {!isLoading && !isError && items.length === 0 && (
-        <p className=" text-slate-500">{t("checkout_basket_empty")}</p>
+        <p className="text-slate-500 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">{t("checkout_basket_empty")}</p>
       )}
       {!isLoading && !isError && items.length > 0 && (
         <ul className="max-h-[50vh] space-y-1 overflow-y-auto pr-1">

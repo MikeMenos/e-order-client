@@ -59,7 +59,7 @@ export default function FavoritesPage() {
       )}
 
       {items.length === 0 && !wishlistQuery.isLoading ? (
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
           {t("config_empty_favorites") || "No favorites found"}
         </p>
       ) : (
