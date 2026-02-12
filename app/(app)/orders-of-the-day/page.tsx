@@ -18,7 +18,7 @@ export default function OrdersOfTheDayPage() {
   );
 
   return (
-    <main className="text-slate-900 px-2">
+    <main className="text-slate-900 px-3">
       <SuppliersSection
         refDate={refDate}
         suppliers={suppliersInPrefDaySchedule}

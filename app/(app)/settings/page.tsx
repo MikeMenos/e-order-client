@@ -76,7 +76,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <main className="text-slate-900 px-2">
+    <main className="text-slate-900 px-3">
       <div className="mx-auto flex max-w-xl flex-col p-4">
         <motion.div
           className="grid grid-cols-2 auto-rows-fr gap-4"
