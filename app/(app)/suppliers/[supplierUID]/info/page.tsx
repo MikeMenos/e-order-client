@@ -200,33 +200,6 @@ export default function SupplierInfoPage() {
                   )}
               </DetailSection>
             )}
-
-            {/* Daily analysis */}
-            {supplier.weekDailyAnalysis &&
-              supplier.weekDailyAnalysis.length > 0 && (
-                <DetailSection title={t("order_next_delivery")}>
-                  <ul className="space-y-1 text-sm">
-                    {supplier.weekDailyAnalysis.map((d, idx) => (
-                      <li
-                        key={`${d.shortDay ?? d.dateObj ?? idx}`}
-                        className="flex flex-col gap-0.5 rounded bg-slate-50 px-2 py-1"
-                      >
-                        <div className="flex justify-between gap-4">
-                          <span className="font-medium text-slate-800">
-                            {d.shortDay}
-                          </span>
-                          <span className="text-xs text-slate-500">
-                            {d.dateObj}
-                          </span>
-                        </div>
-                        {d.infos && (
-                          <p className="text-xs text-slate-700">{d.infos}</p>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </DetailSection>
-              )}
           </div>
         )}
       </div>

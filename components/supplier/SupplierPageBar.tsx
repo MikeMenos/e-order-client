@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { History, ShoppingCart } from "lucide-react";
 import { useTranslation } from "../../lib/i18n";
 import { useBasketItems } from "../../hooks/useBasket";
@@ -11,7 +12,7 @@ type SupplierInfo = {
   title?: string | null;
   customTitle?: string | null;
   subTitle?: string | null;
-  tileColorMode?: string | null;
+  tileColorMode?: string | null
 };
 
 type Props = {
@@ -21,7 +22,10 @@ type Props = {
 
 export function SupplierPageBar({ supplier, selectedDate }: Props) {
   const { t } = useTranslation();
+  const searchParams = useSearchParams();
   const supplierUID = supplier?.supplierUID;
+  const fromParam = searchParams.get("from");
+
   const { data: basketData } = useBasketItems(
     supplierUID ? { SupplierUID: supplierUID } : undefined,
   );
@@ -35,9 +39,12 @@ export function SupplierPageBar({ supplier, selectedDate }: Props) {
     supplier?.subTitle ??
     supplier?.title ??
     t("common_supplier");
-  const orderHistoryHref = `/suppliers/${encodeURIComponent(supplierUID as string)}/order-history`;
 
-  const checkoutHref = `/suppliers/${encodeURIComponent(supplierUID as string)}/checkout`;
+  const queryString = fromParam ? `?from=${encodeURIComponent(fromParam)}` : "";
+
+  const orderHistoryHref = `/suppliers/${encodeURIComponent(supplierUID as string)}/order-history${queryString}`;
+
+  const checkoutHref = `/suppliers/${encodeURIComponent(supplierUID as string)}/checkout${queryString}`;
 
   const isFill =
     (supplier?.tileColorMode?.trim() ?? "").toLowerCase() === "fill";

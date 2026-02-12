@@ -27,11 +27,9 @@ export default function SupplierCheckoutPage() {
   const { t } = useTranslation();
   const router = useRouter();
   const params = useParams<{ supplierUID: string }>();
-  const searchParams = useSearchParams();
   const supplierUID = params.supplierUID ?? "";
-  const refDate = searchParams.get("refDate") ?? undefined;
 
-  const supplierInfoQuery = useSupplierDisplay(supplierUID, refDate);
+  const supplierInfoQuery = useSupplierDisplay(supplierUID);
   const supplier = supplierInfoQuery.data?.supplier ?? null;
   const selectedDate = supplierInfoQuery.data?.selectedDate ?? null;
 

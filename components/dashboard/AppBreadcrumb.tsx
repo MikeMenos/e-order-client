@@ -129,16 +129,15 @@ export function AppBreadcrumb() {
   }
 
   // Special-case: supplier subpages (order-history, info, timetable, etc.)
-  // Trail depends on how user got here: from=settings → Settings trail; from=suppliers or refDate → All suppliers trail
+  // Trail depends on how user got here: from=settings → Settings trail; from=suppliers → All suppliers trail
   const supplierSubpageMatch = pathname.match(
     /^\/suppliers\/([^/]+)\/(info|order-history|timetable|favorites|contact|reviews)$/,
   );
   const fromParam = searchParams.get("from");
-  const refDateParam = searchParams.get("refDate");
 
   if (
     supplierSubpageMatch &&
-    (fromParam === "settings" || fromParam === "suppliers" || refDateParam)
+    (fromParam === "settings" || fromParam === "suppliers" || fromParam === "orders-of-the-day")
   ) {
     const supplierUID = supplierSubpageMatch[1];
     const section = supplierSubpageMatch[2] as
@@ -178,12 +177,7 @@ export function AppBreadcrumb() {
         sectionLabel = t(section);
     }
 
-    const queryRef = refDateParam
-      ? `?refDate=${encodeURIComponent(refDateParam)}`
-      : "";
-    const currentHref = refDateParam
-      ? `${pathname}?refDate=${encodeURIComponent(refDateParam)}&from=suppliers`
-      : pathname + (fromParam === "settings" ? "?from=settings" : "");
+    const currentHref = pathname + (fromParam ? `?from=${encodeURIComponent(fromParam)}` : "");
 
     const segments =
       fromParam === "settings"
@@ -206,6 +200,20 @@ export function AppBreadcrumb() {
             },
             { href: currentHref, label: sectionLabel, isLast: true },
           ]
+        : fromParam === "orders-of-the-day"
+        ? [
+            {
+              href: "/orders-of-the-day",
+              label: t("suppliers_orders_of_day"),
+              isLast: false,
+            },
+            {
+              href: `/suppliers/${encodeURIComponent(supplierUID)}?from=orders-of-the-day`,
+              label: selectedSupplier?.subTitle ?? selectedSupplier?.customTitle ?? selectedSupplier?.title ?? supplierTitle,
+              isLast: false,
+            },
+            { href: currentHref, label: sectionLabel, isLast: true },
+          ]
         : [
             {
               href: "/dashboard",
@@ -213,12 +221,12 @@ export function AppBreadcrumb() {
               isLast: false,
             },
             {
-              href: `/all-suppliers${queryRef}`,
+              href: "/all-suppliers",
               label: t("dashboard_card_suppliers"),
               isLast: false,
             },
             {
-              href: `/suppliers/${encodeURIComponent(supplierUID)}${queryRef}`,
+              href: `/suppliers/${encodeURIComponent(supplierUID)}`,
               label: supplierTitle,
               isLast: false,
             },
@@ -258,35 +266,136 @@ export function AppBreadcrumb() {
     );
   }
 
-  // Special-case: supplier detail page /suppliers/[supplierUID] (e.g. from all-suppliers)
-  // Dashboard -> All suppliers [?refDate] -> [Supplier title] (active)
-  const supplierDetailMatch = pathname.match(/^\/suppliers\/([^/]+)$/);
-  if (supplierDetailMatch) {
-    const supplierUID = supplierDetailMatch[1];
-    const refDateParam = searchParams.get("refDate");
-    const queryRef = refDateParam
-      ? `?refDate=${encodeURIComponent(refDateParam)}`
-      : "";
+  // Special-case: checkout page /suppliers/[supplierUID]/checkout
+  const checkoutMatch = pathname.match(/^\/suppliers\/([^/]+)\/checkout$/);
+  if (checkoutMatch) {
+    const supplierUID = checkoutMatch[1];
+    const fromParam = searchParams.get("from");
+    const isFromOrdersOfDay = fromParam === "orders-of-the-day";
+    
     const selectedSupplier = suppliers?.find(
       (s) => s.supplierUID === supplierUID,
     );
-    const supplierTitle = selectedSupplier?.title ?? t("common_supplier");
+    
+    // Use subTitle for orders-of-the-day, title for others
+    const supplierLabel = isFromOrdersOfDay
+      ? selectedSupplier?.subTitle ?? selectedSupplier?.customTitle ?? selectedSupplier?.title ?? t("common_supplier")
+      : selectedSupplier?.title ?? t("common_supplier");
 
-    const segments = [
-      { href: "/dashboard", label: t("breadcrumb_dashboard"), isLast: false },
-      {
-        href: `/all-suppliers${queryRef}`,
-        label: t("dashboard_card_suppliers"),
-        isLast: false,
-      },
-      {
-        href:
-          pathname +
-          (refDateParam ? `?refDate=${encodeURIComponent(refDateParam)}` : ""),
-        label: supplierTitle,
-        isLast: true,
-      },
-    ];
+    const queryString = isFromOrdersOfDay ? "?from=orders-of-the-day" : "";
+
+    const segments = isFromOrdersOfDay
+      ? [
+          {
+            href: "/orders-of-the-day",
+            label: t("suppliers_orders_of_day"),
+            isLast: false,
+          },
+          {
+            href: `/suppliers/${encodeURIComponent(supplierUID)}${queryString}`,
+            label: supplierLabel,
+            isLast: false,
+          },
+          {
+            href: pathname + queryString,
+            label: t("breadcrumb_checkout"),
+            isLast: true,
+          },
+        ]
+      : [
+          { href: "/dashboard", label: t("breadcrumb_dashboard"), isLast: false },
+          {
+            href: "/all-suppliers",
+            label: t("dashboard_card_suppliers"),
+            isLast: false,
+          },
+          {
+            href: `/suppliers/${encodeURIComponent(supplierUID)}`,
+            label: supplierLabel,
+            isLast: false,
+          },
+          {
+            href: pathname,
+            label: t("breadcrumb_checkout"),
+            isLast: true,
+          },
+        ];
+
+    return (
+      <Breadcrumb className="rounded-b-lg bg-slate-50/60 py-2.5">
+        <div className="min-w-0 overflow-x-auto">
+          <BreadcrumbList className="gap-2 text-slate-500 flex-nowrap w-max px-4 [&>span]:shrink-0">
+            {segments.map((seg, idx) => (
+              <span key={seg.href + String(idx)} className="contents">
+                {idx > 0 && (
+                  <BreadcrumbSeparator className="text-slate-500 [&>svg]:size-4" />
+                )}
+                <BreadcrumbItem>
+                  {seg.isLast ? (
+                    <BreadcrumbPage className="font-medium text-slate-800">
+                      {seg.label}
+                    </BreadcrumbPage>
+                  ) : (
+                    <BreadcrumbLink asChild>
+                      <Link
+                        href={seg.href}
+                        className="rounded-md px-1.5 py-0.5 transition-colors hover:text-slate-800 hover:bg-slate-200/50"
+                      >
+                        {seg.label}
+                      </Link>
+                    </BreadcrumbLink>
+                  )}
+                </BreadcrumbItem>
+              </span>
+            ))}
+          </BreadcrumbList>
+        </div>
+      </Breadcrumb>
+    );
+  }
+
+  // Special-case: supplier detail page /suppliers/[supplierUID] (e.g. from all-suppliers or orders-of-the-day)
+  const supplierDetailMatch = pathname.match(/^\/suppliers\/([^/]+)$/);
+  if (supplierDetailMatch) {
+    const supplierUID = supplierDetailMatch[1];
+    const fromParam = searchParams.get("from");
+    const isFromOrdersOfDay = fromParam === "orders-of-the-day";
+    
+    const selectedSupplier = suppliers?.find(
+      (s) => s.supplierUID === supplierUID,
+    );
+    
+    // Use subTitle for orders-of-the-day, title for others
+    const supplierLabel = isFromOrdersOfDay
+      ? selectedSupplier?.subTitle ?? selectedSupplier?.customTitle ?? selectedSupplier?.title ?? t("common_supplier")
+      : selectedSupplier?.title ?? t("common_supplier");
+
+    const segments = isFromOrdersOfDay
+      ? [
+          {
+            href: "/orders-of-the-day",
+            label: t("suppliers_orders_of_day"),
+            isLast: false,
+          },
+          {
+            href: pathname + "?from=orders-of-the-day",
+            label: supplierLabel,
+            isLast: true,
+          },
+        ]
+      : [
+          { href: "/dashboard", label: t("breadcrumb_dashboard"), isLast: false },
+          {
+            href: "/all-suppliers",
+            label: t("dashboard_card_suppliers"),
+            isLast: false,
+          },
+          {
+            href: pathname,
+            label: supplierLabel,
+            isLast: true,
+          },
+        ];
 
     return (
       <Breadcrumb className="rounded-b-lg bg-slate-50/60 py-2.5">
@@ -329,7 +438,7 @@ export function AppBreadcrumb() {
     return defaultHref;
   }
 
-  /** Only treat last segment as a link when query params indicate a sub-step (e.g. ?menu= on manage-suppliers). Ignore data params like refDate. */
+  /** Only treat last segment as a link when query params indicate a sub-step (e.g. ?menu= on manage-suppliers). */
   const stepParams = pathname.startsWith("/settings/manage-suppliers")
     ? ["menu"]
     : [];

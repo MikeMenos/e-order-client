@@ -17,16 +17,14 @@ export type {
 
 export const useSupplierDisplay = (
   supplierUID: string | undefined,
-  refDate?: string,
 ) => {
   return useQuery({
-    queryKey: ["supplier-display", supplierUID, refDate],
+    queryKey: ["supplier-display", supplierUID],
     queryFn: async (): Promise<SupplierDisplayResponse> => {
       const res = await api.post<SupplierDisplayResponse>(
         "/suppliers-display",
         {
           supplierUID,
-          refDate,
         },
       );
       return res.data;
@@ -37,16 +35,14 @@ export const useSupplierDisplay = (
 
 export const useSupplierProducts = (
   supplierUID: string | undefined,
-  refDate?: string,
 ) => {
   return useQuery({
-    queryKey: ["supplier-products", supplierUID, refDate],
+    queryKey: ["supplier-products", supplierUID],
     queryFn: async (): Promise<SupplierProductsResponse> => {
       const res = await api.post<SupplierProductsResponse>(
         "/suppliers-products",
         {
           supplierUID,
-          refDate,
           erpCatUID: null,
           page: 0,
           search: null,

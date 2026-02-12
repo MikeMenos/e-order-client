@@ -50,6 +50,8 @@ function BasketItemRow({
   const isBusy = isRemoving || isUpdating;
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingQtyRef = useRef<number>(item.qty);
+  const originalValueOnFocusRef = useRef<string>("");
+  const wasClearedOnFocusRef = useRef(false);
 
   useEffect(() => {
     setInputValue(item.qty <= 0 ? "" : String(item.qty));
@@ -85,6 +87,7 @@ function BasketItemRow({
     }
     const next = n - 1;
     setInputValue(String(next));
+    // Debounce API call for button clicks (800ms delay)
     scheduleQtyUpdate(next);
   };
 
@@ -92,10 +95,71 @@ function BasketItemRow({
     const n = toNonNegativeNum(inputValue || String(item.qty));
     const next = n + 1;
     setInputValue(String(next));
+    // Debounce API call for button clicks (800ms delay)
     scheduleQtyUpdate(next);
   };
 
+  const handleInputFocus = () => {
+    // Store original value when focus happens (before Input component clears it)
+    if (inputValue !== "" && originalValueOnFocusRef.current === "") {
+      originalValueOnFocusRef.current = inputValue;
+    }
+    // Note: Input component calls onChange("") BEFORE onFocus
+    // So by the time this runs, inputValue might already be ""
+    // The original value is captured in handleInputChange when onChange("") is called
+    // Don't reset wasClearedOnFocusRef here - it's set in handleInputChange
+  };
+
+  const handleInputChange = (value: string) => {
+    // If value becomes empty, we're likely clearing on focus
+    // Capture the original value BEFORE it gets cleared (React state updates are async)
+    if (value === "") {
+      // Always capture the current display value if we don't have one stored yet
+      // This handles the case where Input clears the value before onFocus runs
+      if (originalValueOnFocusRef.current === "" && inputValue !== "") {
+        originalValueOnFocusRef.current = inputValue;
+      }
+      // Only proceed if we successfully captured a non-empty original value
+      if (originalValueOnFocusRef.current !== "") {
+        wasClearedOnFocusRef.current = true;
+        // Don't schedule update - this is just clearing on focus
+        setInputValue(value);
+        return;
+      }
+    }
+
+    // User typed something, so it's a real change
+    if (value !== "") {
+      wasClearedOnFocusRef.current = false;
+      // Reset original value ref since user is making a real change
+      originalValueOnFocusRef.current = "";
+    }
+
+    setInputValue(value);
+  };
+
   const handleInputBlur = () => {
+    // If value is empty and was cleared on focus, restore original without API call
+    // Use refs to avoid stale closure issues
+    if (
+      wasClearedOnFocusRef.current &&
+      originalValueOnFocusRef.current !== ""
+    ) {
+      const currentValue = inputValue;
+      // Only restore if current value is empty (user didn't type anything)
+      if (currentValue === "") {
+        // Cancel any pending debounced calls
+        if (debounceRef.current) {
+          clearTimeout(debounceRef.current);
+          debounceRef.current = null;
+        }
+        setInputValue(originalValueOnFocusRef.current);
+        wasClearedOnFocusRef.current = false;
+        originalValueOnFocusRef.current = "";
+        return;
+      }
+    }
+
     const n = toNonNegativeNum(inputValue);
     if (n === 0) {
       if (debounceRef.current) {
@@ -105,13 +169,28 @@ function BasketItemRow({
       onRemove();
       return;
     }
+
+    // Normalize the display value
     setInputValue(String(n));
-    if (n !== item.qty) {
+
+    // Only trigger API call if value actually changed from original
+    const originalNum = toNonNegativeNum(
+      originalValueOnFocusRef.current || String(item.qty),
+    );
+    if (n !== originalNum) {
+      // Cancel any pending debounced calls
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = null;
+      }
       scheduleQtyUpdate(n);
     } else if (debounceRef.current) {
       clearTimeout(debounceRef.current);
       debounceRef.current = null;
     }
+
+    wasClearedOnFocusRef.current = false;
+    originalValueOnFocusRef.current = "";
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -144,7 +223,8 @@ function BasketItemRow({
               type="number"
               min={0}
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => handleInputChange(e.target.value)}
+              onFocus={handleInputFocus}
               onBlur={handleInputBlur}
               onKeyDown={handleInputKeyDown}
               placeholder="0"
