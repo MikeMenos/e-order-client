@@ -115,17 +115,6 @@ export default function ManageSuppliersPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 auto-rows-fr gap-4">
-                {/* Store Selection - First on mobile */}
-                {roles.length > 1 && (
-                  <TileCard
-                    icon={Store}
-                    label={t("store_select_title")}
-                    iconColor="text-slate-700"
-                    horizontal={true}
-                    onClick={() => setStoreDialogOpen(true)}
-                  />
-                )}
-
                 {/* Supplier Details - Second on mobile */}
                 <TileCard
                   iconSrc="/assets/supplier-info.png"
