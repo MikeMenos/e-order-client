@@ -44,11 +44,14 @@ export function SuppliersSectionHeader({
       {pathname === "/orders-of-the-day" && (
         <div className="flex items-center gap-2 text-sm text-slate-500">
           <div
-            className="flex items-center gap-0.5 ml-2"
+            className="flex items-center gap-0.5"
             role="group"
             aria-label={t("suppliers_sort_by_time")}
           >
-            <Clock className="h-4 w-4 text-slate-400 shrink-0" aria-hidden />
+            <Clock
+              className="h-5 w-5 text-slate-400 shrink-0 bg-white backdrop-blur-sm rounded-lg"
+              aria-hidden
+            />
             <Button
               variant="outline"
               size="icon"
