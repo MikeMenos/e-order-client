@@ -67,7 +67,7 @@ export default function SupplierCheckoutPage() {
   };
 
   return (
-    <main className="pb-36 text-slate-900 px-2">
+    <main className="pb-36 text-slate-900 px-3">
       <CheckoutPageHeader
         titleKey="order_completion_title"
         supplierName={supplier?.title ?? null}

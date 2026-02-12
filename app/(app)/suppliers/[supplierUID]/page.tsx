@@ -60,11 +60,12 @@ export default function SupplierPage() {
 
     const favorites = products.filter((p) => p.isFavorite);
     const result: SupplierSection[] = [];
+    const favoritesLabel = t("supplier_favorites").toUpperCase();
 
     if (favorites.length > 0) {
       result.push({
         id: "favorites",
-        label: "FAVORITES",
+        label: favoritesLabel,
         products: favorites,
       });
     }
@@ -79,16 +80,23 @@ export default function SupplierPage() {
     });
 
     for (const [label, list] of byCategory.entries()) {
-      if (label === "FAVORITES") continue;
+      if (label === favoritesLabel) continue;
+      // Sort products so favorites appear at the top of each category
+      const sortedList = [...list].sort((a, b) => {
+        // Favorites first (true comes before false)
+        if (a.isFavorite && !b.isFavorite) return -1;
+        if (!a.isFavorite && b.isFavorite) return 1;
+        return 0; // Keep original order for non-favorites
+      });
       result.push({
         id: label.toLowerCase().replace(/\s+/g, "-"),
         label,
-        products: list,
+        products: sortedList,
       });
     }
 
     return result;
-  }, [products]);
+  }, [products, t]);
 
   const [showDetails, setShowDetails] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");

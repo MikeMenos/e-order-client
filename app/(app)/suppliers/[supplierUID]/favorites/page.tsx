@@ -36,7 +36,7 @@ export default function FavoritesPage() {
   };
 
   return (
-    <main className="space-y-3 text-slate-900 px-2">
+    <main className="space-y-3 text-slate-900 px-3">
       <header className="space-y-1">
         <h1 className="text-xl font-bold text-slate-900">
           {t("supplier_favorites")}
@@ -71,7 +71,9 @@ export default function FavoritesPage() {
         >
           {items.map((item: any) => {
             const productUID = item.productUID ?? item.id;
-            const isRemoving = wishlistToggle.isPending && wishlistToggle.variables === productUID;
+            const isRemoving =
+              wishlistToggle.isPending &&
+              wishlistToggle.variables === productUID;
 
             return (
               <motion.div
@@ -93,7 +95,10 @@ export default function FavoritesPage() {
                 {/* Product Info */}
                 <div className="min-w-0 flex-1">
                   <h3 className="text-base font-semibold text-slate-900 leading-tight">
-                    {item.title || item.productTitle || item.productOriginalTitle || "—"}
+                    {item.title ||
+                      item.productTitle ||
+                      item.productOriginalTitle ||
+                      "—"}
                   </h3>
                   {(item.subTitle || item.productDescription) && (
                     <p className="mt-1 text-sm text-slate-600 line-clamp-2">
@@ -132,7 +137,9 @@ export default function FavoritesPage() {
                       <Star
                         className="h-5 w-5"
                         fill={item.favIconColor || item.iconColor || "#9CBDFA"}
-                        stroke={item.favIconColor || item.iconColor || "#9CBDFA"}
+                        stroke={
+                          item.favIconColor || item.iconColor || "#9CBDFA"
+                        }
                         strokeWidth={1.5}
                       />
                     )}
