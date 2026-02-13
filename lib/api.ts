@@ -16,32 +16,25 @@ const AUTH_ENDPOINTS = ["/auth-login", "/register"];
 // Don't treat as global auth failure: 401/500 here should not log the user out (e.g. select-store can 401 when re-calling while navigating)
 const NO_LOGOUT_ON_AUTH_FAIL = ["/select-store"];
 
-function isTokenExpired(error: any): boolean {
+function isAuthFailure(error: any): boolean {
   const status = error?.response?.status;
   const data = error?.response?.data;
   const bodyStatus = data?.statusCode;
   const message = (data?.message ?? error?.message ?? "")
     .toString()
     .toLowerCase();
+  const hadAuthHeader = !!(error?.config?.headers as any)?.["Authorization"];
 
-  // Only log out if we're certain the token has expired
-  // Check for explicit token expiration messages
-  const tokenExpiredKeywords =
-    /token.*expired|expired.*token|token.*invalid|invalid.*token|token.*expir|session.*expired|expired.*session/;
+  // Any 401 is an auth failure (e.g. expired or invalid token)
+  if (status === 401) return true;
 
-  // 401 with explicit token expiration message
-  if (status === 401 && tokenExpiredKeywords.test(message)) {
-    return true;
+  // 500 with auth-related message, or any 500 on an authenticated request (likely expired/invalid token)
+  if (status === 500 || bodyStatus === 500) {
+    const authKeywords =
+      /token|expired|unauthorized|authorization|invalid.*session|session.*invalid|not.*logged|login.*required/;
+    if (authKeywords.test(message)) return true;
+    if (hadAuthHeader) return true;
   }
-
-  // 500 with explicit token expiration message
-  if (
-    (status === 500 || bodyStatus === 500) &&
-    tokenExpiredKeywords.test(message)
-  ) {
-    return true;
-  }
-
   return false;
 }
 
@@ -122,8 +115,7 @@ api.interceptors.response.use(
     const isAuthEndpoint = AUTH_ENDPOINTS.some((p) => url.includes(p));
     const skipLogout = NO_LOGOUT_ON_AUTH_FAIL.some((p) => url.includes(p));
 
-    // Only log out if token is explicitly expired, not on general API failures
-    if (!isAuthEndpoint && !skipLogout && isTokenExpired(error)) {
+    if (!isAuthEndpoint && !skipLogout && isAuthFailure(error)) {
       clearAuthAndRedirect();
     }
     return Promise.reject(error);
