@@ -32,7 +32,13 @@ export function getCookie(name: string): string | null {
 
   if (parts.length === 2) {
     const cookieValue = parts.pop()?.split(";").shift();
-    return cookieValue ? decodeURIComponent(cookieValue) : null;
+    if (!cookieValue) return null;
+    try {
+      return decodeURIComponent(cookieValue);
+    } catch {
+      // Malformed %-encoding (e.g. corrupted or single %) can throw URIError
+      return null;
+    }
   }
 
   return null;
@@ -42,24 +48,30 @@ export function getCookie(name: string): string | null {
  * Initialize auth state from cookies on app load
  * This should be called early in the app lifecycle, before any API calls
  * Updates zustand store directly to avoid triggering cookie setters
+ * Wrapped in try/catch so a failure never crashes the app (e.g. on Android after redirect).
  */
-export function initAuthFromCookies() {
+export function initAuthFromCookies(): void {
   if (typeof window === "undefined") return;
 
-  // Use dynamic import to avoid circular dependencies
-  const { useAuthStore } = require("../stores/auth");
-  const accessToken = getCookie("accessToken");
-  const storeAccessToken = getCookie("storeAccessToken");
+  try {
+    // Use dynamic import to avoid circular dependencies
+    const { useAuthStore } = require("../stores/auth");
+    const accessToken = getCookie("accessToken");
+    const storeAccessToken = getCookie("storeAccessToken");
+    const selectedStoreUID = getCookie("selectedStoreUID");
 
-  // Restore tokens from cookies to zustand store if they exist
-  const currentState = useAuthStore.getState();
-  
-  if (accessToken && accessToken !== currentState.accessToken) {
-    // Update store directly without triggering cookie setter
-    useAuthStore.setState({ accessToken });
-  }
-  if (storeAccessToken && storeAccessToken !== currentState.storeAccessToken) {
-    // Update store directly without triggering cookie setter
-    useAuthStore.setState({ storeAccessToken });
+    const currentState = useAuthStore.getState();
+
+    if (accessToken && accessToken !== currentState.accessToken) {
+      useAuthStore.setState({ accessToken });
+    }
+    if (storeAccessToken && storeAccessToken !== currentState.storeAccessToken) {
+      useAuthStore.setState({ storeAccessToken });
+    }
+    if (selectedStoreUID && selectedStoreUID !== currentState.selectedStoreUID) {
+      useAuthStore.setState({ selectedStoreUID });
+    }
+  } catch (_) {
+    // Do not crash the app; auth will fall back to store/redirect flow
   }
 }

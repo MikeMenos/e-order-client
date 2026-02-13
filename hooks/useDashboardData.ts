@@ -46,12 +46,17 @@ export const useSuppliersForDate = (enabled: boolean) => {
  * Fetches suppliers for today with store token. Use on all-suppliers and orders-of-the-day pages.
  */
 export function useSuppliersListForToday() {
-  const { users, selectedUser } = useAuthStore();
+  const {
+    users,
+    selectedUser,
+    selectedStoreUID: cookieStoreUID,
+  } = useAuthStore();
   const setStoreAccessToken = useAuthStore((s) => s.setStoreAccessToken);
+  const setSelectedStoreUID = useAuthStore((s) => s.setSelectedStoreUID);
   const storeAccessToken = useAuthStore((s) => s.storeAccessToken);
   const refDate = format(new Date(), "yyyy-MM-dd");
 
-  const storeUID = useMemo(() => {
+  const derivedStoreUID = useMemo(() => {
     if (!users && !selectedUser) return null;
     return users?.hasSelectedStore === true
       ? users?.selectedStoreUID
@@ -59,6 +64,8 @@ export function useSuppliersListForToday() {
         ? selectedUser.store.storeUID
         : (users?.role?.store?.storeUID ?? null);
   }, [users, selectedUser]);
+
+  const storeUID = cookieStoreUID || derivedStoreUID;
 
   const selectStoreMutation = useMutation<SelectStoreResponse, unknown, string>(
     {
@@ -68,8 +75,9 @@ export function useSuppliersListForToday() {
         });
         return res.data;
       },
-      onSuccess: (data) => {
-        setStoreAccessToken(data?.accessToken ?? null); // This will also set the cookie via the store setter
+      onSuccess: (data, storeID) => {
+        setStoreAccessToken(data?.accessToken ?? null);
+        setSelectedStoreUID(storeID);
       },
     },
   );
@@ -84,11 +92,9 @@ export function useSuppliersListForToday() {
   }, [storeUID]);
 
   const hasStoreToken = !!storeAccessToken;
-  const isInitializingStoreToken = selectStoreMutation.isPending;
-  // Enable query when we have users and either:
-  // 1. We have a store token, OR
-  // 2. We're in the process of getting one (initializing)
-  const enabled = !!users && (hasStoreToken || isInitializingStoreToken);
+  // Only run store-dependent API when we actually have a store token.
+  // Otherwise we'd send requests with only accessToken and get 500s when storeAccessToken cookie was missing on return.
+  const enabled = !!users && hasStoreToken;
   const suppliersListQuery = useSuppliersForDate(enabled);
   const suppliers = suppliersListQuery.data?.listSuppliers ?? [];
   const errorMessage = (suppliersListQuery.error as Error)?.message;

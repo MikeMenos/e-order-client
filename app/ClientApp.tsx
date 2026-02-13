@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { TranslationProvider } from "../lib/i18n";
@@ -10,12 +11,12 @@ import { initAuthFromCookies } from "../lib/cookies";
 
 const queryClient = new QueryClient();
 
-// Initialize auth from cookies synchronously before React renders
-if (typeof window !== "undefined") {
-  initAuthFromCookies();
-}
-
 export function ClientApp({ children }: { children: ReactNode }) {
+  // Run auth init after mount to avoid module-load exceptions on Android (e.g. after redirect to /dashboard)
+  useEffect(() => {
+    initAuthFromCookies();
+  }, []);
+
   return (
     <TranslationProvider>
       <QueryClientProvider client={queryClient}>

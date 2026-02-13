@@ -28,8 +28,13 @@ export default function ManageSuppliersPage() {
   const { refDate, suppliers, isLoading, isError, errorMessage } =
     useSuppliersListForToday();
 
-  const { users, setSelectedUser, setStoreAccessToken, setLoggedIn } =
-    useAuthStore();
+  const {
+    users,
+    setSelectedUser,
+    setStoreAccessToken,
+    setSelectedStoreUID,
+    setLoggedIn,
+  } = useAuthStore();
 
   const roles = useMemo(
     () => users?.userInfos?.storeAccess ?? [],
@@ -80,6 +85,7 @@ export default function ManageSuppliersPage() {
         .get("/select-store", { params: { StoreUID: storeUID } })
         .then((res) => {
           setStoreAccessToken(res.data?.accessToken ?? null);
+          setSelectedStoreUID(storeUID);
           queryClient.invalidateQueries();
         })
         .catch((err) => {
@@ -153,7 +159,7 @@ export default function ManageSuppliersPage() {
 
                 {/* Order History - Below favorites */}
                 <TileCard
-                  icon={History}
+                  iconSrc="/assets/order-history.png"
                   label={t("settings_order_history")}
                   iconColor="text-blue-600"
                   horizontal={true}
@@ -166,7 +172,7 @@ export default function ManageSuppliersPage() {
 
                 {/* Contact - Below favorites */}
                 <TileCard
-                  icon={User}
+                  iconSrc="/assets/supplier-contact-info.png"
                   label={t("settings_contact")}
                   iconColor="text-slate-700"
                   horizontal={true}

@@ -10,10 +10,17 @@ import type { SelectStoreResponse } from "../lib/types/dashboard";
  * before making any store-related API calls.
  */
 export function useStoreTokenInit() {
-  const { users, selectedUser, storeAccessToken, accessToken } = useAuthStore();
+  const {
+    users,
+    selectedUser,
+    selectedStoreUID: cookieStoreUID,
+    storeAccessToken,
+    accessToken,
+  } = useAuthStore();
   const setStoreAccessToken = useAuthStore((s) => s.setStoreAccessToken);
+  const setSelectedStoreUID = useAuthStore((s) => s.setSelectedStoreUID);
 
-  const storeUID = useMemo(() => {
+  const derivedStoreUID = useMemo(() => {
     if (!users && !selectedUser) return null;
     return users?.hasSelectedStore === true
       ? users?.selectedStoreUID
@@ -21,6 +28,9 @@ export function useStoreTokenInit() {
         ? selectedUser.store.storeUID
         : (users?.role?.store?.storeUID ?? null);
   }, [users, selectedUser]);
+
+  // Use cookie/persisted store UID first so we can call select-store on return before zustand rehydration
+  const storeUID = cookieStoreUID || derivedStoreUID;
 
   const selectStoreMutation = useMutation<SelectStoreResponse, unknown, string>(
     {
@@ -30,13 +40,11 @@ export function useStoreTokenInit() {
         });
         return res.data;
       },
-      onSuccess: (data) => {
-        setStoreAccessToken(data?.accessToken ?? null); // This will also set the cookie via the store setter
+      onSuccess: (data, storeID) => {
+        setStoreAccessToken(data?.accessToken ?? null);
+        setSelectedStoreUID(storeID);
       },
-      onError: (error) => {
-        // If select-store fails, clear the store token to prevent using stale token
-        setStoreAccessToken(null);
-      },
+      // Do not clear store token/cookies on error; only clear on explicit logout
     },
   );
 

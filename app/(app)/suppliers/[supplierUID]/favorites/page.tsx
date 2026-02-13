@@ -29,7 +29,7 @@ export default function FavoritesPage() {
   });
 
   const items =
-    wishlistQuery.data?.items ?? wishlistQuery.data?.wishlistItems ?? [];
+    wishlistQuery.data?.items ?? wishlistQuery.data?.wishLists ?? [];
 
   const handleRemoveFavorite = (productUID: string) => {
     wishlistToggle.mutate(productUID);
@@ -41,9 +41,6 @@ export default function FavoritesPage() {
         <h1 className="text-xl font-bold text-slate-900">
           {t("supplier_favorites")}
         </h1>
-        <p className="text-sm text-slate-600">
-          {t("supplier_favorites_subtitle")}
-        </p>
       </header>
 
       {wishlistQuery.isLoading && (

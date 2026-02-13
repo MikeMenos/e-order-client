@@ -97,6 +97,9 @@ const resources: Resources = {
     login_toast_success: "Logged in",
     login_toast_error: "Login failed",
     login_signing_in: "Signing in…",
+    error_app_message:
+      "Something went wrong. Try again or go back to the home screen.",
+    error_try_again: "Try again",
     pwa_ios_install_title: "Enable app",
     pwa_ios_install_subtitle:
       "To use e-order on this device, add it to your Home Screen.",
@@ -172,6 +175,11 @@ const resources: Resources = {
     order_items: "Items purchased",
     order_items_empty: "No items in this order.",
     order_item_quantity: "Qty",
+    order_redo_button: "Redo order",
+    order_redo_dialog_title: "Redo this order?",
+    order_redo_dialog_description:
+      "This will add the same items to your basket. Continue?",
+    order_redo_success: "Order added to basket",
     dashboard_card_suppliers: "Suppliers",
     dashboard_card_orders_of_day: "Orders of the Day",
     dashboard_card_statistics: "Statistics",
@@ -344,7 +352,7 @@ const resources: Resources = {
     supplier_loading_products: "Φόρτωση προϊόντων…",
     supplier_error_products: "Αποτυχία φόρτωσης προϊόντων.",
     supplier_empty_products: "Δεν βρέθηκαν προϊόντα για αυτόν τον προμηθευτή.",
-    supplier_favorites: "Αγαπημενα",
+    supplier_favorites: "Αγαπημένα",
     supplier_favorites_subtitle:
       "Τα αγαπημένα σας προϊόντα από αυτόν τον προμηθευτή",
     supplier_remove_favorite: "Αφαίρεση από αγαπημένα",
@@ -368,6 +376,9 @@ const resources: Resources = {
     login_toast_success: "Συνδεθήκατε",
     login_toast_error: "Αποτυχία σύνδεσης",
     login_signing_in: "Σύνδεση…",
+    error_app_message:
+      "Κάτι πήγε στραβά. Δοκιμάστε ξανά ή επιστρέψτε στην αρχική οθόνη.",
+    error_try_again: "Δοκίμασε ξανά",
     pwa_ios_install_title: "Ενεργοποίηση εφαρμογής",
     pwa_ios_install_subtitle:
       "Για να χρησιμοποιήσετε το e-order σε αυτή τη συσκευή, προσθέστε το στην αρχική οθόνη.",
@@ -446,6 +457,11 @@ const resources: Resources = {
     order_items: "Αγορασμένα προϊόντα",
     order_items_empty: "Δεν υπάρχουν προϊόντα σε αυτή την παραγγελία.",
     order_item_quantity: "Ποσ.",
+    order_redo_button: "Επανάληψη παραγγελίας",
+    order_redo_dialog_title: "Επανάληψη αυτής της παραγγελίας;",
+    order_redo_dialog_description:
+      "Θα προστεθούν τα ίδια προϊόντα στο καλάθι σας. Συνέχεια;",
+    order_redo_success: "Η παραγγελία προστέθηκε στο καλάθι",
     dashboard_card_suppliers: "Προμηθευτές",
     dashboard_card_orders_of_day: "Παραγγελίες Ημέρας",
     dashboard_card_statistics: "Στατιστικά",

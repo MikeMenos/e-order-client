@@ -62,26 +62,44 @@ export default function SupplierOrderHistoryPage() {
           </p>
         )}
         {orders.length > 0 && (
-          <motion.div
-            className="space-y-2"
-            variants={listVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {orders.map((o: OrderHistoryOrder) => (
-              <motion.div key={o.orderUID} variants={listItemVariants}>
-                <OrderHistoryTile
-                  order={o}
-                  isExpanded={expandedOrderUID === o.orderUID}
-                  onToggleExpand={() => toggleExpanded(o.orderUID)}
-                  items={getItemsForOrder(o)}
-                  itemsLoading={
-                    expandedOrderUID === o.orderUID && orderViewQuery.isFetching
-                  }
+          <>
+            {/* Header: supplier logo + store title from first order (same for all) */}
+            <div className="flex flex-col items-center justify-center gap-2 pb-4 mt-2">
+              {orders[0].supplierLogo && (
+                <img
+                  src={orders[0].supplierLogo}
+                  alt=""
+                  className="h-14 w-14 shrink-0 rounded-full bg-slate-100 object-contain"
                 />
-              </motion.div>
-            ))}
-          </motion.div>
+              )}
+              {orders[0].storeTitle && (
+                <p className="text-center text-base font-semibold text-slate-900">
+                  {orders[0].storeTitle}
+                </p>
+              )}
+            </div>
+            <motion.div
+              className="space-y-2"
+              variants={listVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {orders.map((o: OrderHistoryOrder) => (
+                <motion.div key={o.orderUID} variants={listItemVariants}>
+                  <OrderHistoryTile
+                    order={o}
+                    isExpanded={expandedOrderUID === o.orderUID}
+                    onToggleExpand={() => toggleExpanded(o.orderUID)}
+                    items={getItemsForOrder(o)}
+                    itemsLoading={
+                      expandedOrderUID === o.orderUID &&
+                      orderViewQuery.isFetching
+                    }
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          </>
         )}
       </div>
     </main>

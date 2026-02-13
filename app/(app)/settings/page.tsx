@@ -23,8 +23,14 @@ export default function SettingsPage() {
 
   const [storeDialogOpen, setStoreDialogOpen] = useState(false);
 
-  const { users, logout, setSelectedUser, setStoreAccessToken, setLoggedIn } =
-    useAuthStore();
+  const {
+    users,
+    logout,
+    setSelectedUser,
+    setStoreAccessToken,
+    setSelectedStoreUID,
+    setLoggedIn,
+  } = useAuthStore();
 
   const roles = useMemo(
     () => users?.userInfos?.storeAccess ?? [],
@@ -56,7 +62,8 @@ export default function SettingsPage() {
       api
         .get("/select-store", { params: { StoreUID: storeUID } })
         .then((res) => {
-          setStoreAccessToken(res.data?.accessToken ?? null); // This will also set the cookie via the store setter
+          setStoreAccessToken(res.data?.accessToken ?? null);
+          setSelectedStoreUID(storeUID);
           queryClient.invalidateQueries();
         })
         .catch((err) => {
@@ -114,7 +121,7 @@ export default function SettingsPage() {
           <motion.div variants={listItemVariants}>
             <TileCard
               href="/settings/account"
-              icon={User}
+              iconSrc="/assets/user-settings.png"
               label={t("settings_edit_account_button")}
               iconColor="text-slate-700"
             />
@@ -123,7 +130,7 @@ export default function SettingsPage() {
           <motion.div variants={listItemVariants}>
             <TileCard
               href="/settings/add"
-              icon={UserPlus}
+              iconSrc="/assets/add-user.png"
               label={t("settings_create_user")}
               iconColor="text-blue-600"
             />
