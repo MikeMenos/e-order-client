@@ -114,7 +114,7 @@ export default function ManageSuppliersPage() {
         <div className="mx-auto flex max-w-xl flex-col mt-2">
           {selectedSupplier && (
             <>
-              <div className="my-4 rounded-xl border border-slate-200 bg-app-card/95 p-4 shadow-sm">
+              <div className="my-4">
                 <h1 className="text-xl font-bold text-slate-900 text-center">
                   {selectedSupplier.title}
                 </h1>
