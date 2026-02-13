@@ -65,7 +65,7 @@ export default function AccountSettingsPage() {
     t("settings_edit_account");
 
   return (
-    <main className="pb-16 text-slate-900">
+    <main className="pb-16 text-slate-900 px-3">
       <div className="mx-auto max-w-2xl">
         <div className="my-4">
           <h1 className="text-xl font-bold text-slate-900">{fullName}</h1>

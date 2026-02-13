@@ -10,10 +10,7 @@ import {
 import { useTranslation } from "../../../../lib/i18n";
 import { useAppHeaderHeight } from "@/app/(app)/AppHeaderContext";
 import { listVariants, listItemVariants } from "../../../../lib/motion";
-import type {
-  SupplierProduct,
-  SupplierSection,
-} from "@/lib/types/supplier";
+import type { SupplierProduct, SupplierSection } from "@/lib/types/supplier";
 import { SupplierPageBar } from "../../../../components/supplier/SupplierPageBar";
 import { SupplierSearchAndTabs } from "../../../../components/supplier/SupplierSearchAndTabs";
 import { SupplierProductSection } from "../../../../components/supplier/SupplierProductSection";
@@ -228,7 +225,7 @@ export default function SupplierPage() {
   };
 
   return (
-    <main className="pb-16 text-slate-900">
+    <main className="pb-16 text-slate-900 px-3">
       {/* Sticky bar below layout header: full width on mobile, same width as content on desktop */}
       <div
         ref={pageBar.ref}
