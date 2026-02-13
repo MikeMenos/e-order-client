@@ -41,7 +41,7 @@ export default function SupplierCheckoutPage() {
     onSuccess: (data) => {
       const msg = data?.message?.trim();
       toast.success(msg || t("checkout_submit_order"));
-      router.replace("/dashboard");
+      router.replace("/orders-of-the-day");
     },
     onError: (err) => {
       toast.error(getApiErrorMessage(err, t("basket_error")));
