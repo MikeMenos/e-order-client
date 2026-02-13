@@ -18,10 +18,7 @@ export default function SupplierInfoPage() {
     null;
 
   const displayName =
-    supplier?.customTitle?.trim() ||
-    supplier?.originalTitle?.trim() ||
-    supplier?.supplierUID ||
-    "";
+    supplier?.customTitle?.trim() || supplier?.originalTitle?.trim() || "";
 
   return (
     <main className=" text-slate-900 px-3">
@@ -169,37 +166,6 @@ export default function SupplierInfoPage() {
                 <p className="whitespace-pre-wrap text-sm text-slate-800">
                   {supplier.personalNotes}
                 </p>
-              </DetailSection>
-            )}
-
-            {/* Delivery schedule text + days */}
-            {(supplier.weekDeliveryDaysText ||
-              (supplier.weekDeliverySchedule &&
-                supplier.weekDeliverySchedule.length > 0)) && (
-              <DetailSection title={t("checkout_delivery")}>
-                {supplier.weekDeliveryDaysText && (
-                  <p className="mb-2 text-sm text-slate-800">
-                    {supplier.weekDeliveryDaysText}
-                  </p>
-                )}
-                {supplier.weekDeliverySchedule &&
-                  supplier.weekDeliverySchedule.length > 0 && (
-                    <ul className="space-y-1 text-sm">
-                      {supplier.weekDeliverySchedule.map((d, idx) => (
-                        <li
-                          key={`${d.shortDay ?? d.deliveryDay ?? idx}`}
-                          className="flex justify-between gap-4"
-                        >
-                          <span className="text-slate-600">
-                            {d.shortDay || d.deliveryDay}
-                          </span>
-                          <span className="text-right text-slate-900">
-                            {d.description}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
               </DetailSection>
             )}
           </div>

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { SearchInput } from "../ui/search-input";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { listItemVariants } from "../../lib/motion";
-import type { SupplierSection } from "./types";
+import type { SupplierSection } from "@/lib/types/supplier";
 
 type Props = {
   searchPlaceholder: string;

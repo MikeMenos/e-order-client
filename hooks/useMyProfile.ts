@@ -3,13 +3,10 @@ import { api } from "../lib/api";
 import type {
   MyProfileResponse,
   MyProfileUpdateRequest,
+  MyProfileUpdateResponse,
 } from "../lib/types/dashboard";
 
-export type MyProfileUpdateResponse = {
-  statusCode?: number;
-  message?: string;
-  detailedMessage?: string;
-};
+export type { MyProfileUpdateResponse } from "../lib/types/dashboard";
 
 export function useMyProfile() {
   return useQuery({

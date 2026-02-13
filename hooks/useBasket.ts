@@ -1,15 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
+import type {
+  BasketItemsData,
+  BasketAddOrUpdatePayload,
+} from "../lib/types/basket";
 
-export type BasketItemsData = {
-  basketsList?: Array<{
-    supplierUID: string;
-    totalItems?: number;
-    items: unknown[];
-  }>;
-  totalBasketsCount?: number;
-  totalBasketsCost?: number;
-};
+export type { BasketItemsData, BasketAddOrUpdatePayload } from "../lib/types/basket";
 
 export const useBasketItems = (params?: {
   SupplierUID?: string;
@@ -53,14 +49,6 @@ export const useBasketRemoveItem = (options?: {
     },
     onError,
   });
-};
-
-export type BasketAddOrUpdatePayload = {
-  productUID: string;
-  qty: number;
-  stock: number;
-  suggestedQty: number;
-  comments: string;
 };
 
 export const useBasketAddOrUpdate = (options?: {

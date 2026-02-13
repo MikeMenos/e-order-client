@@ -1,14 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import { api } from "../lib/api";
+import type { OrderAddPayload, OrderAddResponse } from "../lib/types/order";
 
-export type OrderAddPayload = {
-  orderRefDate: string;
-  supplierUID: string;
-  extraComments?: string;
-  desiredDeliveryDate: string;
-};
-
-export type OrderAddResponse = { message?: string };
+export type { OrderAddPayload, OrderAddResponse } from "../lib/types/order";
 
 export function useOrderAdd(options?: {
   onSuccess?: (data: OrderAddResponse) => void;

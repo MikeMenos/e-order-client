@@ -1,18 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
+import type { WishlistBackendResponse } from "../lib/types/wishlist";
 
-/** Backend response: wishLists array, each with supplierUID and items */
-export type WishlistBackendResponse = {
-  wishLists?: Array<{
-    supplierUID?: string;
-    supplierTitle?: string;
-    supplierSubtitle?: string;
-    supplierLogo?: string;
-    items?: Array<Record<string, unknown>>;
-  }>;
-  statusCode?: number;
-  message?: string;
-};
+export type { WishlistBackendResponse } from "../lib/types/wishlist";
 
 function mapWishlistResponse(
   data: WishlistBackendResponse | undefined,

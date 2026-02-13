@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { listVariants, listItemVariants } from "../../lib/motion";
-import type { SupplierSection } from "./types";
+import type { SupplierSection } from "@/lib/types/supplier";
 import { SupplierProductCard } from "./SupplierProductCard";
 
 type Props = {
@@ -37,10 +37,7 @@ export function SupplierProductSection({
       >
         {section.products.map((product) => (
           <motion.div key={product.id} variants={listItemVariants}>
-            <SupplierProductCard
-              product={product}
-              supplierUID={supplierUID}
-            />
+            <SupplierProductCard product={product} supplierUID={supplierUID} />
           </motion.div>
         ))}
       </motion.div>

@@ -19,6 +19,7 @@ const SEGMENT_LABEL_KEYS: Record<string, string> = {
   dashboard: "breadcrumb_dashboard",
   settings: "settings_title",
   "manage-suppliers": "settings_manage_suppliers",
+  "order-schedule": "settings_order_schedule",
   account: "breadcrumb_account",
   "all-suppliers": "dashboard_card_suppliers",
   basket: "basket_title",
@@ -56,11 +57,16 @@ export function AppBreadcrumb() {
   const activeRef = useRef<HTMLSpanElement>(null);
 
   useLayoutEffect(() => {
-    activeRef.current?.scrollIntoView({
-      behavior: "auto",
-      block: "nearest",
-      inline: "end",
+    const el = activeRef.current;
+    if (!el) return;
+    const id = requestAnimationFrame(() => {
+      el.scrollIntoView({
+        behavior: "auto",
+        block: "nearest",
+        inline: "end",
+      });
     });
+    return () => cancelAnimationFrame(id);
   }, [pathname, searchParams?.toString()]);
 
   if (pathname === "/orders-of-the-day" || pathname === "/dashboard")
@@ -113,7 +119,7 @@ export function AppBreadcrumb() {
               <span
                 key={seg.href + String(idx)}
                 ref={seg.isLast ? activeRef : undefined}
-                className="contents"
+                className={seg.isLast ? "inline-flex items-center shrink-0" : "contents"}
               >
                 {idx > 0 && (
                   <BreadcrumbSeparator className="text-slate-500 [&>svg]:size-4" />
@@ -255,7 +261,7 @@ export function AppBreadcrumb() {
               <span
                 key={seg.href + String(idx)}
                 ref={seg.isLast ? activeRef : undefined}
-                className="contents"
+                className={seg.isLast ? "inline-flex items-center shrink-0" : "contents"}
               >
                 {idx > 0 && (
                   <BreadcrumbSeparator className="text-slate-500 [&>svg]:size-4" />
@@ -347,7 +353,7 @@ export function AppBreadcrumb() {
               <span
                 key={seg.href + String(idx)}
                 ref={seg.isLast ? activeRef : undefined}
-                className="contents"
+                className={seg.isLast ? "inline-flex items-center shrink-0" : "contents"}
               >
                 {idx > 0 && (
                   <BreadcrumbSeparator className="text-slate-500 [&>svg]:size-4" />
@@ -427,7 +433,7 @@ export function AppBreadcrumb() {
               <span
                 key={seg.href + String(idx)}
                 ref={seg.isLast ? activeRef : undefined}
-                className="contents"
+                className={seg.isLast ? "inline-flex items-center shrink-0" : "contents"}
               >
                 {idx > 0 && (
                   <BreadcrumbSeparator className="text-slate-500 [&>svg]:size-4" />
@@ -507,7 +513,7 @@ export function AppBreadcrumb() {
             <span
               key={seg.href + (seg.linkEvenIfLast ? "?reset" : "")}
               ref={seg.isLast && !seg.linkEvenIfLast ? activeRef : undefined}
-              className="contents"
+              className={seg.isLast && !seg.linkEvenIfLast ? "inline-flex items-center shrink-0" : "contents"}
             >
               {idx > 0 && (
                 <BreadcrumbSeparator className="text-slate-500 [&>svg]:size-4" />

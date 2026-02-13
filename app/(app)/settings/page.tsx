@@ -101,6 +101,14 @@ export default function SettingsPage() {
 
           <motion.div variants={listItemVariants}>
             <TileCard
+              href="/settings/order-schedule"
+              iconSrc="/assets/order-calendar.png"
+              label={t("settings_order_schedule")}
+            />
+          </motion.div>
+
+          <motion.div variants={listItemVariants}>
+            <TileCard
               href="/settings/partner-suppliers"
               iconSrc="/assets/collab-suppliers.png"
               label={t("dashboard_card_partner_suppliers")}

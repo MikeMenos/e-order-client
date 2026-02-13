@@ -1,18 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { backend } from "../../../lib/backend";
 import { getBackendHeaders } from "../../../lib/backend-headers";
-
-export type WishlistToggleResponse = {
-  statusCode?: number;
-  message?: string;
-  detailedMessage?: string;
-  isFavorite?: boolean;
-  isFavBySupplier?: boolean;
-  isFavByShopper?: boolean;
-  isFavByPlatform?: boolean;
-  iconColor?: string;
-  iconMode?: string;
-};
+import type { WishlistToggleResponse } from "../../../lib/types/wishlist";
 
 export async function GET(req: NextRequest) {
   try {
