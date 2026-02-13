@@ -10,7 +10,7 @@ export default function FavouriteSuppliersPage() {
   const wishlistQuery = useWishlistItems();
 
   const items =
-    wishlistQuery.data?.items ?? wishlistQuery.data?.wishlistItems ?? [];
+    wishlistQuery.data?.items ?? wishlistQuery.data?.wishLists ?? [];
 
   return (
     <main className="space-y-3 text-slate-900">
@@ -28,7 +28,9 @@ export default function FavouriteSuppliersPage() {
       )}
 
       {items.length === 0 && !wishlistQuery.isLoading ? (
-        <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">{t("config_empty_favorites")}</p>
+        <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
+          {t("config_empty_favorites")}
+        </p>
       ) : (
         <motion.div
           className="space-y-2"
