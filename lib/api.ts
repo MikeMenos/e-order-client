@@ -51,8 +51,6 @@ function clearAuthAndRedirect(): void {
   window.location.href = "/";
 }
 
-const retryAfterStoreTokenClear = new WeakMap<any, boolean>();
-
 // Attach auth headers (dual token logic) and API key
 // These headers will be forwarded by the /api route handlers to the backend.
 api.interceptors.request.use((config) => {
@@ -69,6 +67,7 @@ api.interceptors.request.use((config) => {
     url.includes("/orders-get-list") ||
     url.includes("/orders") ||
     url.includes("/order-add") ||
+    url.includes("/order-retake") ||
     url.includes("/store-users") ||
     url.includes("/store-pref-schedule") ||
     url.includes("/basket-items") ||
@@ -80,10 +79,8 @@ api.interceptors.request.use((config) => {
     url.includes("/wishlist-toggle") ||
     url.includes("/my-profile");
 
-  // If we're retrying after clearing store token, use accessToken only
-  const isRetry = retryAfterStoreTokenClear.get(config);
   const token =
-    useStoreToken && !isRetry ? storeAccessToken || accessToken : accessToken;
+    useStoreToken ? storeAccessToken || accessToken : accessToken;
 
   // Ensure config.headers is always present (basic object, Axios can handle it)
   config.headers = config.headers || {};
@@ -123,32 +120,6 @@ api.interceptors.response.use(
     const url = error?.config?.url ?? "";
     const isAuthEndpoint = AUTH_ENDPOINTS.some((p) => url.includes(p));
     const skipLogout = NO_LOGOUT_ON_AUTH_FAIL.some((p) => url.includes(p));
-
-    // Check if this is a 500 error on a store-token endpoint and we haven't retried yet
-    const status = error?.response?.status;
-    const { storeAccessToken, accessToken } = useAuthStore.getState();
-    const isStoreTokenEndpoint =
-      url.includes("/suppliers-list") ||
-      url.includes("/suppliers") ||
-      url.includes("/basket") ||
-      url.includes("/orders");
-
-    // If we get a 500 on a store token endpoint and we have a store token,
-    // it might be expired. Clear it and retry with accessToken.
-    if (
-      status === 500 &&
-      isStoreTokenEndpoint &&
-      storeAccessToken &&
-      accessToken &&
-      !retryAfterStoreTokenClear.get(error.config)
-    ) {
-      // Mark that we're retrying
-      retryAfterStoreTokenClear.set(error.config, true);
-      // Clear the store token
-      useAuthStore.getState().setStoreAccessToken(null);
-      // Retry the request
-      return api.request(error.config);
-    }
 
     // Only log out if token is explicitly expired, not on general API failures
     if (!isAuthEndpoint && !skipLogout && isTokenExpired(error)) {

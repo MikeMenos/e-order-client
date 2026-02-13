@@ -8,6 +8,8 @@ export interface AuthState {
   isLoggedIn: boolean;
   accessToken: string | null;
   storeAccessToken: string | null;
+  /** Persisted store UID so we can call select-store on return when storeAccessToken cookie is missing */
+  selectedStoreUID: string | null;
   refreshToken: string | null;
   isAddUser: boolean;
   users: AnyObject | null;
@@ -20,6 +22,7 @@ export interface AuthState {
   setSelectedUser: (user: AnyObject | null) => void;
   setAccessToken: (token: string | null) => void;
   setStoreAccessToken: (token: string | null) => void;
+  setSelectedStoreUID: (uid: string | null) => void;
   setRefreshToken: (token: string | null) => void;
   logout: () => void;
 }
@@ -30,6 +33,7 @@ export const useAuthStore = create<AuthState>()(
       isLoggedIn: false,
       accessToken: null,
       storeAccessToken: null,
+      selectedStoreUID: null,
       refreshToken: null,
       isAddUser: false,
       users: null,
@@ -54,12 +58,19 @@ export const useAuthStore = create<AuthState>()(
         }));
       },
       setStoreAccessToken: (token) => {
-        // Always sync to cookie when token changes
         if (typeof window !== "undefined") {
           setCookie("storeAccessToken", token);
         }
         set(() => ({
           storeAccessToken: token,
+        }));
+      },
+      setSelectedStoreUID: (uid) => {
+        if (typeof window !== "undefined") {
+          setCookie("selectedStoreUID", uid);
+        }
+        set(() => ({
+          selectedStoreUID: uid,
         }));
       },
       setRefreshToken: (token) =>
@@ -69,10 +80,12 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         setCookie("accessToken", null);
         setCookie("storeAccessToken", null);
+        setCookie("selectedStoreUID", null);
         set(() => ({
           isLoggedIn: false,
           accessToken: null,
           storeAccessToken: null,
+          selectedStoreUID: null,
           refreshToken: null,
           isAddUser: false,
           users: null,

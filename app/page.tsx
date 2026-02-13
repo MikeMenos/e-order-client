@@ -24,6 +24,7 @@ export default function HomePage() {
   const setLoggedIn = useAuthStore((s) => s.setLoggedIn);
   const setSelectedUser = useAuthStore((s) => s.setSelectedUser);
   const setStoreAccessToken = useAuthStore((s) => s.setStoreAccessToken);
+  const setSelectedStoreUID = useAuthStore((s) => s.setSelectedStoreUID);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [roles, setRoles] = useState<any[]>([]);
@@ -82,7 +83,8 @@ export default function HomePage() {
             params: { StoreUID: singleStoreUID },
           })
           .then((res) => {
-            setStoreAccessToken(res.data?.accessToken ?? null); // This will also set the cookie via the store setter
+            setStoreAccessToken(res.data?.accessToken ?? null);
+            setSelectedStoreUID(singleStoreUID);
           })
           .catch((err) => {
             console.error("select-store (single store) failed", err);
@@ -168,6 +170,7 @@ export default function HomePage() {
         })
         .then((res) => {
           setStoreAccessToken(res.data?.accessToken ?? null);
+          setSelectedStoreUID(storeUID);
         })
         .catch((err) => {
           console.error("select-store (multi store) failed", err);

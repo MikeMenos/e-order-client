@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useLayoutEffect } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
@@ -52,6 +53,15 @@ export function AppBreadcrumb() {
   const searchParams = useSearchParams();
   const { t } = useTranslation();
   const { suppliers } = useSuppliersListForToday();
+  const activeRef = useRef<HTMLSpanElement>(null);
+
+  useLayoutEffect(() => {
+    activeRef.current?.scrollIntoView({
+      behavior: "auto",
+      block: "nearest",
+      inline: "end",
+    });
+  }, [pathname, searchParams?.toString()]);
 
   if (pathname === "/orders-of-the-day" || pathname === "/dashboard")
     return null;
@@ -100,7 +110,11 @@ export function AppBreadcrumb() {
         <div className="min-w-0 overflow-x-auto">
           <BreadcrumbList className="gap-2 text-slate-500 flex-nowrap w-max px-4 [&>span]:shrink-0">
             {segments.map((seg, idx) => (
-              <span key={seg.href + String(idx)} className="contents">
+              <span
+                key={seg.href + String(idx)}
+                ref={seg.isLast ? activeRef : undefined}
+                className="contents"
+              >
                 {idx > 0 && (
                   <BreadcrumbSeparator className="text-slate-500 [&>svg]:size-4" />
                 )}
@@ -238,7 +252,11 @@ export function AppBreadcrumb() {
         <div className="min-w-0 overflow-x-auto">
           <BreadcrumbList className="gap-2 text-slate-500 flex-nowrap w-max px-4 [&>span]:shrink-0">
             {segments.map((seg, idx) => (
-              <span key={seg.href + String(idx)} className="contents">
+              <span
+                key={seg.href + String(idx)}
+                ref={seg.isLast ? activeRef : undefined}
+                className="contents"
+              >
                 {idx > 0 && (
                   <BreadcrumbSeparator className="text-slate-500 [&>svg]:size-4" />
                 )}
@@ -326,7 +344,11 @@ export function AppBreadcrumb() {
         <div className="min-w-0 overflow-x-auto">
           <BreadcrumbList className="gap-2 text-slate-500 flex-nowrap w-max px-4 [&>span]:shrink-0">
             {segments.map((seg, idx) => (
-              <span key={seg.href + String(idx)} className="contents">
+              <span
+                key={seg.href + String(idx)}
+                ref={seg.isLast ? activeRef : undefined}
+                className="contents"
+              >
                 {idx > 0 && (
                   <BreadcrumbSeparator className="text-slate-500 [&>svg]:size-4" />
                 )}
@@ -402,7 +424,11 @@ export function AppBreadcrumb() {
         <div className="min-w-0 overflow-x-auto">
           <BreadcrumbList className="gap-2 text-slate-500 flex-nowrap w-max px-4 [&>span]:shrink-0">
             {segments.map((seg, idx) => (
-              <span key={seg.href + String(idx)} className="contents">
+              <span
+                key={seg.href + String(idx)}
+                ref={seg.isLast ? activeRef : undefined}
+                className="contents"
+              >
                 {idx > 0 && (
                   <BreadcrumbSeparator className="text-slate-500 [&>svg]:size-4" />
                 )}
@@ -480,6 +506,7 @@ export function AppBreadcrumb() {
           {segments.map((seg, idx) => (
             <span
               key={seg.href + (seg.linkEvenIfLast ? "?reset" : "")}
+              ref={seg.isLast && !seg.linkEvenIfLast ? activeRef : undefined}
               className="contents"
             >
               {idx > 0 && (
