@@ -67,7 +67,7 @@ export default function AccountSettingsPage() {
   return (
     <main className="pb-16 text-slate-900">
       <div className="mx-auto max-w-2xl">
-        <div className="my-4 rounded-xl border border-slate-200 bg-app-card/95 p-4 shadow-sm">
+        <div className="my-4">
           <h1 className="text-xl font-bold text-slate-900">{fullName}</h1>
           {user?.username && (
             <p className="mt-1 text-sm text-slate-500">@{user.username}</p>

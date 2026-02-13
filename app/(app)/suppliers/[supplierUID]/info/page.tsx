@@ -26,7 +26,7 @@ export default function SupplierInfoPage() {
   return (
     <main className=" text-slate-900 px-3">
       <div className="mx-auto max-w-2xl">
-        <div className="my-4 rounded-xl border border-slate-200 bg-app-card/95 p-4 shadow-sm">
+        <div className="my-4">
           <h1 className="text-xl font-bold text-slate-900">
             {displayName || t("common_supplier")}
           </h1>
@@ -41,7 +41,9 @@ export default function SupplierInfoPage() {
         )}
 
         {!basicInfoQuery.isLoading && !basicInfoQuery.error && !supplier && (
-          <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">{t("suppliers_empty")}</p>
+          <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
+            {t("suppliers_empty")}
+          </p>
         )}
 
         {supplier && (
