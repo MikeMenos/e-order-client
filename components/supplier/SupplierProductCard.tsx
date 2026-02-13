@@ -10,7 +10,7 @@ import { getApiErrorMessage } from "../../lib/api-error";
 import { useWishlistToggle } from "../../hooks/useWishlistToggle";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import type { SupplierProduct } from "./types";
+import type { SupplierProduct } from "@/lib/types/supplier";
 
 const DEBOUNCE_MS = 800;
 

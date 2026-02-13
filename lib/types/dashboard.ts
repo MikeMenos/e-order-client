@@ -160,3 +160,29 @@ export type MyProfileUpdateRequest = {
   newPassword2: string;
   profilePic: string;
 };
+
+/** Response from Account/MyProfile_Update */
+export type MyProfileUpdateResponse = {
+  statusCode?: number;
+  message?: string;
+  detailedMessage?: string;
+};
+
+/** Supplier tile/card (e.g. for dashboard supplier list) */
+export type Supplier = {
+  supplierUID: string;
+  title: string;
+  subTitle?: string | null;
+  logo?: string | null;
+  counterOpenBaskets?: number | null;
+  counterTodayOrders?: number | null;
+  labelOrderTimeExpiresAt?: string | null;
+  orderTillText?: string | null;
+  nextAvailDeliveryText?: string | null;
+  basketIconStatus?: number | string;
+  basketIconStatusDescr?: string | null;
+  labelStockForDays?: string | null;
+  weekDeliveryDaysText?: string | null;
+  tileColor?: string | null;
+  tileColorMode?: string | null;
+};

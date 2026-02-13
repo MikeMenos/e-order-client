@@ -70,6 +70,7 @@ api.interceptors.request.use((config) => {
     url.includes("/order-retake") ||
     url.includes("/store-users") ||
     url.includes("/store-pref-schedule") ||
+    url.includes("/store-pref-schedule-update") ||
     url.includes("/basket-items") ||
     url.includes("/basket-counter") ||
     url.includes("/basket-suggest-qty") ||

@@ -16,7 +16,7 @@ import {
 import type {
   BasketGetItemsResponse,
   BasketGetItemsProduct,
-} from "./checkout-basket-types";
+} from "@/lib/types/checkout-basket";
 
 function toNonNegativeNum(s: string): number {
   const n = Number(s);

@@ -116,7 +116,7 @@ export default function ManageSuppliersPage() {
             <>
               <div className="my-4">
                 <h1 className="text-xl font-bold text-slate-900 text-center">
-                  {selectedSupplier.title}
+                  {selectedSupplier.subTitle}
                 </h1>
               </div>
 

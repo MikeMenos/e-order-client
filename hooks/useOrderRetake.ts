@@ -1,11 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
 
-export type OrderRetakePayload = {
-  orderRefDate: string;
-  orderUID: string;
-  updateMode?: 0 | 1;
-};
+export type { OrderRetakePayload } from "../lib/types/order";
 
 /** Convert orderRefDate to ISO string if needed (backend expects e.g. 2026-02-13T09:21:39.617Z) */
 function toOrderRefDateISO(value: string | null | undefined): string {

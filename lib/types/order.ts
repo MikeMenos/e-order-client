@@ -67,3 +67,18 @@ export type OrderViewResponse = {
   message?: string;
   order?: OrderViewOrder;
 };
+
+export type OrderRetakePayload = {
+  orderRefDate: string;
+  orderUID: string;
+  updateMode?: 0 | 1;
+};
+
+export type OrderAddPayload = {
+  orderRefDate: string;
+  supplierUID: string;
+  extraComments?: string;
+  desiredDeliveryDate: string;
+};
+
+export type OrderAddResponse = { message?: string };

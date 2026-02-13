@@ -1,29 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { backend } from "../../../lib/backend";
 import { getBackendHeaders } from "../../../lib/backend-headers";
-import type { OrderRetakePayload } from "../../../lib/types/order";
+import type { PrefScheduleUpdatePayload } from "../../../lib/types/schedule";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as OrderRetakePayload;
-    const { orderRefDate, orderUID, updateMode = 0 } = body;
-    if (!orderUID || !orderRefDate) {
+    const body = (await req.json()) as PrefScheduleUpdatePayload;
+    const { supplierUID, dayNum, isMarked } = body;
+    if (supplierUID == null || dayNum == null) {
       return NextResponse.json(
-        { message: "orderUID and orderRefDate are required" },
+        { message: "supplierUID and dayNum are required" },
         { status: 400 },
       );
     }
     const res = await backend.post(
-      "Orders/Order_Retake",
-      { orderRefDate, orderUID, updateMode },
+      "MyStore/PrefSchedule_Update",
+      { supplierUID, dayNum, isMarked },
       { headers: getBackendHeaders(req) },
     );
     return NextResponse.json(res.data, { status: res.status });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("Error in /api/order-retake:", message);
+    console.error("Error in /api/store-pref-schedule-update:", message);
     return NextResponse.json(
-      { message: "Failed to redo order" },
+      { message: "Failed to update schedule" },
       { status: 500 },
     );
   }

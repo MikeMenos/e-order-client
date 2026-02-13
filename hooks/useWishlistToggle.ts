@@ -1,12 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
+import type { WishlistToggleResponse } from "../lib/types/wishlist";
 
-export type WishlistToggleResponse = {
-  message?: string;
-  isFavorite?: boolean;
-  iconColor?: string;
-  iconMode?: string;
-};
+export type { WishlistToggleResponse } from "../lib/types/wishlist";
 
 export function useWishlistToggle(options?: {
   supplierUID?: string;

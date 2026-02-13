@@ -13,7 +13,7 @@ import { listVariants, listItemVariants } from "../../../../lib/motion";
 import type {
   SupplierProduct,
   SupplierSection,
-} from "../../../../components/supplier/types";
+} from "@/lib/types/supplier";
 import { SupplierPageBar } from "../../../../components/supplier/SupplierPageBar";
 import { SupplierSearchAndTabs } from "../../../../components/supplier/SupplierSearchAndTabs";
 import { SupplierProductSection } from "../../../../components/supplier/SupplierProductSection";
