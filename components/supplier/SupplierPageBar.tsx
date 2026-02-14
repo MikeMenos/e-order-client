@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { History, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { useTranslation } from "../../lib/i18n";
 import { useBasketItems } from "../../hooks/useBasket";
 
@@ -12,7 +12,7 @@ type SupplierInfo = {
   title?: string | null;
   customTitle?: string | null;
   subTitle?: string | null;
-  tileColorMode?: string | null
+  tileColorMode?: string | null;
 };
 
 type Props = {
@@ -20,7 +20,7 @@ type Props = {
   selectedDate?: string | null;
 };
 
-export function SupplierPageBar({ supplier, selectedDate }: Props) {
+export function SupplierPageBar({ supplier }: Props) {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const supplierUID = supplier?.supplierUID;
@@ -41,13 +41,7 @@ export function SupplierPageBar({ supplier, selectedDate }: Props) {
     t("common_supplier");
 
   const queryString = fromParam ? `?from=${encodeURIComponent(fromParam)}` : "";
-
-  const orderHistoryHref = `/suppliers/${encodeURIComponent(supplierUID as string)}/order-history${queryString}`;
-
   const checkoutHref = `/suppliers/${encodeURIComponent(supplierUID as string)}/checkout${queryString}`;
-
-  const isFill =
-    (supplier?.tileColorMode?.trim() ?? "").toLowerCase() === "fill";
 
   return (
     <div className="mx-auto flex items-center justify-between gap-4 px-4 py-2">
@@ -69,7 +63,6 @@ export function SupplierPageBar({ supplier, selectedDate }: Props) {
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-2 text-sm text-slate-500">
-        {/* Cart / Checkout link */}
         <Link
           href={checkoutHref}
           className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-brand-200 bg-brand-50 text-brand-600 hover:bg-brand-100 md:h-9 md:w-9"
@@ -81,20 +74,6 @@ export function SupplierPageBar({ supplier, selectedDate }: Props) {
               {basketItemCount > 99 ? "99+" : basketItemCount}
             </span>
           )}
-        </Link>
-        {/* Order history link */}
-        <Link
-          href={orderHistoryHref}
-          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-medium md:h-9 md:w-9 ${
-            isFill
-              ? "border-slate-300 text-slate-900 hover:border-slate-400 hover:text-slate-900"
-              : "border-slate-200 bg-white text-slate-500 hover:border-slate-400 hover:text-slate-700"
-          }`}
-          aria-label={`${t("supplier_order_history_title")} ${
-            supplier?.title ?? ""
-          }`}
-        >
-          <History className="h-4 w-4 md:h-4.5 md:w-4.5" />
         </Link>
       </div>
     </div>

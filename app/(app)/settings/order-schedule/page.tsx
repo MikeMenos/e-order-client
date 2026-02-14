@@ -59,24 +59,6 @@ function SupplierScheduleCard({
 
       <CollapsibleContent>
         <div className="px-4 py-4">
-          {schedule.supplierDeliveryDays?.length ? (
-            <div className="pt-1">
-              <div className="text-sm text-slate-600">
-                <span className="font-medium text-slate-700">
-                  {t("timetable_delivery_days")}:
-                </span>
-              </div>
-
-              <ul className="mt-1 space-y-0.5">
-                {schedule.supplierDeliveryDays.map((day) => (
-                  <li key={day} className="text-sm text-slate-600">
-                    {day}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-
           <ul className="mt-3 divide-y divide-slate-100">
             {dailyProgram.map((day) => {
               const isUpdating =
@@ -130,6 +112,23 @@ function SupplierScheduleCard({
               );
             })}
           </ul>
+          {schedule.supplierDeliveryDays?.length ? (
+            <div className="pt-1">
+              <div className="text-sm text-slate-600">
+                <span className="font-medium text-slate-700">
+                  {t("timetable_delivery_days")}:
+                </span>
+              </div>
+
+              <ul className="mt-1 space-y-0.5">
+                {schedule.supplierDeliveryDays.map((day) => (
+                  <li key={day} className="text-sm text-slate-600">
+                    {day}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       </CollapsibleContent>
     </Collapsible>

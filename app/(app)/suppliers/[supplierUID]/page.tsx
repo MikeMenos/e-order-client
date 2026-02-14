@@ -16,6 +16,25 @@ import { SupplierSearchAndTabs } from "../../../../components/supplier/SupplierS
 import { SupplierProductSection } from "../../../../components/supplier/SupplierProductSection";
 import { SupplierCheckoutBar } from "../../../../components/supplier/SupplierCheckoutBar";
 import { useMeasuredHeight } from "../../../../lib/utils";
+import { Tabs, TabsList, TabsTrigger } from "../../../../components/ui/tabs";
+
+function buildSectionsFromProducts(
+  products: SupplierProduct[],
+): SupplierSection[] {
+  if (!products || products.length === 0) return [];
+  const byCategory = new Map<string, SupplierProduct[]>();
+  products.forEach((p) => {
+    const rawCategory = p.category ?? "OTHER";
+    const key = String(rawCategory).toUpperCase();
+    if (!byCategory.has(key)) byCategory.set(key, []);
+    byCategory.get(key)!.push(p);
+  });
+  return Array.from(byCategory.entries()).map(([label, list]) => ({
+    id: label.toLowerCase().replace(/\s+/g, "-"),
+    label,
+    products: list,
+  }));
+}
 
 export default function SupplierPage() {
   const { t } = useTranslation();
@@ -52,57 +71,44 @@ export default function SupplierPage() {
     [rawProducts],
   );
 
-  const sections: SupplierSection[] = useMemo(() => {
-    if (!products || products.length === 0) return [];
+  /** Catalog = non-favorite products by category; Favorites = favorite products by category */
+  const catalogSections: SupplierSection[] = useMemo(() => {
+    const list = products.filter((p) => !p.isFavorite);
+    return buildSectionsFromProducts(list);
+  }, [products]);
 
-    const favorites = products.filter((p) => p.isFavorite);
-    const result: SupplierSection[] = [];
-    const favoritesLabel = t("supplier_favorites").toUpperCase();
+  const favoriteSections: SupplierSection[] = useMemo(() => {
+    const list = products.filter((p) => p.isFavorite);
+    return buildSectionsFromProducts(list);
+  }, [products]);
 
-    if (favorites.length > 0) {
-      result.push({
-        id: "favorites",
-        label: favoritesLabel,
-        products: favorites,
-      });
-    }
-
-    const byCategory = new Map<string, SupplierProduct[]>();
-
-    products.forEach((p) => {
-      const rawCategory = p.category ?? "OTHER";
-      const key = String(rawCategory).toUpperCase();
-      if (!byCategory.has(key)) byCategory.set(key, []);
-      byCategory.get(key)!.push(p);
-    });
-
-    for (const [label, list] of byCategory.entries()) {
-      if (label === favoritesLabel) continue;
-      // Sort products so favorites appear at the top of each category
-      const sortedList = [...list].sort((a, b) => {
-        // Favorites first (true comes before false)
-        if (a.isFavorite && !b.isFavorite) return -1;
-        if (!a.isFavorite && b.isFavorite) return 1;
-        return 0; // Keep original order for non-favorites
-      });
-      result.push({
-        id: label.toLowerCase().replace(/\s+/g, "-"),
-        label,
-        products: sortedList,
-      });
-    }
-
-    return result;
-  }, [products, t]);
+  const [mainTab, setMainTab] = useState<"catalog" | "favorites">("catalog");
+  const currentTabSections =
+    mainTab === "catalog" ? catalogSections : favoriteSections;
 
   const [showDetails, setShowDetails] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isInputFocused, setIsInputFocused] = useState(false);
+
+  useEffect(() => {
+    const onFocusIn = (e: FocusEvent) => {
+      const t = e.target as HTMLElement;
+      if (t && ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName))
+        setIsInputFocused(true);
+    };
+    const onFocusOut = () => setIsInputFocused(false);
+    document.addEventListener("focusin", onFocusIn);
+    document.addEventListener("focusout", onFocusOut);
+    return () => {
+      document.removeEventListener("focusin", onFocusIn);
+      document.removeEventListener("focusout", onFocusOut);
+    };
+  }, []);
 
   const filteredSections = useMemo(() => {
-    if (!searchQuery) return sections;
-
+    if (!searchQuery) return currentTabSections;
     const q = searchQuery.toLowerCase();
-    return sections
+    return currentTabSections
       .map((section) => ({
         ...section,
         products: section.products.filter(
@@ -113,7 +119,7 @@ export default function SupplierPage() {
         ),
       }))
       .filter((section) => section.products.length > 0);
-  }, [sections, searchQuery]);
+  }, [currentTabSections, searchQuery]);
 
   const layoutHeaderHeight = useAppHeaderHeight();
   const pageBar = useMeasuredHeight<HTMLDivElement>();
@@ -131,6 +137,10 @@ export default function SupplierPage() {
   );
 
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    setActiveSectionId(filteredSections[0]?.id ?? null);
+  }, [mainTab]);
 
   useEffect(() => {
     if (filteredSections.length === 0) {
@@ -246,14 +256,36 @@ export default function SupplierPage() {
             style={{ top: tabsStickyTop }}
           >
             <div className="mx-auto max-w-4xl">
-              <SupplierSearchAndTabs
-                searchPlaceholder={t("suppliers_search_placeholder")}
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                sections={filteredSections}
-                activeSectionId={activeSectionId}
-                onTabClick={handleTabClick}
-              />
+              <Tabs
+                value={mainTab}
+                onValueChange={(v) =>
+                  setMainTab(v === "favorites" ? "favorites" : "catalog")
+                }
+                className="w-full"
+              >
+                <TabsList className="mb-2 grid w-full grid-cols-2 rounded-lg bg-slate-100 p-1">
+                  <TabsTrigger
+                    value="catalog"
+                    className="rounded-md font-semibold data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                  >
+                    {t("supplier_catalog")}
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="favorites"
+                    className="rounded-md font-semibold data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                  >
+                    {t("supplier_favorites")}
+                  </TabsTrigger>
+                </TabsList>
+                <SupplierSearchAndTabs
+                  searchPlaceholder={t("suppliers_search_placeholder")}
+                  searchQuery={searchQuery}
+                  onSearchChange={setSearchQuery}
+                  sections={filteredSections}
+                  activeSectionId={activeSectionId}
+                  onTabClick={handleTabClick}
+                />
+              </Tabs>
             </div>
           </div>
         )}
@@ -297,7 +329,10 @@ export default function SupplierPage() {
         )}
       </div>
 
-      <SupplierCheckoutBar supplierUID={supplierUID} />
+      <SupplierCheckoutBar
+        supplierUID={supplierUID}
+        hideWhenInputFocused={isInputFocused}
+      />
     </main>
   );
 }

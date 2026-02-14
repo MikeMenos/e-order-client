@@ -54,6 +54,54 @@ export default function TimetablePage() {
                 {supplierSchedule.selectedDaysInfo}
               </p>
             )}
+            <ul className="divide-y divide-slate-100">
+              {dailyProgram.map((day) => {
+                const isUpdating =
+                  updateMutation.isPending &&
+                  updateMutation.variables?.supplierUID === supplierUID &&
+                  updateMutation.variables?.dayNum === day.dayNum;
+                const dayLabel = day.day ?? day.dayShort ?? String(day.dayNum);
+                const hasTimeOrAbbrev =
+                  (day.orderTillHour ?? "").trim() !== "" ||
+                  (day.dayShort ?? "").trim() !== "" ||
+                  (day.orderExpectedDelivDay ?? "").trim() !== "";
+                const timePart = [
+                  day.orderTillHour,
+                  day.dayShort ?? day.orderExpectedDelivDay,
+                ]
+                  .filter(Boolean)
+                  .join(" • ");
+                return (
+                  <li
+                    key={day.dayNum}
+                    className="flex items-center justify-between gap-3 px-4 py-3 "
+                  >
+                    <div className="min-w-0 flex-1">
+                      <span className="font-medium text-slate-900">
+                        {dayLabel}
+                      </span>
+                      {hasTimeOrAbbrev && (
+                        <span className="ml-1.5 text-slate-500">
+                          • {timePart}
+                        </span>
+                      )}
+                    </div>
+                    <Switch
+                      checked={day.isMarked}
+                      onCheckedChange={(checked) => {
+                        updateMutation.mutate({
+                          supplierUID,
+                          dayNum: day.dayNum,
+                          isMarked: !!checked,
+                        });
+                      }}
+                      disabled={isUpdating}
+                      aria-label={`${dayLabel} ${t("timetable_enabled")}`}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
             {supplierSchedule.supplierDeliveryDays &&
               supplierSchedule.supplierDeliveryDays.length > 0 && (
                 <p className="text-sm text-slate-600 pt-1">
@@ -69,54 +117,6 @@ export default function TimetablePage() {
               )}
           </div>
           {/* Program list: day + time/abbrev + toggle */}
-          <ul className="divide-y divide-slate-100">
-            {dailyProgram.map((day) => {
-              const isUpdating =
-                updateMutation.isPending &&
-                updateMutation.variables?.supplierUID === supplierUID &&
-                updateMutation.variables?.dayNum === day.dayNum;
-              const dayLabel = day.day ?? day.dayShort ?? String(day.dayNum);
-              const hasTimeOrAbbrev =
-                (day.orderTillHour ?? "").trim() !== "" ||
-                (day.dayShort ?? "").trim() !== "" ||
-                (day.orderExpectedDelivDay ?? "").trim() !== "";
-              const timePart = [
-                day.orderTillHour,
-                day.dayShort ?? day.orderExpectedDelivDay,
-              ]
-                .filter(Boolean)
-                .join(" • ");
-              return (
-                <li
-                  key={day.dayNum}
-                  className="flex items-center justify-between gap-3 px-4 py-3 "
-                >
-                  <div className="min-w-0 flex-1">
-                    <span className="font-medium text-slate-900">
-                      {dayLabel}
-                    </span>
-                    {hasTimeOrAbbrev && (
-                      <span className="ml-1.5 text-slate-500">
-                        • {timePart}
-                      </span>
-                    )}
-                  </div>
-                  <Switch
-                    checked={day.isMarked}
-                    onCheckedChange={(checked) => {
-                      updateMutation.mutate({
-                        supplierUID,
-                        dayNum: day.dayNum,
-                        isMarked: !!checked,
-                      });
-                    }}
-                    disabled={isUpdating}
-                    aria-label={`${dayLabel} ${t("timetable_enabled")}`}
-                  />
-                </li>
-              );
-            })}
-          </ul>
         </div>
       )}
     </main>
