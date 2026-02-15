@@ -80,11 +80,11 @@ export default function ErgastirioProductsFamilyPage() {
       </div>
 
       <Card className="shadow-none rounded-2xl border-slate-200 bg-app-card">
-        <CardContent className="p-0 lg:p-3 space-y-6 text-sm">
+        <CardContent className="p-0 lg:p-3 space-y-6 text-base">
           {favProducts && favProducts.length > 0 && (
             <section>
               <div className="relative mb-3">
-                <span className="inline-flex items-center rounded-full bg-brand-500 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-white">
+                <span className="inline-flex items-center rounded-full bg-brand-500 px-4 py-1.5 text-base font-semibold uppercase tracking-wide text-white">
                   {t("erg_fav_products")}
                 </span>
               </div>
@@ -103,7 +103,7 @@ export default function ErgastirioProductsFamilyPage() {
           {regProducts && regProducts.length > 0 && (
             <section>
               <div className="mb-3">
-                <span className="inline-flex items-center rounded-full bg-slate-700 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-white">
+                <span className="inline-flex items-center rounded-full bg-slate-700 px-4 py-1.5 text-base font-semibold uppercase tracking-wide text-white">
                   {t("erg_other_products")}
                 </span>
               </div>

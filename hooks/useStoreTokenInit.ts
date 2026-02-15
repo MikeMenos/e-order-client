@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "../lib/api";
-import { useAuthStore } from "../stores/auth";
+import { useAuthStore, useEffectiveSelectedUser } from "../stores/auth";
 import type { SelectStoreResponse } from "../lib/types/dashboard";
 
 /**
@@ -10,27 +10,25 @@ import type { SelectStoreResponse } from "../lib/types/dashboard";
  * before making any store-related API calls.
  */
 export function useStoreTokenInit() {
-  const {
-    users,
-    selectedUser,
-    selectedStoreUID: cookieStoreUID,
-    storeAccessToken,
-    accessToken,
-  } = useAuthStore();
+  const users = useAuthStore((s) => s.users);
+  const effectiveUser = useEffectiveSelectedUser();
+  const selectedStoreUID = useAuthStore((s) => s.selectedStoreUID);
+  const storeAccessToken = useAuthStore((s) => s.storeAccessToken);
+  const accessToken = useAuthStore((s) => s.accessToken);
   const setStoreAccessToken = useAuthStore((s) => s.setStoreAccessToken);
   const setSelectedStoreUID = useAuthStore((s) => s.setSelectedStoreUID);
 
   const derivedStoreUID = useMemo(() => {
-    if (!users && !selectedUser) return null;
+    if (!users && !effectiveUser) return null;
     return users?.hasSelectedStore === true
       ? users?.selectedStoreUID
-      : selectedUser?.store?.storeUID
-        ? selectedUser.store.storeUID
+      : effectiveUser?.store?.storeUID
+        ? effectiveUser.store.storeUID
         : (users?.role?.store?.storeUID ?? null);
-  }, [users, selectedUser]);
+  }, [users, effectiveUser]);
 
   // Use cookie/persisted store UID first so we can call select-store on return before zustand rehydration
-  const storeUID = cookieStoreUID || derivedStoreUID;
+  const storeUID = selectedStoreUID || derivedStoreUID;
 
   const selectStoreMutation = useMutation<SelectStoreResponse, unknown, string>(
     {

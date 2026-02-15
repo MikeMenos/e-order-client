@@ -37,26 +37,26 @@ export default function FavoritesPage() {
 
   return (
     <main className="space-y-3 text-slate-900 px-3">
-      <header className="space-y-1">
-        <h1 className="text-xl font-bold text-slate-900">
+      <header className="space-y-1 mb-1">
+        <h1 className="text-xl font-bold text-slate-900 mt-2">
           {t("supplier_favorites")}
         </h1>
       </header>
 
       {wishlistQuery.isLoading && (
-        <p className="text-sm text-slate-500">
+        <p className="text-base text-slate-500">
           {t("config_loading_favorites") || "Loading favorites..."}
         </p>
       )}
 
       {wishlistQuery.error && (
-        <p className="text-sm text-red-400">
+        <p className="text-base text-red-400">
           {t("config_error_favorites") || "Error loading favorites"}
         </p>
       )}
 
       {items.length === 0 && !wishlistQuery.isLoading ? (
-        <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
+        <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
           {t("config_empty_favorites") || "No favorites found"}
         </p>
       ) : (
@@ -91,25 +91,25 @@ export default function FavoritesPage() {
 
                 {/* Product Info */}
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-base font-semibold text-slate-900 leading-tight">
+                  <h3 className="text-lg font-semibold text-slate-900 leading-tight">
                     {item.title ||
                       item.productTitle ||
                       item.productOriginalTitle ||
                       "—"}
                   </h3>
                   {(item.subTitle || item.productDescription) && (
-                    <p className="mt-1 text-sm text-slate-600 line-clamp-2">
+                    <p className="mt-1 text-base text-slate-600 line-clamp-2">
                       {item.subTitle || item.productDescription}
                     </p>
                   )}
                   {item.productPackaging && (
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-base text-slate-500">
                       {t("product_packaging")} {item.productPackaging}
                     </p>
                   )}
                   <div className="mt-2 flex items-center gap-4">
                     {typeof item.price === "number" && (
-                      <p className="text-base font-bold text-slate-900">
+                      <p className="text-lg font-bold text-slate-900">
                         {item.price.toFixed(2)} {item.currency ?? "€"}
                       </p>
                     )}

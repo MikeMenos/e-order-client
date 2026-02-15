@@ -4,24 +4,25 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronLeft, Home } from "lucide-react";
-import { useAuthStore } from "../../stores/auth";
+import { useAuthStore, useEffectiveSelectedUser } from "../../stores/auth";
 import { useNavigationHistory } from "@/app/(app)/NavigationHistoryContext";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
   const pathname = usePathname();
-  const { users, selectedUser } = useAuthStore();
+  const users = useAuthStore((s) => s.users);
+  const effectiveUser = useEffectiveSelectedUser();
   const { canGoBack, goBack } = useNavigationHistory();
   const isDashboard = pathname === "/dashboard";
 
   const storeTitle = useMemo(
     () =>
-      selectedUser?.store?.title ??
+      effectiveUser?.store?.title ??
       users?.store?.title ??
       users?.role?.store?.title ??
       "",
     [
-      selectedUser?.store?.title,
+      effectiveUser?.store?.title,
       users?.store?.title,
       users?.role?.store?.title,
     ],
@@ -37,11 +38,11 @@ export function Header() {
             type="button"
             variant="outline"
             size="icon"
-            className="h-9 w-9 rounded-full border-slate-200"
+            className="h-10 w-10 rounded-full border-slate-200"
             onClick={goBack}
             aria-label="Back"
           >
-            <ChevronLeft className="h-5 w-5" aria-hidden />
+            <ChevronLeft className="h-6 w-6 text-brand-500" aria-hidden />
           </Button>
         ) : (
           <span className="w-9" />
@@ -53,11 +54,11 @@ export function Header() {
           <img
             src="/assets/logo.png"
             alt="E-Order"
-            className="h-12 w-12 rounded-lg object-contain"
+            className="h-16 w-16 rounded-lg object-contain"
           />
         </Link>
         {storeTitle && (
-          <p className="mt-1 text-sm font-medium text-slate-600 line-clamp-1">
+          <p className="mt-1 text-base font-medium text-slate-600 line-clamp-1">
             {storeTitle}
           </p>
         )}
@@ -67,10 +68,10 @@ export function Header() {
         <Button
           variant="outline"
           size="icon"
-          className="h-9 w-9 rounded-full border-slate-200"
+          className="h-10 w-10 rounded-full border-slate-200"
         >
           <Link href="/dashboard" aria-label="Home">
-            <Home className="h-5 w-5" aria-hidden />
+            <Home className="h-6 w-6 text-brand-500" aria-hidden />
           </Link>
         </Button>
       </div>

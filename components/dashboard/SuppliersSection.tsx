@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { format, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import { useTranslation } from "../../lib/i18n";
 import { listVariants, listItemVariants } from "../../lib/motion";
@@ -9,6 +8,7 @@ import { SuppliersSearchBar } from "./SuppliersSearchBar";
 import { SupplierTile } from "./SupplierTile";
 import { usePathname } from "next/navigation";
 import { SuppliersListItem } from "@/lib/types/dashboard";
+import { formatRefDateLong, isTodayDate } from "@/lib/utils";
 
 type Props = {
   refDate: string;
@@ -18,6 +18,8 @@ type Props = {
   errorMessage?: string;
   /** When provided, each tile is a button and this is called instead of linking (e.g. manage-suppliers). */
   onSupplierClick?: (supplier: SuppliersListItem) => void;
+  /** Rendered between the search bar and the list (e.g. orders-of-the-day tabs). */
+  children?: React.ReactNode;
 };
 
 export function SuppliersSection({
@@ -27,6 +29,7 @@ export function SuppliersSection({
   isError,
   errorMessage,
   onSupplierClick,
+  children,
 }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAscending, setIsAscending] = useState(true);
@@ -87,34 +90,15 @@ export function SuppliersSection({
     return data;
   }, [suppliers, searchQuery, statusFilter, isAscending, pathname]);
 
-  const isToday = (() => {
-    try {
-      const ref = parseISO(refDate);
-      const today = new Date();
-      return (
-        ref.getFullYear() === today.getFullYear() &&
-        ref.getMonth() === today.getMonth() &&
-        ref.getDate() === today.getDate()
-      );
-    } catch {
-      return false;
-    }
-  })();
-
-  const dateFormatted = (() => {
-    try {
-      return format(parseISO(refDate), "EEEE d MMMM");
-    } catch {
-      return refDate;
-    }
-  })();
+  const isToday = isTodayDate(refDate);
+  const dateFormatted = formatRefDateLong(refDate);
 
   return (
     <section>
       <div className="mb-2 flex flex-col gap-2">
-        {pathname !== "/all-suppliers" &&
+        {/* {pathname !== "/all-suppliers" &&
           pathname !== "/settings/manage-suppliers" && (
-            <p className="text-xl text-slate-900 mt-2 text-center">
+            <p className="text-2xl text-slate-900 mt-2 text-center">
               {isToday ? (
                 <>
                   <span className="font-medium text-green-600">
@@ -126,7 +110,7 @@ export function SuppliersSection({
                 dateFormatted
               )}
             </p>
-          )}
+          )} */}
         <div className="flex h-9 items-center gap-2 mt-2">
           <SuppliersSearchBar value={searchQuery} onChange={setSearchQuery} />
           {(pathname === "/all-suppliers" ||
@@ -147,32 +131,41 @@ export function SuppliersSection({
             </Button>
           )}
         </div>
-        <SuppliersSectionHeader
+        {/* <SuppliersSectionHeader
           isAscending={isAscending}
           onSortToggle={() => setIsAscending((v) => !v)}
           statusOptions={statusOptions}
           selectedStatus={statusFilter}
           onStatusChange={setStatusFilter}
           ordersOfTheDayCount={suppliers.length}
-        />
+        /> */}
       </div>
 
+      {pathname === "/orders-of-the-day" && (
+        <div className="-mx-3 w-[calc(100%+1.5rem)]">{children}</div>
+      )}
+
       {isLoading && (
-        <p className="text-sm text-slate-400">{t("suppliers_loading")}</p>
+        <p className="text-base text-slate-400">{t("suppliers_loading")}</p>
       )}
       {isError && (
-        <p className="text-sm text-red-400">
+        <p className="text-base text-red-400">
           {errorMessage ?? t("suppliers_error")}
         </p>
       )}
 
       {filteredSuppliers.length === 0 && !isLoading ? (
-        <p className="text-sm text-slate-400 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
+        <p className="text-base text-slate-400 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
           {t("suppliers_empty")}
         </p>
       ) : (
         <motion.div
-          className="grid grid-cols-2 gap-2"
+          className={
+            pathname === "/all-suppliers" ||
+            pathname === "/settings/manage-suppliers"
+              ? "grid grid-cols-2 gap-3 pb-8"
+              : "space-y-2 pb-8"
+          }
           variants={listVariants}
           initial="hidden"
           animate="visible"

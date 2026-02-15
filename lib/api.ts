@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useAuthStore } from "../stores/auth";
+import { isApiSuccess, getApiResponseMessage } from "./api-response";
 
 // Frontend API client – talks to Next.js route handlers under /api
 export const api = axios.create({
@@ -73,8 +74,7 @@ api.interceptors.request.use((config) => {
     url.includes("/wishlist-toggle") ||
     url.includes("/my-profile");
 
-  const token =
-    useStoreToken ? storeAccessToken || accessToken : accessToken;
+  const token = useStoreToken ? storeAccessToken || accessToken : accessToken;
 
   // Ensure config.headers is always present (basic object, Axios can handle it)
   config.headers = config.headers || {};
@@ -89,21 +89,13 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Treat body statusCode !== 200 as error (API returns HTTP 200 with statusCode/message in body)
-const SUCCESS_STATUS = 200;
-
+// Treat body statusCode as error when not success (API returns HTTP 200 with statusCode/message in body)
 api.interceptors.response.use(
   (response) => {
     const data: any = response?.data;
-    if (
-      data &&
-      typeof data.statusCode === "number" &&
-      data.statusCode !== SUCCESS_STATUS
-    ) {
+    if (data && typeof data.statusCode === "number" && !isApiSuccess(data)) {
       const message =
-        typeof data.message === "string" && data.message.trim().length > 0
-          ? data.message
-          : "An unexpected error occurred.";
+        getApiResponseMessage(data) || "An unexpected error occurred.";
       const error = new Error(message);
       (error as any).response = response;
       throw error;

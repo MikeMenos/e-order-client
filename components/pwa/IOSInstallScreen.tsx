@@ -26,13 +26,13 @@ export function IOSInstallScreen() {
       </div>
 
       <div className="w-full max-w-sm rounded-2xl border border-slate-200/80 bg-app-card p-6 shadow-lg">
-        <h1 className="mb-4 text-center text-xl font-semibold">
+        <h1 className="mb-4 text-center text-2xl font-semibold">
           {t("pwa_ios_install_title")}
         </h1>
-        <p className="mb-6 text-center text-sm text-slate-600">
+        <p className="mb-6 text-center text-base text-slate-600">
           {t("pwa_ios_install_subtitle")}
         </p>
-        <ol className="list-decimal space-y-2 pl-5 text-sm text-slate-700">
+        <ol className="list-decimal space-y-2 pl-5 text-base text-slate-700">
           <li>{t("pwa_ios_install_step1")}</li>
           <li>{t("pwa_ios_install_step2")}</li>
         </ol>

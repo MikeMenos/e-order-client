@@ -90,18 +90,17 @@ export function SupplierTile({
         </span>
       ) : (
         <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
-          <span className="text-lg font-semibold text-slate-500">
+          <span className="text-xl font-semibold text-slate-500">
             {(supplier.title ?? "").charAt(0).toUpperCase()}
           </span>
         </span>
       )}
-      <span className="text-center text-sm font-medium text-slate-900 line-clamp-2">
+      <span className="text-center text-base font-medium text-slate-900 line-clamp-2">
         {supplier.title}
       </span>
     </>
   ) : isNotOrdersOfDayPage ? (
-    /* All-suppliers: centered layout — logo, dots, title, subTitle */
-    <div className="flex flex-col items-center justify-center px-4 py-4 text-center">
+    <div className="flex min-h-[180px] flex-1 flex-col items-center justify-center px-4 py-4 text-center">
       {supplier.logo ? (
         <img
           src={supplier.logo}
@@ -110,7 +109,7 @@ export function SupplierTile({
         />
       ) : (
         <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-slate-100">
-          <span className="text-xl font-semibold text-slate-500">
+          <span className="text-2xl font-semibold text-slate-500">
             {(supplier.title ?? "").charAt(0).toUpperCase()}
           </span>
         </span>
@@ -130,11 +129,11 @@ export function SupplierTile({
           />
         ))}
       </div>
-      <p className="mt-2 text-sm font-semibold text-slate-900 line-clamp-2">
+      <p className="mt-2 text-base font-semibold text-slate-900 line-clamp-2">
         {supplier.title}
       </p>
       {supplier.subTitle && (
-        <p className="mt-0.5 text-xs text-slate-500 line-clamp-2">
+        <p className="mt-0.5 text-base text-slate-500 line-clamp-2">
           {supplier.subTitle}
         </p>
       )}
@@ -168,14 +167,14 @@ export function SupplierTile({
                   {supplier.customTitle ?? supplier.subTitle ?? supplier.title}
                 </p>
                 {showDeliveryInfo && supplier.nextAvailDeliveryText && (
-                  <p className="mt-0.5 text-sm text-slate-500">
+                  <p className="mt-0.5 text-base text-slate-500">
                     {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
                   </p>
                 )}
                 {showDeliveryInfo &&
                   supplier.labelOrderTimeExpiresAt != null &&
                   supplier.labelOrderTimeExpiresAt !== "" && (
-                    <p className="mt-0.5 text-sm text-slate-500">
+                    <p className="mt-0.5 text-base text-slate-500">
                       {t("order_delivery_until")}{" "}
                       {supplier.labelOrderTimeExpiresAt}
                     </p>
@@ -184,11 +183,11 @@ export function SupplierTile({
             ) : (
               <>
                 {showDeliveryInfo && supplier.nextAvailDeliveryText && (
-                  <p className="mt-0.5 text-sm text-slate-500">
+                  <p className="mt-0.5 text-base text-slate-500">
                     {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
                   </p>
                 )}
-                <p className="mt-0.5 text-sm text-slate-500 ">
+                <p className="mt-0.5 text-base text-slate-500 ">
                   {supplier.title}
                 </p>
               </>
@@ -231,14 +230,14 @@ export function SupplierTile({
               />
             )}
             {supplier.basketIconStatus === 0 && (
-              <CircleAlert
+              <MoreHorizontal
                 className="h-5 w-5 shrink-0"
                 style={iconStyle}
                 aria-hidden
               />
             )}
             {supplier.basketIconStatus === 2 && (
-              <MoreHorizontal
+              <CircleAlert
                 className="h-5 w-5 shrink-0"
                 style={iconStyle}
                 aria-hidden
@@ -249,14 +248,15 @@ export function SupplierTile({
               <span className="ml-auto">
                 <Button
                   type="button"
-                  variant="outline"
-                  className="rounded-sm bg-white px-2 py-0.5 font-medium text-red-600"
+                  variant="ghost"
+                  className="rounded-sm bg-brand-500 px-2 py-0 font-normal text-white"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                   }}
+                  size="sm"
                 >
-                  {t("supplier_continue")}
+                  {t("supplier_order")}
                 </Button>
               </span>
             )}
@@ -265,13 +265,14 @@ export function SupplierTile({
                 <Button
                   type="button"
                   variant="outline"
-                  className="rounded-sm bg-white px-2 py-0.5 font-medium text-red-600"
+                  className="rounded-sm bg-white px-2 py-0 font-normal"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                   }}
+                  size="sm"
                 >
-                  {t("supplier_open")}
+                  {t("supplier_continue")}
                 </Button>
               </span>
             )}
@@ -280,11 +281,12 @@ export function SupplierTile({
                 <Button
                   type="button"
                   variant="outline"
-                  className="rounded-sm bg-white px-2 py-0.5 font-medium text-slate-500"
+                  className="rounded-sm bg-white px-2 py-0 font-normal text-slate-500"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                   }}
+                  size="sm"
                 >
                   {t("supplier_open")}
                 </Button>
@@ -308,7 +310,9 @@ export function SupplierTile({
 
   const tileClassName = isSettingsStyle
     ? tileClassNameSettings
-    : tileClassNameDefault;
+    : isNotOrdersOfDayPage
+      ? `${tileClassNameDefault} h-full flex flex-col`
+      : tileClassNameDefault;
 
   if (onClick) {
     return (

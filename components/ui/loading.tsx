@@ -21,7 +21,7 @@ export default function Loading({
       <Card className="border border-slate-200/70 shadow-none rounded-2xl bg-app-card">
         <CardContent className="flex flex-col items-center justify-center gap-4 px-8 py-10">
           <Spinner size={36} />
-          <span className="text-xs text-slate-500">{label}</span>
+          <span className="text-base text-slate-500">{label}</span>
         </CardContent>
       </Card>
     </div>

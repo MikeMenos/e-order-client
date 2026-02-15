@@ -204,15 +204,15 @@ function BasketItemRow({
       <div className="min-w-0 flex-1">
         <p className="font-medium text-slate-900">{item.productTitle || "—"}</p>
         <div className="mt-1.5 flex items-center gap-1.5">
-          <span className="text-sm text-slate-600 shrink-0">
+          <span className="text-base text-slate-600 shrink-0">
             {t("checkout_quantity")}:
           </span>
-          <div className="inline-flex items-center gap-0.5 rounded border border-slate-200 bg-white px-1 py-0.5">
+          <div className="inline-flex items-center overflow-hidden rounded-lg border bg-white">
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-base"
+              className="h-7 min-w-10 flex-1 basis-10 shrink-0 border-0 border-r  bg-white p-0 text-2xl font-semibold text-slate-900 hover:bg-emerald-50/50 disabled:opacity-50"
               aria-label={t("aria_decrease_basket")}
               onClick={handleDecrement}
               disabled={isBusy}
@@ -228,7 +228,7 @@ function BasketItemRow({
               onBlur={handleInputBlur}
               onKeyDown={handleInputKeyDown}
               placeholder="0"
-              className="h-7 w-12 border-0 bg-transparent p-0 text-center text-base [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              className="h-7 w-12 border-0 bg-brand-50 p-0 text-center text-lg [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               aria-label={t("aria_basket_quantity")}
               disabled={isBusy}
             />
@@ -236,7 +236,7 @@ function BasketItemRow({
               type="button"
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-base"
+              className="h-7 min-w-10 flex-1 basis-10 shrink-0 border  bg-white p-0 text-2xl font-semibold text-slate-900 hover:bg-emerald-50/50 disabled:opacity-50"
               aria-label={t("aria_increase_basket")}
               onClick={handleIncrement}
               disabled={isBusy}
@@ -356,10 +356,12 @@ export function CheckoutBasketSection({
         </p>
       )}
       {!isLoading && !isError && items.length === 0 && (
-        <p className="text-slate-500 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">{t("checkout_basket_empty")}</p>
+        <p className="text-slate-500 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
+          {t("checkout_basket_empty")}
+        </p>
       )}
       {!isLoading && !isError && items.length > 0 && (
-        <ul className="max-h-[50vh] space-y-1 overflow-y-auto pr-1">
+        <ul className="max-h-[50vh] space-y-1 mb-1 overflow-y-auto pr-1">
           {items.map((item) => (
             <BasketItemRow
               key={item.basketUID}

@@ -22,8 +22,8 @@ export default function TimetablePage() {
 
   return (
     <main className="space-y-4 text-slate-900 px-3 pb-12">
-      <header className="space-y-1">
-        <h1 className="text-xl font-bold text-slate-900 text-center mt-2">
+      <header className="space-y-1 mb-1">
+        <h1 className="text-xl font-bold text-slate-900 mt-2 text-center mt-2">
           {t("settings_order_schedule")}
         </h1>
       </header>
@@ -45,12 +45,12 @@ export default function TimetablePage() {
       {supplierSchedule && dailyProgram.length > 0 && (
         <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
           {/* Card header: basic info */}
-          <div className="border-b border-slate-100 bg-slate-50/50 px-4 py-4 space-y-1">
+          <div className="border-b border-slate-100 bg-slate-50/50 px-4 py-4 space-y-1 mb-1">
             {supplierSchedule.supplierTitle && (
               <p className="text-slate-600">{supplierSchedule.supplierTitle}</p>
             )}
             {supplierSchedule.selectedDaysInfo && (
-              <p className="text-sm text-slate-500">
+              <p className="text-base text-slate-500">
                 {supplierSchedule.selectedDaysInfo}
               </p>
             )}
@@ -104,7 +104,7 @@ export default function TimetablePage() {
             </ul>
             {supplierSchedule.supplierDeliveryDays &&
               supplierSchedule.supplierDeliveryDays.length > 0 && (
-                <p className="text-sm text-slate-600 pt-1">
+                <p className="text-base text-slate-600 pt-1">
                   <span className="font-medium text-slate-700">
                     {t("timetable_delivery_days")}:{" "}
                   </span>

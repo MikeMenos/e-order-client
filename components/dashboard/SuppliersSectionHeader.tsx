@@ -42,7 +42,7 @@ export function SuppliersSectionHeader({
   return (
     <div className="flex items-center justify-between">
       {pathname === "/orders-of-the-day" && (
-        <div className="flex items-center gap-2 text-sm text-slate-500">
+        <div className="flex items-center gap-2 text-base text-slate-500">
           <div
             className="flex items-center gap-0.5"
             role="group"
@@ -68,7 +68,7 @@ export function SuppliersSectionHeader({
               )}
             </Button>
           </div>
-          <h2 className="text-sm font-semibold text-slate-900">
+          <h2 className="text-base font-semibold text-slate-900">
             {t("suppliers_orders_of_day")} ({ordersOfTheDayCount})
           </h2>
 

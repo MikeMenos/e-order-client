@@ -24,21 +24,21 @@ export default function SupplierInfoPage() {
     <main className=" text-slate-900 px-3">
       <div className="mx-auto max-w-2xl">
         <div className="my-4">
-          <h1 className="text-xl font-bold text-slate-900">
+          <h1 className="text-xl font-bold text-slate-900 mt-2">
             {displayName || t("common_supplier")}
           </h1>
         </div>
 
         {basicInfoQuery.isLoading && (
-          <p className="text-sm text-slate-500">{t("suppliers_loading")}</p>
+          <p className="text-base text-slate-500">{t("suppliers_loading")}</p>
         )}
 
         {basicInfoQuery.error && (
-          <p className="text-sm text-red-400">{t("suppliers_error")}</p>
+          <p className="text-base text-red-400">{t("suppliers_error")}</p>
         )}
 
         {!basicInfoQuery.isLoading && !basicInfoQuery.error && !supplier && (
-          <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
+          <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
             {t("suppliers_empty")}
           </p>
         )}
@@ -47,7 +47,7 @@ export default function SupplierInfoPage() {
           <div className="space-y-4">
             {/* Basic identity */}
             <DetailSection title={t("settings_supplier_details")}>
-              <dl className="space-y-1 text-sm">
+              <dl className="space-y-1 mb-1 text-base">
                 {supplier.originalTitle && (
                   <DetailRow
                     label={t("supplier_original_title")}
@@ -81,7 +81,7 @@ export default function SupplierInfoPage() {
               supplier.email ||
               supplier.customEmail) && (
               <DetailSection title={t("settings_contact")}>
-                <dl className="space-y-1 text-sm">
+                <dl className="space-y-1 mb-1 text-base">
                   {supplier.customPhone && (
                     <DetailRow
                       label={t("erg_phone")}
@@ -141,7 +141,7 @@ export default function SupplierInfoPage() {
             {/* Address */}
             {(supplier.address || supplier.postalCode || supplier.city) && (
               <DetailSection title={t("settings_address")}>
-                <dl className="space-y-1 text-sm">
+                <dl className="space-y-1 mb-1 text-base">
                   {supplier.address && (
                     <DetailRow
                       label={t("erg_address")}
@@ -163,7 +163,7 @@ export default function SupplierInfoPage() {
             {/* Notes */}
             {supplier.personalNotes && (
               <DetailSection title={t("supplier_notes")}>
-                <p className="whitespace-pre-wrap text-sm text-slate-800">
+                <p className="whitespace-pre-wrap text-base text-slate-800">
                   {supplier.personalNotes}
                 </p>
               </DetailSection>

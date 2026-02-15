@@ -82,7 +82,7 @@ function DrawerTitle(
 ) {
   return (
     <DrawerPrimitive.Title
-      className="text-lg font-semibold leading-none tracking-tight text-slate-900"
+      className="text-xl font-semibold leading-none tracking-tight text-slate-900"
       {...props}
     />
   );

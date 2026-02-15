@@ -13,14 +13,16 @@
   --color-brand-700: #c04a19;
   /* Redesign: main app background and cards */
   --color-app-bg: #EFE0D1;
-  --color-app-card: #F8EDE3;
+  --color-app-bg-solid: #F8EDE3;
+  --color-app-card: #ffffff;
 }
 
 :root {
   color-scheme: light;
   --radius: 0.625rem;
   --color-app-bg: #EFE0D1;
-  --color-app-card: #F8EDE3;
+  --color-app-bg-solid: #F8EDE3;
+  --color-app-card: #ffffff;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -182,9 +184,16 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea {
+    @apply bg-white;
+  }
   body {
     @apply text-foreground;
-    background-color: var(--color-app-bg, #EFE0D1);
+    background-color: var(--color-app-bg-solid, #F8EDE3);
+  }
+  /* Background image only on dashboard, settings, and settings/manage-suppliers (set by AppBackground) */
+  body.app-bg-image {
     background-image: url("/assets/background.png");
     background-size: cover;
     background-position: center;

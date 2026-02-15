@@ -100,3 +100,51 @@ export type SupplierProductsResponse = {
   message?: string;
   detailedMessage?: string;
 };
+
+/** Product_Display API: single product details + last orders */
+export type ProductDisplayOrder = {
+  orderID: number;
+  orderUID: string;
+  orderCode: string;
+  dateCreated: string;
+  orderDate: string;
+  qty: number;
+  packageInfo: string;
+  stock: number;
+  suggestedQty: number;
+  createdBy: string;
+};
+
+export type ProductDisplayProduct = {
+  productUID: string;
+  productTitle: string;
+  productOriginalTitle: string;
+  productImage: string;
+  productPackaging: string;
+  productDescription: string;
+  productCategories: string;
+  productSlug: string;
+  price: number;
+  basketQty: number;
+  basketSuggestedQty: number;
+  isAvailable: boolean;
+  isInWishlist: boolean;
+  isInOrders: boolean;
+  isFavBySupplier: boolean;
+  isFavByShopper: boolean;
+  isFavByPlatform: boolean;
+  favIconColor: string;
+  favIconMode: string;
+  supplierUID: string;
+};
+
+export type ProductDisplayResponse = {
+  statusCode: number;
+  message: string;
+  detailedMessage: string;
+  selectedDate: string;
+  dayNameShort: string;
+  product: ProductDisplayProduct;
+  currentBasketQty: number;
+  lastOrders: ProductDisplayOrder[];
+};

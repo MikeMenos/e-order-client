@@ -25,11 +25,11 @@ export default function ErgastirioHeading({
       )}
     >
       <CardContent className="flex flex-col gap-1 items-center md:items-start">
-        <h1 className="text-xl font-semibold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           {title}
         </h1>
         {description && (
-          <p className="text-sm text-slate-500 text-center">{description}</p>
+          <p className="text-base text-slate-500 text-center">{description}</p>
         )}
       </CardContent>
       {actions && <div className="flex items-center gap-2">{actions}</div>}

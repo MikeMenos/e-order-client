@@ -73,3 +73,29 @@ export function parseDateForPicker(iso: string | null): Date {
     return new Date();
   }
 }
+
+/** Format a ref date (e.g. yyyy-MM-dd) as long display: "EEEE d MMMM" (e.g. Monday 3 February). */
+export function formatRefDateLong(refDate: string | null): string {
+  if (refDate == null || refDate === "") return "";
+  try {
+    return format(parseISO(refDate), "EEEE d MMMM");
+  } catch {
+    return refDate;
+  }
+}
+
+/** True if refDate (yyyy-MM-dd or ISO) is the same calendar day as today. */
+export function isTodayDate(refDate: string | null): boolean {
+  if (refDate == null || refDate === "") return false;
+  try {
+    const ref = parseISO(refDate);
+    const today = new Date();
+    return (
+      ref.getFullYear() === today.getFullYear() &&
+      ref.getMonth() === today.getMonth() &&
+      ref.getDate() === today.getDate()
+    );
+  } catch {
+    return false;
+  }
+}

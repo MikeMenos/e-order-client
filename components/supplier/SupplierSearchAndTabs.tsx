@@ -26,7 +26,7 @@ export function SupplierSearchAndTabs({
   const value = activeSectionId ?? sections[0]?.id ?? "";
 
   return (
-    <div className="flex flex-col gap-0 bg-app-card/95 px-4 rounded-b-lg">
+    <div className="flex flex-col gap-0 shrink-0 px-4 pt-2 rounded-b-lg bg-app-card/95">
       <div className="border-b border-slate-200/80 pb-3">
         <SearchInput
           placeholder={searchPlaceholder}
@@ -39,7 +39,7 @@ export function SupplierSearchAndTabs({
         <div className="-mx-4 flex flex-col gap-0 bg-app-card/95">
           <Tabs value={value} onValueChange={onTabClick}>
             <motion.div
-              className="overflow-x-auto border-b border-slate-200/80 px-4 pt-2 pb-2 bg-app-card/95"
+              className="overflow-x-auto border-b border-slate-200/80 px-4 py-2 bg-app-card/95"
               variants={listItemVariants}
               initial="hidden"
               animate="visible"
@@ -50,7 +50,7 @@ export function SupplierSearchAndTabs({
                     key={section.id}
                     value={section.id}
                     className={[
-                      "shrink-0 rounded-full px-4 py-2 text-sm font-semibold tracking-[0.18em] whitespace-nowrap",
+                      "shrink-0 rounded-lg px-4 py-2 text-sm font-semibold tracking-[0.18em] whitespace-nowrap",
                       "text-slate-500 transition",
                       "data-[state=active]:bg-brand-500 data-[state=active]:text-white",
                       "hover:text-slate-700",

@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Suspense } from "react";
 import { AppHeaderProvider } from "./AppHeaderContext";
 import { NavigationHistoryProvider } from "./NavigationHistoryContext";
+import { AppBackground } from "./AppBackground";
 import { useStoreTokenInit } from "@/hooks/useStoreTokenInit";
 
 function StoreTokenInitializer() {
@@ -20,6 +21,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </div>
       }
     >
+      <AppBackground />
       <NavigationHistoryProvider>
         <AppHeaderProvider>
           <StoreTokenInitializer />

@@ -3,6 +3,7 @@ import { api } from "../lib/api";
 import type {
   SupplierDisplayResponse,
   SupplierProductsResponse,
+  ProductDisplayResponse,
 } from "../lib/types/supplier-api";
 
 export type {
@@ -13,11 +14,12 @@ export type {
   SupplierDisplayResponse,
   SupplierProductApi,
   SupplierProductsResponse,
+  ProductDisplayOrder,
+  ProductDisplayProduct,
+  ProductDisplayResponse,
 } from "../lib/types/supplier-api";
 
-export const useSupplierDisplay = (
-  supplierUID: string | undefined,
-) => {
+export const useSupplierDisplay = (supplierUID: string | undefined) => {
   return useQuery({
     queryKey: ["supplier-display", supplierUID],
     queryFn: async (): Promise<SupplierDisplayResponse> => {
@@ -33,9 +35,7 @@ export const useSupplierDisplay = (
   });
 };
 
-export const useSupplierProducts = (
-  supplierUID: string | undefined,
-) => {
+export const useSupplierProducts = (supplierUID: string | undefined) => {
   return useQuery({
     queryKey: ["supplier-products", supplierUID],
     queryFn: async (): Promise<SupplierProductsResponse> => {
@@ -52,5 +52,20 @@ export const useSupplierProducts = (
       return res.data;
     },
     enabled: !!supplierUID,
+  });
+};
+
+/** POST Product_Display: body { productUID, refDate? } — refDate is undefined when not provided */
+export const useProductDisplay = (productUID: string | undefined) => {
+  return useQuery({
+    queryKey: ["product-display", productUID],
+    queryFn: async (): Promise<ProductDisplayResponse> => {
+      const res = await api.post<ProductDisplayResponse>("/product-display", {
+        productUID,
+        refDate: null,
+      });
+      return res.data;
+    },
+    enabled: !!productUID,
   });
 };

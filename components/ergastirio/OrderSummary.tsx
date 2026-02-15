@@ -20,7 +20,7 @@ export function ErgastirioOrderSummary({
   return (
     <div className="max-w-3xl mx-auto">
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 py-2 justify-between">
-        <h1 className="text-xl font-semibold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           {t("erg_order_summary")}
         </h1>
       </div>

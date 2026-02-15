@@ -31,11 +31,11 @@ export default function ErgastirioStoresPage() {
         <CardHeader className="mb-4 px-0 overflow-x-hidden">
           <div className="flex flex-col gap-2 min-w-0">
             <div className="flex items-center justify-between gap-3 min-w-0">
-              <CardTitle className="min-w-0 truncate text-sm md:text-xl font-semibold tracking-tight leading-tight text-slate-900">
+              <CardTitle className="min-w-0 truncate text-base md:text-2xl font-semibold tracking-tight leading-tight text-slate-900">
                 {(headStore.NAME ?? "").split("-")[0].trim()}
               </CardTitle>
               {headStore.AFM && (
-                <span className="shrink-0 text-xs uppercase tracking-[0.16em] text-slate-500">
+                <span className="shrink-0 text-base uppercase tracking-[0.16em] text-slate-500">
                   ΑΦΜ {headStore.AFM}
                 </span>
               )}

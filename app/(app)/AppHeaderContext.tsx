@@ -40,7 +40,7 @@ export function AppHeaderProvider({ children }: { children: React.ReactNode }) {
         {!isDashboard && (
           <div
             ref={header.ref}
-            className="sticky top-0 z-30 -mt-5 rounded-b-lg border-b-0 bg-app-card shadow-sm"
+            className="sticky top-0 z-30 -mt-5 rounded-b border-b-0 bg-app-card shadow-sm"
           >
             <Header />
           </div>

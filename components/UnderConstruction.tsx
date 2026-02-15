@@ -23,10 +23,10 @@ export function UnderConstruction() {
             <Construction className="h-5 w-5 text-amber-600" aria-hidden />
           </div>
         </div>
-        <h1 className="text-center text-xl font-semibold text-slate-900">
+        <h1 className="text-center text-2xl font-semibold text-slate-900">
           {t("under_construction_title")}
         </h1>
-        <p className="mt-3 text-center text-sm leading-relaxed text-slate-600">
+        <p className="mt-3 text-center text-base leading-relaxed text-slate-600">
           {t("under_construction_message")}
         </p>
         <Link

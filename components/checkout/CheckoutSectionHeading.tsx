@@ -7,7 +7,7 @@ export type CheckoutSectionHeadingProps = {
 };
 
 const headingClass =
-  "mb-2 text-sm font-semibold text-brand-600 bg-slate-100/50 rounded px-2 w-fit";
+  "mb-2 text-base font-semibold text-brand-600 rounded px-2 w-fit";
 
 export function CheckoutSectionHeading({
   labelKey,

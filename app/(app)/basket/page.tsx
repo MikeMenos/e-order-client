@@ -15,23 +15,25 @@ export default function BasketPage() {
 
   return (
     <main className="space-y-3 text-slate-900">
-      <header className="space-y-1">
-        <p className="text-sm text-slate-600">{t("basket_subtitle")}</p>
-        <p className="text-sm text-slate-700">
+      <header className="space-y-1 mb-1">
+        <p className="text-base text-slate-600">{t("basket_subtitle")}</p>
+        <p className="text-base text-slate-700">
           {t("basket_total_baskets")}{" "}
           <span className="font-semibold">{totalCount}</span>
         </p>
       </header>
 
       {basketQuery.isLoading && (
-        <p className="text-sm text-slate-500">{t("basket_loading")}</p>
+        <p className="text-base text-slate-500">{t("basket_loading")}</p>
       )}
       {basketQuery.error && (
-        <p className="text-sm text-red-400">{t("basket_error")}</p>
+        <p className="text-base text-red-400">{t("basket_error")}</p>
       )}
 
       {baskets.length === 0 && !basketQuery.isLoading ? (
-        <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">{t("basket_empty")}</p>
+        <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
+          {t("basket_empty")}
+        </p>
       ) : (
         <motion.div
           className="space-y-3"
@@ -47,12 +49,14 @@ export default function BasketPage() {
             >
               <div className="flex items-center justify-between">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-base font-semibold text-slate-900">
                     {basket.supplierTitle}
                   </p>
-                  <p className="text-sm text-slate-600">{basket.supplierUID}</p>
+                  <p className="text-base text-slate-600">
+                    {basket.supplierUID}
+                  </p>
                 </div>
-                <p className="text-sm text-slate-700">
+                <p className="text-base text-slate-700">
                   {t("basket_items_label")}{" "}
                   <span className="font-semibold">
                     {basket.items?.length ?? 0}
@@ -60,7 +64,7 @@ export default function BasketPage() {
                 </p>
               </div>
               <motion.ul
-                className="max-h-40 space-y-1 overflow-auto text-sm text-slate-700"
+                className="max-h-40 space-y-1 mb-1 overflow-auto text-base text-slate-700"
                 variants={listVariants}
                 initial="hidden"
                 animate="visible"

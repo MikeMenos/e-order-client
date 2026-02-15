@@ -72,18 +72,13 @@ export function ErgastirioCartTotals({
     const now = new Date();
     const todayStart = new Date(now);
     todayStart.setHours(0, 0, 0, 0);
-    const todayDisabledAfter10 =
-      now.getHours() >= 10;
+    const todayDisabledAfter10 = now.getHours() >= 10;
     const disabledWeekdays = programmatismos
-      ? [0, 1, 2, 3, 4, 5, 6].filter(
-          (d) => !programmatismos!.allowed.has(d),
-        )
+      ? [0, 1, 2, 3, 4, 5, 6].filter((d) => !programmatismos!.allowed.has(d))
       : [];
 
     const matchers: Array<
-      | { before: Date }
-      | { dayOfWeek: number[] }
-      | ((date: Date) => boolean)
+      { before: Date } | { dayOfWeek: number[] } | ((date: Date) => boolean)
     > = [{ before: todayStart }];
     if (todayDisabledAfter10) {
       const todayEnd = new Date(todayStart);
@@ -125,8 +120,8 @@ export function ErgastirioCartTotals({
 
   return (
     <Card className="border-0 shadow-none rounded-2xl bg-transparent">
-      <CardContent className="pb-4 pt-4 space-y-4 text-sm p-0">
-        <div className="space-y-1 text-center">
+      <CardContent className="pb-4 pt-4 space-y-4 text-base p-0">
+        <div className="space-y-1 mb-1 text-center">
           <Label className="text-slate-500">{t("erg_delivery_date")}</Label>
           {programmatismos && (
             <p className="text-slate-500">
@@ -144,8 +139,8 @@ export function ErgastirioCartTotals({
             />
           </div>
         </div>
-        <div className="px-3 space-y-1">
-          <Label className="text-xs text-slate-500">
+        <div className="px-3 space-y-1 mb-1">
+          <Label className="text-base text-slate-500">
             {t("erg_order_comments")}
           </Label>
           <Textarea

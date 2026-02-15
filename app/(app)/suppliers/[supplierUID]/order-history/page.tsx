@@ -47,17 +47,17 @@ export default function SupplierOrderHistoryPage() {
     <main className="pb-12 text-slate-900">
       <div>
         {ordersQuery.isLoading && (
-          <p className="text-sm text-slate-500">
+          <p className="text-base text-slate-500">
             {t("supplier_order_history_loading")}
           </p>
         )}
         {ordersQuery.error && (
-          <p className="text-sm text-red-400">
+          <p className="text-base text-red-400">
             {t("supplier_order_history_error")}
           </p>
         )}
         {orders.length === 0 && !ordersQuery.isLoading && (
-          <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
+          <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
             {t("supplier_order_history_empty")}
           </p>
         )}
@@ -73,7 +73,7 @@ export default function SupplierOrderHistoryPage() {
                 />
               )}
               {orders[0].storeTitle && (
-                <p className="text-center text-base font-semibold text-slate-900">
+                <p className="text-center text-lg font-semibold text-slate-900">
                   {orders[0].storeTitle}
                 </p>
               )}
