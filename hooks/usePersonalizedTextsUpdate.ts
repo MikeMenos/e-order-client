@@ -9,7 +9,8 @@ export type PersonalizedTextsUpdatePayload = {
   displayText2: string;
   displayText3: string;
   personalNotes: string;
-  remove: boolean;
+  /** Omit when updating supplier customTitle (displayText) only */
+  remove?: boolean;
 };
 
 export type PersonalizedTextsUpdateResponse = {
