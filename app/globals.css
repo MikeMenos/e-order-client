@@ -184,6 +184,11 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+  }
   input:not([type="checkbox"]):not([type="radio"]),
   textarea {
     @apply bg-white;

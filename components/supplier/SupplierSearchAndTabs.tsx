@@ -32,7 +32,7 @@ export function SupplierSearchAndTabs({
           placeholder={searchPlaceholder}
           value={searchQuery}
           onChange={onSearchChange}
-          className="h-9 w-full border border-slate-200 bg-white px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+          className="h-9 w-full border border-slate-200 bg-white px-3 py-2 rounded-lg focus:outline-none"
         />
       </div>
       {sections.length > 1 && (
