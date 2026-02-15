@@ -222,7 +222,7 @@ export function SupplierTile({
             className="inline-flex w-full items-center gap-2 rounded-lg px-2 py-1.5 font-medium bg-slate-100 text-slate-800"
             style={pillStyle}
           >
-            {supplier.basketIconStatus === 1 && (
+            {supplier.basketIconStatus === 200 && (
               <CheckCircle2
                 className="h-5 w-5 shrink-0"
                 style={iconStyle}
@@ -249,10 +249,9 @@ export function SupplierTile({
                 <Button
                   type="button"
                   variant="ghost"
-                  className="rounded-sm bg-brand-500 px-2 py-0 font-normal text-white"
+                  className="rounded-sm bg-brand-500 hover:bg-brand-600 px-2 py-0 font-normal text-white"
                   onClick={(e) => {
                     e.preventDefault();
-                    e.stopPropagation();
                   }}
                   size="sm"
                 >
@@ -264,11 +263,10 @@ export function SupplierTile({
               <span className="ml-auto">
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   className="rounded-sm bg-white px-2 py-0 font-normal"
                   onClick={(e) => {
                     e.preventDefault();
-                    e.stopPropagation();
                   }}
                   size="sm"
                 >
@@ -276,15 +274,14 @@ export function SupplierTile({
                 </Button>
               </span>
             )}
-            {supplier.basketIconStatus === 1 && (
+            {supplier.basketIconStatus === 200 && (
               <span className="ml-auto">
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   className="rounded-sm bg-white px-2 py-0 font-normal text-slate-500"
                   onClick={(e) => {
                     e.preventDefault();
-                    e.stopPropagation();
                   }}
                   size="sm"
                 >
