@@ -21,7 +21,7 @@ export default function ErgastirioFooter() {
           </div>
         </div>
       )}
-      <footer className="w-full h-14 bg-app-card border-t border-slate-200 flex items-center justify-center text-sm text-slate-500">
+      <footer className="w-full h-14 bg-app-card border-t border-slate-200 flex items-center justify-center text-base text-slate-500">
         {t("erg_footer_copyright")}
       </footer>
     </>

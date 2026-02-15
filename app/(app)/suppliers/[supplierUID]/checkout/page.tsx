@@ -28,7 +28,7 @@ export default function SupplierCheckoutPage() {
   const router = useRouter();
   const params = useParams<{ supplierUID: string }>();
   const supplierUID = params.supplierUID ?? "";
-
+  const searchParams = useSearchParams();
   const supplierInfoQuery = useSupplierDisplay(supplierUID);
   const supplier = supplierInfoQuery.data?.supplier ?? null;
   const selectedDate = supplierInfoQuery.data?.selectedDate ?? null;
@@ -41,7 +41,11 @@ export default function SupplierCheckoutPage() {
     onSuccess: (data) => {
       const msg = data?.message?.trim();
       toast.success(msg || t("checkout_submit_order"));
-      router.replace("/orders-of-the-day");
+      if (searchParams.get("from") === "orders-of-the-day") {
+        router.replace("/orders-of-the-day");
+      } else {
+        router.replace("/all-suppliers");
+      }
     },
     onError: (err) => {
       toast.error(getApiErrorMessage(err, t("basket_error")));

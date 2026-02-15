@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useEffect, useMemo } from "react";
 import { api } from "../lib/api";
-import { useAuthStore } from "../stores/auth";
+import { useAuthStore, useEffectiveSelectedUser } from "../stores/auth";
 import type {
   SupplierBasicInfoResponse,
   SupplierBasicInfoSupplier,
@@ -46,26 +46,24 @@ export const useSuppliersForDate = (enabled: boolean) => {
  * Fetches suppliers for today with store token. Use on all-suppliers and orders-of-the-day pages.
  */
 export function useSuppliersListForToday() {
-  const {
-    users,
-    selectedUser,
-    selectedStoreUID: cookieStoreUID,
-  } = useAuthStore();
+  const users = useAuthStore((s) => s.users);
+  const effectiveUser = useEffectiveSelectedUser();
+  const selectedStoreUID = useAuthStore((s) => s.selectedStoreUID);
   const setStoreAccessToken = useAuthStore((s) => s.setStoreAccessToken);
   const setSelectedStoreUID = useAuthStore((s) => s.setSelectedStoreUID);
   const storeAccessToken = useAuthStore((s) => s.storeAccessToken);
   const refDate = format(new Date(), "yyyy-MM-dd");
 
   const derivedStoreUID = useMemo(() => {
-    if (!users && !selectedUser) return null;
+    if (!users && !effectiveUser) return null;
     return users?.hasSelectedStore === true
       ? users?.selectedStoreUID
-      : selectedUser?.store?.storeUID
-        ? selectedUser.store.storeUID
+      : effectiveUser?.store?.storeUID
+        ? effectiveUser.store.storeUID
         : (users?.role?.store?.storeUID ?? null);
-  }, [users, selectedUser]);
+  }, [users, effectiveUser]);
 
-  const storeUID = cookieStoreUID || derivedStoreUID;
+  const storeUID = selectedStoreUID || derivedStoreUID;
 
   const selectStoreMutation = useMutation<SelectStoreResponse, unknown, string>(
     {

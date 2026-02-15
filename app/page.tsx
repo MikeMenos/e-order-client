@@ -205,7 +205,7 @@ export default function HomePage() {
           className="space-y-3 rounded-2xl border border-slate-200/80 p-6 shadow-lg bg-app-card"
         >
           <div className="flex items-center justify-between gap-2">
-            <h1 className="text-xl font-semibold text-slate-900">
+            <h1 className="text-2xl font-semibold text-slate-900">
               {t("login_title")}
             </h1>
             <Button
@@ -215,13 +215,13 @@ export default function HomePage() {
               onClick={() =>
                 i18n.changeLanguage(i18n.language === "en" ? "gr" : "en")
               }
-              className="shrink-0 rounded-full border border-slate-200/80 px-3 py-1 text-sm font-medium text-slate-700"
+              className="shrink-0 rounded-full border border-slate-200/80 px-3 py-1 text-base font-medium text-slate-700"
             >
               {i18n.language === "gr" ? t("lang_en") : t("lang_gr")}
             </Button>
           </div>
-          <div className="space-y-1">
-            <label className="block text-sm text-slate-700">
+          <div className="space-y-1 mb-1">
+            <label className="block text-base text-slate-700">
               {t("login_username")}
             </label>
             <Input
@@ -229,8 +229,8 @@ export default function HomePage() {
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-          <div className="space-y-1">
-            <label className="block text-sm text-slate-700">
+          <div className="space-y-1 mb-1">
+            <label className="block text-base text-slate-700">
               {t("login_password")}
             </label>
             <Input

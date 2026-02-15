@@ -23,7 +23,7 @@ export function BranchInfo({
         </span>
       )}
       <span
-        className="w-full truncate text-xs sm:text-sm font-medium leading-tight text-slate-900"
+        className="w-full truncate text-base sm:text-lg font-medium leading-tight text-slate-900"
         title={branch.NAME}
       >
         {branch.NAME}

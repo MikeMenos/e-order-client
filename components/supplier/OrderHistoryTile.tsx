@@ -48,7 +48,7 @@ export function OrderHistoryTile({
         </div>
         <div className="shrink-0 text-right">
           {o.totalItems != null && (
-            <p className="text-sm text-slate-500">
+            <p className="text-base text-slate-500">
               {o.totalItems} {t("order_items_count")}
             </p>
           )}
@@ -73,7 +73,7 @@ export function OrderHistoryTile({
       {/* Expanded details + items */}
       {isExpanded && (
         <div className="border-t border-slate-100 px-4 py-3  text-slate-600">
-          <dl className="space-y-1.5">
+          <dl className="space-y-1 mb-1.5">
             {o.createdBy && (
               <div>
                 <dt className="inline font-medium text-slate-500">
@@ -130,15 +130,15 @@ export function OrderHistoryTile({
 
           {/* Items purchased */}
           <div className="mt-3 border-t border-slate-100 pt-3">
-            <p className="mb-2 text-sm font-medium uppercase tracking-wide text-slate-500">
+            <p className="mb-2 text-base font-medium uppercase tracking-wide text-slate-500">
               {t("order_items")}
             </p>
             {itemsLoading ? (
-              <p className="text-sm text-slate-500">
+              <p className="text-base text-slate-500">
                 {t("supplier_order_history_loading")}
               </p>
             ) : items.length === 0 ? (
-              <p className="text-sm text-slate-500 bg-white/80 backdrop-blur-sm rounded px-2 py-1 inline-block">
+              <p className="text-base text-slate-500 bg-white/80 backdrop-blur-sm rounded px-2 py-1 inline-block">
                 {t("order_items_empty")}
               </p>
             ) : (
@@ -175,7 +175,7 @@ export function OrderHistoryTile({
                           )}
                         </p>
                         {item.productPackaging && (
-                          <p className="text-sm text-slate-500">
+                          <p className="text-base text-slate-500">
                             {item.productPackaging}
                           </p>
                         )}

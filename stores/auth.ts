@@ -96,3 +96,16 @@ export const useAuthStore = create<AuthState>()(
     { name: "auth-storage" },
   ),
 );
+
+/**
+ * When selectedUser is null and storeAccess has exactly one item, use that as the effective user (e.g. for store title, store UID).
+ */
+export function useEffectiveSelectedUser(): AnyObject | null {
+  return useAuthStore((state) => {
+    if (state.selectedUser) return state.selectedUser;
+    const storeAccess = state.users?.userInfos?.storeAccess;
+    if (Array.isArray(storeAccess) && storeAccess.length === 1)
+      return storeAccess[0] ?? null;
+    return null;
+  });
+}

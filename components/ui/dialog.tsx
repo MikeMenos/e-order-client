@@ -48,7 +48,9 @@ export function DialogContent({ className, children }: DialogContentProps) {
 
 export function DialogHeader({ children }: { children: React.ReactNode }) {
   return (
-    <div className="space-y-1 border-b border-slate-100 pb-3">{children}</div>
+    <div className="space-y-1 mb-1 border-b border-slate-100 pb-3">
+      {children}
+    </div>
   );
 }
 
@@ -57,5 +59,5 @@ export function DialogTitle({ children }: { children: React.ReactNode }) {
 }
 
 export function DialogDescription({ children }: { children: React.ReactNode }) {
-  return <p className="text-sm text-slate-600">{children}</p>;
+  return <p className="text-base text-slate-600">{children}</p>;
 }

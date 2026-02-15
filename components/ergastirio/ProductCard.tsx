@@ -251,16 +251,16 @@ export default function ErgastirioProductCard({
     <Card className="border border-slate-200/80 shadow-none rounded-2xl p-0 w-full max-w-4xl mx-auto mb-2 bg-app-card">
       <CardContent>
         <div
-          className={`flex-1 flex flex-col text-sm p-0 mb-2 justify-center items-center ${isCart ? "hidden" : "md:hidden"}`}
+          className={`flex-1 flex flex-col text-base p-0 mb-2 justify-center items-center ${isCart ? "hidden" : "md:hidden"}`}
         >
-          <div className="font-medium text-[15px] sm:text-base text-slate-900">
+          <div className="font-medium text-[15px] sm:text-lg text-slate-900">
             {product.TITLE || product.FULL_DESCRIPTION}
           </div>
-          <div className="text-sm text-slate-500">
+          <div className="text-base text-slate-500">
             {product.DESCRIPTION || product.FULL_DESCRIPTION} ({product?.SXESI})
           </div>
           {wholesalePrice != null && (
-            <div className="mt-1 text-sm">
+            <div className="mt-1 text-base">
               <span className="font-bold text-slate-900">
                 {wholesalePrice}€
               </span>{" "}
@@ -282,16 +282,16 @@ export default function ErgastirioProductCard({
           </div>
 
           {isCart && (
-            <div className="flex-1 min-w-0 md:hidden flex flex-col gap-0.5 text-sm pr-2">
+            <div className="flex-1 min-w-0 md:hidden flex flex-col gap-0.5 text-base pr-2">
               <div className="font-medium text-[15px] truncate text-slate-900">
                 {product.TITLE || product.FULL_DESCRIPTION}
               </div>
-              <div className="text-slate-500 text-xs line-clamp-2">
+              <div className="text-slate-500 text-base line-clamp-2">
                 {product.DESCRIPTION || product.FULL_DESCRIPTION} (
                 {product?.SXESI})
               </div>
               {wholesalePrice != null && (
-                <div className="text-xs">
+                <div className="text-base">
                   <span className="font-bold">{wholesalePrice}€</span>{" "}
                   <span className="text-slate-500">
                     {t("erg_wholesale_no_vat")}
@@ -301,8 +301,8 @@ export default function ErgastirioProductCard({
             </div>
           )}
 
-          <div className="flex-1 md:flex flex-col gap-2 text-sm p-0 hidden">
-            <div className="font-medium text-[15px] sm:text-base text-slate-900">
+          <div className="flex-1 md:flex flex-col gap-2 text-base p-0 hidden">
+            <div className="font-medium text-[15px] sm:text-lg text-slate-900">
               {product.TITLE || product.FULL_DESCRIPTION} ({product?.SXESI})
             </div>
             <div className="text-slate-500">
@@ -310,7 +310,7 @@ export default function ErgastirioProductCard({
               {product?.SXESI})
             </div>
             {wholesalePrice != null && (
-              <div className="text-sm">
+              <div className="text-base">
                 <span className="font-bold">{wholesalePrice}€</span>{" "}
                 <span className="text-slate-500">
                   {t("erg_wholesale_no_vat")}
@@ -335,7 +335,7 @@ export default function ErgastirioProductCard({
                       −
                     </Button>
                     <Input
-                      className="w-12 min-w-12 text-center border-0 focus-visible:ring-0 text-base font-medium tabular-nums [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      className="w-12 min-w-12 text-center border-0 focus-visible:ring-0 text-lg font-medium tabular-nums [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       value={qty}
                       type="number"
                       onChange={(e) => handleQtyChange(e.target.value, setQty)}
@@ -355,7 +355,7 @@ export default function ErgastirioProductCard({
                     </Button>
                   </div>
                   {error && (
-                    <p className="text-xs text-red-500 w-44 text-center mx-auto absolute top-10">
+                    <p className="text-base text-red-500 w-44 text-center mx-auto absolute top-10">
                       {error}
                     </p>
                   )}

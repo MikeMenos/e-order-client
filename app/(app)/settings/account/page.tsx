@@ -68,28 +68,30 @@ export default function AccountSettingsPage() {
     <main className="pb-16 text-slate-900 px-3">
       <div className="mx-auto max-w-2xl">
         <div className="my-4">
-          <h1 className="text-xl font-bold text-slate-900">{fullName}</h1>
+          <h1 className="text-xl font-bold text-slate-900 mt-2">{fullName}</h1>
           {user?.username && (
-            <p className="mt-1 text-sm text-slate-500">@{user.username}</p>
+            <p className="mt-1 text-base text-slate-500">@{user.username}</p>
           )}
         </div>
 
         {profileQuery.isLoading && (
-          <p className="text-sm text-slate-500">
+          <p className="text-base text-slate-500">
             {t("settings_account_loading")}
           </p>
         )}
 
         {profileQuery.error && (
-          <p className="text-sm text-red-400">{t("settings_account_error")}</p>
+          <p className="text-base text-red-400">
+            {t("settings_account_error")}
+          </p>
         )}
 
         {!profileQuery.isLoading && !profileQuery.error && user && (
           <div className="space-y-4">
             <DetailSection title={t("settings_edit_account")}>
               <form className="space-y-3" onSubmit={handleSubmit}>
-                <div className="space-y-1">
-                  <label className="block text-xs font-medium text-slate-600">
+                <div className="space-y-1 mb-1">
+                  <label className="block text-base font-medium text-slate-600">
                     {t("signup_email")}
                   </label>
                   <Input
@@ -100,8 +102,8 @@ export default function AccountSettingsPage() {
                   />
                 </div>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-slate-600">
+                  <div className="space-y-1 mb-1">
+                    <label className="block text-base font-medium text-slate-600">
                       {t("first_name")}
                     </label>
                     <Input
@@ -110,8 +112,8 @@ export default function AccountSettingsPage() {
                       disabled={updateMutation.isPending}
                     />
                   </div>
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-slate-600">
+                  <div className="space-y-1 mb-1">
+                    <label className="block text-base font-medium text-slate-600">
                       {t("last_name")}
                     </label>
                     <Input
@@ -121,8 +123,8 @@ export default function AccountSettingsPage() {
                     />
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <label className="block text-xs font-medium text-slate-600">
+                <div className="space-y-1 mb-1">
+                  <label className="block text-base font-medium text-slate-600">
                     {t("signup_phone")}
                   </label>
                   <Input
@@ -131,8 +133,8 @@ export default function AccountSettingsPage() {
                     disabled={updateMutation.isPending}
                   />
                 </div>
-                <div className="space-y-1">
-                  <label className="block text-xs font-medium text-slate-600">
+                <div className="space-y-1 mb-1">
+                  <label className="block text-base font-medium text-slate-600">
                     {t("login_password")}
                   </label>
                   <Input
@@ -144,8 +146,8 @@ export default function AccountSettingsPage() {
                     disabled={updateMutation.isPending}
                   />
                 </div>
-                <div className="space-y-1">
-                  <label className="block text-xs font-medium text-slate-600">
+                <div className="space-y-1 mb-1">
+                  <label className="block text-base font-medium text-slate-600">
                     {t("signup_password_confirm")}
                   </label>
                   <Input

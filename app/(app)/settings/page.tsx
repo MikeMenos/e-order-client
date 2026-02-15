@@ -153,7 +153,7 @@ export default function SettingsPage() {
         >
           <Button
             onClick={handleLogout}
-            className="group flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200/80 bg-red-500 px-6 py-4 text-sm font-medium shadow-sm transition hover:border-red-200 hover:bg-red-50 text-white hover:text-red-700 active:scale-[0.99]"
+            className="group flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200/80 bg-red-500 px-6 py-4 text-base font-medium shadow-sm transition hover:border-red-200 hover:bg-red-50 text-white hover:text-red-700 active:scale-[0.99]"
             aria-label={t("logout")}
           >
             <LogOut

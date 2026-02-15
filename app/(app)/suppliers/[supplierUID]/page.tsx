@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams, useParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronUp } from "lucide-react";
 import {
   useSupplierDisplay,
   useSupplierProducts,
@@ -15,7 +16,26 @@ import { SupplierPageBar } from "../../../../components/supplier/SupplierPageBar
 import { SupplierSearchAndTabs } from "../../../../components/supplier/SupplierSearchAndTabs";
 import { SupplierProductSection } from "../../../../components/supplier/SupplierProductSection";
 import { SupplierCheckoutBar } from "../../../../components/supplier/SupplierCheckoutBar";
-import { useMeasuredHeight } from "../../../../lib/utils";
+import { Button } from "../../../../components/ui/button";
+import { useActiveTabsStore, activeTabKeys } from "@/stores/activeTabs";
+
+function buildSectionsFromProducts(
+  products: SupplierProduct[],
+): SupplierSection[] {
+  if (!products || products.length === 0) return [];
+  const byCategory = new Map<string, SupplierProduct[]>();
+  products.forEach((p) => {
+    const rawCategory = p.category ?? "OTHER";
+    const key = String(rawCategory).toUpperCase();
+    if (!byCategory.has(key)) byCategory.set(key, []);
+    byCategory.get(key)!.push(p);
+  });
+  return Array.from(byCategory.entries()).map(([label, list]) => ({
+    id: label.toLowerCase().replace(/\s+/g, "-"),
+    label,
+    products: list,
+  }));
+}
 
 export default function SupplierPage() {
   const { t } = useTranslation();
@@ -52,57 +72,63 @@ export default function SupplierPage() {
     [rawProducts],
   );
 
-  const sections: SupplierSection[] = useMemo(() => {
-    if (!products || products.length === 0) return [];
+  /** Catalog = non-favorite products by category; Favorites = favorite products by category */
+  const catalogSections: SupplierSection[] = useMemo(() => {
+    const list = products.filter((p) => !p.isFavorite);
+    return buildSectionsFromProducts(list);
+  }, [products]);
 
-    const favorites = products.filter((p) => p.isFavorite);
-    const result: SupplierSection[] = [];
-    const favoritesLabel = t("supplier_favorites").toUpperCase();
+  const favoriteSections: SupplierSection[] = useMemo(() => {
+    const list = products.filter((p) => p.isFavorite);
+    return buildSectionsFromProducts(list);
+  }, [products]);
 
-    if (favorites.length > 0) {
-      result.push({
-        id: "favorites",
-        label: favoritesLabel,
-        products: favorites,
-      });
-    }
-
-    const byCategory = new Map<string, SupplierProduct[]>();
-
-    products.forEach((p) => {
-      const rawCategory = p.category ?? "OTHER";
-      const key = String(rawCategory).toUpperCase();
-      if (!byCategory.has(key)) byCategory.set(key, []);
-      byCategory.get(key)!.push(p);
-    });
-
-    for (const [label, list] of byCategory.entries()) {
-      if (label === favoritesLabel) continue;
-      // Sort products so favorites appear at the top of each category
-      const sortedList = [...list].sort((a, b) => {
-        // Favorites first (true comes before false)
-        if (a.isFavorite && !b.isFavorite) return -1;
-        if (!a.isFavorite && b.isFavorite) return 1;
-        return 0; // Keep original order for non-favorites
-      });
-      result.push({
-        id: label.toLowerCase().replace(/\s+/g, "-"),
-        label,
-        products: sortedList,
-      });
-    }
-
-    return result;
-  }, [products, t]);
+  const mainTabKey = activeTabKeys.supplierMain(supplierUID ?? "");
+  const sectionTabKey = activeTabKeys.supplierSection(supplierUID ?? "");
+  const storedMainTab = useActiveTabsStore((s) => s.tabs[mainTabKey]);
+  const mainTab: "catalog" | "favorites" =
+    storedMainTab === "catalog" ? "catalog" : "favorites";
+  const setActiveTab = useActiveTabsStore((s) => s.setActiveTab);
+  const setMainTab = (tab: "catalog" | "favorites") =>
+    setActiveTab(mainTabKey, tab);
+  const currentTabSections =
+    mainTab === "catalog" ? catalogSections : favoriteSections;
 
   const [showDetails, setShowDetails] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const threshold =
+        typeof window !== "undefined" ? window.innerHeight * 0.5 : 400;
+      setShowBackToTop(window.scrollY > threshold);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const onFocusIn = (e: FocusEvent) => {
+      const t = e.target as HTMLElement;
+      if (t && ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName))
+        setIsInputFocused(true);
+    };
+    const onFocusOut = () => setIsInputFocused(false);
+    document.addEventListener("focusin", onFocusIn);
+    document.addEventListener("focusout", onFocusOut);
+    return () => {
+      document.removeEventListener("focusin", onFocusIn);
+      document.removeEventListener("focusout", onFocusOut);
+    };
+  }, []);
 
   const filteredSections = useMemo(() => {
-    if (!searchQuery) return sections;
-
+    if (!searchQuery) return currentTabSections;
     const q = searchQuery.toLowerCase();
-    return sections
+    return currentTabSections
       .map((section) => ({
         ...section,
         products: section.products.filter(
@@ -113,24 +139,40 @@ export default function SupplierPage() {
         ),
       }))
       .filter((section) => section.products.length > 0);
-  }, [sections, searchQuery]);
+  }, [currentTabSections, searchQuery]);
 
-  const layoutHeaderHeight = useAppHeaderHeight();
-  const pageBar = useMeasuredHeight<HTMLDivElement>();
-  const tabsBar = useMeasuredHeight<HTMLDivElement>();
+  const headerHeight = useAppHeaderHeight();
+  const scrollOffset = headerHeight;
 
-  /** Fallback when page bar not yet measured so tabs don't overlap it */
-  const pageBarHeight = pageBar.height > 0 ? pageBar.height : 52;
-  const tabsStickyTop = layoutHeaderHeight + pageBarHeight;
-
-  const stickyOffset =
-    layoutHeaderHeight + pageBarHeight + (showDetails ? tabsBar.height : 0);
-
-  const [activeSectionId, setActiveSectionId] = useState<string | null>(
-    filteredSections[0]?.id ?? null,
-  );
+  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
 
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const prevMainTabRef = useRef<string | null>(null);
+  const hasRestoredSectionRef = useRef(false);
+
+  useEffect(() => {
+    if (filteredSections.length === 0) return;
+    if (hasRestoredSectionRef.current) return;
+    hasRestoredSectionRef.current = true;
+    const stored = useActiveTabsStore.getState().getActiveTab(sectionTabKey);
+    if (stored && filteredSections.some((s) => s.id === stored)) {
+      setActiveSectionId(stored);
+    } else {
+      setActiveSectionId(filteredSections[0].id);
+    }
+  }, [filteredSections, sectionTabKey]);
+
+  useEffect(() => {
+    if (prevMainTabRef.current !== null && prevMainTabRef.current !== mainTab) {
+      setActiveSectionId(filteredSections[0]?.id ?? null);
+    }
+    prevMainTabRef.current = mainTab;
+  }, [mainTab, filteredSections]);
+
+  useEffect(() => {
+    if (activeSectionId)
+      setActiveTab(sectionTabKey, activeSectionId);
+  }, [activeSectionId, sectionTabKey, setActiveTab]);
 
   useEffect(() => {
     if (filteredSections.length === 0) {
@@ -179,7 +221,7 @@ export default function SupplierPage() {
 
         if (visible.length === 0) return;
 
-        const lineY = stickyOffset;
+        const lineY = scrollOffset;
 
         const started = visible.filter((v) => v.top <= lineY + 1);
 
@@ -199,7 +241,7 @@ export default function SupplierPage() {
       },
       {
         root: null,
-        rootMargin: `-${stickyOffset}px 0px -60% 0px`,
+        rootMargin: `-${scrollOffset}px 0px -60% 0px`,
         threshold: [0, 0.01, 0.1, 0.25, 0.5, 1],
       },
     );
@@ -210,7 +252,7 @@ export default function SupplierPage() {
     });
 
     return () => observer.disconnect();
-  }, [filteredSections, stickyOffset]);
+  }, [filteredSections, scrollOffset]);
 
   const handleTabClick = (id: string) => {
     const el = sectionRefs.current[id];
@@ -220,31 +262,24 @@ export default function SupplierPage() {
 
     setActiveSectionId(id);
 
-    const top = el.getBoundingClientRect().top + window.scrollY - stickyOffset;
+    const top = el.getBoundingClientRect().top + window.scrollY - scrollOffset;
     window.scrollTo({ top, behavior: "smooth" });
   };
 
   return (
     <main className="pb-16 text-slate-900 px-3">
-      {/* Sticky bar below layout header: full width on mobile, same width as content on desktop */}
-      <div
-        ref={pageBar.ref}
-        className="sticky z-10 w-full"
-        style={{ top: layoutHeaderHeight }}
-      >
-        <div className="w-full bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90 rounded-t-lg mt-2">
-          <SupplierPageBar supplier={supplier} selectedDate={selectedDate} />
-        </div>
+      <div className="w-full rounded-t-lg mt-2 bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90">
+        <SupplierPageBar
+          supplier={supplier}
+          selectedDate={selectedDate}
+          mainTab={mainTab}
+          onMainTabChange={setMainTab}
+        />
       </div>
 
       <div className="flex flex-col">
-        {/* Sticky Tabs/Search: full width on mobile, same width as content on desktop */}
         {showDetails && (
-          <div
-            ref={tabsBar.ref}
-            className="sticky z-20 w-full bg-app-card/95 rounded-b-lg"
-            style={{ top: tabsStickyTop }}
-          >
+          <div className="w-full rounded-b-lg">
             <div className="mx-auto max-w-4xl">
               <SupplierSearchAndTabs
                 searchPlaceholder={t("suppliers_search_placeholder")}
@@ -261,22 +296,24 @@ export default function SupplierPage() {
         {/* Content */}
 
         {productsQuery.isLoading && (
-          <p className="text-sm text-slate-500">
+          <p className="text-base text-slate-500">
             {t("supplier_loading_products")}
           </p>
         )}
 
         {productsQuery.error && (
-          <p className="text-sm text-red-400">{t("supplier_error_products")}</p>
+          <p className="text-base text-red-400">
+            {t("supplier_error_products")}
+          </p>
         )}
 
         {filteredSections.length === 0 && !productsQuery.isLoading ? (
-          <p className="text-sm text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
+          <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
             {t("supplier_empty_products")}
           </p>
         ) : (
           <motion.div
-            className="space-y-3"
+            className="space-y-3 pb-16"
             variants={listVariants}
             initial="hidden"
             animate="visible"
@@ -285,7 +322,7 @@ export default function SupplierPage() {
               <motion.div key={section.id} variants={listItemVariants}>
                 <SupplierProductSection
                   section={section}
-                  stickyOffset={stickyOffset}
+                  stickyOffset={scrollOffset}
                   supplierUID={supplierUID}
                   sectionRef={(el) => {
                     sectionRefs.current[section.id] = el;
@@ -297,7 +334,33 @@ export default function SupplierPage() {
         )}
       </div>
 
-      <SupplierCheckoutBar supplierUID={supplierUID} />
+      <SupplierCheckoutBar
+        supplierUID={supplierUID}
+        hideWhenInputFocused={isInputFocused}
+      />
+
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-24 right-4 z-20 md:bottom-6 md:right-6"
+          >
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="h-11 w-11 rounded-full border-slate-200 shadow-lg hover:bg-slate-50"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              aria-label={t("nav_back_to_top")}
+            >
+              <ChevronUp className="h-6 w-6 text-brand-500" aria-hidden />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Star, Loader2 } from "lucide-react";
@@ -263,56 +264,62 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
     basketTouchedRef.current = false;
   }, [basketQtyDisplay, queryClient]);
 
-  const setReserveClamped = useCallback((delta: number) => {
-    reserveTouchedRef.current = true;
-    // Calculate new value first
-    const currentNum = toNonNegativeNum(reserveQtyDisplay);
-    const newNum = currentNum + delta;
-    const newValue = newNum <= 0 ? "" : String(newNum);
-    
-    // Update state
-    setReserveQtyDisplay(newValue);
-    
-    // Cancel any pending debounced calls
-    if (reserveDebounceRef.current) {
-      clearTimeout(reserveDebounceRef.current);
-      reserveDebounceRef.current = null;
-    }
-    
-    // Debounce API call for button clicks (800ms delay)
-    if (newNum > 0) {
-      reserveDebounceRef.current = setTimeout(() => {
-        reserveDebounceRef.current = null;
-        syncFromReserveRef.current();
-      }, DEBOUNCE_MS);
-    }
-  }, [reserveQtyDisplay]);
+  const setReserveClamped = useCallback(
+    (delta: number) => {
+      reserveTouchedRef.current = true;
+      // Calculate new value first
+      const currentNum = toNonNegativeNum(reserveQtyDisplay);
+      const newNum = currentNum + delta;
+      const newValue = newNum <= 0 ? "" : String(newNum);
 
-  const setBasketClamped = useCallback((delta: number) => {
-    basketTouchedRef.current = true;
-    skipNextBasketDebounceRef.current = false;
-    // Calculate new value first
-    const currentNum = toNonNegativeNum(basketQtyDisplay);
-    const newNum = currentNum + delta;
-    const newValue = newNum <= 0 ? "" : String(newNum);
-    
-    // Update state
-    setBasketQtyDisplay(newValue);
-    
-    // Cancel any pending debounced calls
-    if (basketDebounceRef.current) {
-      clearTimeout(basketDebounceRef.current);
-      basketDebounceRef.current = null;
-    }
-    
-    // Debounce API call for button clicks (800ms delay)
-    if (newNum > 0) {
-      basketDebounceRef.current = setTimeout(() => {
+      // Update state
+      setReserveQtyDisplay(newValue);
+
+      // Cancel any pending debounced calls
+      if (reserveDebounceRef.current) {
+        clearTimeout(reserveDebounceRef.current);
+        reserveDebounceRef.current = null;
+      }
+
+      // Debounce API call for button clicks (800ms delay)
+      if (newNum > 0) {
+        reserveDebounceRef.current = setTimeout(() => {
+          reserveDebounceRef.current = null;
+          syncFromReserveRef.current();
+        }, DEBOUNCE_MS);
+      }
+    },
+    [reserveQtyDisplay],
+  );
+
+  const setBasketClamped = useCallback(
+    (delta: number) => {
+      basketTouchedRef.current = true;
+      skipNextBasketDebounceRef.current = false;
+      // Calculate new value first
+      const currentNum = toNonNegativeNum(basketQtyDisplay);
+      const newNum = currentNum + delta;
+      const newValue = newNum <= 0 ? "" : String(newNum);
+
+      // Update state
+      setBasketQtyDisplay(newValue);
+
+      // Cancel any pending debounced calls
+      if (basketDebounceRef.current) {
+        clearTimeout(basketDebounceRef.current);
         basketDebounceRef.current = null;
-        syncFromBasketRef.current();
-      }, DEBOUNCE_MS);
-    }
-  }, [basketQtyDisplay]);
+      }
+
+      // Debounce API call for button clicks (800ms delay)
+      if (newNum > 0) {
+        basketDebounceRef.current = setTimeout(() => {
+          basketDebounceRef.current = null;
+          syncFromBasketRef.current();
+        }, DEBOUNCE_MS);
+      }
+    },
+    [basketQtyDisplay],
+  );
 
   const handleToggleFavorite = useCallback(
     (e: React.MouseEvent) => {
@@ -420,18 +427,25 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
       className="flex flex-col gap-3 rounded-lg border border-slate-100 bg-app-card/95 p-3 shadow-sm"
     >
       {/* Title, subtitle, price (left) | Image, star (right) */}
-      <div className="flex gap-3 items-start">
+      <div className="flex gap-2 items-start justify-between">
         <div className="min-w-0 flex-1">
-          <p className="text-base font-bold text-slate-900 leading-tight">
-            {title}
-          </p>
+          {supplierUID ? (
+            <Link
+              href={`/suppliers/${supplierUID}/product/${id}`}
+              className="font-bold text-slate-900 leading-tight hover:text-brand-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 rounded"
+            >
+              {title}
+            </Link>
+          ) : (
+            <p className="font-bold text-slate-900 leading-tight">{title}</p>
+          )}
           {subTitle ? (
-            <p className="mt-0.5 text-sm text-slate-700 leading-snug">
+            <p className="mt-0.5 text-base text-slate-700 leading-snug">
               {subTitle}
             </p>
           ) : null}
           {productPackaging ? (
-            <p className="mt-0.5 text-sm text-slate-700 leading-snug">
+            <p className="mt-0.5 text-base text-slate-700 leading-snug">
               {t("product_packaging")} {productPackaging}
             </p>
           ) : null}
@@ -449,7 +463,7 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
             variant="ghost"
             onClick={handleToggleFavorite}
             disabled={isTogglingFavorite}
-            className="flex shrink-0 items-center justify-center text-slate-400 hover:text-slate-600 disabled:pointer-events-none"
+            className="px-2 flex shrink-0 items-center justify-center text-slate-400 hover:text-slate-600 disabled:pointer-events-none"
             title={isFavorite ? "Favorite" : undefined}
             aria-label={
               isFavorite ? "Remove from favorites" : "Add to favorites"
@@ -473,19 +487,19 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
 
       {/* Value inputs below: Reserve, then Basket */}
       <div className="flex gap-1.5 border-t border-slate-100 pt-2 justify-between">
-        <div className="flex flex-col items-start gap-1.5 text-xs text-slate-500">
+        <div className="flex flex-col items-start gap-1.5 text-base text-slate-500">
           <span className="w-16">{t("supplier_reserve")}</span>
-          <div className="inline-flex items-center gap-0.5 rounded border border-slate-200 bg-slate-50 px-1.5 py-1">
+          <div className="inline-flex items-center overflow-hidden rounded-lg border bg-white">
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className="h-7 w-9 text-base"
+              className="h-7 min-w-10 flex-1 basis-10 shrink-0 border-0 border-r bg-white p-0 text-2xl font-bold text-slate-900 hover:bg-emerald-50/50 disabled:opacity-50"
               aria-label={t("aria_decrease_reserve")}
               onClick={() => setReserveClamped(-1)}
               disabled={isLoading}
             >
-              -
+              −
             </Button>
             <Input
               type="number"
@@ -495,7 +509,7 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
               onFocus={handleReserveFocus}
               onBlur={handleReserveBlur}
               placeholder="0"
-              className="h-7 w-12 border-brand-200 bg-transparent p-0 rounded text-center text-base [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              className="h-7 w-12 border-0 bg-brand-50 p-0 text-center text-lg rounded [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               aria-label={t("aria_reserve_quantity")}
               disabled={isLoading}
             />
@@ -503,7 +517,7 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
               type="button"
               variant="ghost"
               size="icon"
-              className="h-7 w-9 text-base"
+              className="h-7 min-w-10 flex-1 basis-10 shrink-0 border-0 border-l bg-white p-0 text-2xl font-bold text-slate-900 hover:bg-emerald-50/50 disabled:opacity-50"
               aria-label={t("aria_increase_reserve")}
               onClick={() => setReserveClamped(1)}
               disabled={isLoading}
@@ -512,19 +526,19 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
             </Button>
           </div>
         </div>
-        <div className="flex flex-col items-start gap-1.5 text-xs text-slate-500">
+        <div className="flex flex-col items-start gap-1.5 text-base text-slate-500">
           <span className="w-16">{t("supplier_basket")}</span>
-          <div className="inline-flex items-center gap-0.5 rounded border border-brand-200 bg-brand-50 px-1.5 py-1">
+          <div className="inline-flex items-center overflow-hidden rounded-lg border bg-white">
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className="h-7 w-9 text-base"
+              className="h-7 min-w-10 flex-1 basis-10 shrink-0 border-0 border-r bg-white p-0 text-2xl font-bold text-slate-900 hover:bg-emerald-50/50 disabled:opacity-50"
               aria-label={t("aria_decrease_basket")}
               onClick={() => setBasketClamped(-1)}
               disabled={isLoading}
             >
-              -
+              −
             </Button>
             <Input
               type="number"
@@ -534,7 +548,7 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
               onFocus={handleBasketFocus}
               onBlur={handleBasketBlur}
               placeholder="0"
-              className="h-7 w-12 border-0 bg-transparent p-0 text-center text-base rounded [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              className="h-7 w-12 border-0 bg-brand-50 p-0 text-center text-lg rounded [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               aria-label={t("aria_basket_quantity")}
               disabled={isLoading}
             />
@@ -542,7 +556,7 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
               type="button"
               variant="ghost"
               size="icon"
-              className="h-7 w-9 text-base"
+              className="h-7 min-w-10 flex-1 basis-10 shrink-0 border-0 border-l  bg-white p-0 text-2xl font-bold text-slate-900 hover:bg-emerald-50/50 disabled:opacity-50"
               aria-label={t("aria_increase_basket")}
               onClick={() => setBasketClamped(1)}
               disabled={isLoading}

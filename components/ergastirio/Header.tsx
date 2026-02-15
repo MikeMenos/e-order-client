@@ -76,7 +76,7 @@ export default function ErgastirioHeader() {
     : undefined;
 
   return (
-    <header className="sticky top-0 z-50 w-full max-w-full overflow-x-hidden border-b border-slate-200 bg-app-card/95 shadow-sm backdrop-blur">
+    <header className="z-50 w-full max-w-full overflow-x-hidden border-b border-slate-200 bg-app-card/95 shadow-sm backdrop-blur">
       <div className="flex h-16 w-full max-w-full min-w-0 items-center px-2 sm:px-4 justify-between overflow-x-hidden">
         <ErgastirioLogo pathname={pathname} clientData={clientDataForLogo} />
         {!isFetching && pathname !== `${ERGASTIRIO_BASE}/stores` && (

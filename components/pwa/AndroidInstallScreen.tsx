@@ -29,10 +29,10 @@ export function AndroidInstallScreen() {
       </div>
 
       <div className="w-full max-w-sm rounded-2xl border border-slate-200/80 bg-app-card p-6 shadow-lg">
-        <h1 className="mb-4 text-center text-xl font-semibold">
+        <h1 className="mb-4 text-center text-2xl font-semibold">
           {t("pwa_android_install_title")}
         </h1>
-        <p className="mb-4 text-center text-sm text-slate-600">
+        <p className="mb-4 text-center text-base text-slate-600">
           {t("pwa_android_install_subtitle")}
         </p>
 
@@ -45,7 +45,7 @@ export function AndroidInstallScreen() {
             {t("pwa_android_install_button")}
           </Button>
         ) : (
-          <p className="mt-2 text-center text-xs text-slate-500">
+          <p className="mt-2 text-center text-base text-slate-500">
             {t("pwa_android_install_fallback")}
           </p>
         )}

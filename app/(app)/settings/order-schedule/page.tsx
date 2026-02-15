@@ -35,7 +35,7 @@ function SupplierScheduleCard({
       className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden"
     >
       <CollapsibleTrigger asChild>
-        <div className="border-b border-slate-100 bg-slate-50/50 px-4 py-4 space-y-1 cursor-pointer transition hover:bg-slate-100/60">
+        <div className="border-b border-slate-100 bg-slate-50/50 px-4 py-4 space-y-1 mb-1 cursor-pointer transition hover:bg-slate-100/60">
           <div className="flex items-center justify-between gap-2">
             <p className="font-medium text-slate-900">
               {schedule.supplierTitle ?? supplierUID}
@@ -50,7 +50,7 @@ function SupplierScheduleCard({
           </div>
 
           {schedule.selectedDaysInfo && (
-            <p className="text-sm text-slate-500">
+            <p className="text-base text-slate-500">
               {schedule.selectedDaysInfo}
             </p>
           )}
@@ -59,24 +59,6 @@ function SupplierScheduleCard({
 
       <CollapsibleContent>
         <div className="px-4 py-4">
-          {schedule.supplierDeliveryDays?.length ? (
-            <div className="pt-1">
-              <div className="text-sm text-slate-600">
-                <span className="font-medium text-slate-700">
-                  {t("timetable_delivery_days")}:
-                </span>
-              </div>
-
-              <ul className="mt-1 space-y-0.5">
-                {schedule.supplierDeliveryDays.map((day) => (
-                  <li key={day} className="text-sm text-slate-600">
-                    {day}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-
           <ul className="mt-3 divide-y divide-slate-100">
             {dailyProgram.map((day) => {
               const isUpdating =
@@ -130,6 +112,23 @@ function SupplierScheduleCard({
               );
             })}
           </ul>
+          {schedule.supplierDeliveryDays?.length ? (
+            <div className="pt-1">
+              <div className="text-base text-slate-600">
+                <span className="font-medium text-slate-700">
+                  {t("timetable_delivery_days")}:
+                </span>
+              </div>
+
+              <ul className="mt-1 space-y-0.5">
+                {schedule.supplierDeliveryDays.map((day) => (
+                  <li key={day} className="text-base text-slate-600">
+                    {day}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       </CollapsibleContent>
     </Collapsible>
@@ -158,7 +157,7 @@ export default function OrderSchedulePage() {
   return (
     <main className="space-y-4 text-slate-900 px-3 pb-12">
       <header className="space-y-2">
-        <h1 className="text-xl font-bold text-slate-900 text-center mt-2">
+        <h1 className="text-xl font-bold text-slate-900 mt-2 text-center mt-2">
           {t("settings_order_schedule")}
         </h1>
 

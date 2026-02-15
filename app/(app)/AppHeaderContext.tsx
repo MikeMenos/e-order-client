@@ -4,7 +4,6 @@ import { createContext, useContext, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { useMeasuredHeight } from "@/lib/utils";
 import { Header } from "@/components/dashboard/Header";
-import { AppBreadcrumb } from "@/components/dashboard/AppBreadcrumb";
 
 type AppHeaderContextValue = { headerHeight: number };
 
@@ -41,10 +40,9 @@ export function AppHeaderProvider({ children }: { children: React.ReactNode }) {
         {!isDashboard && (
           <div
             ref={header.ref}
-            className="sticky top-0 z-30 -mt-5 rounded-b-lg border-b-0 bg-app-card shadow-sm"
+            className="sticky top-0 z-30 -mt-5 rounded-b border-b-0 bg-app-card shadow-sm"
           >
             <Header />
-            <AppBreadcrumb />
           </div>
         )}
         <div className="mx-auto max-w-4xl w-full">{children}</div>

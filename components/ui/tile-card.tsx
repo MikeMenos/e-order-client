@@ -72,7 +72,7 @@ export function TileCard({
         horizontal ? "justify-start px-2" : "min-h-11 justify-center px-0.5"
       )}>
         <span className={cn(
-          "text-lg font-medium text-slate-900 leading-tight wrap-break-word text-wrap",
+          "text-xl font-medium text-slate-900 leading-tight wrap-break-word text-wrap",
           horizontal ? "text-left" : "text-center"
         )}>
           {label}

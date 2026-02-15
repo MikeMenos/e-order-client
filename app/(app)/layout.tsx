@@ -3,6 +3,8 @@
 import type { ReactNode } from "react";
 import { Suspense } from "react";
 import { AppHeaderProvider } from "./AppHeaderContext";
+import { NavigationHistoryProvider } from "./NavigationHistoryContext";
+import { AppBackground } from "./AppBackground";
 import { useStoreTokenInit } from "@/hooks/useStoreTokenInit";
 
 function StoreTokenInitializer() {
@@ -19,14 +21,17 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </div>
       }
     >
-      <AppHeaderProvider>
-        <StoreTokenInitializer />
-        <main className="min-h-dvh flex flex-col text-slate-900">
-          <div className="flex-1 animate-in fade-in duration-300">
-            {children}
-          </div>
-        </main>
-      </AppHeaderProvider>
+      <AppBackground />
+      <NavigationHistoryProvider>
+        <AppHeaderProvider>
+          <StoreTokenInitializer />
+          <main className="min-h-dvh flex flex-col text-slate-900">
+            <div className="flex-1 animate-in fade-in duration-300">
+              {children}
+            </div>
+          </main>
+        </AppHeaderProvider>
+      </NavigationHistoryProvider>
     </Suspense>
   );
 }

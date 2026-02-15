@@ -29,7 +29,7 @@ export function ErgastirioProductCategoriesNav({
             key={family.FAMILY}
             variant="ghost"
             size="sm"
-            className={`whitespace-nowrap text-xs font-medium transition-colors duration-300 ${
+            className={`whitespace-nowrap text-base font-medium transition-colors duration-300 ${
               isActive
                 ? "bg-brand-500 font-bold text-white hover:bg-brand-600 rounded-full sm:px-4 sm:py-1"
                 : "text-slate-700"

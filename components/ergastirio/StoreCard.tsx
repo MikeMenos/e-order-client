@@ -36,7 +36,7 @@ function InfoItem({
         <p className="text-[11px] font-medium text-slate-500">{label}</p>
         <p
           className={cn(
-            "truncate text-sm font-semibold text-slate-900",
+            "truncate text-base font-semibold text-slate-900",
             isEmpty && "font-medium text-slate-500",
           )}
         >
@@ -76,7 +76,7 @@ export default function ErgastirioStoreCard({
           <div className="flex items-start gap-3 min-w-0">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <p className="inline-flex items-center rounded-2xl bg-brand-500 px-2 py-1 text-sm font-semibold leading-none text-white tracking-tight">
+                <p className="inline-flex items-center rounded-2xl bg-brand-500 px-2 py-1 text-base font-semibold leading-none text-white tracking-tight">
                   {branchTitle}
                 </p>
               </div>

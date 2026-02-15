@@ -25,7 +25,7 @@ export function ErgastirioCartCheckoutDialog({
     <>
       <div className="fixed left-0 right-0 z-40 p-4 bg-app-bg/95 backdrop-blur border-t border-slate-200 md:flex md:justify-center bottom-16 md:bottom-0 px-2">
         <Button
-          className="w-full md:max-w-sm md:min-w-[280px] h-12 text-base bg-brand-500 hover:bg-brand-600"
+          className="w-full md:max-w-sm md:min-w-[280px] h-12 text-lg bg-brand-500 hover:bg-brand-600"
           onClick={() => onOpenChange(true)}
         >
           {headingTitle ?? t("erg_order_details_and_checkout")}{" "}

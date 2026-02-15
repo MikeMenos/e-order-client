@@ -43,13 +43,14 @@ export function SupplierTile({
 }: Props) {
   const { t } = useTranslation();
   const pathname = usePathname();
-  const isAllSuppliersPage = pathname === "/all-suppliers";
+  const isNotOrdersOfDayPage =
+    pathname === "/all-suppliers" || pathname === "/settings/manage-suppliers";
   const isOrdersOfDayPage = pathname === "/orders-of-the-day";
 
   const openBaskets = supplier.counterOpenBaskets ?? 0;
   const todayOrders = supplier.counterTodayOrders ?? 0;
-  const showDotArea = isAllSuppliersPage || isOrdersOfDayPage;
-  const showOrangeDot = isAllSuppliersPage && openBaskets > 0;
+  const showDotArea = isNotOrdersOfDayPage || isOrdersOfDayPage;
+  const showOrangeDot = isNotOrdersOfDayPage && openBaskets > 0;
   const greenDotCount = Math.min(todayOrders, 10);
 
   const defaultHref = isOrdersOfDayPage
@@ -89,15 +90,54 @@ export function SupplierTile({
         </span>
       ) : (
         <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
-          <span className="text-lg font-semibold text-slate-500">
+          <span className="text-xl font-semibold text-slate-500">
             {(supplier.title ?? "").charAt(0).toUpperCase()}
           </span>
         </span>
       )}
-      <span className="text-center text-sm font-medium text-slate-900 line-clamp-2">
+      <span className="text-center text-base font-medium text-slate-900 line-clamp-2">
         {supplier.title}
       </span>
     </>
+  ) : isNotOrdersOfDayPage ? (
+    <div className="flex min-h-[180px] flex-1 flex-col items-center justify-center px-4 py-4 text-center">
+      {supplier.logo ? (
+        <img
+          src={supplier.logo}
+          alt={supplier.title ?? ""}
+          className="h-14 w-14 shrink-0 rounded-full bg-slate-100 object-contain"
+        />
+      ) : (
+        <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-slate-100">
+          <span className="text-2xl font-semibold text-slate-500">
+            {(supplier.title ?? "").charAt(0).toUpperCase()}
+          </span>
+        </span>
+      )}
+      <div className="mt-2 flex items-center justify-center gap-1" aria-hidden>
+        {showOrangeDot && (
+          <span
+            className="h-2 w-2 rounded-full bg-orange-500 animate-pulse-strong"
+            title={t("suppliers_baskets")}
+          />
+        )}
+        {Array.from({ length: greenDotCount }, (_, i) => (
+          <span
+            key={i}
+            className="h-2 w-2 rounded-full bg-green-500"
+            title={t("suppliers_orders")}
+          />
+        ))}
+      </div>
+      <p className="mt-2 text-base font-semibold text-slate-900 line-clamp-2">
+        {supplier.title}
+      </p>
+      {supplier.subTitle && (
+        <p className="mt-0.5 text-base text-slate-500 line-clamp-2">
+          {supplier.subTitle}
+        </p>
+      )}
+    </div>
   ) : (
     <>
       {/* Top: logo + title + delivery (or subTitle on all-suppliers) + dots (all-suppliers / orders-of-the-day) */}
@@ -127,14 +167,14 @@ export function SupplierTile({
                   {supplier.customTitle ?? supplier.subTitle ?? supplier.title}
                 </p>
                 {showDeliveryInfo && supplier.nextAvailDeliveryText && (
-                  <p className="mt-0.5 text-sm text-slate-500">
+                  <p className="mt-0.5 text-base text-slate-500">
                     {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
                   </p>
                 )}
                 {showDeliveryInfo &&
                   supplier.labelOrderTimeExpiresAt != null &&
                   supplier.labelOrderTimeExpiresAt !== "" && (
-                    <p className="mt-0.5 text-sm text-slate-500">
+                    <p className="mt-0.5 text-base text-slate-500">
                       {t("order_delivery_until")}{" "}
                       {supplier.labelOrderTimeExpiresAt}
                     </p>
@@ -143,11 +183,11 @@ export function SupplierTile({
             ) : (
               <>
                 {showDeliveryInfo && supplier.nextAvailDeliveryText && (
-                  <p className="mt-0.5 text-sm text-slate-500">
+                  <p className="mt-0.5 text-base text-slate-500">
                     {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
                   </p>
                 )}
-                <p className="mt-0.5 text-sm text-slate-500 ">
+                <p className="mt-0.5 text-base text-slate-500 ">
                   {supplier.title}
                 </p>
               </>
@@ -190,14 +230,14 @@ export function SupplierTile({
               />
             )}
             {supplier.basketIconStatus === 0 && (
-              <CircleAlert
+              <MoreHorizontal
                 className="h-5 w-5 shrink-0"
                 style={iconStyle}
                 aria-hidden
               />
             )}
             {supplier.basketIconStatus === 2 && (
-              <MoreHorizontal
+              <CircleAlert
                 className="h-5 w-5 shrink-0"
                 style={iconStyle}
                 aria-hidden
@@ -208,14 +248,15 @@ export function SupplierTile({
               <span className="ml-auto">
                 <Button
                   type="button"
-                  variant="outline"
-                  className="rounded-sm bg-white px-2 py-0.5 font-medium text-red-600"
+                  variant="ghost"
+                  className="rounded-sm bg-brand-500 px-2 py-0 font-normal text-white"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                   }}
+                  size="sm"
                 >
-                  {t("supplier_continue")}
+                  {t("supplier_order")}
                 </Button>
               </span>
             )}
@@ -224,13 +265,14 @@ export function SupplierTile({
                 <Button
                   type="button"
                   variant="outline"
-                  className="rounded-sm bg-white px-2 py-0.5 font-medium text-red-600"
+                  className="rounded-sm bg-white px-2 py-0 font-normal"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                   }}
+                  size="sm"
                 >
-                  {t("supplier_open")}
+                  {t("supplier_continue")}
                 </Button>
               </span>
             )}
@@ -239,11 +281,12 @@ export function SupplierTile({
                 <Button
                   type="button"
                   variant="outline"
-                  className="rounded-sm bg-white px-2 py-0.5 font-medium text-slate-500"
+                  className="rounded-sm bg-white px-2 py-0 font-normal text-slate-500"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                   }}
+                  size="sm"
                 >
                   {t("supplier_open")}
                 </Button>
@@ -267,7 +310,9 @@ export function SupplierTile({
 
   const tileClassName = isSettingsStyle
     ? tileClassNameSettings
-    : tileClassNameDefault;
+    : isNotOrdersOfDayPage
+      ? `${tileClassNameDefault} h-full flex flex-col`
+      : tileClassNameDefault;
 
   if (onClick) {
     return (
