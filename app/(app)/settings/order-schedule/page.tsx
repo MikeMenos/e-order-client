@@ -58,7 +58,7 @@ function SupplierScheduleCard({
       </CollapsibleTrigger>
 
       <CollapsibleContent>
-        <div className="px-4 py-4">
+        <div className="px-4 pb-4">
           <ul className="mt-3 divide-y divide-slate-100">
             {dailyProgram.map((day) => {
               const isUpdating =
@@ -157,7 +157,7 @@ export default function OrderSchedulePage() {
   return (
     <main className="space-y-4 text-slate-900 px-3 pb-12">
       <header className="space-y-2">
-        <h1 className="text-xl font-bold text-slate-900 mt-2 text-center mt-2">
+        <h1 className="text-xl font-bold text-slate-900 mt-2 text-center my-2">
           {t("settings_order_schedule")}
         </h1>
 

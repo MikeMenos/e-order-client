@@ -23,7 +23,7 @@ export default function TimetablePage() {
   return (
     <main className="space-y-4 text-slate-900 px-3 pb-12">
       <header className="space-y-1 mb-1">
-        <h1 className="text-xl font-bold text-slate-900 mt-2 text-center mt-2">
+        <h1 className="text-xl font-bold text-slate-900 mt-2 text-center my-2">
           {t("settings_order_schedule")}
         </h1>
       </header>
