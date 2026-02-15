@@ -1,15 +1,24 @@
 "use client";
 
+import { useState } from "react";
 import { useParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { Pencil, Loader2 } from "lucide-react";
 import { useSupplierBasicInfos } from "@/hooks/useDashboardData";
+import { usePersonalizedTextsUpdate } from "@/hooks/usePersonalizedTextsUpdate";
 import { useTranslation } from "@/lib/i18n";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { DetailSection } from "@/components/ui/detail-section";
 import { DetailRow } from "@/components/ui/detail-row";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function SupplierInfoPage() {
   const { t } = useTranslation();
   const params = useParams<{ supplierUID: string }>();
   const supplierUID = params.supplierUID;
+  const queryClient = useQueryClient();
 
   const basicInfoQuery = useSupplierBasicInfos(supplierUID, !!supplierUID);
   const supplier =
@@ -20,13 +29,69 @@ export default function SupplierInfoPage() {
   const displayName =
     supplier?.customTitle?.trim() || supplier?.originalTitle?.trim() || "";
 
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editCustomTitle, setEditCustomTitle] = useState("");
+
+  const personalizedUpdate = usePersonalizedTextsUpdate({
+    supplierUID: supplierUID ?? undefined,
+    onSuccess: (data) => {
+      const msg = data?.message?.trim();
+      if (msg) toast.success(msg);
+      void queryClient.invalidateQueries({
+        queryKey: ["supplier-basic-infos", supplierUID],
+      });
+      setIsEditingTitle(false);
+    },
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err, t("basket_error")));
+    },
+  });
+
+  const startEditingTitle = () => {
+    setEditCustomTitle(supplier?.customTitle?.trim() ?? "");
+    setIsEditingTitle(true);
+  };
+
+  const saveCustomTitle = () => {
+    if (!supplierUID) return;
+    personalizedUpdate.mutate({
+      productUID: "",
+      supplierUID,
+      erpCatUID: "",
+      displayText: editCustomTitle.trim(),
+      displayText2: "",
+      displayText3: "",
+      personalNotes: "",
+    });
+  };
+
+  const cancelEditingTitle = () => {
+    setIsEditingTitle(false);
+    setEditCustomTitle("");
+  };
+
   return (
     <main className=" text-slate-900 px-3">
       <div className="mx-auto max-w-2xl">
-        <div className="my-4">
-          <h1 className="text-xl font-bold text-slate-900 mt-2">
+        <div className="my-4 flex items-center justify-between gap-3 min-w-0">
+          <h1 className="text-xl font-bold text-slate-900 mt-2 min-w-0">
             {displayName || t("common_supplier")}
           </h1>
+          {supplier && !isEditingTitle && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={startEditingTitle}
+              className="shrink-0 gap-1.5 text-slate-600 hover:text-slate-900"
+              aria-label={t("product_edit_title")}
+            >
+              <Pencil className="h-4 w-4 shrink-0" />
+              <span className="text-sm font-medium">
+                {t("product_edit_title")}
+              </span>
+            </Button>
+          )}
         </div>
 
         {basicInfoQuery.isLoading && (
@@ -55,10 +120,47 @@ export default function SupplierInfoPage() {
                   />
                 )}
 
-                <DetailRow
-                  label={t("supplier_custom_title")}
-                  value={supplier.customTitle ?? "-"}
-                />
+                {isEditingTitle ? (
+                  <div className="space-y-2 pt-1">
+                    <label className="text-sm font-medium text-slate-600">
+                      {t("supplier_custom_title")}
+                    </label>
+                    <Input
+                      value={editCustomTitle}
+                      onChange={(e) => setEditCustomTitle(e.target.value)}
+                      className="text-base"
+                      aria-label={t("supplier_custom_title")}
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={saveCustomTitle}
+                        disabled={personalizedUpdate.isPending}
+                      >
+                        {personalizedUpdate.isPending ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          t("product_save_title")
+                        )}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={cancelEditingTitle}
+                        disabled={personalizedUpdate.isPending}
+                      >
+                        {t("product_cancel_edit")}
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <DetailRow
+                    label={t("supplier_custom_title")}
+                    value={supplier.customTitle ?? "-"}
+                  />
+                )}
 
                 {supplier.vat && (
                   <DetailRow
