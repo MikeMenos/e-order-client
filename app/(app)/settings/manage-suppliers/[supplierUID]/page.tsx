@@ -161,18 +161,6 @@ export default function ManageSupplierMenuPage() {
               )
             }
           />
-
-          <TileCard
-            iconSrc="/assets/supplier-contact-info.png"
-            label={t("settings_contact")}
-            iconColor="text-slate-700"
-            horizontal={true}
-            onClick={() =>
-              router.push(
-                `/suppliers/${selectedSupplier.supplierUID}/contact?from=settings`,
-              )
-            }
-          />
         </div>
 
         <StoreSelectDialog
