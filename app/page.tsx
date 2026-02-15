@@ -202,7 +202,7 @@ export default function HomePage() {
       <div className="w-full max-w-sm space-y-6 px-4">
         <form
           onSubmit={handleSubmit}
-          className="space-y-3 rounded-2xl border border-slate-200/80 p-6 shadow-lg bg-app-card"
+          className="space-y-6 rounded-2xl border border-slate-200/80 p-6 shadow-lg bg-app-card"
         >
           <div className="flex items-center justify-between gap-2">
             <h1 className="text-2xl font-semibold text-slate-900">
@@ -220,7 +220,7 @@ export default function HomePage() {
               {i18n.language === "gr" ? t("lang_en") : t("lang_gr")}
             </Button>
           </div>
-          <div className="space-y-1 mb-1">
+          <div className="space-y-1 mb-4">
             <label className="block text-base text-slate-700">
               {t("login_username")}
             </label>
@@ -229,7 +229,7 @@ export default function HomePage() {
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-          <div className="space-y-1 mb-1">
+          <div className="space-y-1 mb-4">
             <label className="block text-base text-slate-700">
               {t("login_password")}
             </label>
