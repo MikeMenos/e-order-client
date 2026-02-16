@@ -3,7 +3,10 @@
 import { useMemo } from "react";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
 import { SuppliersSection } from "@/components/dashboard/SuppliersSection";
-import { OrdersOfTheDayTabs, type OrdersOfTheDayTabId } from "@/components/dashboard/OrdersOfTheDayTabs";
+import {
+  OrdersOfTheDayTabs,
+  type OrdersOfTheDayTabId,
+} from "@/components/dashboard/OrdersOfTheDayTabs";
 import { useActiveTabsStore, activeTabKeys } from "@/stores/activeTabs";
 
 export default function OrdersOfTheDayPage() {
@@ -22,10 +25,11 @@ export default function OrdersOfTheDayPage() {
   const { all, pending, drafts } = useMemo(() => {
     const allList = suppliersInPrefDaySchedule;
     const pendingList = allList.filter(
-      (s: { basketIconStatus?: number | null }) => s.basketIconStatus === 2,
+      (s: { basketIconStatus?: number | null }) => s.basketIconStatus === 3,
     );
     const draftsList = allList.filter(
-      (s: { basketIconStatus?: number | null }) => s.basketIconStatus === 0,
+      (s: { basketIconStatus?: number | null }) =>
+        s.basketIconStatus === 2 || s.basketIconStatus === 3,
     );
     return { all: allList, pending: pendingList, drafts: draftsList };
   }, [suppliersInPrefDaySchedule]);
@@ -59,6 +63,7 @@ export default function OrdersOfTheDayPage() {
         isLoading={isLoading}
         isError={isError}
         errorMessage={errorMessage}
+        displayAsDraft={activeTab === "drafts"}
       >
         <OrdersOfTheDayTabs
           value={activeTab}
