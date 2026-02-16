@@ -2,9 +2,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
 
 export type PersonalizedTextsUpdatePayload = {
-  productUID: string;
+  productUID: string | null;
   supplierUID: string;
-  erpCatUID: string;
+  erpCatUID: string | null;
   displayText: string;
   displayText2: string;
   displayText3: string;

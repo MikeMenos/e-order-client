@@ -170,8 +170,7 @@ export default function SupplierPage() {
   }, [mainTab, filteredSections]);
 
   useEffect(() => {
-    if (activeSectionId)
-      setActiveTab(sectionTabKey, activeSectionId);
+    if (activeSectionId) setActiveTab(sectionTabKey, activeSectionId);
   }, [activeSectionId, sectionTabKey, setActiveTab]);
 
   useEffect(() => {
@@ -282,7 +281,7 @@ export default function SupplierPage() {
           <div className="w-full rounded-b-lg">
             <div className="mx-auto max-w-4xl">
               <SupplierSearchAndTabs
-                searchPlaceholder={t("suppliers_search_placeholder")}
+                searchPlaceholder={t("products_search_placeholder")}
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
                 sections={filteredSections}
