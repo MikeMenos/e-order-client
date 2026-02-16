@@ -109,11 +109,11 @@ export default function SupplierProductPage() {
   const saveTitle = () => {
     if (!supplierUID || !productUID) return;
     personalizedUpdate.mutate({
-      productUID: null,
-      supplierUID,
+      productUID,
+      supplierUID: null,
       erpCatUID: null,
-      displayText: "",
-      displayText2: editTitle.trim(),
+      displayText: editTitle.trim(),
+      displayText2: "",
       displayText3: "",
       personalNotes: "",
       remove: false,
