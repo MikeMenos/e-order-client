@@ -72,6 +72,7 @@ api.interceptors.request.use((config) => {
     url.includes("/basket-remove-item") ||
     url.includes("/wishlist-items") ||
     url.includes("/wishlist-toggle") ||
+    url.includes("/wishlist-sort") ||
     url.includes("/my-profile");
 
   const token = useStoreToken ? storeAccessToken || accessToken : accessToken;

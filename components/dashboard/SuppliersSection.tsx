@@ -20,6 +20,8 @@ type Props = {
   onSupplierClick?: (supplier: SuppliersListItem) => void;
   /** Rendered between the search bar and the list (e.g. orders-of-the-day tabs). */
   children?: React.ReactNode;
+  /** When true (e.g. on Πρόχειρες tab), all tiles show draft style and text. */
+  displayAsDraft?: boolean;
 };
 
 export function SuppliersSection({
@@ -30,6 +32,7 @@ export function SuppliersSection({
   errorMessage,
   onSupplierClick,
   children,
+  displayAsDraft = false,
 }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAscending, setIsAscending] = useState(true);
@@ -182,6 +185,7 @@ export function SuppliersSection({
                   pathname !== "/all-suppliers" &&
                   pathname !== "/settings/manage-suppliers"
                 }
+                displayAsDraft={displayAsDraft}
                 tileStyle="default"
                 href={
                   onSupplierClick

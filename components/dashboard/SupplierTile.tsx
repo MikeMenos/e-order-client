@@ -26,6 +26,8 @@ type Props = {
   onClick?: () => void;
   /** When "settings", use same card style as /settings (centered, rounded-2xl bg-app-card/95 p-6). */
   tileStyle?: "default" | "settings";
+  /** When true (e.g. Πρόχειρες tab), show draft style and text regardless of basketIconStatus. */
+  displayAsDraft?: boolean;
 };
 
 const tileClassNameDefault =
@@ -40,6 +42,7 @@ export function SupplierTile({
   href: hrefProp,
   onClick,
   tileStyle = "default",
+  displayAsDraft = false,
 }: Props) {
   const { t } = useTranslation();
   const pathname = usePathname();
@@ -58,24 +61,45 @@ export function SupplierTile({
     : `/suppliers/${encodeURIComponent(supplier.supplierUID)}`;
   const href = hrefProp ?? defaultHref;
 
-  const statusDescr = supplier.basketIconStatusDescr ?? "";
-  const pillStyle = supplier.basketIconColor
-    ? {
-        color: supplier.basketIconColor,
-        backgroundColor:
-          supplier.basketIconColor.startsWith("#") &&
-          supplier.basketIconColor.length === 7
-            ? `${supplier.basketIconColor}1A`
-            : supplier.basketIconColor,
-      }
-    : undefined;
-  const iconStyle = supplier.basketIconColor
-    ? {
-        color: "white",
-        backgroundColor: supplier.basketIconColor,
-        borderRadius: "50%",
-      }
-    : undefined;
+  const useDraftDisplay = displayAsDraft || supplier.basketIconStatus === 2;
+  const statusDescr = useDraftDisplay
+    ? ""
+    : (supplier.basketIconStatusDescr ?? "");
+  const statusDisplay = useDraftDisplay
+    ? t("supplier_status_draft")
+    : statusDescr || "—";
+
+  const draftPillStyle = {
+    color: "#EEB23E",
+    backgroundColor: "#FFF8E6",
+  };
+  const draftIconStyle = {
+    color: "white",
+    backgroundColor: "#EEB23E",
+    borderRadius: "50%",
+  };
+
+  const pillStyle = displayAsDraft
+    ? draftPillStyle
+    : supplier.basketIconColor
+      ? {
+          color: supplier.basketIconColor,
+          backgroundColor:
+            supplier.basketIconColor.startsWith("#") &&
+            supplier.basketIconColor.length === 7
+              ? `${supplier.basketIconColor}1A`
+              : supplier.basketIconColor,
+        }
+      : undefined;
+  const iconStyle = displayAsDraft
+    ? draftIconStyle
+    : supplier.basketIconColor
+      ? {
+          color: "white",
+          backgroundColor: supplier.basketIconColor,
+          borderRadius: "50%",
+        }
+      : undefined;
   const isSettingsStyle = tileStyle === "settings";
 
   const content = isSettingsStyle ? (
@@ -222,44 +246,41 @@ export function SupplierTile({
             className="inline-flex w-full items-center gap-2 rounded-lg px-2 py-1.5 font-medium bg-slate-100 text-slate-800"
             style={pillStyle}
           >
-            {supplier.basketIconStatus === 200 && (
+            {!displayAsDraft && supplier.basketIconStatus === 200 && (
               <CheckCircle2
                 className="h-5 w-5 shrink-0"
                 style={iconStyle}
                 aria-hidden
               />
             )}
-            {supplier.basketIconStatus === 0 && (
+            {(displayAsDraft || supplier.basketIconStatus === 2) && (
               <MoreHorizontal
                 className="h-5 w-5 shrink-0"
                 style={iconStyle}
                 aria-hidden
               />
             )}
-            {supplier.basketIconStatus === 2 && (
+            {!displayAsDraft && supplier.basketIconStatus === 3 && (
               <CircleAlert
                 className="h-5 w-5 shrink-0"
                 style={iconStyle}
                 aria-hidden
               />
             )}
-            <span>{statusDescr || "—"}</span>
-            {supplier.basketIconStatus === 2 && (
+            <span>{statusDisplay}</span>
+            {!displayAsDraft && supplier.basketIconStatus === 3 && (
               <span className="ml-auto">
                 <Button
                   type="button"
                   variant="ghost"
                   className="rounded-sm bg-brand-500 hover:bg-brand-600 px-2 py-0 font-normal text-white"
-                  onClick={(e) => {
-                    e.preventDefault();
-                  }}
                   size="sm"
                 >
                   {t("supplier_order")}
                 </Button>
               </span>
             )}
-            {supplier.basketIconStatus === 0 && (
+            {(displayAsDraft || supplier.basketIconStatus === 2) && (
               <span className="ml-auto">
                 <Button
                   type="button"
@@ -274,15 +295,12 @@ export function SupplierTile({
                 </Button>
               </span>
             )}
-            {supplier.basketIconStatus === 200 && (
+            {!displayAsDraft && supplier.basketIconStatus === 200 && (
               <span className="ml-auto">
                 <Button
                   type="button"
                   variant="ghost"
-                  className="rounded-sm bg-white px-2 py-0 font-normal text-slate-500"
-                  onClick={(e) => {
-                    e.preventDefault();
-                  }}
+                  className="rounded-sm bg-brand-500 hover:bg-brand-600 px-2 py-0 font-normal text-white"
                   size="sm"
                 >
                   {t("supplier_open")}

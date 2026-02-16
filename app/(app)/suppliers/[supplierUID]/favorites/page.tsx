@@ -1,10 +1,12 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Star, Loader2 } from "lucide-react";
+import { Star, Loader2, GripVertical } from "lucide-react";
 import { useWishlistItemsBySupplier } from "../../../../../hooks/useWishlist";
 import { useWishlistToggle } from "../../../../../hooks/useWishlistToggle";
+import { useWishlistSortProducts } from "../../../../../hooks/useWishlistSortProducts";
 import { useTranslation } from "../../../../../lib/i18n";
 import { listVariants, listItemVariants } from "../../../../../lib/motion";
 import { Button } from "../../../../../components/ui/button";
@@ -31,8 +33,74 @@ export default function FavoritesPage() {
   const items =
     wishlistQuery.data?.items ?? wishlistQuery.data?.wishLists ?? [];
 
+  const [orderedItems, setOrderedItems] = useState<typeof items>([]);
+  useEffect(() => {
+    const list =
+      wishlistQuery.data?.items ?? wishlistQuery.data?.wishLists ?? [];
+    setOrderedItems(list.length ? [...list] : []);
+  }, [wishlistQuery.dataUpdatedAt, wishlistQuery.data]);
+
+  const wishlistSort = useWishlistSortProducts({
+    supplierUID: supplierUID ?? undefined,
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err, t("basket_error")));
+    },
+  });
+
   const handleRemoveFavorite = (productUID: string) => {
     wishlistToggle.mutate(productUID);
+  };
+
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", String(index));
+    e.dataTransfer.setData("application/json", JSON.stringify({ index }));
+    const row = (e.currentTarget as HTMLElement).closest("[data-drag-row]");
+    if (row instanceof HTMLElement) {
+      const rect = row.getBoundingClientRect();
+      e.dataTransfer.setDragImage(
+        row,
+        e.clientX - rect.left,
+        e.clientY - rect.top,
+      );
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    const raw = e.dataTransfer.getData("text/plain");
+    const dragIndex = raw === "" ? null : parseInt(raw, 10);
+    if (
+      dragIndex == null ||
+      Number.isNaN(dragIndex) ||
+      dragIndex === dropIndex
+    ) {
+      setDraggedIndex(null);
+      return;
+    }
+    const reordered = [...orderedItems];
+    const [removed] = reordered.splice(dragIndex, 1);
+    reordered.splice(dropIndex, 0, removed);
+    setOrderedItems(reordered);
+    setDraggedIndex(null);
+    wishlistSort.mutate({
+      sortedProducts: reordered.map((item: any, rank: number) => ({
+        productUID: item.productUID ?? item.id,
+        newRank: rank,
+      })),
+    });
   };
 
   return (
@@ -66,17 +134,24 @@ export default function FavoritesPage() {
           initial="hidden"
           animate="visible"
         >
-          {items.map((item: any) => {
+          {orderedItems.map((item: any, index: number) => {
             const productUID = item.productUID ?? item.id;
             const isRemoving =
               wishlistToggle.isPending &&
               wishlistToggle.variables === productUID;
+            const isDragging = draggedIndex === index;
 
             return (
               <motion.div
                 key={productUID}
                 variants={listItemVariants}
-                className="flex gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow"
+                data-index={index}
+                data-drag-row
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, index)}
+                className={`flex gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow ${
+                  isDragging ? "opacity-60" : ""
+                }`}
               >
                 {/* Product Image */}
                 {item.productImage && (
@@ -84,7 +159,7 @@ export default function FavoritesPage() {
                     <img
                       src={item.productImage}
                       alt={item.title || item.productTitle || "Product"}
-                      className="h-20 w-20 rounded-lg border border-slate-200 bg-slate-50 object-cover"
+                      className="h-12 w-12 rounded-lg border border-slate-200 bg-slate-50 object-cover"
                     />
                   </div>
                 )}
@@ -92,32 +167,20 @@ export default function FavoritesPage() {
                 {/* Product Info */}
                 <div className="min-w-0 flex-1">
                   <h3 className="text-lg font-semibold text-slate-900 leading-tight">
-                    {item.title ||
-                      item.productTitle ||
+                    {item.productTitle ||
+                      item.title ||
                       item.productOriginalTitle ||
                       "—"}
                   </h3>
-                  {(item.subTitle || item.productDescription) && (
-                    <p className="mt-1 text-base text-slate-600 line-clamp-2">
-                      {item.subTitle || item.productDescription}
-                    </p>
-                  )}
-                  {item.productPackaging && (
+                  {item.productDescription && (
                     <p className="mt-1 text-base text-slate-500">
-                      {t("product_packaging")} {item.productPackaging}
+                      {item.productDescription}
                     </p>
                   )}
-                  <div className="mt-2 flex items-center gap-4">
-                    {typeof item.price === "number" && (
-                      <p className="text-lg font-bold text-slate-900">
-                        {item.price.toFixed(2)} {item.currency ?? "€"}
-                      </p>
-                    )}
-                  </div>
                 </div>
 
                 {/* Remove Button */}
-                <div className="shrink-0 flex items-start">
+                <div className="shrink-0 flex items-center">
                   <Button
                     type="button"
                     variant="ghost"
@@ -141,6 +204,22 @@ export default function FavoritesPage() {
                       />
                     )}
                   </Button>
+                  {/* Drag Handle */}
+                  <div
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, index)}
+                    onDragEnd={handleDragEnd}
+                    className="shrink-0 flex items-center cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-600 touch-none"
+                    aria-label={t("supplier_reorder") ?? "Reorder"}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ")
+                        e.preventDefault();
+                    }}
+                  >
+                    <GripVertical className="h-5 w-5" />
+                  </div>
                 </div>
               </motion.div>
             );
