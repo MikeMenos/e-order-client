@@ -278,7 +278,10 @@ export default function SupplierPage() {
 
       <div className="flex flex-col">
         {showDetails && (
-          <div className="w-full rounded-b-lg">
+          <div
+            className="sticky z-20 w-full rounded-b-lg bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90 pb-1"
+            style={{ top: headerHeight }}
+          >
             <div className="mx-auto max-w-4xl">
               <SupplierSearchAndTabs
                 searchPlaceholder={t("products_search_placeholder")}

@@ -10,7 +10,6 @@ export default function AllSuppliersPage() {
   return (
     <main className="text-slate-900p px-2">
       <SuppliersSection
-        refDate={refDate}
         suppliers={suppliers}
         isLoading={isLoading}
         isError={isError}

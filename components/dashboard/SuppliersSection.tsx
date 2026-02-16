@@ -3,15 +3,13 @@ import { motion } from "framer-motion";
 import { useTranslation } from "../../lib/i18n";
 import { listVariants, listItemVariants } from "../../lib/motion";
 import { Button } from "../ui/button";
-import { SuppliersSectionHeader } from "./SuppliersSectionHeader";
 import { SuppliersSearchBar } from "./SuppliersSearchBar";
 import { SupplierTile } from "./SupplierTile";
 import { usePathname } from "next/navigation";
 import { SuppliersListItem } from "@/lib/types/dashboard";
-import { formatRefDateLong, isTodayDate } from "@/lib/utils";
+import { useAppHeaderHeight } from "@/app/(app)/AppHeaderContext";
 
 type Props = {
-  refDate: string;
   suppliers: SuppliersListItem[];
   isLoading: boolean;
   isError: boolean;
@@ -25,7 +23,6 @@ type Props = {
 };
 
 export function SuppliersSection({
-  refDate,
   suppliers,
   isLoading,
   isError,
@@ -39,15 +36,7 @@ export function SuppliersSection({
   const [statusFilter, setStatusFilter] = useState("");
   const { t } = useTranslation();
   const pathname = usePathname();
-
-  const statusOptions = useMemo(() => {
-    const set = new Set<string>();
-    suppliers.forEach((s) => {
-      const d = s.basketIconStatusDescr?.trim();
-      if (d) set.add(d);
-    });
-    return Array.from(set).sort();
-  }, [suppliers]);
+  const headerHeight = useAppHeaderHeight();
 
   const filteredSuppliers = useMemo(() => {
     let data = [...suppliers];
@@ -93,27 +82,12 @@ export function SuppliersSection({
     return data;
   }, [suppliers, searchQuery, statusFilter, isAscending, pathname]);
 
-  const isToday = isTodayDate(refDate);
-  const dateFormatted = formatRefDateLong(refDate);
-
   return (
     <section>
-      <div className="mb-2 flex flex-col gap-2">
-        {/* {pathname !== "/all-suppliers" &&
-          pathname !== "/settings/manage-suppliers" && (
-            <p className="text-2xl text-slate-900 mt-2 text-center">
-              {isToday ? (
-                <>
-                  <span className="font-medium text-green-600">
-                    {t("calendar_today")}
-                  </span>
-                  <span> – {dateFormatted}</span>
-                </>
-              ) : (
-                dateFormatted
-              )}
-            </p>
-          )} */}
+      <div
+        className="sticky z-20 -mx-3 mb-2 w-[calc(100%+1.5rem)] flex flex-col gap-2 bg-app-bg-solid"
+        style={{ top: headerHeight }}
+      >
         <div className="flex h-9 items-center gap-2 mt-2">
           <SuppliersSearchBar value={searchQuery} onChange={setSearchQuery} />
           {(pathname === "/all-suppliers" ||
@@ -134,19 +108,8 @@ export function SuppliersSection({
             </Button>
           )}
         </div>
-        {/* <SuppliersSectionHeader
-          isAscending={isAscending}
-          onSortToggle={() => setIsAscending((v) => !v)}
-          statusOptions={statusOptions}
-          selectedStatus={statusFilter}
-          onStatusChange={setStatusFilter}
-          ordersOfTheDayCount={suppliers.length}
-        /> */}
+        {pathname === "/orders-of-the-day" && children}
       </div>
-
-      {pathname === "/orders-of-the-day" && (
-        <div className="-mx-3 w-[calc(100%+1.5rem)]">{children}</div>
-      )}
 
       {isLoading && (
         <p className="text-base text-slate-400">{t("suppliers_loading")}</p>

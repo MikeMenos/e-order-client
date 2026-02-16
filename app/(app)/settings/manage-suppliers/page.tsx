@@ -14,7 +14,9 @@ export default function ManageSuppliersPage() {
 
   const handleSupplierClick = React.useCallback(
     (s: SuppliersListItem) => {
-      router.push(`/settings/manage-suppliers/${encodeURIComponent(s.supplierUID)}`);
+      router.push(
+        `/settings/manage-suppliers/${encodeURIComponent(s.supplierUID)}`,
+      );
     },
     [router],
   );
@@ -22,7 +24,6 @@ export default function ManageSuppliersPage() {
   return (
     <main className="text-slate-900 px-3">
       <SuppliersSection
-        refDate={refDate}
         suppliers={suppliers}
         isLoading={isLoading}
         isError={isError}

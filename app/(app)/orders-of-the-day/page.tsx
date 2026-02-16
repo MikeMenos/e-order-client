@@ -10,7 +10,7 @@ import {
 import { useActiveTabsStore, activeTabKeys } from "@/stores/activeTabs";
 
 export default function OrdersOfTheDayPage() {
-  const { refDate, suppliers, isLoading, isError, errorMessage } =
+  const { suppliers, isLoading, isError, errorMessage } =
     useSuppliersListForToday();
 
   const suppliersInPrefDaySchedule = useMemo(
@@ -58,7 +58,6 @@ export default function OrdersOfTheDayPage() {
   return (
     <main className="text-slate-900 px-3">
       <SuppliersSection
-        refDate={refDate}
         suppliers={suppliersByTab}
         isLoading={isLoading}
         isError={isError}
