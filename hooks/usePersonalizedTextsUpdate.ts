@@ -3,7 +3,7 @@ import { api } from "../lib/api";
 
 export type PersonalizedTextsUpdatePayload = {
   productUID: string | null;
-  supplierUID: string;
+  supplierUID: string | null;
   erpCatUID: string | null;
   displayText: string;
   displayText2: string;
