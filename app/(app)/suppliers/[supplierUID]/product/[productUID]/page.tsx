@@ -204,7 +204,7 @@ export default function SupplierProductPage() {
                 <Loader2 className="h-6 w-6 animate-spin" aria-hidden />
               ) : (
                 <Star
-                  className="h-8 w-8 bg-white rounded"
+                  className="h-8 w-8"
                   fill={isFavorite ? favIconColor : "transparent"}
                   stroke={isFavorite ? favIconColor : "currentColor"}
                   strokeWidth={1.5}

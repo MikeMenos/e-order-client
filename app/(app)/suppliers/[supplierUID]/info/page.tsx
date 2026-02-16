@@ -80,7 +80,7 @@ export default function SupplierInfoPage() {
           {supplier && !isEditingTitle && (
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={startEditingTitle}
               className="shrink-0 gap-1.5 text-slate-600 hover:text-slate-900"
