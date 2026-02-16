@@ -31,11 +31,11 @@ export function OrdersOfTheDayTabs({
     <Tabs
       value={value}
       onValueChange={(v) => onValueChange(v as OrdersOfTheDayTabId)}
-      className="w-full"
+      className="rounded-lg"
     >
       <TabsList
         variant="line"
-        className="mb-4 w-full justify-start gap-1.5 rounded-lg bg-white p-0"
+        className="mb-2 w-full justify-start gap-1.5 rounded-lg bg-white p-0"
       >
         <TabsTrigger value="all" className={tabTriggerClass}>
           {t("orders_of_day_tab_all")}
