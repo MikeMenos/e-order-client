@@ -55,13 +55,14 @@ export default function SupplierInfoPage() {
   const saveCustomTitle = () => {
     if (!supplierUID) return;
     personalizedUpdate.mutate({
-      productUID: "",
+      productUID: null,
       supplierUID,
-      erpCatUID: "",
+      erpCatUID: null,
       displayText: editCustomTitle.trim(),
       displayText2: "",
       displayText3: "",
       personalNotes: "",
+      remove: false,
     });
   };
 

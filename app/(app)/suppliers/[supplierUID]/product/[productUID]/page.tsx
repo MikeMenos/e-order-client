@@ -109,9 +109,9 @@ export default function SupplierProductPage() {
   const saveTitle = () => {
     if (!supplierUID || !productUID) return;
     personalizedUpdate.mutate({
-      productUID,
+      productUID: null,
       supplierUID,
-      erpCatUID: "",
+      erpCatUID: null,
       displayText: "",
       displayText2: editTitle.trim(),
       displayText3: "",
@@ -258,6 +258,9 @@ export default function SupplierProductPage() {
 
         {/* Last orders */}
         <DetailSection title={t("product_last_orders")}>
+          <p className="text-sm font-medium text-slate-600 mb-3">
+            {t("product_last_orders")}
+          </p>
           {lastOrders.length === 0 ? (
             <p className="text-base text-slate-500">
               {t("supplier_order_history_empty")}
