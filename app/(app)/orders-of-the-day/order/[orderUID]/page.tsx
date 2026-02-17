@@ -145,7 +145,7 @@ export default function OrderOfTheDayViewPage() {
                         key={item.productUID ?? idx}
                         className="flex items-start gap-3 rounded-md bg-slate-50 px-2 py-1.5 text-slate-700"
                       >
-                        {typeof imageUrl === "string" && imageUrl !== "" ? (
+                        {/* {typeof imageUrl === "string" && imageUrl !== "" ? (
                           <div className="shrink-0">
                             <img
                               src={imageUrl}
@@ -153,7 +153,7 @@ export default function OrderOfTheDayViewPage() {
                               className="h-12 w-12 rounded border border-slate-200 bg-slate-100 object-cover"
                             />
                           </div>
-                        ) : null}
+                        ) : null} */}
                         <div className="min-w-0 flex-1">
                           <p className="font-medium text-slate-900">
                             {item.productTitle ??
