@@ -354,7 +354,7 @@ const resources: Resources = {
     calendar_today: "Σήμερα",
     suppliers_orders_of_day: "Παραγγελίες ημέρας",
     orders_of_day_tab_all: "Όλες",
-    orders_of_day_tab_pending: "Εκκρεμεί",
+    orders_of_day_tab_pending: "Εκκρεμείς",
     orders_of_day_tab_drafts: "Πρόχειρες",
     suppliers_sort_by_time: "Κατά ώρα",
     suppliers_sort_asc: "Πρώτα νωρίτερα",

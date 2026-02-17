@@ -155,6 +155,9 @@ export function SuppliersSection({
                     ? undefined
                     : (() => {
                         if (pathname === "/orders-of-the-day") {
+                          if (s.basketIconStatus === 200 && s.todaysOrderUID) {
+                            return `/orders-of-the-day/order/${encodeURIComponent(s.todaysOrderUID)}`;
+                          }
                           return `/suppliers/${encodeURIComponent(s.supplierUID)}?from=orders-of-the-day`;
                         }
                         return `/suppliers/${encodeURIComponent(s.supplierUID)}`;
