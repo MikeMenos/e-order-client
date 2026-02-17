@@ -83,6 +83,8 @@ export type SuppliersListItem = {
   counterTodayOrders: number;
   counterOpenBaskets: number;
   categories: SupplierDisplayCategory[];
+  /** When basketIconStatus === 200, today's completed order UID for Order_View */
+  todaysOrderUID?: string | null;
 };
 
 export type SuppliersListResponse = {
