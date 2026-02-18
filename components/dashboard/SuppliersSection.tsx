@@ -112,7 +112,7 @@ export function SuppliersSection({
         className="sticky z-20 -mx-3 mb-2 w-[calc(100%+1.5rem)] flex flex-col gap-2 bg-app-bg-solid"
         style={{ top: headerHeight }}
       >
-        <div className="flex h-9 items-center gap-1 mt-2">
+        <div className="flex h-9 items-center gap-1 mt-2 px-2">
           <SuppliersSearchBar value={searchQuery} onChange={setSearchQuery} />
           {showCalendarButton && (
             <Button
