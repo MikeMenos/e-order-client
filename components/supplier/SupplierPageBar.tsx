@@ -37,11 +37,7 @@ export function SupplierPageBar({ supplier, mainTab, onMainTabChange }: Props) {
     basketData?.basketsList?.[0];
   const basketItemCount = supplierBasket?.totalItems ?? 0;
 
-  const supplierLabel =
-    supplier?.customTitle ??
-    supplier?.subTitle ??
-    supplier?.title ??
-    t("common_supplier");
+  const supplierLabel = supplier?.title ?? supplier?.subTitle;
 
   const queryString = fromParam ? `?from=${encodeURIComponent(fromParam)}` : "";
   const checkoutHref = `/suppliers/${encodeURIComponent(supplierUID as string)}/checkout${queryString}`;
@@ -52,23 +48,47 @@ export function SupplierPageBar({ supplier, mainTab, onMainTabChange }: Props) {
   return (
     <div className="flex flex-col gap-0">
       <div className="mx-auto flex w-full items-center justify-between gap-4 px-4 py-2">
-        <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
-          {supplier?.logo && (
-            <img
-              src={supplier.logo}
-              alt={supplierLabel}
-              className="h-10 w-10 shrink-0 rounded-full bg-slate-100 object-contain"
-            />
-          )}
-          <div className="min-w-0 flex-1 overflow-hidden">
-            <p
-              className="text-base font-semibold text-slate-900"
-              title={supplierLabel}
-            >
-              {supplierLabel}
-            </p>
+        {supplierUID ? (
+          <Link
+            href={`/settings/manage-suppliers/${encodeURIComponent(supplierUID)}`}
+            className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden rounded-lg transition-colors hover:bg-slate-100/80 active:bg-slate-100"
+            aria-label={t("supplier_manage") ?? "Manage supplier"}
+          >
+            {supplier?.logo && (
+              <img
+                src={supplier.logo}
+                alt={supplierLabel ?? ""}
+                className="h-10 w-10 shrink-0 rounded-full bg-slate-100 object-contain"
+              />
+            )}
+            <div className="min-w-0 flex-1 overflow-hidden">
+              <p
+                className="text-base font-semibold text-slate-900"
+                title={supplierLabel ?? ""}
+              >
+                {supplierLabel}
+              </p>
+            </div>
+          </Link>
+        ) : (
+          <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
+            {supplier?.logo && (
+              <img
+                src={supplier.logo}
+                alt={supplierLabel ?? ""}
+                className="h-10 w-10 shrink-0 rounded-full bg-slate-100 object-contain"
+              />
+            )}
+            <div className="min-w-0 flex-1 overflow-hidden">
+              <p
+                className="text-base font-semibold text-slate-900"
+                title={supplierLabel ?? ""}
+              >
+                {supplierLabel}
+              </p>
+            </div>
           </div>
-        </div>
+        )}
         <div className="flex shrink-0 items-center gap-2 text-base text-slate-500">
           <Link
             href={checkoutHref}

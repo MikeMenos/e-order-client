@@ -5,6 +5,7 @@ import { useTranslation } from "@/lib/i18n";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Calendar } from "../ui/calendar";
 import { Button } from "../ui/button";
+import { X } from "lucide-react";
 
 type Props = {
   open: boolean;
@@ -26,11 +27,23 @@ export function RefDateCalendarDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="gap-4">
+      <DialogContent className="relative gap-4">
         <DialogHeader>
-          <DialogTitle>
-            {t("suppliers_select_date") ?? "Select date"}
-          </DialogTitle>
+          <div className="flex items-center justify-between gap-2">
+            <DialogTitle>
+              {t("suppliers_select_date") ?? "Select date"}
+            </DialogTitle>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label={t("suppliers_calendar_close") ?? "Close"}
+              className="shrink-0 text-slate-500 hover:text-slate-700 hover:bg-slate-100 -mr-1"
+              onClick={() => onOpenChange(false)}
+            >
+              <X className="size-5" />
+            </Button>
+          </div>
         </DialogHeader>
         <Calendar
           mode="single"
@@ -43,15 +56,6 @@ export function RefDateCalendarDialog({
           }}
           disabled={(date) => isBefore(startOfDay(date), todayStart())}
         />
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="self-center"
-          onClick={() => onOpenChange(false)}
-        >
-          {t("suppliers_calendar_close") ?? "Close"}
-        </Button>
       </DialogContent>
     </Dialog>
   );
