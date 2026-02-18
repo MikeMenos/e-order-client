@@ -13,6 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api-error";
 import type { SuppliersListItem } from "@/lib/types/dashboard";
+import { Button } from "@/components/ui/button";
 
 export default function ManageSupplierMenuPage() {
   const { t } = useTranslation();
@@ -97,13 +98,6 @@ export default function ManageSupplierMenuPage() {
     return (
       <main className="px-3 text-slate-900">
         <p className="text-base text-slate-500">{t("suppliers_error")}</p>
-        <button
-          type="button"
-          onClick={() => router.push("/settings/manage-suppliers")}
-          className="mt-2 text-base text-brand-600 underline"
-        >
-          {t("common_back")}
-        </button>
       </main>
     );
   }
@@ -113,11 +107,11 @@ export default function ManageSupplierMenuPage() {
       <div className="mx-auto flex max-w-xl flex-col mt-2">
         <div className="my-4">
           <h1 className="text-xl font-bold text-slate-900 mt-2 text-center">
-            {selectedSupplier.subTitle ?? selectedSupplier.title}
+            {selectedSupplier.title ?? selectedSupplier.subTitle}
           </h1>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 auto-rows-fr gap-4">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 auto-rows-fr gap-4">
           <TileCard
             iconSrc="/assets/supplier-info.png"
             label={t("settings_supplier_details")}
@@ -170,7 +164,7 @@ export default function ManageSupplierMenuPage() {
           roles={roles}
           userName={userName || undefined}
           onSelectRole={handleSelectRole}
-        />
+        /> */}
       </div>
     </main>
   );

@@ -4,13 +4,14 @@ import { useTranslation } from "@/lib/i18n";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
-export type OrdersOfTheDayTabId = "all" | "pending" | "drafts";
+export type OrdersOfTheDayTabId = "all" | "pending" | "drafts" | "completed";
 
 type Props = {
   value: OrdersOfTheDayTabId;
   onValueChange: (value: OrdersOfTheDayTabId) => void;
   pendingCount: number;
   draftsCount: number;
+  completedCount: number;
 };
 
 const tabTriggerClass = cn(
@@ -24,6 +25,7 @@ export function OrdersOfTheDayTabs({
   onValueChange,
   pendingCount,
   draftsCount,
+  completedCount,
 }: Props) {
   const { t } = useTranslation();
 
@@ -33,12 +35,21 @@ export function OrdersOfTheDayTabs({
       onValueChange={(v) => onValueChange(v as OrdersOfTheDayTabId)}
       className="rounded-lg"
     >
-      <TabsList
-        variant="line"
-        className="mb-2 w-full justify-start gap-1.5 rounded-lg bg-white p-0"
-      >
+      <div className="mb-2 overflow-x-auto overflow-y-hidden min-w-0 [-webkit-overflow-scrolling:touch]">
+        <TabsList
+          variant="line"
+          className="inline-flex w-max min-w-full flex-nowrap justify-start gap-1.5 rounded-lg bg-white p-0"
+        >
         <TabsTrigger value="all" className={tabTriggerClass}>
           {t("orders_of_day_tab_all")}
+        </TabsTrigger>
+        <TabsTrigger value="completed" className={tabTriggerClass}>
+          {t("orders_of_day_tab_completed")}
+          {completedCount > 0 && (
+            <span className="ml-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-500 px-1.5 text-xs font-medium text-white group-data-[state=active]:bg-white group-data-[state=active]:text-brand-600">
+              {completedCount}
+            </span>
+          )}
         </TabsTrigger>
         <TabsTrigger value="pending" className={tabTriggerClass}>
           {t("orders_of_day_tab_pending")}
@@ -56,7 +67,8 @@ export function OrdersOfTheDayTabs({
             </span>
           )}
         </TabsTrigger>
-      </TabsList>
+        </TabsList>
+      </div>
     </Tabs>
   );
 }

@@ -28,6 +28,8 @@ type Props = {
   tileStyle?: "default" | "settings";
   /** When true (e.g. Πρόχειρες tab), show draft style and text regardless of basketIconStatus. */
   displayAsDraft?: boolean;
+  /** When true, list uses all-suppliers style (grid, no delivery/basket) and children (tabs) are hidden. */
+  calendarDateView?: boolean;
 };
 
 const tileClassNameDefault =
@@ -43,17 +45,23 @@ export function SupplierTile({
   onClick,
   tileStyle = "default",
   displayAsDraft = false,
+  calendarDateView = false,
 }: Props) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const isNotOrdersOfDayPage =
-    pathname === "/all-suppliers" || pathname === "/settings/manage-suppliers";
-  const isOrdersOfDayPage = pathname === "/orders-of-the-day";
+    calendarDateView ||
+    pathname === "/all-suppliers" ||
+    pathname === "/settings/manage-suppliers" ||
+    pathname === "/settings/partner-suppliers";
+  const isOrdersOfDayPage =
+    pathname === "/orders-of-the-day" && !calendarDateView;
 
   const openBaskets = supplier.counterOpenBaskets ?? 0;
   const todayOrders = supplier.counterTodayOrders ?? 0;
-  const showDotArea = isNotOrdersOfDayPage || isOrdersOfDayPage;
-  const showOrangeDot = isNotOrdersOfDayPage && openBaskets > 0;
+  const showDotArea =
+    !calendarDateView && (isNotOrdersOfDayPage || isOrdersOfDayPage);
+  const showOrangeDot = showDotArea && isNotOrdersOfDayPage && openBaskets > 0;
   const greenDotCount = Math.min(todayOrders, 10);
 
   const defaultHref = isOrdersOfDayPage
@@ -188,7 +196,7 @@ export function SupplierTile({
             {isOrdersOfDayPage ? (
               <>
                 <p className="font-bold uppercase tracking-wide text-slate-900">
-                  {supplier.customTitle ?? supplier.subTitle ?? supplier.title}
+                  {supplier.title ?? supplier.subTitle}
                 </p>
                 {showDeliveryInfo && supplier.nextAvailDeliveryText && (
                   <p className="mt-0.5 text-base text-slate-500">
