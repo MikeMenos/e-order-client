@@ -58,45 +58,46 @@ export default function FavoritesPage() {
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/plain", String(index));
     e.dataTransfer.setData("application/json", JSON.stringify({ index }));
-    const row = (e.currentTarget as HTMLElement).closest("[data-drag-row]");
-    if (row instanceof HTMLElement) {
-      const rect = row.getBoundingClientRect();
-      e.dataTransfer.setDragImage(
-        row,
-        e.clientX - rect.left,
-        e.clientY - rect.top,
-      );
-    }
+    const img = new Image();
+    img.src =
+      "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+    e.dataTransfer.setDragImage(img, 0, 0);
   };
 
   const handleDragEnd = () => {
     setDraggedIndex(null);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: React.DragEvent, overIndex: number) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
+    if (draggedIndex == null || overIndex === draggedIndex) return;
+    setOrderedItems((prev) => {
+      const reordered = [...prev];
+      const [removed] = reordered.splice(draggedIndex, 1);
+      reordered.splice(overIndex, 0, removed);
+      return reordered;
+    });
+    setDraggedIndex(overIndex);
   };
 
   const handleDrop = (e: React.DragEvent, dropIndex: number) => {
     e.preventDefault();
-    const raw = e.dataTransfer.getData("text/plain");
-    const dragIndex = raw === "" ? null : parseInt(raw, 10);
-    if (
-      dragIndex == null ||
-      Number.isNaN(dragIndex) ||
-      dragIndex === dropIndex
-    ) {
+    if (draggedIndex == null) {
       setDraggedIndex(null);
       return;
     }
-    const reordered = [...orderedItems];
-    const [removed] = reordered.splice(dragIndex, 1);
-    reordered.splice(dropIndex, 0, removed);
-    setOrderedItems(reordered);
+    let finalOrder = orderedItems;
+    if (draggedIndex !== dropIndex) {
+      const reordered = [...orderedItems];
+      const [removed] = reordered.splice(draggedIndex, 1);
+      reordered.splice(dropIndex, 0, removed);
+      setOrderedItems(reordered);
+      finalOrder = reordered;
+    }
     setDraggedIndex(null);
     wishlistSort.mutate({
-      sortedProducts: reordered.map((item: any, rank: number) => ({
+      sortedProducts: finalOrder.map((item: any, rank: number) => ({
         productUID: item.productUID ?? item.id,
         newRank: rank,
       })),
@@ -143,12 +144,14 @@ export default function FavoritesPage() {
 
             return (
               <motion.div
+                layout
                 key={productUID}
                 variants={listItemVariants}
                 data-index={index}
                 data-drag-row
-                onDragOver={handleDragOver}
+                onDragOver={(e) => handleDragOver(e, index)}
                 onDrop={(e) => handleDrop(e, index)}
+                transition={{ type: "spring", stiffness: 350, damping: 30 }}
                 className={`flex gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow ${
                   isDragging ? "opacity-60" : ""
                 }`}
