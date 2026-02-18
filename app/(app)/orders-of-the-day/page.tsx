@@ -71,7 +71,8 @@ export default function OrdersOfTheDayPage() {
     }
   }, [activeTab, all, pending, drafts, completed]);
 
-  const suppliersToShow = calendarRefDate != null ? suppliers : suppliersByTab;
+  const suppliersToShow =
+    calendarRefDate != null ? suppliersInPrefDaySchedule : suppliersByTab;
 
   return (
     <main className="text-slate-900 px-3">
