@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { ArrowRight, Calendar as CalendarIcon } from "lucide-react";
 import { useTranslation } from "../../lib/i18n";
 import { listVariants, listItemVariants } from "../../lib/motion";
 import { Button } from "../ui/button";
@@ -9,6 +10,7 @@ import { SupplierTile } from "./SupplierTile";
 import { usePathname } from "next/navigation";
 import { SuppliersListItem } from "@/lib/types/dashboard";
 import { useAppHeaderHeight } from "@/app/(app)/AppHeaderContext";
+import { RefDateCalendarDialog } from "./RefDateCalendarDialog";
 
 type Props = {
   suppliers: SuppliersListItem[];
@@ -21,6 +23,18 @@ type Props = {
   children?: React.ReactNode;
   /** When true (e.g. on Πρόχειρες tab), all tiles show draft style and text. */
   displayAsDraft?: boolean;
+  /** When true, show a calendar button that opens a date picker; on select, onRefDateSelect is called. */
+  showCalendarButton?: boolean;
+  /** Called when user selects a date in the calendar (orders-of-the-day). */
+  onRefDateSelect?: (date: Date) => void;
+  /** When true, list uses all-suppliers style (grid, no delivery/basket) and children (tabs) are hidden. */
+  calendarDateView?: boolean;
+  /** Currently selected date (ISO string). Passed to the calendar dialog so it shows as selected when reopened. */
+  selectedRefDate?: string | null;
+  /** Day name from API (e.g. "Mon") when in calendar date view; shown centered above the list. */
+  calendarDayNameShort?: string | null;
+  /** When in calendar date view, called when user clicks "Today's orders" to show today's list. */
+  onShowTodayClick?: () => void;
 };
 
 export function SuppliersSection({
@@ -31,13 +45,26 @@ export function SuppliersSection({
   onSupplierClick,
   children,
   displayAsDraft = false,
+  showCalendarButton = false,
+  onRefDateSelect,
+  calendarDateView = false,
+  selectedRefDate = null,
+  calendarDayNameShort = null,
+  onShowTodayClick,
 }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAscending, setIsAscending] = useState(true);
-  const [statusFilter, setStatusFilter] = useState("");
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const { t } = useTranslation();
   const pathname = usePathname();
   const headerHeight = useAppHeaderHeight();
+
+  const useAllSuppliersStyle =
+    calendarDateView ||
+    pathname === "/all-suppliers" ||
+    pathname === "/settings/manage-suppliers" ||
+    pathname === "/settings/partner-suppliers";
+  const showTabs = pathname === "/orders-of-the-day" && !calendarDateView;
 
   const filteredSuppliers = useMemo(() => {
     let data = [...suppliers];
@@ -51,26 +78,12 @@ export function SuppliersSection({
       );
     }
 
-    if (statusFilter) {
-      data = data.filter(
-        (s) => (s.basketIconStatusDescr?.trim() ?? "") === statusFilter,
-      );
-    }
-
-    // Sort by nextAvailDeliveryText on orders-of-the-day
-    if (pathname === "/orders-of-the-day") {
-      data.sort((a, b) => {
-        const na = (a.nextAvailDeliveryText ?? "").toLowerCase();
-        const nb = (b.nextAvailDeliveryText ?? "").toLowerCase();
-        const cmp = na.localeCompare(nb);
-        return isAscending ? cmp : -cmp;
-      });
-    }
-
-    // Alphabetical by title on all-suppliers and manage-suppliers
+    // Alphabetical by title on all-suppliers, manage-suppliers, and calendar date view
     if (
       pathname === "/all-suppliers" ||
-      pathname === "/settings/manage-suppliers"
+      pathname === "/settings/manage-suppliers" ||
+      pathname === "/settings/partner-suppliers" ||
+      calendarDateView
     ) {
       data.sort((a, b) => {
         const na = (a.title ?? "").toLowerCase();
@@ -80,8 +93,18 @@ export function SuppliersSection({
       });
     }
 
+    // Sort by nextAvailDeliveryText on orders-of-the-day (tabs view only)
+    if (pathname === "/orders-of-the-day" && !calendarDateView) {
+      data.sort((a, b) => {
+        const na = (a.nextAvailDeliveryText ?? "").toLowerCase();
+        const nb = (b.nextAvailDeliveryText ?? "").toLowerCase();
+        const cmp = na.localeCompare(nb);
+        return isAscending ? cmp : -cmp;
+      });
+    }
+
     return data;
-  }, [suppliers, searchQuery, statusFilter, isAscending, pathname]);
+  }, [suppliers, searchQuery, isAscending, pathname, calendarDateView]);
 
   return (
     <section>
@@ -89,10 +112,24 @@ export function SuppliersSection({
         className="sticky z-20 -mx-3 mb-2 w-[calc(100%+1.5rem)] flex flex-col gap-2 bg-app-bg-solid"
         style={{ top: headerHeight }}
       >
-        <div className="flex h-9 items-center gap-2 mt-2">
+        <div className="flex h-9 items-center gap-1 mt-2">
           <SuppliersSearchBar value={searchQuery} onChange={setSearchQuery} />
+          {showCalendarButton && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-9 shrink-0 border-slate-300 text-slate-700"
+              aria-label={t("suppliers_select_date") ?? "Select date"}
+              onClick={() => setCalendarOpen(true)}
+            >
+              <CalendarIcon className="h-4 w-4" />
+            </Button>
+          )}
           {(pathname === "/all-suppliers" ||
-            pathname === "/settings/manage-suppliers") && (
+            pathname === "/settings/manage-suppliers" ||
+            pathname === "/settings/partner-suppliers" ||
+            calendarDateView) && (
             <Button
               type="button"
               variant="outline"
@@ -109,7 +146,7 @@ export function SuppliersSection({
             </Button>
           )}
         </div>
-        {pathname === "/orders-of-the-day" && children}
+        {showTabs && children}
       </div>
 
       {isLoading && <Loading spinnerOnly />}
@@ -124,49 +161,80 @@ export function SuppliersSection({
           {t("suppliers_empty")}
         </p>
       ) : (
-        <motion.div
-          className={
-            pathname === "/all-suppliers" ||
-            pathname === "/settings/manage-suppliers"
-              ? "grid grid-cols-2 gap-3 pb-8"
-              : "space-y-2 pb-8"
-          }
-          variants={listVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {filteredSuppliers.map((s) => (
-            <motion.div key={s.supplierUID} variants={listItemVariants}>
-              <SupplierTile
-                supplier={s}
-                showDeliveryInfo={
-                  pathname !== "/all-suppliers" &&
-                  pathname !== "/settings/manage-suppliers"
-                }
-                showBasketStatus={
-                  pathname !== "/all-suppliers" &&
-                  pathname !== "/settings/manage-suppliers"
-                }
-                displayAsDraft={displayAsDraft}
-                tileStyle="default"
-                href={
-                  onSupplierClick
-                    ? undefined
-                    : (() => {
-                        if (pathname === "/orders-of-the-day") {
-                          if (s.basketIconStatus === 200 && s.todaysOrderUID) {
-                            return `/orders-of-the-day/order/${encodeURIComponent(s.todaysOrderUID)}`;
+        <>
+          <RefDateCalendarDialog
+            open={calendarOpen}
+            onOpenChange={setCalendarOpen}
+            selectedDate={
+              selectedRefDate ? new Date(selectedRefDate) : undefined
+            }
+            onSelect={(date) => onRefDateSelect?.(date)}
+          />
+          {calendarDateView && calendarDayNameShort && (
+            <div className="flex items-center gap-2 my-1 justify-between">
+              <p className="text-center text-lg text-brand-500 font-medium">
+                {calendarDayNameShort}
+              </p>
+              {onShowTodayClick && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0"
+                  onClick={onShowTodayClick}
+                >
+                  {t("orders_today_button")}{" "}
+                  <ArrowRight className="h-4 w-4 ml-1" />
+                </Button>
+              )}
+            </div>
+          )}
+          <motion.div
+            className={
+              useAllSuppliersStyle
+                ? "grid grid-cols-2 gap-3 pb-8"
+                : "space-y-2 pb-8"
+            }
+            variants={listVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {filteredSuppliers.map((s) => (
+              <motion.div key={s.supplierUID} variants={listItemVariants}>
+                <SupplierTile
+                  supplier={s}
+                  showDeliveryInfo={!useAllSuppliersStyle}
+                  showBasketStatus={!useAllSuppliersStyle}
+                  displayAsDraft={displayAsDraft}
+                  calendarDateView={calendarDateView}
+                  tileStyle="default"
+                  href={
+                    onSupplierClick
+                      ? undefined
+                      : (() => {
+                          if (
+                            pathname === "/orders-of-the-day" &&
+                            !calendarDateView
+                          ) {
+                            if (
+                              s.basketIconStatus === 200 &&
+                              s.todaysOrderUID
+                            ) {
+                              return `/orders-of-the-day/order/${encodeURIComponent(s.todaysOrderUID)}`;
+                            }
+                            return `/suppliers/${encodeURIComponent(s.supplierUID)}?from=orders-of-the-day`;
                           }
-                          return `/suppliers/${encodeURIComponent(s.supplierUID)}?from=orders-of-the-day`;
-                        }
-                        return `/suppliers/${encodeURIComponent(s.supplierUID)}`;
-                      })()
-                }
-                onClick={onSupplierClick ? () => onSupplierClick(s) : undefined}
-              />
-            </motion.div>
-          ))}
-        </motion.div>
+                          return `/suppliers/${encodeURIComponent(s.supplierUID)}`;
+                        })()
+                  }
+                  onClick={
+                    onSupplierClick ? () => onSupplierClick(s) : undefined
+                  }
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </>
       )}
     </section>
   );

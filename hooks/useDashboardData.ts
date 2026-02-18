@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
 import { useEffect, useMemo } from "react";
 import { api } from "../lib/api";
 import { useAuthStore, useEffectiveSelectedUser } from "../stores/auth";
@@ -26,16 +25,27 @@ export const useDashboardCalendar = (enabled: boolean) => {
   });
 };
 
-export const useSuppliersForDate = (enabled: boolean) => {
+export const useSuppliersForDate = (
+  enabled: boolean,
+  refDate?: string | null,
+) => {
+  const hasRefDate = refDate != null && refDate !== "";
+
   return useQuery({
-    queryKey: ["suppliers"],
+    queryKey: ["suppliers", hasRefDate ? refDate : "today"],
     queryFn: async (): Promise<SuppliersListResponse> => {
-      const res = await api.post<SuppliersListResponse>("/suppliers-list", {
+      const body: Record<string, unknown> = {
         setCategories: true,
         setLastOrders: true,
         setDeliverySchedule: true,
         setDailyAnalysisSchedule: true,
-      });
+      };
+      if (hasRefDate) {
+        body.refDate = refDate;
+      } else {
+        body.refDate = null;
+      }
+      const res = await api.post<SuppliersListResponse>("/suppliers-list", body);
       return res.data;
     },
     enabled,
@@ -43,16 +53,24 @@ export const useSuppliersForDate = (enabled: boolean) => {
 };
 
 /**
- * Fetches suppliers for today with store token. Use on all-suppliers and orders-of-the-day pages.
+ * Fetches suppliers for today (or for refDateOverride when provided) with store token.
+ * Use on all-suppliers and orders-of-the-day pages.
+ * @param refDateOverride - Optional ISO date string (e.g. "2026-02-18T10:39:44.364Z"). When set, list is for that date.
  */
-export function useSuppliersListForToday() {
+export function useSuppliersListForToday(refDateOverride?: string | null) {
   const users = useAuthStore((s) => s.users);
   const effectiveUser = useEffectiveSelectedUser();
   const selectedStoreUID = useAuthStore((s) => s.selectedStoreUID);
   const setStoreAccessToken = useAuthStore((s) => s.setStoreAccessToken);
   const setSelectedStoreUID = useAuthStore((s) => s.setSelectedStoreUID);
   const storeAccessToken = useAuthStore((s) => s.storeAccessToken);
-  const refDate = format(new Date(), "yyyy-MM-dd");
+  const refDate = useMemo(
+    () =>
+      refDateOverride != null && refDateOverride !== ""
+        ? refDateOverride
+        : null,
+    [refDateOverride],
+  );
 
   const derivedStoreUID = useMemo(() => {
     if (!users && !effectiveUser) return null;
@@ -91,18 +109,41 @@ export function useSuppliersListForToday() {
 
   const hasStoreToken = !!storeAccessToken;
   // Only run store-dependent API when we actually have a store token.
-  // Otherwise we'd send requests with only accessToken and get 500s when storeAccessToken cookie was missing on return.
   const enabled = !!users && hasStoreToken;
-  const suppliersListQuery = useSuppliersForDate(enabled);
+  const suppliersListQuery = useSuppliersForDate(enabled, refDate);
   const suppliers = suppliersListQuery.data?.listSuppliers ?? [];
+  const dayNameShort = suppliersListQuery.data?.dayNameShort;
   const errorMessage = (suppliersListQuery.error as Error)?.message;
 
   return {
     refDate,
     suppliers,
+    dayNameShort,
     isLoading: suppliersListQuery.isLoading,
     isError: !!suppliersListQuery.error,
     errorMessage,
+  };
+}
+
+/**
+ * GET Shop/SuppliersNoPartners_GetList.
+ * Use on settings/partner-suppliers page.
+ */
+export function useSuppliersNoPartners() {
+  const query = useQuery({
+    queryKey: ["suppliers-no-partners"],
+    queryFn: async (): Promise<SuppliersListResponse> => {
+      const res = await api.get<SuppliersListResponse>("/suppliers-no-partners");
+      return res.data;
+    },
+  });
+
+  const suppliers = query.data?.listSuppliers ?? [];
+  return {
+    suppliers,
+    isLoading: query.isLoading,
+    isError: !!query.error,
+    errorMessage: (query.error as Error)?.message,
   };
 }
 
