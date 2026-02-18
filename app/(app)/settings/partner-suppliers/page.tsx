@@ -12,14 +12,14 @@ export default function PartnerSuppliersPage() {
   const { suppliers, isLoading, isError, errorMessage } =
     useSuppliersNoPartners();
 
-  const handleSupplierClick = React.useCallback(
-    (s: SuppliersListItem) => {
-      router.push(
-        `/settings/manage-suppliers/${encodeURIComponent(s.supplierUID)}`,
-      );
-    },
-    [router],
-  );
+  // const handleSupplierClick = React.useCallback(
+  //   (s: SuppliersListItem) => {
+  //     router.push(
+  //       `/settings/manage-suppliers/${encodeURIComponent(s.supplierUID)}`,
+  //     );
+  //   },
+  //   [router],
+  // );
 
   return (
     <main className="text-slate-900 px-3">
@@ -28,7 +28,7 @@ export default function PartnerSuppliersPage() {
         isLoading={isLoading}
         isError={isError}
         errorMessage={errorMessage}
-        onSupplierClick={handleSupplierClick}
+        // onSupplierClick={handleSupplierClick}
       />
     </main>
   );
