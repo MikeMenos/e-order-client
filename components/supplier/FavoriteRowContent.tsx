@@ -30,7 +30,7 @@ export function FavoriteRowContent({
 }: Props) {
   const productUID = item.productUID ?? item.id ?? "";
   return (
-    <div className="flex gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:shadow-md w-full">
+    <div className="flex gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:shadow-md w-full select-none [-webkit-touch-callout:none]">
       {item.productImage && (
         <div className="shrink-0">
           <img
@@ -46,7 +46,7 @@ export function FavoriteRowContent({
           {item.productTitle ?? item.title ?? item.productOriginalTitle ?? "—"}
         </h3>
         {item.productDescription && (
-          <p className="mt-l text-sm text-slate-500">
+          <p className="mt-1 text-sm text-slate-500">
             {item.productDescription}
           </p>
         )}
@@ -80,7 +80,7 @@ export function FavoriteRowContent({
               ref={dragHandleProps.setActivatorNodeRef}
               {...dragHandleProps.listeners}
               {...dragHandleProps.attributes}
-              className="shrink-0 flex items-center cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-600 touch-none p-1 -m-1"
+              className="shrink-0 flex items-center cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-600 touch-none select-none p-1 -m-1"
               aria-label={t("supplier_reorder") ?? "Reorder"}
             >
               <GripHorizontal className="h-6 w-6" />
