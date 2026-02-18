@@ -4,13 +4,13 @@ import type { Metadata, Viewport } from "next";
 import { ClientApp } from "./ClientApp";
 
 export const metadata: Metadata = {
-  title: "e-order",
+  title: "eorder",
   description: "e-order B2B PWA",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "e-order",
+    title: "eorder",
   },
 };
 

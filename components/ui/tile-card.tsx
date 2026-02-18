@@ -6,10 +6,11 @@ import { cn } from "@/lib/utils";
 import { Button } from "./button";
 
 const tileCardClass =
-  "flex h-full w-full flex-col items-stretch gap-2 rounded-2xl bg-white p-2 shadow-sm transition hover:shadow-md hover:shadow-slate-200/50 active:scale-[0.99] cursor-pointer";
+  "flex h-full w-full flex-col items-center justify-center gap-4 rounded-2xl bg-white p-6 shadow-sm transition hover:shadow-md hover:shadow-slate-200/50 active:scale-[0.99] cursor-pointer";
 
 const tileCardClassHorizontal =
-  "flex h-full w-full flex-row items-center gap-3 rounded-2xl bg-white p-3 shadow-sm transition hover:shadow-md hover:shadow-slate-200/50 active:scale-[0.99] cursor-pointer";
+  "flex h-full w-full flex-row items-center gap-4 rounded-2xl bg-white p-6 shadow-sm transition hover:shadow-md hover:shadow-slate-200/50 active:scale-[0.99] cursor-pointer";
+
 
 type TileCardProps = {
   icon?: LucideIcon;
@@ -72,7 +73,7 @@ export function TileCard({
         horizontal ? "justify-start px-2" : "min-h-11 justify-center px-0.5"
       )}>
         <span className={cn(
-          "text-xl font-medium text-slate-900 leading-tight wrap-break-word text-wrap",
+         "text-lg font-semibold text-slate-900 leading-tight wrap-break-word text-wrap",
           horizontal ? "text-left" : "text-center"
         )}>
           {label}
