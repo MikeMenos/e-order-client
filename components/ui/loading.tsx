@@ -4,12 +4,23 @@ import { Spinner } from "@/components/ui/spinner";
 type LoadingProps = {
   label?: string;
   fullPage?: boolean;
+  /** When true, only a centered spinner is shown (no card or message). Use for page-level loading. */
+  spinnerOnly?: boolean;
 };
 
 export default function Loading({
   label = "Loading…",
   fullPage = false,
+  spinnerOnly = false,
 }: LoadingProps) {
+  if (spinnerOnly) {
+    return (
+      <div className="min-h-[40vh] flex items-center justify-center py-12">
+        <Spinner size={40} />
+      </div>
+    );
+  }
+
   return (
     <div
       className={

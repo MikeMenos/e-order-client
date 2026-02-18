@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
 import { TileCard } from "@/components/ui/tile-card";
+import Loading from "@/components/ui/loading";
 import { StoreSelectDialog } from "@/components/auth/StoreSelectDialog";
 import { useAuthStore } from "@/stores/auth";
 import toast from "react-hot-toast";
@@ -87,7 +88,7 @@ export default function ManageSupplierMenuPage() {
   if (isLoading || !supplierUID) {
     return (
       <main className="px-3 text-slate-900">
-        <p className="text-base text-slate-500">{t("suppliers_loading")}</p>
+        <Loading spinnerOnly />
       </main>
     );
   }

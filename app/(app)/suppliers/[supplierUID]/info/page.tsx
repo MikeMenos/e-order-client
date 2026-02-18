@@ -12,6 +12,7 @@ import { getApiErrorMessage } from "@/lib/api-error";
 import { DetailSection } from "@/components/ui/detail-section";
 import { DetailRow } from "@/components/ui/detail-row";
 import { Button } from "@/components/ui/button";
+import Loading from "@/components/ui/loading";
 import { Input } from "@/components/ui/input";
 
 export default function SupplierInfoPage() {
@@ -76,7 +77,7 @@ export default function SupplierInfoPage() {
       <div className="mx-auto max-w-2xl">
         <div className="my-4 flex items-center justify-between gap-3 min-w-0">
           <h1 className="text-xl font-bold text-slate-900 mt-2 min-w-0">
-            {displayName || t("common_supplier")}
+            {displayName}
           </h1>
           {supplier && !isEditingTitle && (
             <Button
@@ -95,9 +96,7 @@ export default function SupplierInfoPage() {
           )}
         </div>
 
-        {basicInfoQuery.isLoading && (
-          <p className="text-base text-slate-500">{t("suppliers_loading")}</p>
-        )}
+        {basicInfoQuery.isLoading && <Loading spinnerOnly />}
 
         {basicInfoQuery.error && (
           <p className="text-base text-red-400">{t("suppliers_error")}</p>

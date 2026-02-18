@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { formatOrderDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { listVariants, listItemVariants } from "@/lib/motion";
 import type {
   OrderHistoryOrder,
@@ -134,9 +135,9 @@ export function OrderHistoryTile({
               {t("order_items")}
             </p>
             {itemsLoading ? (
-              <p className="text-base text-slate-500">
-                {t("supplier_order_history_loading")}
-              </p>
+              <div className="flex justify-center py-4">
+                <Spinner size={28} />
+              </div>
             ) : items.length === 0 ? (
               <p className="text-base text-slate-500 bg-white/80 backdrop-blur-sm rounded px-2 py-1 inline-block">
                 {t("order_items_empty")}

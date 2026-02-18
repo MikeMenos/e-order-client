@@ -17,6 +17,7 @@ import { SupplierSearchAndTabs } from "../../../../components/supplier/SupplierS
 import { SupplierProductSection } from "../../../../components/supplier/SupplierProductSection";
 import { SupplierCheckoutBar } from "../../../../components/supplier/SupplierCheckoutBar";
 import { Button } from "../../../../components/ui/button";
+import Loading from "../../../../components/ui/loading";
 import { useActiveTabsStore, activeTabKeys } from "@/stores/activeTabs";
 
 function buildSectionsFromProducts(
@@ -297,11 +298,7 @@ export default function SupplierPage() {
 
         {/* Content */}
 
-        {productsQuery.isLoading && (
-          <p className="text-base text-slate-500">
-            {t("supplier_loading_products")}
-          </p>
-        )}
+        {productsQuery.isLoading && <Loading spinnerOnly />}
 
         {productsQuery.error && (
           <p className="text-base text-red-400">

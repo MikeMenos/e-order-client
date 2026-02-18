@@ -5,6 +5,7 @@ import * as React from "react";
 import { ChevronDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
+import Loading from "@/components/ui/loading";
 import { usePrefSchedule, usePrefScheduleUpdate } from "@/hooks/useSchedule";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
@@ -183,9 +184,7 @@ export default function OrderSchedulePage() {
         </div>
       </header>
 
-      {scheduleQuery.isLoading && (
-        <p className="text-slate-500">{t("config_loading_schedule")}</p>
-      )}
+      {scheduleQuery.isLoading && <Loading spinnerOnly />}
 
       {scheduleQuery.error && (
         <p className="text-red-400">{t("config_error_schedule")}</p>

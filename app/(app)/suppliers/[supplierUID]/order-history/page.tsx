@@ -10,6 +10,7 @@ import {
 } from "@/hooks/useSupplierOrderHistory";
 import { useOrderView } from "@/hooks/useOrderView";
 import { OrderHistoryTile } from "@/components/supplier/OrderHistoryTile";
+import Loading from "@/components/ui/loading";
 import { useTranslation } from "@/lib/i18n";
 import { listVariants, listItemVariants } from "@/lib/motion";
 
@@ -46,11 +47,7 @@ export default function SupplierOrderHistoryPage() {
   return (
     <main className="pb-12 text-slate-900">
       <div>
-        {ordersQuery.isLoading && (
-          <p className="text-base text-slate-500">
-            {t("supplier_order_history_loading")}
-          </p>
-        )}
+        {ordersQuery.isLoading && <Loading spinnerOnly />}
         {ordersQuery.error && (
           <p className="text-base text-red-400">
             {t("supplier_order_history_error")}

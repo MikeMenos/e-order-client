@@ -7,6 +7,7 @@ import { getApiErrorMessage } from "@/lib/api-error";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Loading from "@/components/ui/loading";
 import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
 import {
   useBasketItems,
@@ -348,7 +349,7 @@ export function CheckoutBasketSection({
   return (
     <section className="mb-6">
       <CheckoutSectionHeading labelKey="checkout_basket_items" />
-      {isLoading && <p className=" text-slate-500">{t("suppliers_loading")}</p>}
+      {isLoading && <Loading spinnerOnly />}
       {isError && (
         <p className=" text-red-500">
           {error instanceof Error ? error.message : t("basket_error")}

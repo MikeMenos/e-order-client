@@ -1,3 +1,17 @@
+/** Single wishlist/favorite item (product) for display and reorder */
+export type WishlistItem = {
+  productUID?: string;
+  id?: string;
+  productImage?: string;
+  title?: string;
+  productTitle?: string;
+  productOriginalTitle?: string;
+  productDescription?: string;
+  favIconColor?: string;
+  iconColor?: string;
+  [key: string]: unknown;
+};
+
 /** Backend response: wishLists array, each with supplierUID and items */
 export type WishlistBackendResponse = {
   wishLists?: Array<{
