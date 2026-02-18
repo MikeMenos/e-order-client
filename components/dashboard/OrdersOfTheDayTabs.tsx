@@ -38,35 +38,35 @@ export function OrdersOfTheDayTabs({
       <div className="mb-2 overflow-x-auto overflow-y-hidden min-w-0 [-webkit-overflow-scrolling:touch]">
         <TabsList
           variant="line"
-          className="inline-flex w-max min-w-full flex-nowrap justify-start gap-1.5 rounded-lg bg-white p-0"
+          className="inline-flex w-max min-w-full flex-nowrap justify-start rounded-lg bg-white p-0"
         >
-        <TabsTrigger value="all" className={tabTriggerClass}>
-          {t("orders_of_day_tab_all")}
-        </TabsTrigger>
-        <TabsTrigger value="completed" className={tabTriggerClass}>
-          {t("orders_of_day_tab_completed")}
-          {completedCount > 0 && (
-            <span className="ml-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-500 px-1.5 text-xs font-medium text-white group-data-[state=active]:bg-white group-data-[state=active]:text-brand-600">
-              {completedCount}
-            </span>
-          )}
-        </TabsTrigger>
-        <TabsTrigger value="pending" className={tabTriggerClass}>
-          {t("orders_of_day_tab_pending")}
-          {pendingCount > 0 && (
-            <span className="ml-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-500 px-1.5 text-xs font-medium text-white group-data-[state=active]:bg-white group-data-[state=active]:text-brand-600">
-              {pendingCount}
-            </span>
-          )}
-        </TabsTrigger>
-        <TabsTrigger value="drafts" className={tabTriggerClass}>
-          {t("orders_of_day_tab_drafts")}
-          {draftsCount > 0 && (
-            <span className="ml-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-500 px-1.5 text-xs font-medium text-white group-data-[state=active]:bg-white group-data-[state=active]:text-brand-600">
-              {draftsCount}
-            </span>
-          )}
-        </TabsTrigger>
+          <TabsTrigger value="all" className={tabTriggerClass}>
+            {t("orders_of_day_tab_all")}
+          </TabsTrigger>
+          <TabsTrigger value="completed" className={tabTriggerClass}>
+            {t("orders_of_day_tab_completed")}
+            {completedCount > 0 && (
+              <span className="ml-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-500 px-1.5 text-xs font-medium text-white group-data-[state=active]:bg-white group-data-[state=active]:text-brand-600">
+                {completedCount}
+              </span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="pending" className={tabTriggerClass}>
+            {t("orders_of_day_tab_pending")}
+            {pendingCount > 0 && (
+              <span className="ml-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-500 px-1.5 text-xs font-medium text-white group-data-[state=active]:bg-white group-data-[state=active]:text-brand-600">
+                {pendingCount}
+              </span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="drafts" className={tabTriggerClass}>
+            {t("orders_of_day_tab_drafts")}
+            {draftsCount > 0 && (
+              <span className="ml-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-500 px-1.5 text-xs font-medium text-white group-data-[state=active]:bg-white group-data-[state=active]:text-brand-600">
+                {draftsCount}
+              </span>
+            )}
+          </TabsTrigger>
         </TabsList>
       </div>
     </Tabs>
