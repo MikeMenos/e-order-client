@@ -53,10 +53,6 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
 
   const wishlistToggle = useWishlistToggle({
     supplierUID: supplierUID ?? undefined,
-    onSuccess: (data) => {
-      const msg = data?.message?.trim();
-      if (msg) toast.success(msg);
-    },
     onError: (err) => {
       toast.error(getApiErrorMessage(err, t("basket_error")));
     },
@@ -355,8 +351,6 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
           comments: "",
         },
       );
-      const msg = addRes.data?.message?.trim();
-      toast.success(msg || t("basket_toast_success"));
       if (supplierUID != null) {
         void queryClient.invalidateQueries({
           queryKey: ["supplier-products", supplierUID],
@@ -380,18 +374,13 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
     setIsLoading(true);
     try {
       const suggestedQty = lastSuggestedQtyRef.current ?? qtyToSend;
-      const res = await api.post<{ message?: string }>(
-        "/basket-add-or-update",
-        {
-          productUID: id,
-          qty: qtyToSend,
-          stock: reserveQtyNum,
-          suggestedQty,
-          comments: "",
-        },
-      );
-      const msg = res.data?.message?.trim();
-      toast.success(msg || t("basket_toast_success"));
+      await api.post<{ message?: string }>("/basket-add-or-update", {
+        productUID: id,
+        qty: qtyToSend,
+        stock: reserveQtyNum,
+        suggestedQty,
+        comments: "",
+      });
       if (supplierUID != null) {
         void queryClient.invalidateQueries({
           queryKey: ["supplier-products", supplierUID],

@@ -39,8 +39,6 @@ export default function SupplierCheckoutPage() {
 
   const orderAddMutation = useOrderAdd({
     onSuccess: (data) => {
-      const msg = data?.message?.trim();
-      toast.success(msg || t("checkout_submit_order"));
       if (searchParams.get("from") === "orders-of-the-day") {
         router.replace("/orders-of-the-day");
       } else {

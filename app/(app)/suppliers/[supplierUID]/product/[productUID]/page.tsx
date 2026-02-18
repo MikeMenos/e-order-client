@@ -33,8 +33,6 @@ export default function SupplierProductPage() {
   const wishlistToggle = useWishlistToggle({
     supplierUID: supplierUID ?? undefined,
     onSuccess: (data) => {
-      const msg = data?.message?.trim();
-      if (msg) toast.success(msg);
       void queryClient.invalidateQueries({
         queryKey: ["product-display", productUID],
       });

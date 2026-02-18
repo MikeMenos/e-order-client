@@ -302,8 +302,7 @@ export function CheckoutBasketSection({
 
   const addOrUpdateMutation = useBasketAddOrUpdate({
     supplierUID,
-    onSuccess: (d) => {
-      toast.success(d?.message?.trim() || t("basket_toast_success"));
+    onSuccess: () => {
       setUpdatingProductUID(null);
     },
     onError: (err) => {
