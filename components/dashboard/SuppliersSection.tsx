@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "../../lib/i18n";
 import { listVariants, listItemVariants } from "../../lib/motion";
 import { Button } from "../ui/button";
+import Loading from "../ui/loading";
 import { SuppliersSearchBar } from "./SuppliersSearchBar";
 import { SupplierTile } from "./SupplierTile";
 import { usePathname } from "next/navigation";
@@ -111,9 +112,7 @@ export function SuppliersSection({
         {pathname === "/orders-of-the-day" && children}
       </div>
 
-      {isLoading && (
-        <p className="text-base text-slate-400">{t("suppliers_loading")}</p>
-      )}
+      {isLoading && <Loading spinnerOnly />}
       {isError && (
         <p className="text-base text-red-400">
           {errorMessage ?? t("suppliers_error")}

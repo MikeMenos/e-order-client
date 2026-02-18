@@ -13,6 +13,7 @@ import { usePersonalizedTextsUpdate } from "@/hooks/usePersonalizedTextsUpdate";
 import { DetailSection } from "@/components/ui/detail-section";
 import { DetailRow } from "@/components/ui/detail-row";
 import { Button } from "@/components/ui/button";
+import Loading from "@/components/ui/loading";
 import { Input } from "@/components/ui/input";
 import { formatOrderDate } from "@/lib/utils";
 
@@ -61,11 +62,7 @@ export default function SupplierProductPage() {
   if (displayQuery.isLoading) {
     return (
       <main className="px-3 text-slate-900">
-        <div className="mx-auto max-w-2xl py-4">
-          <p className="text-base text-slate-500">
-            {t("supplier_product_loading")}
-          </p>
-        </div>
+        <Loading spinnerOnly />
       </main>
     );
   }

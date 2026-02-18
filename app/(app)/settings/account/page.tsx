@@ -8,6 +8,7 @@ import { useMyProfile, useMyProfileUpdate } from "@/hooks/useMyProfile";
 import { DetailSection } from "@/components/ui/detail-section";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Loading from "@/components/ui/loading";
 import { getApiErrorMessage } from "@/lib/api-error";
 
 export default function AccountSettingsPage() {
@@ -74,11 +75,7 @@ export default function AccountSettingsPage() {
           )}
         </div>
 
-        {profileQuery.isLoading && (
-          <p className="text-base text-slate-500">
-            {t("settings_account_loading")}
-          </p>
-        )}
+        {profileQuery.isLoading && <Loading spinnerOnly />}
 
         {profileQuery.error && (
           <p className="text-base text-red-400">

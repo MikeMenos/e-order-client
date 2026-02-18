@@ -6,6 +6,7 @@ import { useOrderView } from "@/hooks/useOrderView";
 import { useTranslation } from "@/lib/i18n";
 import { formatOrderDate } from "@/lib/utils";
 import { DetailSection } from "@/components/ui/detail-section";
+import Loading from "@/components/ui/loading";
 import { ChevronLeft } from "lucide-react";
 import type { OrderLineItem } from "@/lib/types/order";
 
@@ -29,11 +30,7 @@ export default function OrderOfTheDayViewPage() {
   return (
     <main className="pb-12 text-slate-900 px-3">
       <div className="mx-auto max-w-2xl">
-        {orderViewQuery.isLoading && (
-          <p className="text-base text-slate-500">
-            {t("supplier_order_history_loading")}
-          </p>
-        )}
+        {orderViewQuery.isLoading && <Loading spinnerOnly />}
 
         {orderViewQuery.error && (
           <p className="text-base text-red-400">
@@ -137,9 +134,9 @@ export default function OrderOfTheDayViewPage() {
                       item.quantity ??
                       (item as Record<string, unknown>).qty ??
                       (item as Record<string, unknown>).Quantity;
-                    const imageUrl =
-                      item.productImage ??
-                      (item as Record<string, unknown>).productImage;
+                    // const imageUrl =
+                    //   item.productImage ??
+                    //   (item as Record<string, unknown>).productImage;
                     return (
                       <li
                         key={item.productUID ?? idx}

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useBasketCounter, useBasketItems } from "../../../hooks/useBasket";
 import { useTranslation } from "../../../lib/i18n";
+import Loading from "../../../components/ui/loading";
 import { listVariants, listItemVariants } from "../../../lib/motion";
 
 export default function BasketPage() {
@@ -23,9 +24,7 @@ export default function BasketPage() {
         </p>
       </header>
 
-      {basketQuery.isLoading && (
-        <p className="text-base text-slate-500">{t("basket_loading")}</p>
-      )}
+      {basketQuery.isLoading && <Loading spinnerOnly />}
       {basketQuery.error && (
         <p className="text-base text-red-400">{t("basket_error")}</p>
       )}

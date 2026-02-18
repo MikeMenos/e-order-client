@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ergastirioStore } from "@/stores/ergastirioStore";
 import ErgastirioAppShell from "@/components/ergastirio/AppShell";
+import { Spinner } from "@/components/ui/spinner";
 
 const ERGASTIRIO_SESSION_COOKIE = "ergastirio_session";
 
@@ -53,10 +54,10 @@ export default function ErgastirioLayout({
   if (allowed === null) {
     return (
       <div
-        className={`flex items-center justify-center ${bgClass}`}
+        className={`flex items-center justify-center min-h-dvh ${bgClass}`}
         style={bgStyle}
       >
-        <p className="text-slate-500">Loading…</p>
+        <Spinner size={40} />
       </div>
     );
   }
