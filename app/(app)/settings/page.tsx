@@ -137,9 +137,9 @@ export default function SettingsPage() {
 
           <motion.div variants={listItemVariants}>
             <TileCard
-              href="/settings/add"
-              iconSrc="/assets/add-user.png"
-              label={t("settings_create_user")}
+              href="/settings/manage-users"
+              iconSrc="/assets/manage-users.png"
+              label={t("config_link_users")}
               iconColor="text-blue-600"
             />
           </motion.div>

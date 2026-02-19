@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 function shouldShowBackgroundImage(pathname: string): boolean {
   if (pathname === "/dashboard" || pathname === "/settings") return true;
   if (pathname.startsWith("/settings/manage-suppliers/")) return true;
+  if (pathname === "/settings/manage-users") return true;
   return false;
 }
 
