@@ -54,7 +54,7 @@ export function Header() {
           <img
             src="/assets/logo.png"
             alt="E-Order"
-            className="h-16 w-16 rounded-lg object-contain"
+            className="h-16 w-16 object-contain"
           />
         </Link>
         {storeTitle && (

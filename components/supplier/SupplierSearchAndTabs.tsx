@@ -26,8 +26,8 @@ export function SupplierSearchAndTabs({
   const value = activeSectionId ?? sections[0]?.id ?? "";
 
   return (
-    <div className="flex flex-col gap-0 shrink-0 px-4 pt-2 rounded-b-lg bg-app-card/95">
-      <div className="border-b border-slate-200/80 pb-3">
+    <div className="flex flex-col gap-0 shrink-0 px-4 rounded-b-lg bg-app-card/95">
+      <div>
         <SearchInput
           placeholder={searchPlaceholder}
           value={searchQuery}
