@@ -93,7 +93,7 @@ export default function SupplierPage() {
       <div className="flex flex-col">
         <div
           ref={stickyBarMeasurement.ref}
-          className="sticky z-20 w-full rounded-b-lg bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90 pb-1"
+          className="sticky z-20 w-full rounded-b-lg bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90"
           style={{ top: headerHeight }}
         >
           <div className="mx-auto max-w-4xl">
