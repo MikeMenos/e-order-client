@@ -64,6 +64,10 @@ api.interceptors.request.use((config) => {
     url.includes("/order-add") ||
     url.includes("/order-retake") ||
     url.includes("/store-users") ||
+    url.includes("/users-view-profile") ||
+    url.includes("/users-toggle-active") ||
+    url.includes("/users-add-or-update") ||
+    url.includes("/users-set-permissions") ||
     url.includes("/store-pref-schedule") ||
     url.includes("/store-pref-schedule-update") ||
     url.includes("/basket-items") ||

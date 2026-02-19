@@ -52,11 +52,6 @@ export function StoreSelectDialog({
             </Button>
           </div>
         </DialogHeader>
-        {userName && (
-          <div className="rounded-xl bg-slate-50 px-3 py-2 text-base text-slate-600">
-            {userName}
-          </div>
-        )}
         <motion.div
           className="min-h-0 flex-1 space-y-2 overflow-y-auto -mx-1 px-1"
           variants={listVariants}
