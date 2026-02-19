@@ -82,3 +82,16 @@ export type OrderAddPayload = {
 };
 
 export type OrderAddResponse = { message?: string };
+
+export type OrderTempSavePayload = {
+  orderRefDate: string;
+  supplierUID: string;
+  extraComments?: string;
+  desiredDeliveryDate: string;
+};
+
+export type OrderTempSaveResponse = {
+  statusCode?: number;
+  message?: string;
+  detailedMessage?: string;
+};

@@ -10,7 +10,7 @@ import { api } from "../../lib/api";
 import { getApiErrorMessage } from "../../lib/api-error";
 import { useWishlistToggle } from "../../hooks/useWishlistToggle";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import { Stepper } from "../ui/stepper";
 import type { SupplierProduct } from "@/lib/types/supplier";
 
 const DEBOUNCE_MS = 800;
@@ -475,86 +475,38 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
       </div>
 
       {/* Value inputs below: Reserve, then Basket */}
-      <div className="flex gap-1.5 border-t border-slate-100 pt-2 justify-between">
-        <div className="flex flex-col items-start gap-1.5 text-base text-slate-500">
-          <span className="w-16">{t("supplier_reserve")}</span>
-          <div className="inline-flex items-center overflow-hidden rounded-lg border bg-white">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-7 min-w-10 flex-1 basis-10 shrink-0 border-0 border-r bg-white p-0 text-2xl font-bold text-slate-900 hover:bg-emerald-50/50 disabled:opacity-50"
-              aria-label={t("aria_decrease_reserve")}
-              onClick={() => setReserveClamped(-1)}
-              disabled={isLoading}
-            >
-              −
-            </Button>
-            <Input
-              type="number"
-              min={0}
-              value={reserveQtyDisplay}
-              onChange={(e) => setReserveFromUser(e.target.value)}
-              onFocus={handleReserveFocus}
-              onBlur={handleReserveBlur}
-              placeholder="0"
-              className="h-7 w-12 border-0 bg-brand-50 p-0 text-center text-lg rounded [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              aria-label={t("aria_reserve_quantity")}
-              disabled={isLoading}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-7 min-w-10 flex-1 basis-10 shrink-0 border-0 border-l bg-white p-0 text-2xl font-bold text-slate-900 hover:bg-emerald-50/50 disabled:opacity-50"
-              aria-label={t("aria_increase_reserve")}
-              onClick={() => setReserveClamped(1)}
-              disabled={isLoading}
-            >
-              +
-            </Button>
-          </div>
-        </div>
-        <div className="flex flex-col items-start gap-1.5 text-base text-slate-500">
-          <span className="w-16">{t("supplier_basket")}</span>
-          <div className="inline-flex items-center overflow-hidden rounded-lg border bg-white">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-7 min-w-10 flex-1 basis-10 shrink-0 border-0 border-r bg-white p-0 text-2xl font-bold text-slate-900 hover:bg-emerald-50/50 disabled:opacity-50"
-              aria-label={t("aria_decrease_basket")}
-              onClick={() => setBasketClamped(-1)}
-              disabled={isLoading}
-            >
-              −
-            </Button>
-            <Input
-              type="number"
-              min={0}
-              value={basketQtyDisplay}
-              onChange={(e) => setBasketFromUser(e.target.value)}
-              onFocus={handleBasketFocus}
-              onBlur={handleBasketBlur}
-              placeholder="0"
-              className="h-7 w-12 border-0 bg-brand-50 p-0 text-center text-lg rounded [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              aria-label={t("aria_basket_quantity")}
-              disabled={isLoading}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-7 min-w-10 flex-1 basis-10 shrink-0 border-0 border-l  bg-white p-0 text-2xl font-bold text-slate-900 hover:bg-emerald-50/50 disabled:opacity-50"
-              aria-label={t("aria_increase_basket")}
-              onClick={() => setBasketClamped(1)}
-              disabled={isLoading}
-            >
-              +
-            </Button>
-          </div>
-        </div>
+      <div className="flex justify-between gap-2 border-t border-slate-100 pt-3">
+        <Stepper
+          label={t("supplier_reserve")}
+          value={reserveQtyDisplay}
+          onDec={() => setReserveClamped(-1)}
+          onInc={() => setReserveClamped(1)}
+          onChange={(e) => setReserveFromUser(e.target.value)}
+          onFocus={handleReserveFocus}
+          onBlur={handleReserveBlur}
+          ariaDec={t("aria_decrease_reserve")}
+          ariaInc={t("aria_increase_reserve")}
+          ariaValue={t("aria_reserve_quantity")}
+          disabled={isLoading}
+          tone="reserve"
+        />
+
+        <Stepper
+          label={t("supplier_basket")}
+          value={basketQtyDisplay}
+          onDec={() => setBasketClamped(-1)}
+          onInc={() => setBasketClamped(1)}
+          onChange={(e) => setBasketFromUser(e.target.value)}
+          onFocus={handleBasketFocus}
+          onBlur={handleBasketBlur}
+          ariaDec={t("aria_decrease_basket")}
+          ariaInc={t("aria_increase_basket")}
+          ariaValue={t("aria_basket_quantity")}
+          disabled={isLoading}
+          tone="basket"
+        />
       </div>
+
     </article>
   );
 }

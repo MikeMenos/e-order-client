@@ -201,7 +201,7 @@ function BasketItemRow({
   };
 
   return (
-    <li className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2">
+    <li className="flex items-center gap-3 rounded-lg border border-slate-100 bg-app-card/95 px-3 py-2">
       <div className="min-w-0 flex-1">
         <p className="font-medium text-slate-900">{item.productTitle || "—"}</p>
         <div className="mt-1.5 flex items-center gap-1.5">

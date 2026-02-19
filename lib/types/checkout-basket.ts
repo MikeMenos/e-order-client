@@ -17,6 +17,10 @@ export type BasketGetItemsBasket = {
   supplierSubtitle: string;
   totalItems?: number;
   items: BasketGetItemsProduct[];
+  /** Prefill delivery date when returning to this basket (from Order_TempSave). */
+  desiredDeliveryDate?: string | null;
+  /** Prefill comments when returning to this basket (from Order_TempSave). */
+  shopperComments?: string | null;
 };
 
 export type BasketGetItemsResponse = {
