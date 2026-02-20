@@ -81,7 +81,11 @@ export type OrderAddPayload = {
   desiredDeliveryDate: string;
 };
 
-export type OrderAddResponse = { message?: string };
+export type OrderAddResponse = {
+  statusCode?: number;
+  message?: string;
+  detailedMessage?: string;
+};
 
 export type OrderTempSavePayload = {
   orderRefDate: string;

@@ -15,9 +15,13 @@ export const api = axios.create({
 const AUTH_ENDPOINTS = ["/auth-login", "/register"];
 
 // Don't treat as global auth failure: 401/500 here should not log the user out (e.g. select-store can 401 when re-calling while navigating)
-// order-temp-save: show error to user instead of logging out so they can retry or fix
-// Use substring that matches both "order-temp-save" and "/order-temp-save" (axios config.url can be relative)
-const NO_LOGOUT_ON_AUTH_FAIL = ["/select-store"];
+// order-temp-save, product-display, personalized-texts-update: show error to user instead of logging out so they can retry or fix
+const NO_LOGOUT_ON_AUTH_FAIL = [
+  "/select-store",
+  "order-temp-save",
+  "product-display",
+  "personalized-texts-update",
+];
 
 function isAuthFailure(error: any): boolean {
   const status = error?.response?.status;
@@ -81,7 +85,9 @@ api.interceptors.request.use((config) => {
     url.includes("/wishlist-items") ||
     url.includes("/wishlist-toggle") ||
     url.includes("/wishlist-sort") ||
-    url.includes("/my-profile");
+    url.includes("/my-profile") ||
+    url.includes("/product-display") ||
+    url.includes("/personalized-texts-update");
 
   const token = useStoreToken ? storeAccessToken || accessToken : accessToken;
 
@@ -107,6 +113,7 @@ api.interceptors.response.use(
         getApiResponseMessage(data) || "An unexpected error occurred.";
       const error = new Error(message);
       (error as any).response = response;
+      (error as any).config = response?.config;
       throw error;
     }
     return response;
