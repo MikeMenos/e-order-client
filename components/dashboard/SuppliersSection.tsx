@@ -208,6 +208,11 @@ export function SuppliersSection({
                   displayAsDraft={displayAsDraft}
                   calendarDateView={calendarDateView}
                   tileStyle="default"
+                  titleHref={
+                    pathname === "/orders-of-the-day" && !calendarDateView
+                      ? `/settings/manage-suppliers/${encodeURIComponent(s.supplierUID)}`
+                      : undefined
+                  }
                   href={
                     onSupplierClick
                       ? undefined

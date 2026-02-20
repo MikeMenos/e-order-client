@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "../../lib/i18n";
 import {
   Calendar,
@@ -26,6 +26,8 @@ type Props = {
   onClick?: () => void;
   /** When "settings", use same card style as /settings (centered, rounded-2xl bg-app-card/95 p-6). */
   tileStyle?: "default" | "settings";
+  /** When provided, the title is a link to this href (e.g. orders-of-the-day → manage-suppliers). */
+  titleHref?: string;
   /** When true (e.g. Πρόχειρες tab), show draft style and text regardless of basketIconStatus. */
   displayAsDraft?: boolean;
   /** When true, list uses all-suppliers style (grid, no delivery/basket) and children (tabs) are hidden. */
@@ -46,9 +48,11 @@ export function SupplierTile({
   tileStyle = "default",
   displayAsDraft = false,
   calendarDateView = false,
+  titleHref,
 }: Props) {
   const { t } = useTranslation();
   const pathname = usePathname();
+  const router = useRouter();
   const isNotOrdersOfDayPage =
     calendarDateView ||
     pathname === "/all-suppliers" ||
@@ -195,9 +199,19 @@ export function SupplierTile({
 
             {isOrdersOfDayPage ? (
               <>
-                <p className="font-bold uppercase tracking-wide text-slate-900">
-                  {supplier.title ?? supplier.subTitle}
-                </p>
+                {titleHref ? (
+                  <Link
+                    href={titleHref}
+                    onClick={(e) => e.stopPropagation()}
+                    className="font-bold uppercase tracking-wide text-slate-900 hover:text-brand-600 hover:underline block"
+                  >
+                    {supplier.title ?? supplier.subTitle}
+                  </Link>
+                ) : (
+                  <p className="font-bold uppercase tracking-wide text-slate-900">
+                    {supplier.title ?? supplier.subTitle}
+                  </p>
+                )}
                 {showDeliveryInfo && supplier.nextAvailDeliveryText && (
                   <p className="mt-0.5 text-base text-slate-500">
                     {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
@@ -346,6 +360,25 @@ export function SupplierTile({
       >
         {content}
       </button>
+    );
+  }
+
+  if (titleHref) {
+    return (
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => router.push(href)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            router.push(href);
+          }
+        }}
+        className={tileClassName}
+      >
+        {content}
+      </div>
     );
   }
 
