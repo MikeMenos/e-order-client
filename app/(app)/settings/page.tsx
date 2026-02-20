@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 import { Store, User, UserPlus, LogOut } from "lucide-react";
 
 import { useAuthStore } from "@/stores/auth";
-import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
 import { api } from "@/lib/api";
@@ -24,7 +23,6 @@ export default function SettingsPage() {
 
   const [storeDialogOpen, setStoreDialogOpen] = useState(false);
 
-  const { userTypeId } = useUserPermissions();
   const {
     users,
     logout,
@@ -120,7 +118,7 @@ export default function SettingsPage() {
           {roles.length > 1 && (
             <motion.div variants={listItemVariants}>
               <TileCard
-                iconSrc="/assets/store-selection.png"
+                iconSrc="/assets/select-store.png"
                 label={t("settings_switch_store")}
                 iconColor="text-slate-700"
                 onClick={() => setStoreDialogOpen(true)}
@@ -137,16 +135,14 @@ export default function SettingsPage() {
             />
           </motion.div>
 
-          {userTypeId !== 3 && (
-            <motion.div variants={listItemVariants}>
-              <TileCard
-                href="/settings/manage-users"
-                iconSrc="/assets/manage-users.png"
-                label={t("config_link_users")}
-                iconColor="text-blue-600"
-              />
-            </motion.div>
-          )}
+          <motion.div variants={listItemVariants}>
+            <TileCard
+              href="/settings/manage-users"
+              iconSrc="/assets/manage-users.png"
+              label={t("config_link_users")}
+              iconColor="text-blue-600"
+            />
+          </motion.div>
         </motion.div>
 
         <motion.div

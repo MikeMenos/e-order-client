@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "./button";
 
 const tileCardClass =
-  "flex h-full w-full flex-col items-stretch gap-2 rounded-2xl bg-white p-2 shadow-sm transition hover:shadow-md hover:shadow-slate-200/50 active:scale-[0.99] cursor-pointer";
+  "flex h-full w-full flex-col items-stretch gap-2 rounded-2xl bg-white pt-4 pb-3 px-2 shadow-sm transition hover:shadow-md hover:shadow-slate-200/50 active:scale-[0.99] cursor-pointer";
 
 const tileCardClassHorizontal =
   "flex h-full w-full flex-row items-center gap-3 rounded-2xl bg-white p-3 shadow-sm transition hover:shadow-md hover:shadow-slate-200/50 active:scale-[0.99] cursor-pointer";
