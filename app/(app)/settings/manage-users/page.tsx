@@ -312,7 +312,7 @@ function UserProfileDialog({
 
             {!profileQuery.isLoading && !profileQuery.error && user && (
               <div className="space-y-4">
-                <DetailSection title={t("settings_edit_account")}>
+                <DetailSection title={t("settings_edit_account_button")}>
                   {isEditing ? (
                     <form className="space-y-3" onSubmit={handleSave}>
                       <div className="space-y-1">

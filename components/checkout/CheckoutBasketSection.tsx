@@ -18,6 +18,7 @@ import type {
   BasketGetItemsResponse,
   BasketGetItemsProduct,
 } from "@/lib/types/checkout-basket";
+import { Stepper } from "../ui/stepper";
 
 function toNonNegativeNum(s: string): number {
   const n = Number(s);
@@ -201,50 +202,28 @@ function BasketItemRow({
   };
 
   return (
-    <li className="flex items-center gap-3 rounded-lg border border-slate-100 bg-app-card/95 px-3 py-2">
+    <li className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
       <div className="min-w-0 flex-1">
         <p className="font-medium text-slate-900">{item.productTitle || "—"}</p>
         <div className="mt-1.5 flex items-center gap-1.5">
           <span className="text-base text-slate-600 shrink-0">
             {t("checkout_quantity")}:
           </span>
-          <div className="inline-flex items-center overflow-hidden rounded-lg border bg-white">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-7 min-w-10 flex-1 basis-10 shrink-0 border-0 border-r  bg-white p-0 text-2xl font-semibold text-slate-900 hover:bg-emerald-50/50 disabled:opacity-50"
-              aria-label={t("aria_decrease_basket")}
-              onClick={handleDecrement}
-              disabled={isBusy}
-            >
-              −
-            </Button>
-            <Input
-              type="number"
-              min={0}
-              value={inputValue}
-              onChange={(e) => handleInputChange(e.target.value)}
-              onFocus={handleInputFocus}
-              onBlur={handleInputBlur}
-              onKeyDown={handleInputKeyDown}
-              placeholder="0"
-              className="h-7 w-12 border-0 bg-brand-50 p-0 text-center text-lg [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              aria-label={t("aria_basket_quantity")}
-              disabled={isBusy}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-7 min-w-10 flex-1 basis-10 shrink-0 border  bg-white p-0 text-2xl font-semibold text-slate-900 hover:bg-emerald-50/50 disabled:opacity-50"
-              aria-label={t("aria_increase_basket")}
-              onClick={handleIncrement}
-              disabled={isBusy}
-            >
-              +
-            </Button>
-          </div>
+          <Stepper
+            label=""
+            tone="basket"
+            value={inputValue}
+            onDec={handleDecrement}
+            onInc={handleIncrement}
+            onChange={(e) => handleInputChange(e.target.value)}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+            onKeyDown={handleInputKeyDown}
+            ariaDec={t("aria_decrease_basket")}
+            ariaInc={t("aria_increase_basket")}
+            ariaValue={t("aria_basket_quantity")}
+            disabled={isBusy}
+          />
         </div>
       </div>
       <Button

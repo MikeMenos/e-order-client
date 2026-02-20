@@ -196,7 +196,7 @@ export default function HomePage() {
         <img
           src="/assets/logo.png"
           alt="E-Order"
-          className="h-24 w-24 rounded-lg object-contain"
+          className="h-24 w-24 object-contain"
         />
       </div>
       <div className="w-full max-w-sm space-y-6 px-4">
