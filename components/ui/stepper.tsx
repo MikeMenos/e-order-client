@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 
 type StepperTone = "reserve" | "basket";
 
@@ -17,6 +16,7 @@ export function Stepper({
     ariaValue,
     disabled,
     tone,
+    onKeyDown,
 }: {
     label: string;
     value: string | number;
@@ -30,6 +30,7 @@ export function Stepper({
     ariaValue: string;
     disabled?: boolean;
     tone: StepperTone;
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }) {
     const toneStyles =
         tone === "reserve"

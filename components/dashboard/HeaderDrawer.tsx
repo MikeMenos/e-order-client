@@ -44,7 +44,7 @@ export function HeaderDrawer({
             <img
               src="/assets/logo.png"
               alt="E-Order"
-              className="h-20 w-h-20 rounded-lg object-contain"
+              className="h-20 w-h-20 object-contain"
             />
           </div>
           <div className="flex flex-col gap-2 p-4">

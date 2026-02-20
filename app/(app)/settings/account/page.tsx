@@ -63,7 +63,7 @@ export default function AccountSettingsPage() {
 
   const fullName =
     (user ? [user.fname, user.lname].filter(Boolean).join(" ") : "") ||
-    t("settings_edit_account");
+    t("settings_edit_account_button");
 
   return (
     <main className="pb-16 text-slate-900 px-3">
@@ -85,7 +85,7 @@ export default function AccountSettingsPage() {
 
         {!profileQuery.isLoading && !profileQuery.error && user && (
           <div className="space-y-4">
-            <DetailSection title={t("settings_edit_account")}>
+            <DetailSection title={t("settings_edit_account_button")}>
               <form className="space-y-3" onSubmit={handleSubmit}>
                 <div className="space-y-1 mb-1">
                   <label className="block text-base font-medium text-slate-600">

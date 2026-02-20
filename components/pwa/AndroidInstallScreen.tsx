@@ -24,7 +24,7 @@ export function AndroidInstallScreen() {
         <img
           src="/assets/logo.png"
           alt="E-Order"
-          className="h-20 w-20 rounded-xl object-contain"
+          className="h-20 w-20 object-contain"
         />
       </div>
 
