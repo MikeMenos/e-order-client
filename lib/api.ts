@@ -15,6 +15,8 @@ export const api = axios.create({
 const AUTH_ENDPOINTS = ["/auth-login", "/register"];
 
 // Don't treat as global auth failure: 401/500 here should not log the user out (e.g. select-store can 401 when re-calling while navigating)
+// order-temp-save: show error to user instead of logging out so they can retry or fix
+// Use substring that matches both "order-temp-save" and "/order-temp-save" (axios config.url can be relative)
 const NO_LOGOUT_ON_AUTH_FAIL = ["/select-store"];
 
 function isAuthFailure(error: any): boolean {
@@ -62,6 +64,7 @@ api.interceptors.request.use((config) => {
     url.includes("/orders-get-list") ||
     url.includes("/orders") ||
     url.includes("/order-add") ||
+    url.includes("/order-temp-save") ||
     url.includes("/order-retake") ||
     url.includes("/store-users") ||
     url.includes("/users-view-profile") ||

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { format } from "date-fns";
 import { useTranslation } from "@/lib/i18n";
 import { formatDeliveryDateDisplay, parseDateForPicker } from "@/lib/utils";
@@ -16,11 +16,13 @@ import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
 
 export type CheckoutDeliverySectionProps = {
   selectedDate: string | null;
+  initialDeliveryDate?: string | null;
   onEffectiveDateChange?: (isoDate: string | null) => void;
 };
 
 export function CheckoutDeliverySection({
   selectedDate,
+  initialDeliveryDate,
   onEffectiveDateChange,
 }: CheckoutDeliverySectionProps) {
   const { t } = useTranslation();
@@ -32,6 +34,23 @@ export function CheckoutDeliverySection({
   const [dialogDateValue, setDialogDateValue] = useState<Date | undefined>(
     undefined,
   );
+  const hasAppliedInitialRef = useRef(false);
+
+  useEffect(() => {
+    if (
+      hasAppliedInitialRef.current ||
+      !initialDeliveryDate?.trim() ||
+      !selectedDate
+    )
+      return;
+    const initial = initialDeliveryDate.trim();
+    const sel = selectedDate.trim();
+    if (initial !== sel) {
+      hasAppliedInitialRef.current = true;
+      setOtherDate(initial);
+      setDeliveryOption("other");
+    }
+  }, [initialDeliveryDate, selectedDate]);
 
   const defaultDeliveryLabel =
     formatDeliveryDateDisplay(selectedDate) || (selectedDate ?? "");
@@ -93,8 +112,8 @@ export function CheckoutDeliverySection({
           variant={deliveryOption === "selected" ? "outline" : "ghost"}
           className={
             deliveryOption === "selected"
-              ? "border-brand-400 text-brand-600"
-              : "bg-brand-50 text-brand-600"
+              ? "border-2 border-brand-400 bg-brand-100 text-brand-700 font-medium"
+              : "border border-slate-300 bg-slate-100/60 text-slate-600"
           }
           onClick={selectDefault}
         >
@@ -105,8 +124,8 @@ export function CheckoutDeliverySection({
           variant={deliveryOption === "other" ? "outline" : "ghost"}
           className={
             deliveryOption === "other"
-              ? "border-brand-400 text-brand-600"
-              : "bg-brand-50 text-brand-600"
+              ? "border-2 border-brand-400 bg-brand-100 text-brand-700 font-medium"
+              : "border border-slate-300 bg-slate-100/60 text-slate-600"
           }
           onClick={openOtherDateDialog}
         >
