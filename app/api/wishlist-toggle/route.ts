@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { backend } from "../../../lib/backend";
 import { getBackendHeaders } from "../../../lib/backend-headers";
+import { isApiSuccess } from "../../../lib/api-response";
 import type { WishlistToggleResponse } from "../../../lib/types/wishlist";
 
 export async function GET(req: NextRequest) {
@@ -19,7 +20,7 @@ export async function GET(req: NextRequest) {
     const data = res.data as Record<string, unknown>;
     // Normalize backend success (statusCode 0) so client interceptor accepts it
     const body =
-      data && typeof data.statusCode === "number" && data.statusCode === 0
+      data && isApiSuccess(data) && data.statusCode === 0
         ? { ...data, statusCode: 200 }
         : data;
 

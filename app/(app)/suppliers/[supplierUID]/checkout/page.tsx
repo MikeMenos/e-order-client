@@ -8,7 +8,7 @@ import { useBasketItems } from "@/hooks/useBasket";
 import { useOrderAdd } from "@/hooks/useOrderAdd";
 import { useOrderTempSave } from "@/hooks/useOrderTempSave";
 import { getApiErrorMessage } from "@/lib/api-error";
-import { isApiSuccess } from "@/lib/api-response";
+import { isApiSuccess, getApiResponseMessage } from "@/lib/api-response";
 import { CheckoutPageHeader } from "@/components/checkout/CheckoutPageHeader";
 import { CheckoutBasketSection } from "@/components/checkout/CheckoutBasketSection";
 import { CheckoutDeliverySection } from "@/components/checkout/CheckoutDeliverySection";
@@ -67,10 +67,14 @@ export default function SupplierCheckoutPage() {
 
   const orderAddMutation = useOrderAdd({
     onSuccess: (data) => {
-      if (searchParams.get("from") === "orders-of-the-day") {
-        router.replace("/orders-of-the-day");
+      if (data != null && isApiSuccess(data as { statusCode?: number })) {
+        if (searchParams.get("from") === "orders-of-the-day") {
+          router.replace("/orders-of-the-day");
+        } else {
+          router.replace("/all-suppliers");
+        }
       } else {
-        router.replace("/all-suppliers");
+        toast.error(getApiResponseMessage(data) || t("basket_error"));
       }
     },
     onError: (err) => {
