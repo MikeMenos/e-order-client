@@ -52,44 +52,10 @@ function clearAuthAndRedirect(): void {
 }
 
 // Attach auth headers (dual token logic) and API key
-// These headers will be forwarded by the /api route handlers to the backend.
+// All endpoints use store token when available, otherwise fall back to main access token.
 api.interceptors.request.use((config) => {
   const { accessToken, storeAccessToken } = useAuthStore.getState();
-  const url = config.url ?? "";
-
-  // Endpoints that should use the store token when available (flat /api paths)
-  const useStoreToken =
-    url.includes("/suppliers-list") ||
-    url.includes("/suppliers-no-partners") ||
-    url.includes("/supplier-basic-infos") ||
-    url.includes("/suppliers") ||
-    url.includes("/suppliers-products") ||
-    url.includes("/suppliers-display") ||
-    url.includes("/orders-get-list") ||
-    url.includes("/orders") ||
-    url.includes("/order-add") ||
-    url.includes("/order-temp-save") ||
-    url.includes("/order-retake") ||
-    url.includes("/store-users") ||
-    url.includes("/users-view-profile") ||
-    url.includes("/users-toggle-active") ||
-    url.includes("/users-add-or-update") ||
-    url.includes("/users-set-permissions") ||
-    url.includes("/store-pref-schedule") ||
-    url.includes("/store-pref-schedule-update") ||
-    url.includes("/basket-items") ||
-    url.includes("/basket-counter") ||
-    url.includes("/basket-suggest-qty") ||
-    url.includes("/basket-add-or-update") ||
-    url.includes("/basket-remove-item") ||
-    url.includes("/wishlist-items") ||
-    url.includes("/wishlist-toggle") ||
-    url.includes("/wishlist-sort") ||
-    url.includes("/my-profile") ||
-    url.includes("/product-display") ||
-    url.includes("/personalized-texts-update");
-
-  const token = useStoreToken ? storeAccessToken || accessToken : accessToken;
+  const token = storeAccessToken || accessToken;
 
   // Ensure config.headers is always present (basic object, Axios can handle it)
   config.headers = config.headers || {};
