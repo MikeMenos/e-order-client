@@ -25,7 +25,7 @@ export function ClientApp({ children }: { children: ReactNode }) {
             {children}
             <Toaster
               toastOptions={{
-                duration: 4000,
+                duration: 2500,
               }}
               position="bottom-center"
               containerStyle={{
