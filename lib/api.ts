@@ -19,6 +19,8 @@ const NO_LOGOUT_ON_AUTH_FAIL = [
   "order-temp-save",
   "product-display",
   "personalized-texts-update",
+  "suppliers-display",
+  "suppliers-products",
   "users-add-or-update",
   "users-view-profile",
   "users-toggle-active",
