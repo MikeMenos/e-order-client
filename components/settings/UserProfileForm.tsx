@@ -421,6 +421,7 @@ export function UserProfileForm({
             placeholder={
               appUserUID ? t("settings_user_password_placeholder") : undefined
             }
+            className="placeholder:text-sm"
           />
         </div>
         <div className="flex gap-2 pt-2">
