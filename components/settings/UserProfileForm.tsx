@@ -210,6 +210,8 @@ export function UserProfileForm({
             {t("signup_phone")}
           </label>
           <Input
+            type="number"
+            inputMode="numeric"
             value={form.mobile}
             onChange={(e) => onFormChange("mobile", e.target.value)}
             disabled={isPending}
@@ -350,6 +352,8 @@ export function UserProfileForm({
             {t("signup_phone")}
           </label>
           <Input
+            type="number"
+            inputMode="numeric"
             value={form.mobile}
             onChange={(e) => onFormChange("mobile", e.target.value)}
             disabled={isPending}

@@ -8,11 +8,11 @@ import { TranslationProvider } from "../lib/i18n";
 import { PwaGate } from "@/components/pwa/PwaGate";
 import { PwaInstallProvider } from "@/components/pwa/PwaInstallContext";
 import { initAuthFromCookies } from "../lib/cookies";
+import { ScrollToTop } from "./(app)/ScrollToTop";
 
 const queryClient = new QueryClient();
 
 export function ClientApp({ children }: { children: ReactNode }) {
-  // Run auth init after mount to avoid module-load exceptions on Android (e.g. after redirect to /dashboard)
   useEffect(() => {
     initAuthFromCookies();
   }, []);
@@ -22,6 +22,7 @@ export function ClientApp({ children }: { children: ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <PwaInstallProvider>
           <PwaGate>
+            <ScrollToTop />
             {children}
             <Toaster
               toastOptions={{
