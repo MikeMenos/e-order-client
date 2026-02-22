@@ -177,89 +177,157 @@ export function SupplierTile({
   ) : (
     <>
       {/* Top: logo + title + delivery (or subTitle on all-suppliers) + dots (all-suppliers / orders-of-the-day) */}
-      <div
-        className={`flex items-center gap-3 px-4 py-2 pb-2 ${
-          showDotArea ? "md:items-center md:justify-between" : ""
-        }`}
-      >
-        <div className="flex items-start gap-3 flex-1 min-w-0">
-          {supplier.logo && (
-            <img
-              src={supplier.logo}
-              alt={supplier.title ?? ""}
-              className="h-10 w-10 shrink-0 rounded-full bg-slate-100 object-contain"
-            />
-          )}
-          <div className="min-w-0 flex-1">
-            {!showBasketStatus && supplier.subTitle && (
-              <p className="font-bold uppercase tracking-wide text-slate-900">
-                {supplier.subTitle}
-              </p>
+      {titleHref && isOrdersOfDayPage ? (
+        <Link
+          href={titleHref}
+          onClick={(e) => e.stopPropagation()}
+          className={`flex items-center gap-3 px-4 py-2 pb-2 hover:bg-slate-50/50 transition-colors ${
+            showDotArea ? "md:items-center md:justify-between" : ""
+          }`}
+        >
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            {supplier.logo && (
+              <img
+                src={supplier.logo}
+                alt={supplier.title ?? ""}
+                className="h-10 w-10 shrink-0 rounded-full bg-slate-100 object-contain"
+              />
             )}
+            <div className="min-w-0 flex-1">
+              {!showBasketStatus && supplier.subTitle && (
+                <p className="font-bold uppercase tracking-wide text-slate-900">
+                  {supplier.subTitle}
+                </p>
+              )}
 
-            {isOrdersOfDayPage ? (
-              <>
-                {titleHref ? (
-                  <Link
-                    href={titleHref}
-                    onClick={(e) => e.stopPropagation()}
-                    className="font-bold uppercase tracking-wide text-slate-900 hover:text-brand-600 hover:underline block"
-                  >
-                    {supplier.title ?? supplier.subTitle}
-                  </Link>
-                ) : (
+              {isOrdersOfDayPage ? (
+                <>
                   <p className="font-bold uppercase tracking-wide text-slate-900">
                     {supplier.title ?? supplier.subTitle}
                   </p>
-                )}
-                {showDeliveryInfo && supplier.nextAvailDeliveryText && (
-                  <p className="mt-0.5 text-base text-slate-500">
-                    {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
-                  </p>
-                )}
-                {showDeliveryInfo &&
-                  supplier.labelOrderTimeExpiresAt != null &&
-                  supplier.labelOrderTimeExpiresAt !== "" && (
+                  {showDeliveryInfo && supplier.nextAvailDeliveryText && (
                     <p className="mt-0.5 text-base text-slate-500">
-                      {t("order_delivery_until")}{" "}
-                      {supplier.labelOrderTimeExpiresAt}
+                      {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
                     </p>
                   )}
-              </>
-            ) : (
-              <>
-                {showDeliveryInfo && supplier.nextAvailDeliveryText && (
-                  <p className="mt-0.5 text-base text-slate-500">
-                    {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
+                  {showDeliveryInfo &&
+                    supplier.labelOrderTimeExpiresAt != null &&
+                    supplier.labelOrderTimeExpiresAt !== "" && (
+                      <p className="mt-0.5 text-base text-slate-500">
+                        {t("order_delivery_until")}{" "}
+                        {supplier.labelOrderTimeExpiresAt}
+                      </p>
+                    )}
+                </>
+              ) : (
+                <>
+                  {showDeliveryInfo && supplier.nextAvailDeliveryText && (
+                    <p className="mt-0.5 text-base text-slate-500">
+                      {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
+                    </p>
+                  )}
+                  <p className="mt-0.5 text-base text-slate-500 ">
+                    {supplier.title}
                   </p>
-                )}
-                <p className="mt-0.5 text-base text-slate-500 ">
-                  {supplier.title}
-                </p>
-              </>
-            )}
+                </>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* Dots: all-suppliers = orange (blink if open baskets) + green (today orders); orders-of-the-day = green only */}
-        {showDotArea && (
-          <div className="flex items-center gap-1 shrink-0 ml-2" aria-hidden>
-            {showOrangeDot && (
-              <span
-                className="h-2 w-2 rounded-full bg-orange-500 animate-pulse-strong"
-                title={t("suppliers_baskets")}
+          {/* Dots: all-suppliers = orange (blink if open baskets) + green (today orders); orders-of-the-day = green only */}
+          {showDotArea && (
+            <div className="flex items-center gap-1 shrink-0 ml-2" aria-hidden>
+              {showOrangeDot && (
+                <span
+                  className="h-2 w-2 rounded-full bg-orange-500 animate-pulse-strong"
+                  title={t("suppliers_baskets")}
+                />
+              )}
+              {Array.from({ length: greenDotCount }, (_, i) => (
+                <span
+                  key={i}
+                  className="h-2 w-2 rounded-full bg-green-500"
+                  title={t("suppliers_orders")}
+                />
+              ))}
+            </div>
+          )}
+        </Link>
+      ) : (
+        <div
+          className={`flex items-center gap-3 px-4 py-2 pb-2 ${
+            showDotArea ? "md:items-center md:justify-between" : ""
+          }`}
+        >
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            {supplier.logo && (
+              <img
+                src={supplier.logo}
+                alt={supplier.title ?? ""}
+                className="h-10 w-10 shrink-0 rounded-full bg-slate-100 object-contain"
               />
             )}
-            {Array.from({ length: greenDotCount }, (_, i) => (
-              <span
-                key={i}
-                className="h-2 w-2 rounded-full bg-green-500"
-                title={t("suppliers_orders")}
-              />
-            ))}
+            <div className="min-w-0 flex-1">
+              {!showBasketStatus && supplier.subTitle && (
+                <p className="font-bold uppercase tracking-wide text-slate-900">
+                  {supplier.subTitle}
+                </p>
+              )}
+
+              {isOrdersOfDayPage ? (
+                <>
+                  <p className="font-bold uppercase tracking-wide text-slate-900">
+                    {supplier.title ?? supplier.subTitle}
+                  </p>
+                  {showDeliveryInfo && supplier.nextAvailDeliveryText && (
+                    <p className="mt-0.5 text-base text-slate-500">
+                      {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
+                    </p>
+                  )}
+                  {showDeliveryInfo &&
+                    supplier.labelOrderTimeExpiresAt != null &&
+                    supplier.labelOrderTimeExpiresAt !== "" && (
+                      <p className="mt-0.5 text-base text-slate-500">
+                        {t("order_delivery_until")}{" "}
+                        {supplier.labelOrderTimeExpiresAt}
+                      </p>
+                    )}
+                </>
+              ) : (
+                <>
+                  {showDeliveryInfo && supplier.nextAvailDeliveryText && (
+                    <p className="mt-0.5 text-base text-slate-500">
+                      {t("suppliers_delivery")} {supplier.nextAvailDeliveryText}
+                    </p>
+                  )}
+                  <p className="mt-0.5 text-base text-slate-500 ">
+                    {supplier.title}
+                  </p>
+                </>
+              )}
+            </div>
           </div>
-        )}
-      </div>
+
+          {/* Dots: all-suppliers = orange (blink if open baskets) + green (today orders); orders-of-the-day = green only */}
+          {showDotArea && (
+            <div className="flex items-center gap-1 shrink-0 ml-2" aria-hidden>
+              {showOrangeDot && (
+                <span
+                  className="h-2 w-2 rounded-full bg-orange-500 animate-pulse-strong"
+                  title={t("suppliers_baskets")}
+                />
+              )}
+              {Array.from({ length: greenDotCount }, (_, i) => (
+                <span
+                  key={i}
+                  className="h-2 w-2 rounded-full bg-green-500"
+                  title={t("suppliers_orders")}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Middle: status pill (hidden on all-suppliers); colored by basketIconColor */}
       {showBasketStatus && (

@@ -10,6 +10,7 @@ import { ergastirioStore } from "../stores/ergastirioStore";
 import { useGetClientData } from "../hooks/useGetClientData";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { PasswordInput } from "../components/ui/password-input";
 import { StoreSelectDialog } from "../components/auth/StoreSelectDialog";
 import { useTranslation } from "../lib/i18n";
 import { getApiErrorMessage } from "../lib/api-error";
@@ -233,8 +234,7 @@ export default function HomePage() {
             <label className="block text-base text-slate-700">
               {t("login_password")}
             </label>
-            <Input
-              type="password"
+            <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />

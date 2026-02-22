@@ -7,6 +7,7 @@ import type { MyProfileUpdateRequest } from "@/lib/types/dashboard";
 import { useMyProfile, useMyProfileUpdate } from "@/hooks/useMyProfile";
 import { DetailSection } from "@/components/ui/detail-section";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
 import { getApiErrorMessage } from "@/lib/api-error";
@@ -134,8 +135,7 @@ export default function AccountSettingsPage() {
                   <label className="block text-base font-medium text-slate-600">
                     {t("login_password")}
                   </label>
-                  <Input
-                    type="password"
+                  <PasswordInput
                     value={form.newPassword1}
                     onChange={(e) =>
                       handleChange("newPassword1", e.target.value)
@@ -147,8 +147,7 @@ export default function AccountSettingsPage() {
                   <label className="block text-base font-medium text-slate-600">
                     {t("signup_password_confirm")}
                   </label>
-                  <Input
-                    type="password"
+                  <PasswordInput
                     value={form.newPassword2}
                     onChange={(e) =>
                       handleChange("newPassword2", e.target.value)
