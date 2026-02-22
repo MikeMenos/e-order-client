@@ -105,8 +105,15 @@ export default function ManageSupplierMenuPage() {
   return (
     <main className="px-3 text-slate-900">
       <div className="mx-auto flex max-w-xl flex-col mt-2">
-        <div className="my-4">
-          <h1 className="text-xl font-bold text-slate-900 mt-2 text-center">
+        <div className="my-4 flex items-center justify-center gap-3">
+          {selectedSupplier.logo && (
+            <img
+              src={selectedSupplier.logo}
+              alt=""
+              className="h-12 w-12 shrink-0 rounded-full bg-slate-100 object-contain"
+            />
+          )}
+          <h1 className="text-xl font-bold text-slate-900 text-center">
             {selectedSupplier.title ?? selectedSupplier.subTitle}
           </h1>
         </div>
