@@ -14,13 +14,15 @@ export const api = axios.create({
 // Skip auth-clear for login/register so failed login doesn't redirect
 const AUTH_ENDPOINTS = ["/auth-login", "/register"];
 
-// Don't treat as global auth failure: 401/500 here should not log the user out (e.g. select-store can 401 when re-calling while navigating)
-// order-temp-save, product-display, personalized-texts-update: show error to user instead of logging out so they can retry or fix
 const NO_LOGOUT_ON_AUTH_FAIL = [
   "/select-store",
   "order-temp-save",
   "product-display",
   "personalized-texts-update",
+  "users-add-or-update",
+  "users-view-profile",
+  "users-toggle-active",
+  "users-set-permissions",
 ];
 
 function isAuthFailure(error: any): boolean {

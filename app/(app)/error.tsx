@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
 
 export default function AppError({
   error,
@@ -24,13 +25,13 @@ export default function AppError({
     <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-slate-900">
       <p className="text-center mb-6 max-w-sm">{t("error_app_message")}</p>
       <div className="flex flex-wrap gap-3 justify-center">
-        <button
+        <Button
           type="button"
           onClick={reset}
           className="rounded-lg bg-slate-800 text-white px-4 py-2"
         >
           {t("error_try_again")}
-        </button>
+        </Button>
         <Link
           href="/dashboard"
           className="rounded-lg border border-slate-300 px-4 py-2"
