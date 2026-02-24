@@ -13,6 +13,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useWishlistItemsBySupplier } from "../../../../../hooks/useWishlist";
+import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { useWishlistToggle } from "../../../../../hooks/useWishlistToggle";
 import { useWishlistSortProducts } from "../../../../../hooks/useWishlistSortProducts";
 import { useFavoritesSortable } from "../../../../../hooks/useFavoritesSortable";
@@ -27,6 +28,7 @@ import { SortableFavoriteRow } from "../../../../../components/supplier/Sortable
 
 export default function FavoritesPage() {
   const { t } = useTranslation();
+  const { hasAccess } = useUserPermissions();
   const params = useParams<{ supplierUID: string }>();
   const supplierUID = params.supplierUID;
 
@@ -71,8 +73,10 @@ export default function FavoritesPage() {
   );
 
   const handleRemoveFavorite = (productUID: string) => {
-    wishlistToggle.mutate(productUID);
+    if (hasAccess("P6")) wishlistToggle.mutate(productUID);
   };
+
+  const canEditFavorites = hasAccess("P6");
 
   return (
     <main className="space-y-3 text-slate-900 px-3">
@@ -123,6 +127,8 @@ export default function FavoritesPage() {
                   }
                   onRemove={handleRemoveFavorite}
                   t={t}
+                  showDragHandle={canEditFavorites}
+                  showRemoveButton={canEditFavorites}
                 />
               ))}
             </motion.div>

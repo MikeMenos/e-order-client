@@ -2,12 +2,14 @@
 
 import { useParams } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
+import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { usePrefSchedule, usePrefScheduleUpdate } from "@/hooks/useSchedule";
 import { Switch } from "@/components/ui/switch";
 import Loading from "@/components/ui/loading";
 
 export default function TimetablePage() {
   const { t } = useTranslation();
+  const { hasAccess } = useUserPermissions();
   const params = useParams<{ supplierUID: string }>();
   const supplierUID = params.supplierUID as string;
 
@@ -85,18 +87,20 @@ export default function TimetablePage() {
                         </span>
                       )}
                     </div>
-                    <Switch
-                      checked={day.isMarked}
-                      onCheckedChange={(checked) => {
-                        updateMutation.mutate({
-                          supplierUID,
-                          dayNum: day.dayNum,
-                          isMarked: !!checked,
-                        });
-                      }}
-                      disabled={isUpdating}
-                      aria-label={`${dayLabel} ${t("timetable_enabled")}`}
-                    />
+                    {hasAccess("P4") && (
+                      <Switch
+                        checked={day.isMarked}
+                        onCheckedChange={(checked) => {
+                          updateMutation.mutate({
+                            supplierUID,
+                            dayNum: day.dayNum,
+                            isMarked: !!checked,
+                          });
+                        }}
+                        disabled={isUpdating}
+                        aria-label={`${dayLabel} ${t("timetable_enabled")}`}
+                      />
+                    )}
                   </li>
                 );
               })}

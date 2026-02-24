@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
 import { SuppliersSection } from "@/components/dashboard/SuppliersSection";
@@ -9,10 +9,10 @@ import type { SuppliersListItem } from "@/lib/types/dashboard";
 export default function ManageSuppliersPage() {
   const router = useRouter();
 
-  const { refDate, suppliers, isLoading, isError, errorMessage } =
+  const { suppliers, isLoading, isError, errorMessage } =
     useSuppliersListForToday();
 
-  const handleSupplierClick = React.useCallback(
+  const handleSupplierClick = useCallback(
     (s: SuppliersListItem) => {
       router.push(
         `/settings/manage-suppliers/${encodeURIComponent(s.supplierUID)}`,

@@ -16,6 +16,8 @@ type Props = {
   onRemove: (productUID: string) => void;
   t: (key: string) => string;
   showDragHandle?: boolean;
+  /** When false, hide the remove-from-favorites button. */
+  showRemoveButton?: boolean;
   /** When provided, the drag handle is interactive (for sortable list). */
   dragHandleProps?: DragHandleProps;
 };
@@ -26,6 +28,7 @@ export function FavoriteRowContent({
   onRemove,
   t,
   showDragHandle = true,
+  showRemoveButton = true,
   dragHandleProps,
 }: Props) {
   const productUID = item.productUID ?? item.id ?? "";
@@ -53,6 +56,7 @@ export function FavoriteRowContent({
       </div>
 
       <div className="shrink-0 flex items-center gap-2">
+        {showRemoveButton && (
         <Button
           type="button"
           variant="ghost"
@@ -74,6 +78,7 @@ export function FavoriteRowContent({
             />
           )}
         </Button>
+        )}
         {showDragHandle &&
           (dragHandleProps ? (
             <div
