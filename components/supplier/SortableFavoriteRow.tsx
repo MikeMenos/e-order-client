@@ -13,6 +13,8 @@ type Props = {
   isRemoving: boolean;
   onRemove: (productUID: string) => void;
   t: (key: string) => string;
+  showDragHandle?: boolean;
+  showRemoveButton?: boolean;
 };
 
 export function SortableFavoriteRow({
@@ -20,6 +22,8 @@ export function SortableFavoriteRow({
   isRemoving,
   onRemove,
   t,
+  showDragHandle = true,
+  showRemoveButton = true,
 }: Props) {
   const productUID = item.productUID ?? item.id ?? "";
   const {
@@ -53,12 +57,17 @@ export function SortableFavoriteRow({
         isRemoving={isRemoving}
         onRemove={onRemove}
         t={t}
-        showDragHandle={true}
-        dragHandleProps={{
-          setActivatorNodeRef,
-          listeners,
-          attributes,
-        }}
+        showDragHandle={showDragHandle}
+        showRemoveButton={showRemoveButton}
+        dragHandleProps={
+          showDragHandle
+            ? {
+                setActivatorNodeRef,
+                listeners,
+                attributes,
+              }
+            : undefined
+        }
       />
     </motion.div>
   );

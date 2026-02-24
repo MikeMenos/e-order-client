@@ -5,6 +5,7 @@ import * as React from "react";
 import { ChevronDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
+import { useUserPermissions } from "@/hooks/useUserPermissions";
 import Loading from "@/components/ui/loading";
 import { usePrefSchedule, usePrefScheduleUpdate } from "@/hooks/useSchedule";
 import { Switch } from "@/components/ui/switch";
@@ -20,10 +21,12 @@ function SupplierScheduleCard({
   schedule,
   updateMutation,
   t,
+  canEdit,
 }: {
   schedule: PrefScheduleSupplier;
   updateMutation: ReturnType<typeof usePrefScheduleUpdate>;
   t: (key: string) => string;
+  canEdit: boolean;
 }) {
   const supplierUID = schedule.supplierUID ?? "";
   const dailyProgram = schedule.dailyProgram ?? [];
@@ -97,18 +100,20 @@ function SupplierScheduleCard({
                     )}
                   </div>
 
-                  <Switch
-                    checked={day.isMarked}
-                    onCheckedChange={(checked) => {
-                      updateMutation.mutate({
-                        supplierUID,
-                        dayNum: day.dayNum,
-                        isMarked: !!checked,
-                      });
-                    }}
-                    disabled={isUpdating}
-                    aria-label={`${dayLabel} ${t("timetable_enabled")}`}
-                  />
+                  {canEdit && (
+                    <Switch
+                      checked={day.isMarked}
+                      onCheckedChange={(checked) => {
+                        updateMutation.mutate({
+                          supplierUID,
+                          dayNum: day.dayNum,
+                          isMarked: !!checked,
+                        });
+                      }}
+                      disabled={isUpdating}
+                      aria-label={`${dayLabel} ${t("timetable_enabled")}`}
+                    />
+                  )}
                 </li>
               );
             })}
@@ -138,6 +143,7 @@ function SupplierScheduleCard({
 
 export default function OrderSchedulePage() {
   const { t } = useTranslation();
+  const { hasAccess } = useUserPermissions();
   const scheduleQuery = usePrefSchedule();
   const updateMutation = usePrefScheduleUpdate();
   const storeSchedules = scheduleQuery.data?.storeSchedules ?? [];
@@ -208,6 +214,7 @@ export default function OrderSchedulePage() {
               schedule={schedule}
               updateMutation={updateMutation}
               t={t}
+              canEdit={hasAccess("P4")}
             />
           ))}
         </div>

@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
+import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { TileCard } from "@/components/ui/tile-card";
 import Loading from "@/components/ui/loading";
 import { StoreSelectDialog } from "@/components/auth/StoreSelectDialog";
@@ -17,6 +18,7 @@ import { Button } from "@/components/ui/button";
 
 export default function ManageSupplierMenuPage() {
   const { t } = useTranslation();
+  const { hasAccess } = useUserPermissions();
   const router = useRouter();
   const params = useParams<{ supplierUID: string }>();
   const supplierUID = params.supplierUID;
@@ -152,17 +154,19 @@ export default function ManageSupplierMenuPage() {
             }
           />
 
-          <TileCard
-            iconSrc="/assets/order-history.png"
-            label={t("settings_order_history")}
-            iconColor="text-blue-600"
-            horizontal={true}
-            onClick={() =>
-              router.push(
-                `/suppliers/${selectedSupplier.supplierUID}/order-history?from=settings`,
-              )
-            }
-          />
+          {hasAccess("P5") && (
+            <TileCard
+              iconSrc="/assets/order-history.png"
+              label={t("settings_order_history")}
+              iconColor="text-blue-600"
+              horizontal={true}
+              onClick={() =>
+                router.push(
+                  `/suppliers/${selectedSupplier.supplierUID}/order-history?from=settings`,
+                )
+              }
+            />
+          )}
         </div>
 
         <StoreSelectDialog

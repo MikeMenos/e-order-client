@@ -9,6 +9,7 @@ import { useTranslation } from "../../lib/i18n";
 import { api } from "../../lib/api";
 import { getApiErrorMessage } from "../../lib/api-error";
 import { useWishlistToggle } from "../../hooks/useWishlistToggle";
+import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { Button } from "../ui/button";
 import { Stepper } from "../ui/stepper";
 import type { SupplierProduct } from "@/lib/types/supplier";
@@ -26,6 +27,7 @@ function toNonNegativeNum(s: string): number {
 }
 
 export function SupplierProductCard({ product, supplierUID }: Props) {
+  const { hasAccess } = useUserPermissions();
   const {
     id,
     title,
@@ -320,9 +322,9 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
   const handleToggleFavorite = useCallback(
     (e: React.MouseEvent) => {
       if (e?.nativeEvent && !(e.nativeEvent as MouseEvent).isTrusted) return;
-      wishlistToggle.mutate(id);
+      if (hasAccess("P6")) wishlistToggle.mutate(id);
     },
-    [id, wishlistToggle],
+    [id, wishlistToggle, hasAccess],
   );
 
   const syncFromReserve = useCallback(async () => {
@@ -447,6 +449,7 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
               className="h-20 w-[100px] rounded border border-slate-200 bg-white object-contain object-left"
             />
           ) : null}
+          {hasAccess("P6") && (
           <Button
             type="button"
             variant="ghost"
@@ -471,6 +474,7 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
               />
             )}
           </Button>
+          )}
         </div>
       </div>
 

@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Star, Loader2, Pencil } from "lucide-react";
 import { useProductDisplay } from "@/hooks/useSupplier";
+import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { useTranslation } from "@/lib/i18n";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { useWishlistToggle } from "@/hooks/useWishlistToggle";
@@ -19,6 +20,7 @@ import { formatOrderDate } from "@/lib/utils";
 
 export default function SupplierProductPage() {
   const { t } = useTranslation();
+  const { hasAccess, userTypeId } = useUserPermissions();
   const params = useParams<{ supplierUID: string; productUID: string }>();
   const supplierUID = params.supplierUID;
   const productUID = params.productUID;
@@ -124,7 +126,7 @@ export default function SupplierProductPage() {
     <main className="px-3 text-slate-900">
       <div className="mx-auto max-w-2xl space-y-4 pb-16">
         {/* Edit button row: above title+star, aligned right */}
-        {!isEditing && (
+        {!isEditing && hasAccess("P3") && (
           <div className="my-4 flex justify-end">
             <Button
               type="button"
@@ -179,12 +181,12 @@ export default function SupplierProductPage() {
                 </div>
               </div>
             ) : (
-              <h1 className="text-xl font-bold text-slate-900 mt-2 leading-tight text-center">
+              <h1 className="text-xl font-bold text-slate-900 leading-tight text-center">
                 {title}
               </h1>
             )}
           </div>
-          {!isEditing && (
+          {!isEditing && hasAccess("P6") && (
             <Button
               type="button"
               variant="ghost"
@@ -251,49 +253,51 @@ export default function SupplierProductPage() {
           </div>
         </DetailSection>
 
-        {/* Last orders */}
-        <DetailSection title={t("product_last_orders")}>
-          <p className="text-sm font-medium text-slate-600 mb-3">
-            {t("product_last_orders")}
-          </p>
-          {lastOrders.length === 0 ? (
-            <p className="text-base text-slate-500">
-              {t("supplier_order_history_empty")}
+        {/* Last orders - hidden for userTypeId 3 (Employee) */}
+        {userTypeId !== 3 && (
+          <DetailSection title={t("product_last_orders")}>
+            <p className="text-sm font-medium text-slate-600 mb-3">
+              {t("product_last_orders")}
             </p>
-          ) : (
-            <ul className="space-y-3">
-              {lastOrders.map((order) => (
-                <li
-                  key={order.orderUID}
-                  className="rounded-lg border border-slate-100 bg-slate-50/80 p-3 text-base"
-                >
-                  <dl className="grid gap-1">
-                    {order.orderCode ? (
+            {lastOrders.length === 0 ? (
+              <p className="text-base text-slate-500">
+                {t("supplier_order_history_empty")}
+              </p>
+            ) : (
+              <ul className="space-y-3">
+                {lastOrders.map((order) => (
+                  <li
+                    key={order.orderUID}
+                    className="rounded-lg border border-slate-100 bg-slate-50/80 p-3 text-base"
+                  >
+                    <dl className="grid gap-1">
+                      {order.orderCode ? (
+                        <DetailRow
+                          label={t("order_code")}
+                          value={order.orderCode}
+                        />
+                      ) : null}
                       <DetailRow
-                        label={t("order_code")}
-                        value={order.orderCode}
+                        label={t("order_date_created")}
+                        value={formatOrderDate(order.orderDate)}
                       />
-                    ) : null}
-                    <DetailRow
-                      label={t("order_date_created")}
-                      value={formatOrderDate(order.orderDate)}
-                    />
-                    <DetailRow
-                      label={t("order_item_quantity")}
-                      value={String(order.qty)}
-                    />
-                    {order.packageInfo ? (
                       <DetailRow
-                        label={t("product_packaging")}
-                        value={order.packageInfo}
+                        label={t("order_item_quantity")}
+                        value={String(order.qty)}
                       />
-                    ) : null}
-                  </dl>
-                </li>
-              ))}
-            </ul>
-          )}
-        </DetailSection>
+                      {order.packageInfo ? (
+                        <DetailRow
+                          label={t("product_packaging")}
+                          value={order.packageInfo}
+                        />
+                      ) : null}
+                    </dl>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </DetailSection>
+        )}
       </div>
     </main>
   );

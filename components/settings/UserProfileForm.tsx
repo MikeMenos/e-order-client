@@ -428,6 +428,20 @@ export function UserProfileForm({
             className="placeholder:text-sm"
           />
         </div>
+        <div className="space-y-1">
+          <label className="block font-medium text-slate-600">
+            {t("signup_password_confirm")}
+          </label>
+          <PasswordInput
+            value={form.newPassword2}
+            onChange={(e) => onFormChange("newPassword2", e.target.value)}
+            disabled={isPending}
+            placeholder={
+              appUserUID ? t("settings_user_password_placeholder") : undefined
+            }
+            className="placeholder:text-sm"
+          />
+        </div>
         <div className="flex gap-2 pt-2">
           <Button
             type="button"

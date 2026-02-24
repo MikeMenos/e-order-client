@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Pencil, Loader2 } from "lucide-react";
 import { useSupplierBasicInfos } from "@/hooks/useDashboardData";
+import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { usePersonalizedTextsUpdate } from "@/hooks/usePersonalizedTextsUpdate";
 import { useTranslation } from "@/lib/i18n";
 import { getApiErrorMessage } from "@/lib/api-error";
@@ -17,6 +18,7 @@ import { Input } from "@/components/ui/input";
 
 export default function SupplierInfoPage() {
   const { t } = useTranslation();
+  const { hasAccess } = useUserPermissions();
   const params = useParams<{ supplierUID: string }>();
   const supplierUID = params.supplierUID;
   const queryClient = useQueryClient();
@@ -79,7 +81,7 @@ export default function SupplierInfoPage() {
           <h1 className="text-xl font-bold text-slate-900 mt-2 min-w-0">
             {displayName}
           </h1>
-          {supplier && !isEditingTitle && (
+          {supplier && !isEditingTitle && hasAccess("P2") && (
             <Button
               type="button"
               variant="outline"

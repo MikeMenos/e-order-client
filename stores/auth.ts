@@ -99,13 +99,21 @@ export const useAuthStore = create<AuthState>()(
 
 /**
  * When selectedUser is null and storeAccess has exactly one item, use that as the effective user (e.g. for store title, store UID).
+ * When multiple stores exist, try to match selectedStoreUID to get the correct store's policies.
+ * Also considers users.role when set (e.g. from multi-store login or settings store switch).
  */
 export function useEffectiveSelectedUser(): AnyObject | null {
   return useAuthStore((state) => {
     if (state.selectedUser) return state.selectedUser;
+    if (state.users?.role) return state.users.role;
     const storeAccess = state.users?.userInfos?.storeAccess;
-    if (Array.isArray(storeAccess) && storeAccess.length === 1)
-      return storeAccess[0] ?? null;
-    return null;
+    if (!Array.isArray(storeAccess) || storeAccess.length === 0) return null;
+    if (storeAccess.length === 1) return storeAccess[0] ?? null;
+    const match = state.selectedStoreUID
+      ? storeAccess.find(
+          (sa: AnyObject) => sa?.store?.storeUID === state.selectedStoreUID,
+        )
+      : null;
+    return match ?? storeAccess[0] ?? null;
   });
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { History } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
+import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { Button } from "@/components/ui/button";
 
 export type SupplierCheckoutBarProps = {
@@ -17,6 +18,7 @@ export function SupplierCheckoutBar({
   hideWhenInputFocused = false,
 }: SupplierCheckoutBarProps) {
   const { t } = useTranslation();
+  const { hasAccess } = useUserPermissions();
   const searchParams = useSearchParams();
   const fromParam = searchParams.get("from");
 
@@ -35,12 +37,14 @@ export function SupplierCheckoutBar({
         hideWhenInputFocused ? "max-md:translate-y-full" : ""
       }`}
     >
-      <Button variant="outline" size="lg">
-        <Link href={orderHistoryHref} className="flex items-center gap-1">
-          <History className="h-4 w-4 shrink-0" aria-hidden />
-          {t("nav_history")}
-        </Link>
-      </Button>
+      {hasAccess("P5") && (
+        <Button variant="outline" size="lg">
+          <Link href={orderHistoryHref} className="flex items-center gap-1">
+            <History className="h-4 w-4 shrink-0" aria-hidden />
+            {t("nav_history")}
+          </Link>
+        </Button>
+      )}
       <Button size="lg">
         <Link href={checkoutHref}>{t("checkout_button")}</Link>
       </Button>

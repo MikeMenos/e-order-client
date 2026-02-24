@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { DetailSection } from "@/components/ui/detail-section";
 import Loading from "@/components/ui/loading";
 import {
   useUserProfile,
