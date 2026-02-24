@@ -118,7 +118,7 @@ export default function SettingsPage() {
           {roles.length > 1 && (
             <motion.div variants={listItemVariants}>
               <TileCard
-                icon={Store}
+                iconSrc="/assets/store-selection.png"
                 label={t("settings_switch_store")}
                 iconColor="text-slate-700"
                 onClick={() => setStoreDialogOpen(true)}
