@@ -415,7 +415,7 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
   return (
     <article
       key={id}
-      className="flex flex-col gap-3 rounded-lg border border-slate-100 bg-app-card/95 p-3 shadow-sm"
+      className="flex flex-col gap-1 rounded-lg border border-slate-100 bg-app-card/95 p-3 shadow-sm"
     >
       {/* Title, subtitle, price (left) | Image, star (right) */}
       <div className="flex gap-2 items-start justify-between">
