@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import * as React from "react";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import Loading from "@/components/ui/loading";
 import { usePrefSchedule, usePrefScheduleUpdate } from "@/hooks/useSchedule";
 import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
+import { ClearableInput } from "@/components/ui/clearable-input";
 import type { PrefScheduleSupplier } from "@/lib/types/schedule";
 import {
   Collapsible,
@@ -168,25 +168,12 @@ export default function OrderSchedulePage() {
           {t("settings_order_schedule")}
         </h1>
 
-        {/* Filter input with clear button */}
         <div className="relative max-w-md mx-auto">
-          <Input
+          <ClearableInput
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("suppliers_search_placeholder")}
-            className="pr-10"
           />
-
-          {query && (
-            <button
-              type="button"
-              onClick={() => setQuery("")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 hover:text-slate-700 transition"
-              aria-label="Clear search"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
         </div>
       </header>
 

@@ -15,7 +15,7 @@ import { DetailSection } from "@/components/ui/detail-section";
 import { DetailRow } from "@/components/ui/detail-row";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
-import { Input } from "@/components/ui/input";
+import { ClearableInput } from "@/components/ui/clearable-input";
 import { formatOrderDate } from "@/lib/utils";
 
 export default function SupplierProductPage() {
@@ -149,7 +149,7 @@ export default function SupplierProductPage() {
           <div className="min-w-0 flex-1">
             {isEditing ? (
               <div className="space-y-2">
-                <Input
+                <ClearableInput
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                   className="text-xl font-bold"
@@ -228,12 +228,14 @@ export default function SupplierProductPage() {
               <DetailRow
                 label={t("product_original_title")}
                 value={product.productOriginalTitle}
+                valueClassName="font-semibold"
               />
             ) : null}
             {product.productPackaging ? (
               <DetailRow
                 label={t("product_packaging")}
                 value={product.productPackaging}
+                valueClassName="font-semibold tabular-nums"
               />
             ) : null}
             {product.productDescription ? (
@@ -248,6 +250,7 @@ export default function SupplierProductPage() {
               <DetailRow
                 label={t("product_categories")}
                 value={product.productCategories}
+                valueClassName="font-semibold"
               />
             ) : null}
           </div>
@@ -271,24 +274,28 @@ export default function SupplierProductPage() {
                     className="rounded-lg border border-slate-100 bg-slate-50/80 p-3 text-base"
                   >
                     <dl className="grid gap-1">
-                      {order.orderCode ? (
-                        <DetailRow
-                          label={t("order_code")}
-                          value={order.orderCode}
-                        />
-                      ) : null}
                       <DetailRow
                         label={t("order_date_created")}
                         value={formatOrderDate(order.orderDate)}
+                        valueClassName="font-semibold tabular-nums"
                       />
                       <DetailRow
                         label={t("order_item_quantity")}
                         value={String(order.qty)}
+                        valueClassName="font-semibold tabular-nums"
                       />
+                      {order.suggestedQty != null ? (
+                        <DetailRow
+                          label={t("order_suggested_qty")}
+                          value={String(order.suggestedQty)}
+                          valueClassName="font-semibold tabular-nums"
+                        />
+                      ) : null}
                       {order.packageInfo ? (
                         <DetailRow
                           label={t("product_packaging")}
                           value={order.packageInfo}
+                          valueClassName="font-semibold tabular-nums"
                         />
                       ) : null}
                     </dl>

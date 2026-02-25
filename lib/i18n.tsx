@@ -200,6 +200,7 @@ const resources: Resources = {
     order_items: "Items purchased",
     order_items_empty: "No items in this order.",
     order_item_quantity: "Qty",
+    order_suggested_qty: "Suggested qty",
     order_redo_button: "Redo order",
     order_redo_dialog_title: "Redo this order?",
     order_redo_dialog_description:
@@ -541,7 +542,8 @@ const resources: Resources = {
     order_items_count: "Στοιχεία",
     order_items: "Αγορασμένα προϊόντα",
     order_items_empty: "Δεν υπάρχουν προϊόντα σε αυτή την παραγγελία.",
-    order_item_quantity: "Ποσ.",
+    order_item_quantity: "Ποσότητα",
+    order_suggested_qty: "Προτεινόμενη ποσότητα",
     order_redo_button: "Επανάληψη παραγγελίας",
     order_redo_dialog_title: "Επανάληψη αυτής της παραγγελίας;",
     order_redo_dialog_description:

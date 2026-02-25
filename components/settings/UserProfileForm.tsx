@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ClearableInput } from "@/components/ui/clearable-input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -164,7 +164,7 @@ export function UserProfileForm({
           <label className="block  font-medium text-slate-600">
             {t("login_username")}
           </label>
-          <Input
+          <ClearableInput
             value={form.username}
             onChange={(e) => onFormChange("username", e.target.value)}
             disabled={isPending}
@@ -175,7 +175,7 @@ export function UserProfileForm({
           <label className="block  font-medium text-slate-600">
             {t("signup_email")}
           </label>
-          <Input
+          <ClearableInput
             type="email"
             value={form.email}
             onChange={(e) => onFormChange("email", e.target.value)}
@@ -188,7 +188,7 @@ export function UserProfileForm({
             <label className="block  font-medium text-slate-600">
               {t("first_name")}
             </label>
-            <Input
+            <ClearableInput
               value={form.fname}
               onChange={(e) => onFormChange("fname", e.target.value)}
               disabled={isPending}
@@ -198,7 +198,7 @@ export function UserProfileForm({
             <label className="block  font-medium text-slate-600">
               {t("last_name")}
             </label>
-            <Input
+            <ClearableInput
               value={form.lname}
               onChange={(e) => onFormChange("lname", e.target.value)}
               disabled={isPending}
@@ -209,7 +209,7 @@ export function UserProfileForm({
           <label className="block  font-medium text-slate-600">
             {t("signup_phone")}
           </label>
-          <Input
+          <ClearableInput
             type="number"
             inputMode="numeric"
             value={form.mobile}
@@ -318,7 +318,7 @@ export function UserProfileForm({
           <label className="block  font-medium text-slate-600">
             {t("signup_email")}
           </label>
-          <Input
+          <ClearableInput
             type="email"
             value={form.email}
             onChange={(e) => onFormChange("email", e.target.value)}
@@ -330,7 +330,7 @@ export function UserProfileForm({
             <label className="block  font-medium text-slate-600">
               {t("first_name")}
             </label>
-            <Input
+            <ClearableInput
               value={form.fname}
               onChange={(e) => onFormChange("fname", e.target.value)}
               disabled={isPending}
@@ -340,7 +340,7 @@ export function UserProfileForm({
             <label className="block  font-medium text-slate-600">
               {t("last_name")}
             </label>
-            <Input
+            <ClearableInput
               value={form.lname}
               onChange={(e) => onFormChange("lname", e.target.value)}
               disabled={isPending}
@@ -351,7 +351,7 @@ export function UserProfileForm({
           <label className="block  font-medium text-slate-600">
             {t("signup_phone")}
           </label>
-          <Input
+          <ClearableInput
             type="number"
             inputMode="numeric"
             value={form.mobile}
