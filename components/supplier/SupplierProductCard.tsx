@@ -431,12 +431,12 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
             <p className="font-bold text-slate-900 leading-tight">{title}</p>
           )}
           {subTitle ? (
-            <p className="mt-0.5 text-base text-slate-700 leading-snug">
+            <p className="mt-0.5 text-sm text-slate-700 leading-snug">
               {subTitle}
             </p>
           ) : null}
           {productPackaging ? (
-            <p className="mt-0.5 text-base text-slate-700 leading-snug">
+            <p className="mt-0.5 text-sm text-slate-700 leading-snug">
               {t("product_packaging")} {productPackaging}
             </p>
           ) : null}
@@ -450,30 +450,32 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
             />
           ) : null}
           {hasAccess("P6") && (
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={handleToggleFavorite}
-            disabled={isTogglingFavorite}
-            className="px-2 flex shrink-0 items-center justify-center text-slate-400 hover:text-slate-600 disabled:pointer-events-none"
-            title={isFavorite ? "Favorite" : undefined}
-            aria-label={
-              isFavorite ? "Remove from favorites" : "Add to favorites"
-            }
-          >
-            {isTogglingFavorite ? (
-              <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
-            ) : (
-              <Star
-                className="h-5 w-5"
-                fill={isFavorite ? (favIconColor ?? "#9CBDFA") : "transparent"}
-                stroke={
-                  isFavorite ? (favIconColor ?? "#9CBDFA") : "currentColor"
-                }
-                strokeWidth={1.5}
-              />
-            )}
-          </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={handleToggleFavorite}
+              disabled={isTogglingFavorite}
+              className="px-2 flex shrink-0 items-center justify-center text-slate-400 hover:text-slate-600 disabled:pointer-events-none"
+              title={isFavorite ? "Favorite" : undefined}
+              aria-label={
+                isFavorite ? "Remove from favorites" : "Add to favorites"
+              }
+            >
+              {isTogglingFavorite ? (
+                <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
+              ) : (
+                <Star
+                  className="h-5 w-5"
+                  fill={
+                    isFavorite ? (favIconColor ?? "#9CBDFA") : "transparent"
+                  }
+                  stroke={
+                    isFavorite ? (favIconColor ?? "#9CBDFA") : "currentColor"
+                  }
+                  strokeWidth={1.5}
+                />
+              )}
+            </Button>
           )}
         </div>
       </div>
@@ -510,7 +512,6 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
           tone="basket"
         />
       </div>
-
     </article>
   );
 }
