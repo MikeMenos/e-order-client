@@ -431,12 +431,12 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
             <p className="font-bold text-slate-900 leading-tight">{title}</p>
           )}
           {subTitle ? (
-            <p className="mt-0.5 text-sm text-slate-700 leading-snug">
+            <p className="mt-0.5 text-base text-slate-700 leading-snug">
               {subTitle}
             </p>
           ) : null}
           {productPackaging ? (
-            <p className="mt-0.5 text-sm text-slate-700 leading-snug">
+            <p className="mt-0.5 text-base text-slate-700 leading-snug">
               {t("product_packaging")} {productPackaging}
             </p>
           ) : null}
@@ -446,7 +446,7 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
             <img
               src={image}
               alt={title}
-              className="h-20 w-[80px] rounded border border-slate-200 bg-white object-contain object-center"
+              className="h-20 w-[80px] rounded object-contain object-center"
             />
           ) : null}
           {hasAccess("P6") && (

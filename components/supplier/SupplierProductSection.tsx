@@ -23,7 +23,7 @@ export function SupplierProductSection({
       ref={sectionRef}
       data-section-id={section.id}
       style={{ scrollMarginTop: stickyOffset }}
-      className="space-y-3 rounded-xl bg-app-card/95 p-2 mt-2"
+      className="space-y-2 rounded-xl bg-app-card/95 p-2 "
     >
       <div className="mb-2 border-b border-slate-200 pb-1 pl-3 text-base font-semibold uppercase tracking-[0.18em] text-slate-500">
         {section.label}
