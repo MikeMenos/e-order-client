@@ -446,7 +446,7 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
             <img
               src={image}
               alt={title}
-              className="h-20 w-[100px] rounded border border-slate-200 bg-white object-contain object-left"
+              className="h-20 w-[80px] rounded border border-slate-200 bg-white object-contain object-center"
             />
           ) : null}
           {hasAccess("P6") && (
