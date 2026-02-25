@@ -6,7 +6,7 @@ import { useTranslation } from "@/lib/i18n";
 import type { MyProfileUpdateRequest } from "@/lib/types/dashboard";
 import { useMyProfile, useMyProfileUpdate } from "@/hooks/useMyProfile";
 import { DetailSection } from "@/components/ui/detail-section";
-import { Input } from "@/components/ui/input";
+import { ClearableInput } from "@/components/ui/clearable-input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
@@ -92,7 +92,7 @@ export default function AccountSettingsPage() {
                   <label className="block text-base font-medium text-slate-600">
                     {t("signup_email")}
                   </label>
-                  <Input
+                  <ClearableInput
                     type="email"
                     value={form.email}
                     onChange={(e) => handleChange("email", e.target.value)}
@@ -104,7 +104,7 @@ export default function AccountSettingsPage() {
                     <label className="block text-base font-medium text-slate-600">
                       {t("first_name")}
                     </label>
-                    <Input
+                    <ClearableInput
                       value={form.fname}
                       onChange={(e) => handleChange("fname", e.target.value)}
                       disabled={updateMutation.isPending}
@@ -114,7 +114,7 @@ export default function AccountSettingsPage() {
                     <label className="block text-base font-medium text-slate-600">
                       {t("last_name")}
                     </label>
-                    <Input
+                    <ClearableInput
                       value={form.lname}
                       onChange={(e) => handleChange("lname", e.target.value)}
                       disabled={updateMutation.isPending}
@@ -125,7 +125,7 @@ export default function AccountSettingsPage() {
                   <label className="block text-base font-medium text-slate-600">
                     {t("signup_phone")}
                   </label>
-                  <Input
+                  <ClearableInput
                     value={form.mobile}
                     onChange={(e) => handleChange("mobile", e.target.value)}
                     disabled={updateMutation.isPending}

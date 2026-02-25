@@ -14,7 +14,7 @@ import { DetailSection } from "@/components/ui/detail-section";
 import { DetailRow } from "@/components/ui/detail-row";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
-import { Input } from "@/components/ui/input";
+import { ClearableInput } from "@/components/ui/clearable-input";
 
 export default function SupplierInfoPage() {
   const { t } = useTranslation();
@@ -127,7 +127,7 @@ export default function SupplierInfoPage() {
                     <label className="text-sm font-medium text-slate-600">
                       {t("supplier_custom_title")}
                     </label>
-                    <Input
+                    <ClearableInput
                       value={editCustomTitle}
                       onChange={(e) => setEditCustomTitle(e.target.value)}
                       className="text-base"

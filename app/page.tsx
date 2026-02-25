@@ -9,7 +9,7 @@ import { useAuthStore } from "../stores/auth";
 import { ergastirioStore } from "../stores/ergastirioStore";
 import { useGetClientData } from "../hooks/useGetClientData";
 import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
+import { ClearableInput } from "../components/ui/clearable-input";
 import { PasswordInput } from "../components/ui/password-input";
 import { StoreSelectDialog } from "../components/auth/StoreSelectDialog";
 import { useTranslation } from "../lib/i18n";
@@ -225,7 +225,7 @@ export default function HomePage() {
             <label className="block text-base text-slate-700">
               {t("login_username")}
             </label>
-            <Input
+            <ClearableInput
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
