@@ -17,7 +17,7 @@ export function UnderConstruction() {
           <img
             src="/assets/logo.png"
             alt="E-Order"
-            className="h-20 w-20 rounded-xl object-contain"
+            className="h-20 w-20 object-contain"
           />
           <div className="absolute -bottom-1 -right-8 rounded-full bg-amber-100 p-1.5">
             <Construction className="h-5 w-5 text-amber-600" aria-hidden />
