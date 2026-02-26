@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -34,6 +34,7 @@ export default function SupplierInfoPage() {
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editCustomTitle, setEditCustomTitle] = useState("");
+  const editInputRef = useRef<HTMLInputElement>(null);
 
   const personalizedUpdate = usePersonalizedTextsUpdate({
     supplierUID: supplierUID ?? undefined,
@@ -73,6 +74,12 @@ export default function SupplierInfoPage() {
     setIsEditingTitle(false);
     setEditCustomTitle("");
   };
+
+  useEffect(() => {
+    if (isEditingTitle) {
+      editInputRef.current?.focus();
+    }
+  }, [isEditingTitle]);
 
   return (
     <main className=" text-slate-900 px-3">
@@ -128,6 +135,7 @@ export default function SupplierInfoPage() {
                       {t("supplier_custom_title")}
                     </label>
                     <ClearableInput
+                      ref={editInputRef}
                       value={editCustomTitle}
                       onChange={(e) => setEditCustomTitle(e.target.value)}
                       className="text-base"
