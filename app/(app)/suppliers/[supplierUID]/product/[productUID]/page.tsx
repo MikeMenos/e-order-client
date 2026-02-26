@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -32,6 +32,7 @@ export default function SupplierProductPage() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState("");
+  const editInputRef = useRef<HTMLInputElement>(null);
 
   const wishlistToggle = useWishlistToggle({
     supplierUID: supplierUID ?? undefined,
@@ -122,6 +123,12 @@ export default function SupplierProductPage() {
     setEditTitle("");
   };
 
+  useEffect(() => {
+    if (isEditing) {
+      editInputRef.current?.focus();
+    }
+  }, [isEditing]);
+
   return (
     <main className="px-3 text-slate-900">
       <div className="mx-auto max-w-2xl space-y-4 pb-16">
@@ -150,6 +157,7 @@ export default function SupplierProductPage() {
             {isEditing ? (
               <div className="space-y-2">
                 <ClearableInput
+                  ref={editInputRef}
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                   className="text-xl font-bold"
