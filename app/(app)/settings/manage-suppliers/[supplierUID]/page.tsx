@@ -154,6 +154,17 @@ export default function ManageSupplierMenuPage() {
             }
           />
 
+          <TileCard
+            iconSrc="/assets/manage-products.png"
+            label={t("settings_edit_products")}
+            horizontal={true}
+            onClick={() =>
+              router.push(
+                `/settings/manage-suppliers/${selectedSupplier.supplierUID}/manage-products`,
+              )
+            }
+          />
+
           {hasAccess("P5") && (
             <TileCard
               iconSrc="/assets/order-history.png"

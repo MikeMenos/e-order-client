@@ -153,7 +153,6 @@ export default function SupplierProductPage() {
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                   className="text-xl font-bold"
-                  placeholder={title}
                   aria-label={t("product_edit_title")}
                 />
                 <div className="flex gap-2">
@@ -161,7 +160,9 @@ export default function SupplierProductPage() {
                     type="button"
                     size="sm"
                     onClick={saveTitle}
-                    disabled={personalizedUpdate.isPending}
+                    disabled={
+                      personalizedUpdate.isPending || editTitle.trim() === ""
+                    }
                   >
                     {personalizedUpdate.isPending ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -198,10 +199,10 @@ export default function SupplierProductPage() {
               }
             >
               {wishlistToggle.isPending ? (
-                <Loader2 className="h-6 w-6 animate-spin" aria-hidden />
+                <Loader2 className="h-7 w-7 animate-spin" aria-hidden />
               ) : (
                 <Star
-                  className="h-8 w-8"
+                  className="h-7 w-7"
                   fill={isFavorite ? favIconColor : "transparent"}
                   stroke={isFavorite ? favIconColor : "currentColor"}
                   strokeWidth={1.5}
