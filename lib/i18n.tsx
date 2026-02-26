@@ -622,7 +622,7 @@ const resources: Resources = {
     settings_user_type_select: "Επιλέξτε τύπο χρήστη",
     settings_user_type_placeholder: "Επιλέξτε τύπο χρήστη",
     settings_user_type_admin: "Διαχειριστής",
-    settings_user_type_deputy: "Υπ.Καταστήματος",
+    settings_user_type_deputy: "Υπεύθυνος Καταστήματος",
     settings_user_type_employee: "Υπάλληλος",
     settings_perm_P1: "Προβολή τιμών",
     settings_perm_P2: "Μεταβολή ονομασίας προμηθευτών",
