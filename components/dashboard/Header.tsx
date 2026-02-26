@@ -31,7 +31,7 @@ export function Header() {
   if (isDashboard) return null;
 
   return (
-    <header className="flex items-center justify-between gap-3 bg-transparent px-3 py-1 w-full min-w-0 border-b-0">
+    <header className="flex items-center justify-between gap-3 bg-transparent px-3 py-0.5 w-full min-w-0 border-b-0">
       <div className="flex w-14 shrink-0 justify-start">
         {canGoBack ? (
           <Button
@@ -54,11 +54,11 @@ export function Header() {
           <img
             src="/assets/logo.png"
             alt="E-Order"
-            className="h-16 w-16 object-contain"
+            className="h-15 w-15 object-contain"
           />
         </Link>
         {storeTitle && (
-          <p className="mt-1 text-base font-medium text-slate-600 line-clamp-1">
+          <p className="mt-0.5 text-base font-medium text-slate-600 line-clamp-1">
             {storeTitle}
           </p>
         )}
