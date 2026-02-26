@@ -42,10 +42,10 @@ export function Stepper({
             }
 
             : {
-                wrap: "border-emerald-200/70 bg-white",
-                btn: "bg-white text-emerald-900 hover:bg-emerald-100/50 active:bg-emerald-100/50",
-                mid: "bg-emerald-50/60 text-emerald-950",
-                ring: "focus-within:ring-emerald-100/50",
+                wrap: "border-sky-200/70 bg-white",
+                btn: "bg-white text-sky-900 hover:bg-sky-100/50 active:bg-sky-200/40",
+                mid: "bg-sky-50/70 text-sky-950",
+                ring: "focus-within:ring-sky-200/50",
             };
 
     return (

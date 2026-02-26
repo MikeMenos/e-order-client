@@ -31,18 +31,18 @@ export function Header() {
   if (isDashboard) return null;
 
   return (
-    <header className="flex items-center justify-between gap-3 bg-transparent px-3 py-2.5 w-full min-w-0 border-b-0">
+    <header className="flex items-center justify-between gap-3 bg-transparent px-3 py-1 w-full min-w-0 border-b-0">
       <div className="flex w-14 shrink-0 justify-start">
         {canGoBack ? (
           <Button
             type="button"
             variant="outline"
             size="icon"
-            className="h-10 w-10 rounded-full border-slate-200"
+            className="h-12 w-12 rounded-full border-slate-200"
             onClick={goBack}
             aria-label="Back"
           >
-            <ChevronLeft className="h-6 w-6 text-brand-500" aria-hidden />
+            <ChevronLeft className="h-8 w-8 text-brand-500" aria-hidden />
           </Button>
         ) : (
           <span className="w-9" />
@@ -68,10 +68,10 @@ export function Header() {
         <Button
           variant="outline"
           size="icon"
-          className="h-10 w-10 rounded-full border-slate-200"
+          className="h-12 w-12 rounded-full border-slate-200"
         >
           <Link href="/dashboard" aria-label="Home">
-            <Home className="h-6 w-6 text-brand-500" aria-hidden />
+            <Home className="h-8 w-8 text-brand-500" aria-hidden />
           </Link>
         </Button>
       </div>

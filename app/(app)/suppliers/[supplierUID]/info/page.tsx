@@ -138,7 +138,10 @@ export default function SupplierInfoPage() {
                         type="button"
                         size="sm"
                         onClick={saveCustomTitle}
-                        disabled={personalizedUpdate.isPending}
+                        disabled={
+                          personalizedUpdate.isPending ||
+                          editCustomTitle.trim() === ""
+                        }
                       >
                         {personalizedUpdate.isPending ? (
                           <Loader2 className="h-4 w-4 animate-spin" />

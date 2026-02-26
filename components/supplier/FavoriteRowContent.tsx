@@ -33,7 +33,7 @@ export function FavoriteRowContent({
 }: Props) {
   const productUID = item.productUID ?? item.id ?? "";
   return (
-    <div className="flex gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:shadow-md w-full select-none [-webkit-touch-callout:none]">
+    <div className="flex gap-2 items-center rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:shadow-md w-full select-none [-webkit-touch-callout:none]">
       {item.productImage && (
         <div className="shrink-0">
           <img
@@ -48,36 +48,31 @@ export function FavoriteRowContent({
         <h3 className="font-semibold text-slate-900 leading-tight">
           {item.productTitle ?? item.title ?? item.productOriginalTitle ?? "—"}
         </h3>
-        {item.productDescription && (
-          <p className="mt-1 text-sm text-slate-500">
-            {item.productDescription}
-          </p>
-        )}
       </div>
 
       <div className="shrink-0 flex items-center gap-2">
         {showRemoveButton && (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          onClick={() => onRemove(productUID)}
-          disabled={isRemoving}
-          className="h-10 w-10 text-red-500 hover:text-red-700 hover:bg-red-50 disabled:opacity-60"
-          aria-label={t("supplier_remove_favorite")}
-          title={t("supplier_remove_favorite")}
-        >
-          {isRemoving ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
-          ) : (
-            <Star
-              className="h-5 w-5"
-              fill={item.favIconColor || item.iconColor || "#9CBDFA"}
-              stroke={item.favIconColor || item.iconColor || "#9CBDFA"}
-              strokeWidth={1.5}
-            />
-          )}
-        </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => onRemove(productUID)}
+            disabled={isRemoving}
+            className="h-10 w-10 text-red-500 hover:text-red-700 hover:bg-red-50 disabled:opacity-60"
+            aria-label={t("supplier_remove_favorite")}
+            title={t("supplier_remove_favorite")}
+          >
+            {isRemoving ? (
+              <Loader2 className="h-7 w-7 animate-spin" />
+            ) : (
+              <Star
+                className="h-7 w-7"
+                fill={item.favIconColor || item.iconColor || "#9CBDFA"}
+                stroke={item.favIconColor || item.iconColor || "#9CBDFA"}
+                strokeWidth={1.5}
+              />
+            )}
+          </Button>
         )}
         {showDragHandle &&
           (dragHandleProps ? (

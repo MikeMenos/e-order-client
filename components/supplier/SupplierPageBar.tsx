@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
+import { cn } from "../../lib/utils";
 import { useTranslation } from "../../lib/i18n";
 import { useBasketItems } from "../../hooks/useBasket";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
@@ -21,9 +22,18 @@ type Props = {
   selectedDate?: string | null;
   mainTab?: "catalog" | "favorites";
   onMainTabChange?: (tab: "catalog" | "favorites") => void;
+  hideCartIcon?: boolean;
+  /** When true, center the supplier logo and title */
+  centerLayout?: boolean;
 };
 
-export function SupplierPageBar({ supplier, mainTab, onMainTabChange }: Props) {
+export function SupplierPageBar({
+  supplier,
+  mainTab,
+  onMainTabChange,
+  hideCartIcon = false,
+  centerLayout = false,
+}: Props) {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const supplierUID = supplier?.supplierUID;
@@ -45,64 +55,71 @@ export function SupplierPageBar({ supplier, mainTab, onMainTabChange }: Props) {
   const showProductTabs =
     typeof mainTab === "string" && typeof onMainTabChange === "function";
 
+  const supplierContent = (
+    <>
+      {supplier?.logo && (
+        <img
+          src={supplier.logo}
+          alt={supplierLabel ?? ""}
+          className="h-10 w-10 shrink-0 rounded-full bg-slate-100 object-contain"
+        />
+      )}
+      <div className="min-w-0 overflow-hidden">
+        <p
+          className="text-base font-semibold text-slate-900"
+          title={supplierLabel ?? ""}
+        >
+          {supplierLabel}
+        </p>
+      </div>
+    </>
+  );
+
   return (
     <div className="flex flex-col gap-0">
-      <div className="mx-auto flex w-full items-center justify-between gap-4 px-4 py-2">
+      <div
+        className={cn(
+          "mx-auto flex w-full items-center gap-4 px-4 py-2",
+          centerLayout ? "justify-center" : "justify-between",
+        )}
+      >
         {supplierUID ? (
           <Link
             href={`/settings/manage-suppliers/${encodeURIComponent(supplierUID)}`}
-            className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden rounded-lg transition-colors hover:bg-slate-100/80 active:bg-slate-100"
+            className={cn(
+              "flex items-center gap-3 overflow-hidden rounded-lg transition-colors hover:bg-slate-100/80 active:bg-slate-100",
+              centerLayout ? "flex-1 justify-center" : "min-w-0 flex-1",
+            )}
             aria-label={t("supplier_manage") ?? "Manage supplier"}
           >
-            {supplier?.logo && (
-              <img
-                src={supplier.logo}
-                alt={supplierLabel ?? ""}
-                className="h-10 w-10 shrink-0 rounded-full bg-slate-100 object-contain"
-              />
-            )}
-            <div className="min-w-0 flex-1 overflow-hidden">
-              <p
-                className="text-base font-semibold text-slate-900"
-                title={supplierLabel ?? ""}
-              >
-                {supplierLabel}
-              </p>
-            </div>
+            {supplierContent}
           </Link>
         ) : (
-          <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
-            {supplier?.logo && (
-              <img
-                src={supplier.logo}
-                alt={supplierLabel ?? ""}
-                className="h-10 w-10 shrink-0 rounded-full bg-slate-100 object-contain"
-              />
+          <div
+            className={cn(
+              "flex items-center gap-3 overflow-hidden",
+              centerLayout ? "flex-1 justify-center" : "min-w-0 flex-1",
             )}
-            <div className="min-w-0 flex-1 overflow-hidden">
-              <p
-                className="text-base font-semibold text-slate-900"
-                title={supplierLabel ?? ""}
-              >
-                {supplierLabel}
-              </p>
-            </div>
+          >
+            {supplierContent}
           </div>
         )}
-        <div className="flex shrink-0 items-center gap-2 text-base text-slate-500">
-          <Link
-            href={checkoutHref}
-            className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-brand-200 bg-brand-50 text-brand-600 hover:bg-brand-100 md:h-9 md:w-9"
-            aria-label={t("checkout_button")}
-          >
-            <ShoppingCart className="h-4 w-4 md:h-4.5 md:w-4.5" />
-            {basketItemCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-white">
-                {basketItemCount > 99 ? "99+" : basketItemCount}
-              </span>
-            )}
-          </Link>
-        </div>
+        {!hideCartIcon && (
+          <div className="flex shrink-0 items-center gap-2 text-base text-slate-500">
+            <Link
+              href={checkoutHref}
+              className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-brand-200 bg-brand-50 text-brand-600 hover:bg-brand-100 md:h-9 md:w-9"
+              aria-label={t("checkout_button")}
+            >
+              <ShoppingCart className="h-4 w-4 md:h-4.5 md:w-4.5" />
+              {basketItemCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-white">
+                  {basketItemCount > 99 ? "99+" : basketItemCount}
+                </span>
+              )}
+            </Link>
+          </div>
+        )}
       </div>
       {showProductTabs && (
         <Tabs

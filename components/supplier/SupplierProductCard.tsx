@@ -10,6 +10,7 @@ import { api } from "../../lib/api";
 import { getApiErrorMessage } from "../../lib/api-error";
 import { useWishlistToggle } from "../../hooks/useWishlistToggle";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
+import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { Stepper } from "../ui/stepper";
 import type { SupplierProduct } from "@/lib/types/supplier";
@@ -19,6 +20,7 @@ const DEBOUNCE_MS = 800;
 type Props = {
   product: SupplierProduct;
   supplierUID?: string;
+  compact?: boolean;
 };
 
 function toNonNegativeNum(s: string): number {
@@ -26,7 +28,11 @@ function toNonNegativeNum(s: string): number {
   return Number.isNaN(n) || n < 0 ? 0 : Math.floor(n);
 }
 
-export function SupplierProductCard({ product, supplierUID }: Props) {
+export function SupplierProductCard({
+  product,
+  supplierUID,
+  compact = false,
+}: Props) {
   const { hasAccess } = useUserPermissions();
   const {
     id,
@@ -46,7 +52,7 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
     const q = Math.max(0, Number(initialSuggestedQty) || 0);
     return q === 0 ? "" : String(q);
   });
-  /** Basket input = total qty in basket for this product (from basket-items). User can increment or decrement; we send this total. */
+
   const [basketQtyDisplay, setBasketQtyDisplay] = useState(() => {
     const q = Math.max(0, Number(initialQty) || 0);
     return q === 0 ? "" : String(q);
@@ -83,10 +89,6 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
     ) {
       reserveOriginalValueOnFocusRef.current = reserveQtyDisplay;
     }
-    // Note: Input component calls onChange("") BEFORE onFocus
-    // So by the time this runs, reserveQtyDisplay might already be ""
-    // The original value is captured in setReserveFromUser when onChange("") is called
-    // Don't reset reserveWasClearedOnFocusRef here - it's set in setReserveFromUser
   }, [reserveQtyDisplay]);
 
   const handleBasketFocus = useCallback(() => {
@@ -97,19 +99,11 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
     ) {
       basketOriginalValueOnFocusRef.current = basketQtyDisplay;
     }
-    // Note: Input component calls onChange("") BEFORE onFocus
-    // So by the time this runs, basketQtyDisplay might already be ""
-    // The original value is captured in setBasketFromUser when onChange("") is called
-    // Don't reset basketWasClearedOnFocusRef here - it's set in setBasketFromUser
   }, [basketQtyDisplay]);
 
   const setReserveFromUser = useCallback(
     (value: string) => {
-      // If value becomes empty, we're likely clearing on focus
-      // Capture the original value BEFORE it gets cleared (React state updates are async)
       if (value === "") {
-        // Always capture the current display value if we don't have one stored yet
-        // This handles the case where Input clears the value before onFocus runs
         if (
           reserveOriginalValueOnFocusRef.current === "" &&
           reserveQtyDisplay !== ""
@@ -415,38 +409,59 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
   return (
     <article
       key={id}
-      className="flex flex-col gap-1 rounded-lg border border-slate-100 bg-app-card/95 px-3 py-2 shadow-sm"
+      className={cn(
+        "flex flex-col rounded-lg border border-slate-100 bg-app-card/95 px-3 shadow-sm",
+        compact ? "gap-0.5 py-1.5" : "gap-1 py-2",
+      )}
     >
       {/* Title, subtitle, price (left) | Image, star (right) */}
-      <div className="flex gap-2 items-start justify-between">
+      <div
+        className={cn(
+          "flex items-center justify-between",
+          compact ? "gap-1.5" : "gap-2",
+        )}
+      >
         <div className="min-w-0 flex-1">
           {supplierUID ? (
             <Link
               href={`/suppliers/${supplierUID}/product/${id}`}
-              className="font-bold text-slate-900 leading-tight hover:text-brand-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 rounded"
+              className={cn(
+                "font-bold text-slate-900 leading-tight hover:text-brand-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 rounded",
+                compact && "text-base",
+              )}
             >
               {title}
             </Link>
           ) : (
-            <p className="font-bold text-slate-900 leading-tight">{title}</p>
+            <p
+              className={cn(
+                "font-bold text-slate-900 leading-tight",
+                compact && "text-base",
+              )}
+            >
+              {title}
+            </p>
           )}
-          {subTitle ? (
+          {!compact && subTitle ? (
             <p className="mt-0.5 text-base text-slate-700 leading-snug">
               {subTitle}
             </p>
           ) : null}
-          {productPackaging ? (
+          {!compact && productPackaging ? (
             <p className="mt-0.5 text-base text-slate-700 leading-snug">
               {t("product_packaging")} {productPackaging}
             </p>
           ) : null}
         </div>
-        <div className="flex shrink-0 items-center gap-1.5">
+        <div className={cn("flex shrink-0 items-center gap-2")}>
           {image ? (
             <img
               src={image}
               alt={title}
-              className="h-20 w-[80px] rounded object-contain object-center"
+              className={cn(
+                "rounded object-contain object-center",
+                compact ? "h-14 w-14" : "h-20 w-[80px]",
+              )}
             />
           ) : null}
           {hasAccess("P6") && (
@@ -455,17 +470,23 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
               variant="ghost"
               onClick={handleToggleFavorite}
               disabled={isTogglingFavorite}
-              className="px-2 flex shrink-0 items-center justify-center text-slate-400 hover:text-slate-600 disabled:pointer-events-none"
+              className={cn(
+                "flex shrink-0 items-center justify-center text-slate-400 hover:text-slate-600 disabled:pointer-events-none",
+                compact ? "p-1" : "px-2",
+              )}
               title={isFavorite ? "Favorite" : undefined}
               aria-label={
                 isFavorite ? "Remove from favorites" : "Add to favorites"
               }
             >
               {isTogglingFavorite ? (
-                <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
+                <Loader2
+                  className={cn("animate-spin", "h-7 w-7")}
+                  aria-hidden
+                />
               ) : (
                 <Star
-                  className="h-5 w-5"
+                  className="h-7 w-7"
                   fill={
                     isFavorite ? (favIconColor ?? "#9CBDFA") : "transparent"
                   }
@@ -480,38 +501,40 @@ export function SupplierProductCard({ product, supplierUID }: Props) {
         </div>
       </div>
 
-      {/* Value inputs below: Reserve, then Basket */}
-      <div className="flex justify-between gap-2 border-t border-slate-100 pt-1">
-        <Stepper
-          label={t("supplier_reserve")}
-          value={reserveQtyDisplay}
-          onDec={() => setReserveClamped(-1)}
-          onInc={() => setReserveClamped(1)}
-          onChange={(e) => setReserveFromUser(e.target.value)}
-          onFocus={handleReserveFocus}
-          onBlur={handleReserveBlur}
-          ariaDec={t("aria_decrease_reserve")}
-          ariaInc={t("aria_increase_reserve")}
-          ariaValue={t("aria_reserve_quantity")}
-          disabled={isLoading}
-          tone="reserve"
-        />
+      {/* Value inputs below: Reserve, then Basket (hidden in compact mode) */}
+      {!compact && (
+        <div className="flex justify-between gap-2 border-t border-slate-100 pt-1">
+          <Stepper
+            label={t("supplier_reserve")}
+            value={reserveQtyDisplay}
+            onDec={() => setReserveClamped(-1)}
+            onInc={() => setReserveClamped(1)}
+            onChange={(e) => setReserveFromUser(e.target.value)}
+            onFocus={handleReserveFocus}
+            onBlur={handleReserveBlur}
+            ariaDec={t("aria_decrease_reserve")}
+            ariaInc={t("aria_increase_reserve")}
+            ariaValue={t("aria_reserve_quantity")}
+            disabled={isLoading}
+            tone="reserve"
+          />
 
-        <Stepper
-          label={t("supplier_basket")}
-          value={basketQtyDisplay}
-          onDec={() => setBasketClamped(-1)}
-          onInc={() => setBasketClamped(1)}
-          onChange={(e) => setBasketFromUser(e.target.value)}
-          onFocus={handleBasketFocus}
-          onBlur={handleBasketBlur}
-          ariaDec={t("aria_decrease_basket")}
-          ariaInc={t("aria_increase_basket")}
-          ariaValue={t("aria_basket_quantity")}
-          disabled={isLoading}
-          tone="basket"
-        />
-      </div>
+          <Stepper
+            label={t("supplier_basket")}
+            value={basketQtyDisplay}
+            onDec={() => setBasketClamped(-1)}
+            onInc={() => setBasketClamped(1)}
+            onChange={(e) => setBasketFromUser(e.target.value)}
+            onFocus={handleBasketFocus}
+            onBlur={handleBasketBlur}
+            ariaDec={t("aria_decrease_basket")}
+            ariaInc={t("aria_increase_basket")}
+            ariaValue={t("aria_basket_quantity")}
+            disabled={isLoading}
+            tone="basket"
+          />
+        </div>
+      )}
     </article>
   );
 }
