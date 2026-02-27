@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 import { useActiveTabsStore } from "@/stores/activeTabs";
 import type { SupplierSection } from "@/lib/types/supplier";

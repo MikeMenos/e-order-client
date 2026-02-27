@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -40,8 +41,8 @@ export function formatOrderDate(value: unknown): string {
     typeof value === "string"
       ? parseISO(value)
       : value instanceof Date
-      ? value
-      : new Date(Number(value));
+        ? value
+        : new Date(Number(value));
   if (!isValid(date))
     return typeof value === "string" ? value.slice(0, 10) : String(value);
   return format(date, "dd-MM-yyyy");
