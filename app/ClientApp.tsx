@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import { TranslationProvider } from "../lib/i18n";
 import { PwaGate } from "@/components/pwa/PwaGate";
 import { PwaInstallProvider } from "@/components/pwa/PwaInstallContext";
+import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
 import { initAuthFromCookies } from "../lib/cookies";
 import { ScrollToTop } from "./(app)/ScrollToTop";
 
@@ -21,6 +22,7 @@ export function ClientApp({ children }: { children: ReactNode }) {
     <TranslationProvider>
       <QueryClientProvider client={queryClient}>
         <PwaInstallProvider>
+          <ServiceWorkerRegistration />
           <PwaGate>
             <ScrollToTop />
             {children}
