@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useSupplierDisplay } from "@/hooks/useSupplier";
@@ -24,6 +24,50 @@ function toISOOrNull(dateStr: string | null): string | null {
     return Number.isNaN(d.getTime()) ? null : d.toISOString();
   } catch {
     return null;
+  }
+}
+
+function toYyyyMmDd(dateStr: string | null): string | null {
+  if (!dateStr?.trim()) return null;
+  try {
+    const d = new Date(dateStr);
+    if (Number.isNaN(d.getTime())) return null;
+    return d.toISOString().slice(0, 10);
+  } catch {
+    return null;
+  }
+}
+
+function isDeliveryDateBlocked(
+  effectiveDate: string | null,
+  weekDailyAnalysis: {
+    dateObj: string;
+    dayIsClosed: boolean;
+    supplierCanDeliver: boolean;
+  }[],
+): boolean {
+  const key = toYyyyMmDd(effectiveDate);
+  if (!key) return false;
+  const item = weekDailyAnalysis.find((it) => it.dateObj.slice(0, 10) === key);
+  return item ? item.dayIsClosed || !item.supplierCanDeliver : false;
+}
+
+function getFirstValidDeliveryDate(
+  weekDailyAnalysis: {
+    dateObj: string;
+    dayIsClosed: boolean;
+    supplierCanDeliver: boolean;
+  }[],
+  fallback: string | null,
+): string | null {
+  const valid = weekDailyAnalysis.find(
+    (it) => !it.dayIsClosed && it.supplierCanDeliver,
+  );
+  if (!valid) return fallback;
+  try {
+    return valid.dateObj.slice(0, 10);
+  } catch {
+    return fallback;
   }
 }
 
@@ -99,11 +143,26 @@ export default function SupplierCheckoutPage() {
   const isSubmitting = orderAddMutation.isPending;
   const isSavingTemp = orderTempSaveMutation.isPending;
 
+  const defaultDeliveryDate = useMemo(
+    () =>
+      getFirstValidDeliveryDate(
+        supplier?.weekDailyAnalysis ?? [],
+        selectedDate,
+      ) ?? selectedDate,
+    [supplier?.weekDailyAnalysis, selectedDate],
+  );
+
+  const effectiveDeliveryDate = deliveryDate ?? defaultDeliveryDate;
+  const isDeliveryDateInvalid = isDeliveryDateBlocked(
+    effectiveDeliveryDate,
+    supplier?.weekDailyAnalysis ?? [],
+  );
+
   const handleTemporarySave = () => {
     const orderRefDate =
       toISOOrNull(selectedDate ?? null) ?? new Date().toISOString();
     const desiredDeliveryDate =
-      toISOOrNull(deliveryDate ?? selectedDate) ?? orderRefDate;
+      toISOOrNull(effectiveDeliveryDate) ?? orderRefDate;
     orderTempSaveMutation.mutate({
       orderRefDate,
       supplierUID,
@@ -116,7 +175,7 @@ export default function SupplierCheckoutPage() {
     const orderRefDate =
       toISOOrNull(selectedDate ?? null) ?? new Date().toISOString();
     const desiredDeliveryDate =
-      toISOOrNull(deliveryDate ?? selectedDate) ?? orderRefDate;
+      toISOOrNull(effectiveDeliveryDate) ?? orderRefDate;
     orderAddMutation.mutate({
       orderRefDate,
       supplierUID,
@@ -138,11 +197,12 @@ export default function SupplierCheckoutPage() {
       />
 
       <CheckoutDeliverySection
-        selectedDate={selectedDate ?? null}
+        selectedDate={defaultDeliveryDate ?? null}
         initialDeliveryDate={
           basketForSupplier?.desiredDeliveryDate ?? undefined
         }
         onEffectiveDateChange={setDeliveryDate}
+        weekDailyAnalysis={supplier?.weekDailyAnalysis ?? []}
       />
 
       <CheckoutCommentsSection
@@ -158,7 +218,7 @@ export default function SupplierCheckoutPage() {
         onSubmitOrder={handleSubmitOrder}
         isSubmitting={isSubmitting}
         isTemporarySaveLoading={isSavingTemp}
-        isSubmitDisabled={!hasBasketItems}
+        isSubmitDisabled={!hasBasketItems || isDeliveryDateInvalid}
       />
     </main>
   );

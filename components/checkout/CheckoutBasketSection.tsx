@@ -326,7 +326,7 @@ export function CheckoutBasketSection({
   );
 
   return (
-    <section className="mb-6">
+    <section className="mb-4">
       <CheckoutSectionHeading labelKey="checkout_basket_items" />
       {isLoading && <Loading spinnerOnly />}
       {isError && (

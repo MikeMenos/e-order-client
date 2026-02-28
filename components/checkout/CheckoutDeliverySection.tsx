@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
-import { format } from "date-fns";
+import { useMemo, useState, useCallback, useEffect, useRef } from "react";
+import { addDays, format, parseISO } from "date-fns";
 import { useTranslation } from "@/lib/i18n";
 import { formatDeliveryDateDisplay, parseDateForPicker } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -13,17 +13,20 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
+import type { WeekDailyAnalysisItem } from "@/lib/types/supplier-api";
 
 export type CheckoutDeliverySectionProps = {
   selectedDate: string | null;
   initialDeliveryDate?: string | null;
   onEffectiveDateChange?: (isoDate: string | null) => void;
+  weekDailyAnalysis?: WeekDailyAnalysisItem[];
 };
 
 export function CheckoutDeliverySection({
   selectedDate,
   initialDeliveryDate,
   onEffectiveDateChange,
+  weekDailyAnalysis = [],
 }: CheckoutDeliverySectionProps) {
   const { t } = useTranslation();
   const [deliveryOption, setDeliveryOption] = useState<"selected" | "other">(
@@ -82,6 +85,31 @@ export function CheckoutDeliverySection({
     d.setHours(0, 0, 0, 0);
     return d;
   })();
+
+  const endOfValidRange = addDays(startOfToday, 13);
+
+  const disabledDates = useMemo(() => {
+    const set = new Set<string>();
+    for (const item of weekDailyAnalysis) {
+      if (item.dayIsClosed || !item.supplierCanDeliver) {
+        try {
+          const d = parseISO(item.dateObj);
+          set.add(format(d, "yyyy-MM-dd"));
+        } catch {
+          // Skip invalid dates
+        }
+      }
+    }
+    return set;
+  }, [weekDailyAnalysis]);
+
+  const isDateDisabled = useCallback(
+    (date: Date) => {
+      const key = format(date, "yyyy-MM-dd");
+      return disabledDates.has(key);
+    },
+    [disabledDates],
+  );
 
   const openOtherDateDialog = () => {
     setDialogDateValue(parseDateForPicker(otherDate ?? selectedDate));
@@ -143,7 +171,11 @@ export function CheckoutDeliverySection({
               mode="single"
               selected={dialogDateValue}
               onSelect={setDialogDateValue}
-              disabled={{ before: startOfToday }}
+              disabled={(date) =>
+                date < startOfToday ||
+                date > endOfValidRange ||
+                isDateDisabled(date)
+              }
             />
             <div className="flex justify-end gap-2">
               <Button
