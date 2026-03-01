@@ -107,7 +107,7 @@ export default function ManageSupplierMenuPage() {
   return (
     <main className="px-3 text-slate-900">
       <div className="mx-auto flex max-w-xl flex-col mt-2">
-        <div className="my-4 flex items-center justify-center gap-3">
+        <div className="my-3 flex items-center justify-center gap-3">
           {selectedSupplier.logo && (
             <img
               src={selectedSupplier.logo}

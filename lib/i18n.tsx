@@ -151,9 +151,6 @@ const resources: Resources = {
     settings_account_error: "Failed to load account details.",
     settings_account_loading: "Loading account details…",
     config_empty_users: "No users found.",
-    config_order_retake_title: "Order retake",
-    config_order_retake_subtitle:
-      'List of previous orders that could be "retaken" (new order from an existing one).',
     config_loading_orders: "Loading orders…",
     config_error_orders: "Failed to load orders.",
     config_empty_orders: "No orders found.",
@@ -229,6 +226,11 @@ const resources: Resources = {
     checkout_submitting: "Submitting…",
     checkout_basket_items: "Basket items",
     checkout_basket_empty: "No items in basket",
+    checkout_delete_basket: "Delete cart",
+    checkout_delete_basket_confirm_title: "Delete basket?",
+    checkout_delete_basket_confirm_description:
+      "Are you sure you want to delete this basket? All items will be removed.",
+    checkout_delete_basket_confirm_button: "Empty",
     checkout_quantity: "Quantity",
     checkout_remove_item: "Remove",
     checkout_removing: "Removing…",
@@ -291,7 +293,6 @@ const resources: Resources = {
       "Settings and management screens migrated from the React Native app.",
     config_link_users: "Users management",
     config_link_order_hours: "Order hours",
-    config_link_order_retake: "Order retake",
     config_link_fav_suppliers: "Favorite suppliers",
     aria_back: "Back",
     /* Ergastirio */
@@ -494,9 +495,6 @@ const resources: Resources = {
     settings_account_error: "Αποτυχία φόρτωσης στοιχείων λογαριασμού.",
     settings_account_loading: "Φόρτωση στοιχείων λογαριασμού…",
     config_empty_users: "Δεν βρέθηκαν χρήστες.",
-    config_order_retake_title: "Επαναληπτική παραγγελία",
-    config_order_retake_subtitle:
-      'Λίστα προηγούμενων παραγγελιών που μπορούν να "επαναληφθούν" (νέα παραγγελία από υπάρχουσα).',
     config_loading_orders: "Φόρτωση παραγγελιών…",
     config_error_orders: "Αποτυχία φόρτωσης παραγγελιών.",
     config_empty_orders: "Δεν βρέθηκαν παραγγελίες.",
@@ -530,7 +528,7 @@ const resources: Resources = {
     supplier_order_history_error: "Αποτυχία φόρτωσης παραγγελιών.",
     supplier_order_history_empty:
       "Δεν βρέθηκαν παραγγελίες για αυτόν τον προμηθευτή.",
-    order_ref_date: "Ημ. παραγγελίας:",
+    order_ref_date: "Παραγγελία:",
     order_delivery_date: "Παράδοση:",
     order_min_order: "Ελάχ. παραγγελία:",
     order_remaining: "Υπόλοιπο:",
@@ -540,7 +538,7 @@ const resources: Resources = {
     order_shopper_comments: "Σχόλια σας:",
     order_supplier_comments: "Σχόλια προμηθευτή:",
     order_next_delivery: "Επομενη παραδοση:",
-    order_items_count: "Στοιχεία",
+    order_items_count: "Προϊόντα",
     order_items: "Αγορασμένα προϊόντα",
     order_items_empty: "Δεν υπάρχουν προϊόντα σε αυτή την παραγγελία.",
     order_item_quantity: "Ποσότητα",
@@ -573,6 +571,11 @@ const resources: Resources = {
     checkout_submitting: "Αποστολή…",
     checkout_basket_items: "Στοιχεία καλαθιού",
     checkout_basket_empty: "Δεν υπάρχουν στοιχεία στο καλάθι",
+    checkout_delete_basket: "Άδειασμα καλαθιού",
+    checkout_delete_basket_confirm_title: "Άδειασμα καλαθιού",
+    checkout_delete_basket_confirm_description:
+      "Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το καλάθι; Όλα τα στοιχεία θα αφαιρεθούν.",
+    checkout_delete_basket_confirm_button: "Άδειασμα",
     checkout_quantity: "Ποσότητα",
     checkout_remove_item: "Το προϊόν αφαιρέθηκε",
     checkout_removing: "Αφαιρείται…",
@@ -636,7 +639,6 @@ const resources: Resources = {
       "Οθόνες ρυθμίσεων και διαχείρισης από την εφαρμογή React Native.",
     config_link_users: "Διαχείριση Χρηστών",
     config_link_order_hours: "Ώρες παραγγελίας",
-    config_link_order_retake: "Επαναληπτική παραγγελία",
     config_link_fav_suppliers: "Αγαπημένοι προμηθευτές",
     aria_back: "Πίσω",
     /* Ergastirio */

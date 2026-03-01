@@ -68,14 +68,7 @@ export type OrderViewResponse = {
   order?: OrderViewOrder;
 };
 
-export type OrderRetakePayload = {
-  orderRefDate: string;
-  orderUID: string;
-  updateMode?: 0 | 1;
-};
-
 export type OrderAddPayload = {
-  orderRefDate: string;
   supplierUID: string;
   extraComments?: string;
   desiredDeliveryDate: string;
@@ -88,7 +81,6 @@ export type OrderAddResponse = {
 };
 
 export type OrderTempSavePayload = {
-  orderRefDate: string;
   supplierUID: string;
   extraComments?: string;
   desiredDeliveryDate: string;

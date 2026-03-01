@@ -79,6 +79,34 @@ export const useBasketAddOrUpdate = (options?: {
   });
 };
 
+export const useBasketDelete = (options?: {
+  supplierUID?: string;
+  onSuccess?: (data: { message?: string }) => void;
+  onError?: (err: unknown) => void;
+}) => {
+  const queryClient = useQueryClient();
+  const { supplierUID, onSuccess, onError } = options ?? {};
+  return useMutation({
+    mutationFn: async (payload: { supplierUID: string }) => {
+      const res = await api.post<{ message?: string }>("/basket-delete", {
+        supplierUID: payload.supplierUID,
+      });
+      return res.data;
+    },
+    onSuccess: (data, payload) => {
+      onSuccess?.(data);
+      if (payload?.supplierUID != null) {
+        void queryClient.refetchQueries({
+          queryKey: ["basket-items", payload.supplierUID],
+        });
+      }
+      void queryClient.invalidateQueries({ queryKey: ["basket-items"] });
+      void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });
+    },
+    onError,
+  });
+};
+
 export const useBasketCounter = () => {
   return useQuery({
     queryKey: ["basket-counter"],

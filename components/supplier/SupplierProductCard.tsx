@@ -458,10 +458,7 @@ export function SupplierProductCard({
             <img
               src={image}
               alt={title}
-              className={cn(
-                "rounded object-contain object-center",
-                compact ? "h-14 w-14" : "h-20 w-[80px]",
-              )}
+              className={cn("rounded object-contain object-center h-10 w-10")}
             />
           ) : null}
           {hasAccess("P6") && (

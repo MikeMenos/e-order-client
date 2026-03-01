@@ -21,9 +21,10 @@ export function CheckoutCommentsSection({
       <CheckoutSectionHeading labelKey={labelKey} />
       <Textarea
         placeholder={placeholder}
+        rows={2}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="min-h-[100px] border-slate-300 focus-visible:ring-brand-500"
+        className="border-slate-300"
       />
     </section>
   );

@@ -84,7 +84,7 @@ export default function SupplierInfoPage() {
   return (
     <main className=" text-slate-900 px-3">
       <div className="mx-auto max-w-2xl">
-        <div className="my-4 flex items-center justify-between gap-3 min-w-0">
+        <div className="my-3 flex items-center justify-between gap-3 min-w-0">
           <h1 className="text-xl font-bold text-slate-900 mt-2 min-w-0">
             {displayName}
           </h1>
