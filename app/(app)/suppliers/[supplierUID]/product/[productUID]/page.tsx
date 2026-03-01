@@ -118,7 +118,7 @@ export default function SupplierProductPage() {
           <>
             {/* Edit button row: above title+star, aligned right */}
             {!isEditing && hasAccess("P3") && (
-              <div className="my-4 flex justify-end">
+              <div className="my-3 flex justify-end">
                 <Button
                   type="button"
                   variant="outline"
@@ -146,6 +146,7 @@ export default function SupplierProductPage() {
                       onChange={(e) => setEditTitle(e.target.value)}
                       className="text-xl font-bold"
                       aria-label={t("product_edit_title")}
+                      autoComplete="off"
                     />
                     <div className="flex gap-2">
                       <Button

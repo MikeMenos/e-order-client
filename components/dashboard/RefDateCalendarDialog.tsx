@@ -1,9 +1,10 @@
 "use client";
 
-import { startOfDay, isBefore } from "date-fns";
+import { startOfDay } from "date-fns";
 import { useTranslation } from "@/lib/i18n";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Calendar } from "../ui/calendar";
+import { CalendarDisabledDayButton } from "../ui/calendar-disabled-day-button";
 import { Button } from "../ui/button";
 import { X } from "lucide-react";
 
@@ -54,7 +55,8 @@ export function RefDateCalendarDialog({
               onOpenChange(false);
             }
           }}
-          disabled={(date) => isBefore(startOfDay(date), todayStart())}
+          disabled={(date) => startOfDay(date) < todayStart()}
+          components={{ DayButton: CalendarDisabledDayButton }}
         />
       </DialogContent>
     </Dialog>

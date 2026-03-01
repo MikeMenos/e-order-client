@@ -62,14 +62,14 @@ export default function AccountSettingsPage() {
     updateMutation.mutate(form);
   };
 
-  const fullName =
-    (user ? [user.fname, user.lname].filter(Boolean).join(" ") : "") ||
-    t("settings_edit_account_button");
+  const fullName = user
+    ? [user.fname, user.lname].filter(Boolean).join(" ")
+    : "";
 
   return (
     <main className="pb-16 text-slate-900 px-3">
       <div className="mx-auto max-w-2xl">
-        <div className="my-4">
+        <div className="my-3">
           <h1 className="text-xl font-bold text-slate-900 mt-2">{fullName}</h1>
           {user?.username && (
             <p className="mt-1 text-base text-slate-500">@{user.username}</p>

@@ -1,11 +1,20 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { activeTabKeys, useActiveTabsStore } from "@/stores/activeTabs";
 import { Trash2, Loader2 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { getApiErrorMessage } from "@/lib/api-error";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import Loading from "@/components/ui/loading";
 import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
@@ -13,6 +22,7 @@ import {
   useBasketItems,
   useBasketRemoveItem,
   useBasketAddOrUpdate,
+  useBasketDelete,
 } from "@/hooks/useBasket";
 import type {
   BasketGetItemsResponse,
@@ -203,12 +213,11 @@ function BasketItemRow({
 
   return (
     <li className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
-      <div className="min-w-0 flex-1">
-        <p className="font-medium text-slate-900">{item.productTitle || "—"}</p>
-        <div className="mt-1.5 flex items-center gap-1.5">
-          <span className="text-base text-slate-600 shrink-0">
-            {t("checkout_quantity")}:
-          </span>
+      <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1 w-full">
+        <p className="font-medium text-slate-900 min-w-0 pr-1">
+          {item.productTitle || "—"}
+        </p>
+        <div className="shrink-0">
           <Stepper
             label=""
             tone="basket"
@@ -225,22 +234,22 @@ function BasketItemRow({
             disabled={isBusy}
           />
         </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="h-10 w-10 shrink-0 text-red-600 hover:bg-red-50 hover:text-red-700"
+          aria-label={t("checkout_remove_item")}
+          onClick={onRemove}
+          disabled={isBusy}
+        >
+          {isRemoving ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : (
+            <Trash2 className="h-5 w-5" />
+          )}
+        </Button>
       </div>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        className="h-10 w-10 shrink-0 text-red-600 hover:bg-red-50 hover:text-red-700"
-        aria-label={t("checkout_remove_item")}
-        onClick={onRemove}
-        disabled={isBusy}
-      >
-        {isRemoving ? (
-          <Loader2 className="h-5 w-5 animate-spin" />
-        ) : (
-          <Trash2 className="h-5 w-5" />
-        )}
-      </Button>
     </li>
   );
 }
@@ -250,6 +259,8 @@ export function CheckoutBasketSection({
   onHasItemsChange,
 }: Props) {
   const { t } = useTranslation();
+  const router = useRouter();
+  const setActiveTab = useActiveTabsStore((s) => s.setActiveTab);
   const { data, isLoading, isError, error } = useBasketItems({
     SupplierUID: supplierUID,
     enabled: !!supplierUID,
@@ -271,7 +282,6 @@ export function CheckoutBasketSection({
   const removeItemMutation = useBasketRemoveItem({
     supplierUID,
     onSuccess: (d) => {
-      toast.success(d?.message?.trim() || t("checkout_remove_item"));
       setRemovingBasketUID(null);
     },
     onError: (err) => {
@@ -288,6 +298,18 @@ export function CheckoutBasketSection({
     onError: (err) => {
       toast.error(getApiErrorMessage(err, t("basket_error")));
       setUpdatingProductUID(null);
+    },
+  });
+
+  const basketDeleteMutation = useBasketDelete({
+    supplierUID,
+    onSuccess: (d) => {
+      toast.success(d?.message?.trim() || t("checkout_delete_basket"));
+      setActiveTab(activeTabKeys.ordersOfTheDay, "pending");
+      router.replace("/orders-of-the-day");
+    },
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err, t("basket_error")));
     },
   });
 
@@ -325,9 +347,32 @@ export function CheckoutBasketSection({
     [handleRemove, addOrUpdateMutation],
   );
 
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+
+  const handleDeleteBasketClick = useCallback(() => {
+    setDeleteConfirmOpen(true);
+  }, []);
+
+  const handleDeleteBasketConfirm = useCallback(() => {
+    basketDeleteMutation.mutate({ supplierUID });
+    setDeleteConfirmOpen(false);
+  }, [basketDeleteMutation, supplierUID]);
+
   return (
-    <section className="mb-4">
-      <CheckoutSectionHeading labelKey="checkout_basket_items" />
+    <section>
+      <CheckoutSectionHeading
+        labelKey="checkout_basket_items"
+        deleteBasket={
+          hasItems
+            ? {
+                hasItems,
+                supplierUID,
+                onDelete: handleDeleteBasketClick,
+                isDeleting: basketDeleteMutation.isPending,
+              }
+            : undefined
+        }
+      />
       {isLoading && <Loading spinnerOnly />}
       {isError && (
         <p className=" text-red-500">
@@ -339,8 +384,45 @@ export function CheckoutBasketSection({
           {t("checkout_basket_empty")}
         </p>
       )}
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>
+              {t("checkout_delete_basket_confirm_title")}
+            </DialogTitle>
+            <DialogDescription>
+              {t("checkout_delete_basket_confirm_description")}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setDeleteConfirmOpen(false)}
+            >
+              {t("checkout_date_cancel")}
+            </Button>
+            <Button
+              type="button"
+              className="bg-red-600 hover:bg-red-700 text-white"
+              onClick={handleDeleteBasketConfirm}
+              disabled={basketDeleteMutation.isPending}
+            >
+              {basketDeleteMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                  {t("checkout_removing")}
+                </>
+              ) : (
+                t("checkout_delete_basket_confirm_button")
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {!isLoading && !isError && items.length > 0 && (
-        <ul className="max-h-[50vh] space-y-1 mb-1 overflow-y-auto pr-1">
+        <ul className="space-y-1 mb-1 pr-1">
           {items.map((item) => (
             <BasketItemRow
               key={item.basketUID}

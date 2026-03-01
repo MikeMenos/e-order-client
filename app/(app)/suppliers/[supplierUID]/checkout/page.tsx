@@ -82,7 +82,7 @@ export default function SupplierCheckoutPage() {
   const selectedDate = supplierInfoQuery.data?.selectedDate ?? null;
 
   const [comments, setComments] = useState("");
-  const [deliveryDate, setDeliveryDate] = useState<string | null>(null);
+  const [deliveryDate, setDeliveryDate] = useState<string>("");
   const [hasBasketItems, setHasBasketItems] = useState(false);
   const hasPrefilledFromBasketRef = useRef(false);
 
@@ -159,57 +159,49 @@ export default function SupplierCheckoutPage() {
   );
 
   const handleTemporarySave = () => {
-    const orderRefDate =
-      toISOOrNull(selectedDate ?? null) ?? new Date().toISOString();
-    const desiredDeliveryDate =
-      toISOOrNull(effectiveDeliveryDate) ?? orderRefDate;
+    const desiredDeliveryDate = toISOOrNull(effectiveDeliveryDate);
     orderTempSaveMutation.mutate({
-      orderRefDate,
       supplierUID,
       extraComments: comments,
-      desiredDeliveryDate,
+      desiredDeliveryDate: desiredDeliveryDate as string,
     });
   };
 
   const handleSubmitOrder = () => {
-    const orderRefDate =
-      toISOOrNull(selectedDate ?? null) ?? new Date().toISOString();
-    const desiredDeliveryDate =
-      toISOOrNull(effectiveDeliveryDate) ?? orderRefDate;
+    const desiredDeliveryDate = toISOOrNull(effectiveDeliveryDate);
     orderAddMutation.mutate({
-      orderRefDate,
       supplierUID,
       extraComments: comments,
-      desiredDeliveryDate,
+      desiredDeliveryDate: desiredDeliveryDate as string,
     });
   };
 
   return (
-    <main className="pb-36 text-slate-900 px-3">
+    <main className="min-h-screen flex flex-col pb-36 text-slate-900 px-3">
       <CheckoutPageHeader
         titleKey="order_completion_title"
         supplierName={supplier?.title ?? null}
       />
 
-      <CheckoutBasketSection
-        supplierUID={supplierUID}
-        onHasItemsChange={setHasBasketItems}
-      />
-
-      <CheckoutDeliverySection
-        selectedDate={defaultDeliveryDate ?? null}
-        initialDeliveryDate={
-          basketForSupplier?.desiredDeliveryDate ?? undefined
-        }
-        onEffectiveDateChange={setDeliveryDate}
-        weekDailyAnalysis={supplier?.weekDailyAnalysis ?? []}
-      />
-
-      <CheckoutCommentsSection
-        labelKey="checkout_comments"
-        value={comments}
-        onChange={setComments}
-      />
+      <div className="flex-1 min-h-0 overflow-y-auto -mx-3 px-3 space-y-3">
+        <CheckoutBasketSection
+          supplierUID={supplierUID}
+          onHasItemsChange={setHasBasketItems}
+        />
+        <CheckoutDeliverySection
+          selectedDate={defaultDeliveryDate ?? null}
+          initialDeliveryDate={
+            basketForSupplier?.desiredDeliveryDate ?? undefined
+          }
+          onEffectiveDateChange={setDeliveryDate}
+          weekDailyAnalysis={supplier?.weekDailyAnalysis ?? []}
+        />
+        <CheckoutCommentsSection
+          labelKey="checkout_comments"
+          value={comments}
+          onChange={setComments}
+        />
+      </div>
 
       <CheckoutActionBar
         temporarySaveLabelKey="checkout_temporary_save"

@@ -1,11 +1,18 @@
 "use client";
 
-import { useMemo, useState, useCallback, useEffect, useRef } from "react";
+import React, {
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import { addDays, format, parseISO } from "date-fns";
 import { useTranslation } from "@/lib/i18n";
 import { formatDeliveryDateDisplay, parseDateForPicker } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { CalendarDisabledDayButton } from "@/components/ui/calendar-disabled-day-button";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +25,7 @@ import type { WeekDailyAnalysisItem } from "@/lib/types/supplier-api";
 export type CheckoutDeliverySectionProps = {
   selectedDate: string | null;
   initialDeliveryDate?: string | null;
-  onEffectiveDateChange?: (isoDate: string | null) => void;
+  onEffectiveDateChange?: (isoDate: string) => void;
   weekDailyAnalysis?: WeekDailyAnalysisItem[];
 };
 
@@ -65,7 +72,7 @@ export function CheckoutDeliverySection({
 
   const notifyEffectiveDate = useCallback(
     (date: string | null) => {
-      onEffectiveDateChange?.(date);
+      onEffectiveDateChange?.(date as string);
     },
     [onEffectiveDateChange],
   );
@@ -86,7 +93,7 @@ export function CheckoutDeliverySection({
     return d;
   })();
 
-  const endOfValidRange = addDays(startOfToday, 13);
+  const endOfValidRange = addDays(startOfToday, 14);
 
   const disabledDates = useMemo(() => {
     const set = new Set<string>();
@@ -128,7 +135,7 @@ export function CheckoutDeliverySection({
 
   const selectDefault = () => {
     setDeliveryOption("selected");
-    onEffectiveDateChange?.(selectedDate ?? null);
+    onEffectiveDateChange?.(selectedDate as string);
   };
 
   return (
@@ -176,6 +183,7 @@ export function CheckoutDeliverySection({
                 date > endOfValidRange ||
                 isDateDisabled(date)
               }
+              components={{ DayButton: CalendarDisabledDayButton }}
             />
             <div className="flex justify-end gap-2">
               <Button

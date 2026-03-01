@@ -83,7 +83,7 @@ export default function ErgastirioStoreCard({
             </div>
           </div>
         </div>
-        <div className="my-4 border-t border-dashed border-slate-200" />
+        <div className="my-3 border-t border-dashed border-slate-200" />
         <div className="flex flex-col gap-3">
           <InfoItem
             label={t("erg_address")}
