@@ -223,6 +223,10 @@ const resources: Resources = {
     checkout_total: "Total:",
     checkout_temporary_save: "Temporary Save",
     checkout_submit_order: "Submit Order",
+    checkout_submit_order_confirm_title: "Submit order?",
+    checkout_submit_order_confirm_description:
+      "Are you sure you want to submit this order? It will be sent to the supplier.",
+    checkout_submit_order_confirm_button: "Submit",
     checkout_submitting: "Submitting…",
     checkout_basket_items: "Basket items",
     checkout_basket_empty: "No items in basket",
@@ -568,6 +572,10 @@ const resources: Resources = {
     checkout_total: "Σύνολο:",
     checkout_temporary_save: "Προσωρινή Αποθήκευση",
     checkout_submit_order: "Αποστολή Παραγγελίας",
+    checkout_submit_order_confirm_title: "Αποστολή παραγγελίας;",
+    checkout_submit_order_confirm_description:
+      "Είστε σίγουροι ότι θέλετε να αποστείλετε αυτή την παραγγελία; Θα σταλεί στον προμηθευτή.",
+    checkout_submit_order_confirm_button: "Αποστολή",
     checkout_submitting: "Αποστολή…",
     checkout_basket_items: "Στοιχεία καλαθιού",
     checkout_basket_empty: "Δεν υπάρχουν στοιχεία στο καλάθι",

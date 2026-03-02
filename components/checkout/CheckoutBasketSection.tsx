@@ -8,14 +8,7 @@ import { useTranslation } from "@/lib/i18n";
 import { getApiErrorMessage } from "@/lib/api-error";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { DeleteBasketConfirmDialog } from "@/components/checkout/DeleteBasketConfirmDialog";
 import Loading from "@/components/ui/loading";
 import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
 import {
@@ -384,42 +377,12 @@ export function CheckoutBasketSection({
           {t("checkout_basket_empty")}
         </p>
       )}
-      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>
-              {t("checkout_delete_basket_confirm_title")}
-            </DialogTitle>
-            <DialogDescription>
-              {t("checkout_delete_basket_confirm_description")}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end gap-2 mt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setDeleteConfirmOpen(false)}
-            >
-              {t("checkout_date_cancel")}
-            </Button>
-            <Button
-              type="button"
-              className="bg-red-600 hover:bg-red-700 text-white"
-              onClick={handleDeleteBasketConfirm}
-              disabled={basketDeleteMutation.isPending}
-            >
-              {basketDeleteMutation.isPending ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                  {t("checkout_removing")}
-                </>
-              ) : (
-                t("checkout_delete_basket_confirm_button")
-              )}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <DeleteBasketConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={handleDeleteBasketConfirm}
+        isDeleting={basketDeleteMutation.isPending}
+      />
 
       {!isLoading && !isError && items.length > 0 && (
         <ul className="space-y-1 mb-1 pr-1">
