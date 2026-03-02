@@ -136,7 +136,7 @@ export default function SupplierProductPage() {
             )}
 
             {/* Title (or edit input) + star */}
-            <div className="flex items-center justify-between gap-3 mt-2">
+            <div className="flex items-center justify-between mt-2">
               <div className="min-w-0 flex-1">
                 {isEditing ? (
                   <div className="space-y-2">
@@ -144,9 +144,8 @@ export default function SupplierProductPage() {
                       ref={editInputRef}
                       value={editTitle}
                       onChange={(e) => setEditTitle(e.target.value)}
-                      className="text-xl font-bold"
+                      className="text-base"
                       aria-label={t("product_edit_title")}
-                      autoComplete="off"
                     />
                     <div className="flex gap-2">
                       <Button
