@@ -410,7 +410,7 @@ export function SupplierProductCard({
     <article
       key={id}
       className={cn(
-        "flex flex-col px-2",
+        "flex flex-col rounded-lg border border-slate-200 bg-white px-2",
         compact ? "gap-0.5 py-1.5" : "gap-1 py-2",
       )}
     >
