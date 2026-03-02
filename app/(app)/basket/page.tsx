@@ -29,7 +29,7 @@ export default function BasketPage() {
         <p className="text-base text-red-400">{t("basket_error")}</p>
       )}
 
-      {baskets.length === 0 && !basketQuery.isLoading ? (
+      {baskets.length === 0 && !basketQuery.isLoading && !basketQuery.error ? (
         <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
           {t("basket_empty")}
         </p>

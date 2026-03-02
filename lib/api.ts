@@ -11,42 +11,23 @@ export const api = axios.create({
   },
 });
 
-// Skip auth-clear for login/register so failed login doesn't redirect
-const AUTH_ENDPOINTS = ["/auth-login", "/register"];
-
-const NO_LOGOUT_ON_AUTH_FAIL = [
-  "/select-store",
-  "order-temp-save",
-  "product-display",
-  "personalized-texts-update",
-  "suppliers-display",
-  "suppliers-products",
-  "users-add-or-update",
-  "users-view-profile",
-  "users-toggle-active",
-  "users-set-permissions",
-];
-
-function isAuthFailure(error: any): boolean {
+/**
+ * Logout only when: /api/select-store with StoreUID returns 401 Unauthorized.
+ * All other auth failures do not trigger automatic logout.
+ */
+function shouldLogoutOnError(error: any): boolean {
   const status = error?.response?.status;
-  const data = error?.response?.data;
-  const bodyStatus = data?.statusCode;
-  const message = (data?.message ?? error?.message ?? "")
-    .toString()
-    .toLowerCase();
-  const hadAuthHeader = !!(error?.config?.headers as any)?.["Authorization"];
+  const url = error?.config?.url ?? "";
+  const params = error?.config?.params ?? {};
+  const hasStoreUID =
+    url.includes("StoreUID=") ||
+    (typeof params?.StoreUID === "string" && params.StoreUID.length > 0);
 
-  // Any 401 is an auth failure (e.g. expired or invalid token)
-  if (status === 401) return true;
-
-  // 500 with auth-related message, or any 500 on an authenticated request (likely expired/invalid token)
-  if (status === 500 || bodyStatus === 500) {
-    const authKeywords =
-      /token|expired|unauthorized|authorization|invalid.*session|session.*invalid|not.*logged|login.*required/;
-    if (authKeywords.test(message)) return true;
-    if (hadAuthHeader) return true;
-  }
-  return false;
+  return (
+    status === 401 &&
+    (url.includes("select-store") || url.includes("/select-store")) &&
+    hasStoreUID
+  );
 }
 
 function clearAuthAndRedirect(): void {
@@ -89,11 +70,7 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-    const url = error?.config?.url ?? "";
-    const isAuthEndpoint = AUTH_ENDPOINTS.some((p) => url.includes(p));
-    const skipLogout = NO_LOGOUT_ON_AUTH_FAIL.some((p) => url.includes(p));
-
-    if (!isAuthEndpoint && !skipLogout && isAuthFailure(error)) {
+    if (shouldLogoutOnError(error)) {
       clearAuthAndRedirect();
     }
     return Promise.reject(error);

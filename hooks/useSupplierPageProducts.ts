@@ -38,7 +38,7 @@ export function useSupplierPageProducts(supplierUID: string | undefined) {
     products,
     catalogSections,
     favoriteSections,
-    isLoading: productsQuery.isLoading,
-    error: productsQuery.error,
+    isLoading: supplierInfoQuery.isLoading || productsQuery.isLoading,
+    error: supplierInfoQuery.error ?? productsQuery.error,
   };
 }

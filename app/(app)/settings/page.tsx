@@ -5,10 +5,8 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Store, User, UserPlus, LogOut } from "lucide-react";
 
 import { useAuthStore } from "@/stores/auth";
-import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
 import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api-error";
@@ -25,7 +23,6 @@ export default function SettingsPage() {
 
   const {
     users,
-    logout,
     setSelectedUser,
     setStoreAccessToken,
     setSelectedStoreUID,
@@ -75,11 +72,6 @@ export default function SettingsPage() {
     }
 
     router.push("/dashboard");
-  };
-
-  const handleLogout = () => {
-    logout();
-    router.replace("/");
   };
 
   return (
@@ -143,25 +135,6 @@ export default function SettingsPage() {
               iconColor="text-blue-600"
             />
           </motion.div>
-        </motion.div>
-
-        <motion.div
-          className="mt-8 w-full"
-          variants={listItemVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <Button
-            onClick={handleLogout}
-            className="group flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200/80 bg-red-500 px-6 py-4 text-base font-medium shadow-sm transition hover:border-red-200 hover:bg-red-50 text-white hover:text-red-700 active:scale-[0.99]"
-            aria-label={t("logout")}
-          >
-            <LogOut
-              className="h-5 w-5 shrink-0 text-white transition-colors group-hover:text-red-600"
-              aria-hidden
-            />
-            {t("logout")}
-          </Button>
         </motion.div>
       </div>
 
