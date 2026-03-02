@@ -7,18 +7,11 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import { addDays, format, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { useTranslation } from "@/lib/i18n";
 import { formatDeliveryDateDisplay, parseDateForPicker } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarDisabledDayButton } from "@/components/ui/calendar-disabled-day-button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { DeliveryDatePickerDialog } from "@/components/checkout/DeliveryDatePickerDialog";
 import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
 import type { WeekDailyAnalysisItem } from "@/lib/types/supplier-api";
 
@@ -86,14 +79,6 @@ export function CheckoutDeliverySection({
       notifyEffectiveDate(selectedDate ?? null);
     }
   }, [deliveryOption, otherDate, selectedDate, notifyEffectiveDate]);
-
-  const startOfToday = (() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
-  })();
-
-  const endOfValidRange = addDays(startOfToday, 14);
 
   const disabledDates = useMemo(() => {
     const set = new Set<string>();
@@ -168,38 +153,14 @@ export function CheckoutDeliverySection({
         </Button>
       </div>
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>{t("checkout_select_delivery_date")}</DialogTitle>
-          </DialogHeader>
-          <div className="mt-4 space-y-3">
-            <Calendar
-              mode="single"
-              selected={dialogDateValue}
-              onSelect={setDialogDateValue}
-              disabled={(date) =>
-                date < startOfToday ||
-                date > endOfValidRange ||
-                isDateDisabled(date)
-              }
-              components={{ DayButton: CalendarDisabledDayButton }}
-            />
-            <div className="flex justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setDialogOpen(false)}
-              >
-                {t("checkout_date_cancel")}
-              </Button>
-              <Button type="button" onClick={confirmOtherDate}>
-                {t("checkout_date_confirm")}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <DeliveryDatePickerDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        selectedDate={dialogDateValue}
+        onDateSelect={setDialogDateValue}
+        onConfirm={confirmOtherDate}
+        disabledDates={isDateDisabled}
+      />
     </section>
   );
 }

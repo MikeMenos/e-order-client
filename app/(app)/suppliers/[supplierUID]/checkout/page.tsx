@@ -14,6 +14,7 @@ import { CheckoutBasketSection } from "@/components/checkout/CheckoutBasketSecti
 import { CheckoutDeliverySection } from "@/components/checkout/CheckoutDeliverySection";
 import { CheckoutCommentsSection } from "@/components/checkout/CheckoutCommentsSection";
 import { CheckoutActionBar } from "@/components/checkout/CheckoutActionBar";
+import { SubmitOrderConfirmDialog } from "@/components/checkout/SubmitOrderConfirmDialog";
 import { useTranslation } from "@/lib/i18n";
 import type { BasketGetItemsResponse } from "@/lib/types/checkout-basket";
 
@@ -84,6 +85,7 @@ export default function SupplierCheckoutPage() {
   const [comments, setComments] = useState("");
   const [deliveryDate, setDeliveryDate] = useState<string>("");
   const [hasBasketItems, setHasBasketItems] = useState(false);
+  const [submitConfirmOpen, setSubmitConfirmOpen] = useState(false);
   const hasPrefilledFromBasketRef = useRef(false);
 
   const basketQuery = useBasketItems({
@@ -167,7 +169,12 @@ export default function SupplierCheckoutPage() {
     });
   };
 
-  const handleSubmitOrder = () => {
+  const handleSubmitOrderClick = () => {
+    setSubmitConfirmOpen(true);
+  };
+
+  const handleSubmitOrderConfirm = () => {
+    setSubmitConfirmOpen(false);
     const desiredDeliveryDate = toISOOrNull(effectiveDeliveryDate);
     orderAddMutation.mutate({
       supplierUID,
@@ -180,7 +187,10 @@ export default function SupplierCheckoutPage() {
     return (
       <main className="min-h-screen flex flex-col pb-36 text-slate-900 px-3 pt-6">
         <p className="text-base text-red-400">
-          {getApiErrorMessage(supplierInfoQuery.error, t("supplier_error_products"))}
+          {getApiErrorMessage(
+            supplierInfoQuery.error,
+            t("supplier_error_products"),
+          )}
         </p>
       </main>
     );
@@ -217,10 +227,17 @@ export default function SupplierCheckoutPage() {
         temporarySaveLabelKey="checkout_temporary_save"
         submitOrderLabelKey="checkout_submit_order"
         onTemporarySave={handleTemporarySave}
-        onSubmitOrder={handleSubmitOrder}
+        onSubmitOrder={handleSubmitOrderClick}
         isSubmitting={isSubmitting}
         isTemporarySaveLoading={isSavingTemp}
         isSubmitDisabled={!hasBasketItems || isDeliveryDateInvalid}
+      />
+
+      <SubmitOrderConfirmDialog
+        open={submitConfirmOpen}
+        onOpenChange={setSubmitConfirmOpen}
+        onConfirm={handleSubmitOrderConfirm}
+        isSubmitting={orderAddMutation.isPending}
       />
     </main>
   );
