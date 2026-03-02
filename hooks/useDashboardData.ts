@@ -39,13 +39,16 @@ export const useSuppliersForDate = (
         setLastOrders: true,
         setDeliverySchedule: true,
         setDailyAnalysisSchedule: true,
+        supplierStatus: 1,
+        shopperStatus: 200,
       };
       if (hasRefDate) {
         body.refDate = refDate;
-      } else {
-        body.refDate = null;
       }
-      const res = await api.post<SuppliersListResponse>("/suppliers-list", body);
+      const res = await api.post<SuppliersListResponse>(
+        "/suppliers-list",
+        body,
+      );
       return res.data;
     },
     enabled,
@@ -126,14 +129,21 @@ export function useSuppliersListForToday(refDateOverride?: string | null) {
 }
 
 /**
- * GET Shop/SuppliersNoPartners_GetList.
+ * POST Shop/Suppliers_GetList with supplierStatus: 4.
  * Use on settings/partner-suppliers page.
  */
 export function useSuppliersNoPartners() {
   const query = useQuery({
     queryKey: ["suppliers-no-partners"],
     queryFn: async (): Promise<SuppliersListResponse> => {
-      const res = await api.get<SuppliersListResponse>("/suppliers-no-partners");
+      const res = await api.post<SuppliersListResponse>("/suppliers-list", {
+        setCategories: true,
+        setLastOrders: true,
+        setDeliverySchedule: true,
+        setDailyAnalysisSchedule: true,
+        supplierStatus: 4,
+        shopperStatus: null,
+      });
       return res.data;
     },
   });
