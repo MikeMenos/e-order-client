@@ -1,10 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { LogOut } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import type { MyProfileUpdateRequest } from "@/lib/types/dashboard";
 import { useMyProfile, useMyProfileUpdate } from "@/hooks/useMyProfile";
+import { useAuthStore } from "@/stores/auth";
 import { DetailSection } from "@/components/ui/detail-section";
 import { ClearableInput } from "@/components/ui/clearable-input";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -14,6 +17,8 @@ import { getApiErrorMessage } from "@/lib/api-error";
 
 export default function AccountSettingsPage() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const logout = useAuthStore((s) => s.logout);
 
   const profileQuery = useMyProfile();
   const user = profileQuery.data?.userInfos ?? null;
@@ -155,7 +160,7 @@ export default function AccountSettingsPage() {
                     disabled={updateMutation.isPending}
                   />
                 </div>
-                <div className="pt-2">
+                <div className="py-2">
                   <Button type="submit" disabled={updateMutation.isPending}>
                     {updateMutation.isPending
                       ? t("checkout_submitting")
@@ -163,6 +168,23 @@ export default function AccountSettingsPage() {
                   </Button>
                 </div>
               </form>
+              <div className="pt-2 border-t border-slate-100">
+                <Button
+                  type="button"
+                  onClick={() => {
+                    logout();
+                    router.replace("/");
+                  }}
+                  className="group flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200/80 bg-red-500 px-6 py-4 text-base font-medium shadow-sm transition hover:border-red-200 hover:bg-red-50 text-white hover:text-red-700 active:scale-[0.99]"
+                  aria-label={t("logout")}
+                >
+                  <LogOut
+                    className="h-5 w-5 shrink-0 text-white transition-colors group-hover:text-red-600"
+                    aria-hidden
+                  />
+                  {t("logout")}
+                </Button>
+              </div>
             </DetailSection>
           </div>
         )}

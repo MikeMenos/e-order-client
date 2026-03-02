@@ -53,7 +53,7 @@ export default function SupplierOrderHistoryPage() {
             {t("supplier_order_history_error")}
           </p>
         )}
-        {orders.length === 0 && !ordersQuery.isLoading && (
+        {orders.length === 0 && !ordersQuery.isLoading && !ordersQuery.error && (
           <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
             {t("supplier_order_history_empty")}
           </p>

@@ -12,6 +12,7 @@ import { SupplierSearchAndTabs } from "@/components/supplier/SupplierSearchAndTa
 import { SupplierProductSection } from "@/components/supplier/SupplierProductSection";
 import { BackToTopButton } from "@/components/ui/BackToTopButton";
 import Loading from "@/components/ui/loading";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { useActiveTabsStore, activeTabKeys } from "@/stores/activeTabs";
 import { useSupplierPageProducts } from "@/hooks/useSupplierPageProducts";
 import { useSupplierSectionScrollSpy } from "@/hooks/useSupplierSectionScrollSpy";
@@ -112,11 +113,11 @@ export default function ManageProductsPage() {
 
         {error && (
           <p className="text-base text-red-400">
-            {t("supplier_error_products")}
+            {getApiErrorMessage(error, t("supplier_error_products"))}
           </p>
         )}
 
-        {filteredSections.length === 0 && !isLoading ? (
+        {filteredSections.length === 0 && !isLoading && !error ? (
           <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
             {t("supplier_empty_products")}
           </p>
