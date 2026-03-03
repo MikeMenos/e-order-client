@@ -316,7 +316,7 @@ export function SupplierProductCard({
   const handleToggleFavorite = useCallback(
     (e: React.MouseEvent) => {
       if (e?.nativeEvent && !(e.nativeEvent as MouseEvent).isTrusted) return;
-      if (hasAccess("P6")) wishlistToggle.mutate(id);
+      if (hasAccess("P6")) wishlistToggle.mutate({ productUID: id, rank: 0 });
     },
     [id, wishlistToggle, hasAccess],
   );
@@ -445,11 +445,6 @@ export function SupplierProductCard({
           {!compact && subTitle ? (
             <p className="mt-0.5 text-base text-slate-700 leading-snug">
               {subTitle}
-            </p>
-          ) : null}
-          {!compact && productPackaging ? (
-            <p className="mt-0.5 text-base text-slate-700 leading-snug">
-              {t("product_packaging")} {productPackaging}
             </p>
           ) : null}
         </div>

@@ -121,6 +121,13 @@ const resources: Resources = {
     login_toast_success: "Logged in",
     login_toast_error: "Login failed",
     login_signing_in: "Signing in…",
+    login_forgot_password: "Forgot password?",
+    login_forgot_password_title: "Reset password",
+    login_forgot_password_description:
+      "Enter your username and email to receive reset instructions.",
+    login_forgot_password_submit: "Send",
+    login_forgot_password_success: "Check your email for reset instructions.",
+    login_forgot_password_error: "Failed to send reset request.",
     error_app_message:
       "Something went wrong. Try again or go back to the home screen.",
     error_try_again: "Try again",
@@ -467,6 +474,14 @@ const resources: Resources = {
     login_toast_success: "Συνδεθήκατε",
     login_toast_error: "Αποτυχία σύνδεσης",
     login_signing_in: "Σύνδεση…",
+    login_forgot_password: "Ξεχάσατε τον κωδικό;",
+    login_forgot_password_title: "Επαναφορά κωδικού",
+    login_forgot_password_description:
+      "Εισάγετε το όνομα χρήστη και το email για να λάβετε οδηγίες επαναφοράς.",
+    login_forgot_password_submit: "Αποστολή",
+    login_forgot_password_success:
+      "Ελέγξτε το email σας για τις οδηγίες επαναφοράς.",
+    login_forgot_password_error: "Αποτυχία αποστολής αιτήματος επαναφοράς.",
     error_app_message:
       "Κάτι πήγε στραβά. Δοκιμάστε ξανά ή επιστρέψτε στην αρχική οθόνη.",
     error_try_again: "Δοκίμασε ξανά",

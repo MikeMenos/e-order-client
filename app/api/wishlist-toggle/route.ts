@@ -7,12 +7,12 @@ import type { WishlistToggleResponse } from "../../../lib/types/wishlist";
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
-    const productUID = url.searchParams.get("ProductUID");
+    const params = Object.fromEntries(url.searchParams.entries());
 
     const res = await backend.get<WishlistToggleResponse>(
       "Basket/Wishlist_ToggleItem",
       {
-        params: { ProductUID: productUID ?? undefined },
+        params,
         headers: getBackendHeaders(req),
       },
     );

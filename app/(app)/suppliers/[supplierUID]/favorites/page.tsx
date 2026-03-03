@@ -69,11 +69,15 @@ export default function FavoritesPage() {
     activeItem,
     itemIds,
   } = useFavoritesSortable(orderedItems, setOrderedItems, (payload) =>
-    wishlistSort.mutate(payload)
+    wishlistSort.mutate({ ...payload, supplierUID: supplierUID ?? undefined })
   );
 
-  const handleRemoveFavorite = (productUID: string) => {
-    if (hasAccess("P6")) wishlistToggle.mutate(productUID);
+  const handleRemoveFavorite = (productUID: string, rank?: number) => {
+    if (hasAccess("P6")) {
+      wishlistToggle.mutate(
+        rank !== undefined ? { productUID, rank } : productUID,
+      );
+    }
   };
 
   const canEditFavorites = hasAccess("P6");
@@ -123,9 +127,14 @@ export default function FavoritesPage() {
                   index={index}
                   isRemoving={
                     wishlistToggle.isPending &&
-                    wishlistToggle.variables === (item.productUID ?? item.id)
+                    (wishlistToggle.variables === (item.productUID ?? item.id) ||
+                      (typeof wishlistToggle.variables === "object" &&
+                        wishlistToggle.variables?.productUID ===
+                          (item.productUID ?? item.id)))
                   }
-                  onRemove={handleRemoveFavorite}
+                  onRemove={(productUID) =>
+                    handleRemoveFavorite(productUID, item.rank ?? index)
+                  }
                   t={t}
                   showDragHandle={canEditFavorites}
                   showRemoveButton={canEditFavorites}

@@ -2,6 +2,7 @@
 export type WishlistItem = {
   productUID?: string;
   id?: string;
+  rank?: number;
   productImage?: string;
   title?: string;
   productTitle?: string;

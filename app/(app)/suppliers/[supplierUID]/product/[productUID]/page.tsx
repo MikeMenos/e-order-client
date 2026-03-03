@@ -184,7 +184,12 @@ export default function SupplierProductPage() {
                 <Button
                   type="button"
                   variant="ghost"
-                  onClick={() => wishlistToggle.mutate(product.productUID)}
+                  onClick={() =>
+                    wishlistToggle.mutate({
+                      productUID: product.productUID,
+                      rank: 0,
+                    })
+                  }
                   disabled={wishlistToggle.isPending}
                   className="shrink-0 px-2 text-slate-400 hover:text-slate-600 disabled:pointer-events-none"
                   aria-label={

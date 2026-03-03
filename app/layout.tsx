@@ -2,18 +2,17 @@ import "./globals.css";
 import type { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
 import { ClientApp } from "./ClientApp";
-import { Google_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 
-const googleSans = Google_Sans({
+const fontSans = Inter({
   subsets: ["latin", "greek"],
-  weight: ["400", "500", "600", "700"],
   display: "swap",
   variable: "--font-sans",
 });
 
 export const metadata: Metadata = {
   title: "eorder",
-  description: "e-order B2B PWA",
+  description: "e-order B2B",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -28,7 +27,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="el" className={googleSans.variable}>
+    <html lang="el" className={fontSans.variable}>
       <head>
         <link
           rel="apple-touch-icon"

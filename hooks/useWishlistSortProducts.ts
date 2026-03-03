@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
 
 export type WishlistSortPayload = {
+  supplierUID?: string;
   sortedProducts: Array<{ productUID: string; newRank: number }>;
 };
 
@@ -20,10 +21,11 @@ export function useWishlistSortProducts(options?: {
 
   return useMutation({
     mutationFn: async (payload: WishlistSortPayload) => {
-      const res = await api.post<WishlistSortResponse>(
-        "/wishlist-sort",
-        payload,
-      );
+      const body = {
+        ...payload,
+        supplierUID: payload.supplierUID ?? supplierUID ?? undefined,
+      };
+      const res = await api.post<WishlistSortResponse>("/wishlist-sort", body);
       return res.data;
     },
     onSuccess: (data, _variables) => {

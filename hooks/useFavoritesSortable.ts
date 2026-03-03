@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import {
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -27,8 +28,11 @@ export function useFavoritesSortable(
 ) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const lastOverIdRef = useRef<string | null>(null);
+  const orderAtDragStartRef = useRef<string[]>([]);
   const orderedItemsRef = useRef<WishlistItem[]>(orderedItems);
+  const onSortRef = useRef(onSort);
   orderedItemsRef.current = orderedItems;
+  onSortRef.current = onSort;
 
   const activeItem =
     activeId != null
@@ -39,6 +43,9 @@ export function useFavoritesSortable(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 6 },
     }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 200, tolerance: 8 },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -47,6 +54,9 @@ export function useFavoritesSortable(
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
     lastOverIdRef.current = null;
+    orderAtDragStartRef.current = orderedItemsRef.current.map(
+      (i) => i.productUID ?? i.id ?? ""
+    );
   };
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -68,29 +78,44 @@ export function useFavoritesSortable(
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    const hadDrag = activeId != null;
     setActiveId(null);
     lastOverIdRef.current = null;
-    if (over == null || active.id === over.id) return;
+
+    if (!hadDrag) return;
 
     const prev = orderedItemsRef.current;
-    const ids = prev.map((i) => i.productUID ?? i.id ?? "");
-    const oldIndex = ids.indexOf(active.id as string);
-    const newIndex = ids.indexOf(over.id as string);
-    if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return;
+    let next = prev;
 
-    const next = arrayMove(prev, oldIndex, newIndex);
-    setOrderedItems(next);
-    orderedItemsRef.current = next;
-    onSort({
-      sortedProducts: next
-        .map((item, rank) => ({
-          productUID: item.productUID ?? item.id,
-          newRank: rank,
-        }))
-        .filter((p): p is { productUID: string; newRank: number } =>
-          Boolean(p.productUID)
-        ),
-    });
+    if (over != null && over.id !== active.id) {
+      const ids = prev.map((i) => i.productUID ?? i.id ?? "");
+      const oldIndex = ids.indexOf(active.id as string);
+      const newIndex = ids.indexOf(over.id as string);
+      if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+        next = arrayMove(prev, oldIndex, newIndex);
+        setOrderedItems(next);
+        orderedItemsRef.current = next;
+      }
+    }
+
+    const orderAfter = next.map((i) => i.productUID ?? i.id ?? "");
+    const orderBefore = orderAtDragStartRef.current;
+    const orderChanged =
+      orderAfter.length !== orderBefore.length ||
+      orderAfter.some((id, i) => id !== orderBefore[i]);
+
+    if (orderChanged) {
+      onSortRef.current({
+        sortedProducts: next
+          .map((item, rank) => ({
+            productUID: item.productUID ?? item.id,
+            newRank: rank,
+          }))
+          .filter((p): p is { productUID: string; newRank: number } =>
+            Boolean(p.productUID)
+          ),
+      });
+    }
   };
 
   const itemIds = orderedItems.map((item) => item.productUID ?? item.id ?? "");
