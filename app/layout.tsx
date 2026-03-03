@@ -2,6 +2,14 @@ import "./globals.css";
 import type { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
 import { ClientApp } from "./ClientApp";
+import { Google_Sans } from "next/font/google";
+
+const googleSans = Google_Sans({
+  subsets: ["latin", "greek"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: "eorder",
@@ -20,7 +28,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="el">
+    <html lang="el" className={googleSans.variable}>
       <head>
         <link
           rel="apple-touch-icon"

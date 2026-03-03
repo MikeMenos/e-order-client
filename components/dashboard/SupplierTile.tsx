@@ -35,9 +35,9 @@ type Props = {
 };
 
 const tileClassNameDefault =
-  "flex flex-col rounded-lg border border-slate-200/80 bg-app-card/95 shadow-sm cursor-pointer transition hover:border-brand-400/70 hover:shadow-md";
+  "flex flex-col rounded-lg bg-brand-100 shadow-sm cursor-pointer transition hover:border-brand-400/70 hover:shadow-md";
 const tileClassNameSettings =
-  "flex h-full w-full flex-col items-center justify-center gap-3 rounded-lg bg-app-card/95 p-6 shadow-sm transition hover:shadow-md cursor-pointer";
+  "flex h-full w-full flex-col items-center justify-center gap-3 rounded-lg bg-brand-100 p-6 shadow-sm transition hover:shadow-md cursor-pointer";
 
 export function SupplierTile({
   supplier,
@@ -82,12 +82,12 @@ export function SupplierTile({
     : statusDescr || "—";
 
   const draftPillStyle = {
-    color: "#EEB23E",
-    backgroundColor: "#FFF8E6",
+    color: "#034D71",
+    backgroundColor: "rgba(196, 214, 224, 0.7)",
   };
   const draftIconStyle = {
     color: "white",
-    backgroundColor: "#EEB23E",
+    backgroundColor: "#034D71",
     borderRadius: "50%",
   };
 
@@ -95,22 +95,22 @@ export function SupplierTile({
     ? draftPillStyle
     : supplier.basketIconColor
       ? {
-          color: supplier.basketIconColor,
-          backgroundColor:
-            supplier.basketIconColor.startsWith("#") &&
+        color: supplier.basketIconColor,
+        backgroundColor:
+          supplier.basketIconColor.startsWith("#") &&
             supplier.basketIconColor.length === 7
-              ? `${supplier.basketIconColor}1A`
-              : supplier.basketIconColor,
-        }
+            ? `${supplier.basketIconColor}1A`
+            : supplier.basketIconColor,
+      }
       : undefined;
   const iconStyle = displayAsDraft
     ? draftIconStyle
     : supplier.basketIconColor
       ? {
-          color: "white",
-          backgroundColor: supplier.basketIconColor,
-          borderRadius: "50%",
-        }
+        color: "white",
+        backgroundColor: supplier.basketIconColor,
+        borderRadius: "50%",
+      }
       : undefined;
   const isSettingsStyle = tileStyle === "settings";
 
@@ -126,12 +126,12 @@ export function SupplierTile({
         </span>
       ) : (
         <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
-          <span className="text-xl font-semibold text-slate-500">
+          <span className="text-xl font-semibold text-brand-800">
             {(supplier.title ?? "").charAt(0).toUpperCase()}
           </span>
         </span>
       )}
-      <span className="text-center text-base font-medium text-slate-900 line-clamp-2">
+      <span className="text-center text-base font-medium t text-brand-800 line-clamp-2">
         {supplier.title}
       </span>
     </>
@@ -165,7 +165,7 @@ export function SupplierTile({
           />
         ))}
       </div>
-      <p className="mt-2 text-base font-semibold text-slate-900 line-clamp-2">
+      <p className="mt-2 text-base font-semibold text-brand-800 line-clamp-2">
         {supplier.title}
       </p>
       {supplier.subTitle && (
@@ -181,9 +181,8 @@ export function SupplierTile({
         <Link
           href={titleHref}
           onClick={(e) => e.stopPropagation()}
-          className={`flex items-center gap-3 px-4 py-2 pb-2 hover:bg-slate-50/50 transition-colors ${
-            showDotArea ? "md:items-center md:justify-between" : ""
-          }`}
+          className={`flex items-center gap-3 px-4 py-2 pb-2 hover:bg-slate-50/50 transition-colors ${showDotArea ? "md:items-center md:justify-between" : ""
+            }`}
         >
           <div className="flex items-start gap-3 flex-1 min-w-0">
             {supplier.logo && (
@@ -202,7 +201,7 @@ export function SupplierTile({
 
               {isOrdersOfDayPage ? (
                 <>
-                  <p className="font-bold uppercase tracking-wide text-slate-900">
+                  <p className="font-bold uppercase tracking-wide text-brand-800">
                     {supplier.title ?? supplier.subTitle}
                   </p>
                   {showDeliveryInfo && supplier.nextAvailDeliveryText && (
@@ -255,9 +254,8 @@ export function SupplierTile({
         </Link>
       ) : (
         <div
-          className={`flex items-center gap-3 px-4 py-2 pb-2 ${
-            showDotArea ? "md:items-center md:justify-between" : ""
-          }`}
+          className={`flex items-center gap-3 px-4 py-2 pb-2 ${showDotArea ? "md:items-center md:justify-between" : ""
+            }`}
         >
           <div className="flex items-start gap-3 flex-1 min-w-0">
             {supplier.logo && (
@@ -353,17 +351,17 @@ export function SupplierTile({
             {!displayAsDraft && supplier.basketIconStatus === 3 && (
               <CircleAlert
                 className="h-5 w-5 shrink-0"
-                style={iconStyle}
                 aria-hidden
               />
             )}
             <span>{statusDisplay}</span>
             {!displayAsDraft && supplier.basketIconStatus === 3 && (
               <span className="ml-auto">
+                {/* paraggelia button*/}
                 <Button
                   type="button"
                   variant="ghost"
-                  className="rounded-sm bg-brand-500 hover:bg-brand-600 px-2 py-0 font-normal text-white"
+                  className="rounded-sm bg-brand-50 text-brand-700 px-2 py-0 font-normal"
                   size="sm"
                 >
                   {t("supplier_order")}
@@ -375,7 +373,7 @@ export function SupplierTile({
                 <Button
                   type="button"
                   variant="ghost"
-                  className="rounded-sm bg-white px-2 py-0 font-normal"
+                  className="rounded-sm bg-brand-50 text-brand-700 px-2 py-0 font-normal"
                   onClick={(e) => {
                     e.preventDefault();
                   }}
@@ -390,7 +388,7 @@ export function SupplierTile({
                 <Button
                   type="button"
                   variant="ghost"
-                  className="rounded-sm bg-brand-500 hover:bg-brand-600 px-2 py-0 font-normal text-white"
+                  className="rounded-sm bg-brand-50 text-brand-700 px-2 py-0 font-normal"
                   size="sm"
                 >
                   {t("supplier_open")}
@@ -403,7 +401,7 @@ export function SupplierTile({
 
       {/* Bottom: order days (hidden on all-suppliers) */}
       {showDeliveryInfo && supplier.weekDeliveryDaysText && (
-        <div className="flex items-center justify-center gap-2 border-t border-slate-100 px-4 py-2">
+        <div className="flex items-center justify-center gap-2 border-t border-neutral-200 px-4 py-2">
           <Calendar className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
           <span className="font-semibold text-green-600">
             {supplier.weekDeliveryDaysText}
