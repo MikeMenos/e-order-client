@@ -154,7 +154,7 @@ html {
 body {
   @apply text-slate-900;
   min-height: 100dvh;
-
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 /* iOS safe area for notch / home indicator */
