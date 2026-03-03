@@ -36,10 +36,10 @@ export function SupplierSearchAndTabs({
         />
       </div>
       {sections.length > 1 && (
-        <div className="-mx-4 flex flex-col gap-0 bg-app-card/95">
+        <div className="-mx-4 flex flex-col gap-0 rounded-2xl bg-app-card/95 overflow-hidden">
           <Tabs value={value} onValueChange={onTabClick}>
             <motion.div
-              className="overflow-x-auto border-b border-slate-200/80 px-4 py-2 bg-app-card/95"
+              className="overflow-x-auto border-slate-200/80 px-4 py-2"
               variants={listItemVariants}
               initial="hidden"
               animate="visible"

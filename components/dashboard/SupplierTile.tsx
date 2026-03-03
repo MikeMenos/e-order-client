@@ -35,9 +35,9 @@ type Props = {
 };
 
 const tileClassNameDefault =
-  "flex flex-col rounded-lg border border-slate-200/80 bg-app-card/95 shadow-sm cursor-pointer transition hover:border-brand-400/70 hover:shadow-md";
+  "flex flex-col rounded-lg border border-slate-200/80 bg-brand-50 shadow-sm cursor-pointer transition hover:border-brand-400/70 hover:shadow-md";
 const tileClassNameSettings =
-  "flex h-full w-full flex-col items-center justify-center gap-3 rounded-lg bg-app-card/95 p-6 shadow-sm transition hover:shadow-md cursor-pointer";
+  "flex h-full w-full flex-col items-center justify-center gap-3 rounded-lg bg-brand-50 p-6 shadow-sm transition hover:shadow-md cursor-pointer";
 
 export function SupplierTile({
   supplier,
@@ -95,22 +95,22 @@ export function SupplierTile({
     ? draftPillStyle
     : supplier.basketIconColor
       ? {
-          color: supplier.basketIconColor,
-          backgroundColor:
-            supplier.basketIconColor.startsWith("#") &&
+        color: supplier.basketIconColor,
+        backgroundColor:
+          supplier.basketIconColor.startsWith("#") &&
             supplier.basketIconColor.length === 7
-              ? `${supplier.basketIconColor}1A`
-              : supplier.basketIconColor,
-        }
+            ? `${supplier.basketIconColor}1A`
+            : supplier.basketIconColor,
+      }
       : undefined;
   const iconStyle = displayAsDraft
     ? draftIconStyle
     : supplier.basketIconColor
       ? {
-          color: "white",
-          backgroundColor: supplier.basketIconColor,
-          borderRadius: "50%",
-        }
+        color: "white",
+        backgroundColor: supplier.basketIconColor,
+        borderRadius: "50%",
+      }
       : undefined;
   const isSettingsStyle = tileStyle === "settings";
 
@@ -181,9 +181,8 @@ export function SupplierTile({
         <Link
           href={titleHref}
           onClick={(e) => e.stopPropagation()}
-          className={`flex items-center gap-3 px-4 py-2 pb-2 hover:bg-slate-50/50 transition-colors ${
-            showDotArea ? "md:items-center md:justify-between" : ""
-          }`}
+          className={`flex items-center gap-3 px-4 py-2 pb-2 hover:bg-slate-50/50 transition-colors ${showDotArea ? "md:items-center md:justify-between" : ""
+            }`}
         >
           <div className="flex items-start gap-3 flex-1 min-w-0">
             {supplier.logo && (
@@ -255,9 +254,8 @@ export function SupplierTile({
         </Link>
       ) : (
         <div
-          className={`flex items-center gap-3 px-4 py-2 pb-2 ${
-            showDotArea ? "md:items-center md:justify-between" : ""
-          }`}
+          className={`flex items-center gap-3 px-4 py-2 pb-2 ${showDotArea ? "md:items-center md:justify-between" : ""
+            }`}
         >
           <div className="flex items-start gap-3 flex-1 min-w-0">
             {supplier.logo && (
