@@ -12,8 +12,16 @@ import { Button } from "../components/ui/button";
 import { ClearableInput } from "../components/ui/clearable-input";
 import { PasswordInput } from "../components/ui/password-input";
 import { StoreSelectDialog } from "../components/auth/StoreSelectDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "../components/ui/dialog";
 import { useTranslation } from "../lib/i18n";
 import { getApiErrorMessage } from "../lib/api-error";
+import { isApiSuccess, getApiResponseMessage } from "../lib/api-response";
 
 const ERGASTIRIO_SESSION_COOKIE = "ergastirio_session";
 const ERGASTIRIO_SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
@@ -31,6 +39,9 @@ export default function HomePage() {
   const [roles, setRoles] = useState<any[]>([]);
   const [userResponse, setUserResponse] = useState<any | null>(null);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
+  const [forgotUsername, setForgotUsername] = useState("");
+  const [forgotEmail, setForgotEmail] = useState("");
 
   const getClientDataMutation = useGetClientData();
 
@@ -103,6 +114,43 @@ export default function HomePage() {
       toast.error(getApiErrorMessage(err, t("login_toast_error")));
     },
   });
+
+  const passwordForgotMutation = useMutation({
+    mutationFn: async (payload: { username: string; email: string }) => {
+      const res = await api.post("/password-forgot", payload);
+      return res.data;
+    },
+    onSuccess: (data: any) => {
+      if (data != null && isApiSuccess(data as { statusCode?: number })) {
+        toast.success(
+          getApiResponseMessage(data) || t("login_forgot_password_success"),
+        );
+        setForgotPasswordOpen(false);
+        setForgotUsername("");
+        setForgotEmail("");
+      } else {
+        toast.error(
+          getApiResponseMessage(data) || t("login_forgot_password_error"),
+        );
+      }
+    },
+    onError: (err: unknown) => {
+      toast.error(getApiErrorMessage(err, t("login_forgot_password_error")));
+    },
+  });
+
+  const handleForgotPasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const u = forgotUsername.trim();
+    const em = forgotEmail.trim();
+    if (!u || !em) return;
+    passwordForgotMutation.mutate({ username: u, email: em });
+  };
+
+  const handleForgotPasswordOpen = () => {
+    setForgotUsername(username);
+    setForgotPasswordOpen(true);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -238,6 +286,13 @@ export default function HomePage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            <button
+              type="button"
+              onClick={handleForgotPasswordOpen}
+              className="mt-1 text-sm text-brand-600 hover:text-brand-700 hover:underline"
+            >
+              {t("login_forgot_password")}
+            </button>
           </div>
           <Button
             type="submit"
@@ -260,6 +315,60 @@ export default function HomePage() {
           }`.trim()}
           onSelectRole={handleSelectRole}
         />
+
+        <Dialog open={forgotPasswordOpen} onOpenChange={setForgotPasswordOpen}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>{t("login_forgot_password_title")}</DialogTitle>
+              <DialogDescription>
+                {t("login_forgot_password_description")}
+              </DialogDescription>
+            </DialogHeader>
+            <form
+              onSubmit={handleForgotPasswordSubmit}
+              className="mt-4 space-y-4"
+            >
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-slate-700">
+                  {t("login_username")}
+                </label>
+                <ClearableInput
+                  value={forgotUsername}
+                  onChange={(e) => setForgotUsername(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-slate-700">
+                  {t("signup_email")}
+                </label>
+                <ClearableInput
+                  type="email"
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setForgotPasswordOpen(false)}
+                >
+                  {t("common_back")}
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={passwordForgotMutation.isPending}
+                >
+                  {passwordForgotMutation.isPending
+                    ? t("login_signing_in")
+                    : t("login_forgot_password_submit")}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </main>
   );

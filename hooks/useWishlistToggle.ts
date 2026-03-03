@@ -13,9 +13,21 @@ export function useWishlistToggle(options?: {
   const { supplierUID, onSuccess, onError } = options ?? {};
 
   return useMutation({
-    mutationFn: async (productUID: string) => {
+    mutationFn: async (
+      payload: string | { productUID: string; rank?: number },
+    ) => {
+      const productUID =
+        typeof payload === "string" ? payload : payload.productUID;
+      const rank =
+        typeof payload === "object" && typeof payload.rank === "number"
+          ? payload.rank
+          : undefined;
+      const params: Record<string, string | number> = { ProductUID: productUID };
+      if (rank !== undefined) {
+        params.Rank = rank;
+      }
       const res = await api.get<WishlistToggleResponse>("/wishlist-toggle", {
-        params: { ProductUID: productUID },
+        params,
       });
       return res.data;
     },
