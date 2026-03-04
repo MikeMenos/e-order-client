@@ -1,17 +1,29 @@
 import { useMemo } from "react";
-import {
-  useSupplierDisplay,
-  useSupplierProducts,
-} from "@/hooks/useSupplier";
+import { useSupplierDisplay, useSupplierProducts } from "@/hooks/useSupplier";
 import {
   buildSectionsFromProducts,
   mapRawProductsToSupplierProducts,
 } from "@/lib/supplier";
 import type { SupplierProduct, SupplierSection } from "@/lib/types/supplier";
 
-export function useSupplierPageProducts(supplierUID: string | undefined) {
+export type UseSupplierPageProductsParams = {
+  mainTab: "catalog" | "favorites";
+  search?: string;
+  refDate?: string | null;
+};
+
+export function useSupplierPageProducts(
+  supplierUID: string | undefined,
+  params?: UseSupplierPageProductsParams,
+) {
   const supplierInfoQuery = useSupplierDisplay(supplierUID);
-  const productsQuery = useSupplierProducts(supplierUID);
+  const mainTab = params?.mainTab ?? "catalog";
+  const search = params?.search ?? "";
+
+  const productsQuery = useSupplierProducts(supplierUID, {
+    favoritesOnly: mainTab === "favorites",
+    search: search.trim() || null,
+  });
 
   const selectedDate = supplierInfoQuery.data?.selectedDate ?? undefined;
   const supplier = supplierInfoQuery.data?.supplier ?? null;

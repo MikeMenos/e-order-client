@@ -35,9 +35,28 @@ export const useSupplierDisplay = (supplierUID: string | undefined) => {
   });
 };
 
-export const useSupplierProducts = (supplierUID: string | undefined) => {
+export type SupplierProductsParams = {
+  favoritesOnly?: boolean;
+  search?: string | null;
+  refDate?: string | null;
+};
+
+export const useSupplierProducts = (
+  supplierUID: string | undefined,
+  params?: SupplierProductsParams,
+) => {
+  const favoritesOnly = params?.favoritesOnly ?? false;
+  const search = params?.search ?? null;
+  const refDate = params?.refDate ?? null;
+
   return useQuery({
-    queryKey: ["supplier-products", supplierUID],
+    queryKey: [
+      "supplier-products",
+      supplierUID,
+      favoritesOnly,
+      search ?? "",
+      refDate ?? "",
+    ],
     queryFn: async (): Promise<SupplierProductsResponse> => {
       const res = await api.post<SupplierProductsResponse>(
         "/suppliers-products",
@@ -45,8 +64,9 @@ export const useSupplierProducts = (supplierUID: string | undefined) => {
           supplierUID,
           erpCatUID: null,
           page: 0,
-          search: null,
-          favoritesOnly: false,
+          pageSize: 500,
+          search: search && search.trim() ? search.trim() : null,
+          favoritesOnly,
         },
       );
       return res.data;

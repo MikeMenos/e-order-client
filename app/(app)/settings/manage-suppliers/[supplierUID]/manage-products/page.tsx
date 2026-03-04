@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
@@ -17,19 +17,12 @@ import { useActiveTabsStore, activeTabKeys } from "@/stores/activeTabs";
 import { useSupplierPageProducts } from "@/hooks/useSupplierPageProducts";
 import { useSupplierSectionScrollSpy } from "@/hooks/useSupplierSectionScrollSpy";
 import { useBackToTop } from "@/hooks/useBackToTop";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 export default function ManageProductsPage() {
   const { t } = useTranslation();
   const params = useParams<{ supplierUID: string }>();
   const supplierUID = params.supplierUID;
-
-  const {
-    supplier,
-    catalogSections,
-    favoriteSections,
-    isLoading,
-    error,
-  } = useSupplierPageProducts(supplierUID);
 
   const mainTabKey = activeTabKeys.supplierMain(supplierUID ?? "");
   const sectionTabKey = activeTabKeys.supplierSection(supplierUID ?? "");
@@ -40,27 +33,19 @@ export default function ManageProductsPage() {
   const setMainTab = (tab: "catalog" | "favorites") =>
     setActiveTab(mainTabKey, tab);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebouncedValue(searchQuery, 500);
+
+  const { supplier, catalogSections, favoriteSections, isLoading, error } =
+    useSupplierPageProducts(supplierUID, {
+      mainTab,
+      search: debouncedSearch,
+    });
+
   const currentTabSections =
     mainTab === "catalog" ? catalogSections : favoriteSections;
 
-  const [searchQuery, setSearchQuery] = useState("");
   const showBackToTop = useBackToTop();
-
-  const filteredSections = useMemo(() => {
-    if (!searchQuery) return currentTabSections;
-    const q = searchQuery.toLowerCase();
-    return currentTabSections
-      .map((section) => ({
-        ...section,
-        products: section.products.filter(
-          (p) =>
-            p.title?.toLowerCase().includes(q) ||
-            p.subTitle?.toLowerCase().includes(q) ||
-            p.description?.toLowerCase().includes(q),
-        ),
-      }))
-      .filter((section) => section.products.length > 0);
-  }, [currentTabSections, searchQuery]);
 
   const headerHeight = useAppHeaderHeight();
   const stickyBarMeasurement = useMeasuredHeight<HTMLDivElement>();
@@ -70,7 +55,7 @@ export default function ManageProductsPage() {
 
   const { activeSectionId, setSectionRef, handleTabClick } =
     useSupplierSectionScrollSpy({
-      filteredSections,
+      filteredSections: currentTabSections,
       mainTab,
       sectionTabKey,
       scrollOffset,
@@ -102,7 +87,7 @@ export default function ManageProductsPage() {
               searchPlaceholder={t("products_search_placeholder")}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
-              sections={filteredSections}
+              sections={currentTabSections}
               activeSectionId={activeSectionId}
               onTabClick={handleTabClick}
             />
@@ -117,7 +102,7 @@ export default function ManageProductsPage() {
           </p>
         )}
 
-        {filteredSections.length === 0 && !isLoading && !error ? (
+        {currentTabSections.length === 0 && !isLoading && !error ? (
           <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
             {t("supplier_empty_products")}
           </p>
@@ -128,7 +113,7 @@ export default function ManageProductsPage() {
             initial="hidden"
             animate="visible"
           >
-            {filteredSections.map((section) => (
+            {currentTabSections.map((section) => (
               <motion.div key={section.id} variants={listItemVariants}>
                 <SupplierProductSection
                   section={section}
