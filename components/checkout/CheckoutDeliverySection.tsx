@@ -7,9 +7,13 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { useTranslation } from "@/lib/i18n";
-import { formatDeliveryDateDisplay, parseDateForPicker } from "@/lib/utils";
+import {
+  formatDeliveryDateDisplay,
+  parseDateForPicker,
+  toDateOnly,
+} from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { DeliveryDatePickerDialog } from "@/components/checkout/DeliveryDatePickerDialog";
 import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
@@ -80,27 +84,32 @@ export function CheckoutDeliverySection({
     }
   }, [deliveryOption, otherDate, selectedDate, notifyEffectiveDate]);
 
-  const disabledDates = useMemo(() => {
+  const { disabledDatesSet, minDateOnly, maxDateOnly } = useMemo(() => {
     const set = new Set<string>();
+    let min: string | null = null;
+    let max: string | null = null;
     for (const item of weekDailyAnalysis) {
-      if (item.dayIsClosed || !item.supplierCanDeliver) {
-        try {
-          const d = parseISO(item.dateObj);
-          set.add(format(d, "yyyy-MM-dd"));
-        } catch {
-          // Skip invalid dates
+      const dateOnly = toDateOnly(item.dateObj);
+      if (dateOnly) {
+        if (item.dayIsClosed || !item.supplierCanDeliver) {
+          set.add(dateOnly);
         }
+        if (!min || dateOnly < min) min = dateOnly;
+        if (!max || dateOnly > max) max = dateOnly;
       }
     }
-    return set;
+    return { disabledDatesSet: set, minDateOnly: min, maxDateOnly: max };
   }, [weekDailyAnalysis]);
 
   const isDateDisabled = useCallback(
     (date: Date) => {
       const key = format(date, "yyyy-MM-dd");
-      return disabledDates.has(key);
+      if (disabledDatesSet.has(key)) return true;
+      if (minDateOnly && key < minDateOnly) return true;
+      if (maxDateOnly && key > maxDateOnly) return true;
+      return false;
     },
-    [disabledDates],
+    [disabledDatesSet, minDateOnly, maxDateOnly],
   );
 
   const openOtherDateDialog = () => {

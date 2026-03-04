@@ -30,6 +30,8 @@ function toISOOrNull(dateStr: string | null): string | null {
 
 function toYyyyMmDd(dateStr: string | null): string | null {
   if (!dateStr?.trim()) return null;
+  const slice = dateStr.trim().slice(0, 10);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(slice)) return slice;
   try {
     const d = new Date(dateStr);
     if (Number.isNaN(d.getTime())) return null;

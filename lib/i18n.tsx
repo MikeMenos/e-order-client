@@ -547,7 +547,7 @@ const resources: Resources = {
     supplier_order_history_error: "Αποτυχία φόρτωσης παραγγελιών.",
     supplier_order_history_empty:
       "Δεν βρέθηκαν παραγγελίες για αυτόν τον προμηθευτή.",
-    order_ref_date: "Παραγγελία:",
+    order_ref_date: "Order:",
     order_delivery_date: "Παράδοση:",
     order_min_order: "Ελάχ. παραγγελία:",
     order_remaining: "Υπόλοιπο:",
