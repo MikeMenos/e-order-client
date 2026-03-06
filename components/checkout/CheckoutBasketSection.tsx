@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { activeTabKeys, useActiveTabsStore } from "@/stores/activeTabs";
 import { Trash2, Loader2 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { getApiErrorMessage } from "@/lib/api-error";
@@ -253,7 +252,6 @@ export function CheckoutBasketSection({
 }: Props) {
   const { t } = useTranslation();
   const router = useRouter();
-  const setActiveTab = useActiveTabsStore((s) => s.setActiveTab);
   const { data, isLoading, isError, error } = useBasketItems({
     SupplierUID: supplierUID,
     enabled: !!supplierUID,
@@ -298,8 +296,11 @@ export function CheckoutBasketSection({
     supplierUID,
     onSuccess: (d) => {
       toast.success(d?.message?.trim() || t("checkout_delete_basket"));
-      setActiveTab(activeTabKeys.ordersOfTheDay, "pending");
-      router.replace("/orders-of-the-day");
+      if (supplierUID) {
+        router.replace(`/suppliers/${supplierUID}`);
+      } else {
+        router.replace("/orders-of-the-day");
+      }
     },
     onError: (err) => {
       toast.error(getApiErrorMessage(err, t("basket_error")));
