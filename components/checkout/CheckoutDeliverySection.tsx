@@ -84,32 +84,39 @@ export function CheckoutDeliverySection({
     }
   }, [deliveryOption, otherDate, selectedDate, notifyEffectiveDate]);
 
-  const { disabledDatesSet, minDateOnly, maxDateOnly } = useMemo(() => {
-    const set = new Set<string>();
-    let min: string | null = null;
-    let max: string | null = null;
-    for (const item of weekDailyAnalysis) {
-      const dateOnly = toDateOnly(item.dateObj);
-      if (dateOnly) {
-        if (item.dayIsClosed || !item.supplierCanDeliver) {
-          set.add(dateOnly);
+  const { disabledDatesSet, minDateOnly, maxDateOnly, isEmpty } =
+    useMemo(() => {
+      const set = new Set<string>();
+      let min: string | null = null;
+      let max: string | null = null;
+      for (const item of weekDailyAnalysis) {
+        const dateOnly = toDateOnly(item.dateObj);
+        if (dateOnly) {
+          if (item.dayIsClosed || !item.supplierCanDeliver) {
+            set.add(dateOnly);
+          }
+          if (!min || dateOnly < min) min = dateOnly;
+          if (!max || dateOnly > max) max = dateOnly;
         }
-        if (!min || dateOnly < min) min = dateOnly;
-        if (!max || dateOnly > max) max = dateOnly;
       }
-    }
-    return { disabledDatesSet: set, minDateOnly: min, maxDateOnly: max };
-  }, [weekDailyAnalysis]);
+      return {
+        disabledDatesSet: set,
+        minDateOnly: min,
+        maxDateOnly: max,
+        isEmpty: weekDailyAnalysis.length === 0,
+      };
+    }, [weekDailyAnalysis]);
 
   const isDateDisabled = useCallback(
     (date: Date) => {
+      if (isEmpty) return true;
       const key = format(date, "yyyy-MM-dd");
       if (disabledDatesSet.has(key)) return true;
       if (minDateOnly && key < minDateOnly) return true;
       if (maxDateOnly && key > maxDateOnly) return true;
       return false;
     },
-    [disabledDatesSet, minDateOnly, maxDateOnly],
+    [disabledDatesSet, minDateOnly, maxDateOnly, isEmpty],
   );
 
   const openOtherDateDialog = () => {
