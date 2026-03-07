@@ -118,12 +118,12 @@ export function SuppliersSection({
             <Button
               type="button"
               variant="outline"
-              size="sm"
-              className="h-9 shrink-0 border-slate-300 text-slate-700"
+              size="icon"
+              className="h-11 w-11 shrink-0 border-slate-300 text-slate-700"
               aria-label={t("suppliers_select_date") ?? "Select date"}
               onClick={() => setCalendarOpen(true)}
             >
-              <CalendarIcon className="h-4 w-4" />
+              <CalendarIcon className="h-7 w-7" />
             </Button>
           )}
           {(pathname === "/all-suppliers" ||

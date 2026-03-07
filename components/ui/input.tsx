@@ -1,17 +1,21 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, inputMode, value, onChange, onFocus, onBlur, ...props }, ref) => {
+  (
+    { className, type, inputMode, value, onChange, onFocus, onBlur, ...props },
+    ref,
+  ) => {
     // For numeric inputs, prefer showing the numeric keypad on mobile devices.
     const resolvedInputMode =
       inputMode ?? (type === "number" ? "decimal" : undefined);
 
     // Track original value when focus happens and whether we cleared it
-    const originalValueRef = React.useRef<string | number | readonly string[] | undefined>(undefined);
+    const originalValueRef = React.useRef<
+      string | number | readonly string[] | undefined
+    >(undefined);
     const wasClearedOnFocusRef = React.useRef(false);
     const clearedValueRef = React.useRef<string>("");
 
@@ -22,7 +26,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         originalValueRef.current = value;
         wasClearedOnFocusRef.current = true;
         clearedValueRef.current = "";
-        
+
         // Create a synthetic event to clear the value
         // We still call onChange, but parent components can check if value is empty
         // and skip API calls if it matches the pattern of "cleared on focus"
@@ -56,7 +60,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         clearedValueRef.current = "";
       }
       // If value changes from empty, mark that user actually changed it
-      if (wasClearedOnFocusRef.current && e.target.value !== "" && e.target.value !== clearedValueRef.current) {
+      if (
+        wasClearedOnFocusRef.current &&
+        e.target.value !== "" &&
+        e.target.value !== clearedValueRef.current
+      ) {
         wasClearedOnFocusRef.current = false;
         originalValueRef.current = undefined;
       }

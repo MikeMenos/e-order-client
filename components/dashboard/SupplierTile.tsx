@@ -95,22 +95,22 @@ export function SupplierTile({
     ? draftPillStyle
     : supplier.basketIconColor
       ? {
-        color: supplier.basketIconColor,
-        backgroundColor:
-          supplier.basketIconColor.startsWith("#") &&
+          color: supplier.basketIconColor,
+          backgroundColor:
+            supplier.basketIconColor.startsWith("#") &&
             supplier.basketIconColor.length === 7
-            ? `${supplier.basketIconColor}1A`
-            : supplier.basketIconColor,
-      }
+              ? `${supplier.basketIconColor}1A`
+              : supplier.basketIconColor,
+        }
       : undefined;
   const iconStyle = displayAsDraft
     ? draftIconStyle
     : supplier.basketIconColor
       ? {
-        color: "white",
-        backgroundColor: supplier.basketIconColor,
-        borderRadius: "50%",
-      }
+          color: "white",
+          backgroundColor: supplier.basketIconColor,
+          borderRadius: "50%",
+        }
       : undefined;
   const isSettingsStyle = tileStyle === "settings";
 
@@ -178,13 +178,16 @@ export function SupplierTile({
     <>
       {/* Top: logo + title + delivery (or subTitle on all-suppliers) + dots (all-suppliers / orders-of-the-day) */}
       {titleHref && isOrdersOfDayPage ? (
-        <Link
-          href={titleHref}
-          onClick={(e) => e.stopPropagation()}
-          className={`flex items-center gap-3 px-4 py-2 pb-2 hover:bg-slate-50/50 transition-colors ${showDotArea ? "md:items-center md:justify-between" : ""
-            }`}
+        <div
+          className={`flex items-center gap-3 px-4 py-2 pb-2 hover:bg-slate-50/50 transition-colors ${
+            showDotArea ? "md:items-center md:justify-between" : ""
+          }`}
         >
-          <div className="flex items-start gap-3 flex-1 min-w-0">
+          <Link
+            href={titleHref}
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-start gap-3"
+          >
             {supplier.logo && (
               <img
                 src={supplier.logo}
@@ -231,7 +234,7 @@ export function SupplierTile({
                 </>
               )}
             </div>
-          </div>
+          </Link>
 
           {/* Dots: all-suppliers = orange (blink if open baskets) + green (today orders); orders-of-the-day = green only */}
           {showDotArea && (
@@ -251,11 +254,12 @@ export function SupplierTile({
               ))}
             </div>
           )}
-        </Link>
+        </div>
       ) : (
         <div
-          className={`flex items-center gap-3 px-4 py-2 pb-2 ${showDotArea ? "md:items-center md:justify-between" : ""
-            }`}
+          className={`flex items-center gap-3 px-4 py-2 pb-2 ${
+            showDotArea ? "md:items-center md:justify-between" : ""
+          }`}
         >
           <div className="flex items-start gap-3 flex-1 min-w-0">
             {supplier.logo && (
@@ -349,10 +353,7 @@ export function SupplierTile({
               />
             )}
             {!displayAsDraft && supplier.basketIconStatus === 3 && (
-              <CircleAlert
-                className="h-5 w-5 shrink-0"
-                aria-hidden
-              />
+              <CircleAlert className="h-5 w-5 shrink-0" aria-hidden />
             )}
             <span>{statusDisplay}</span>
             {!displayAsDraft && supplier.basketIconStatus === 3 && (
