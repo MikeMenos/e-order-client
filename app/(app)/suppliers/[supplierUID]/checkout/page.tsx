@@ -203,6 +203,7 @@ export default function SupplierCheckoutPage() {
       <CheckoutPageHeader
         titleKey="order_completion_title"
         supplierName={supplier?.title ?? null}
+        supplierLogo={supplier?.logo ?? null}
       />
 
       <div className="flex-1 min-h-0 overflow-y-auto -mx-3 px-3 space-y-3">
