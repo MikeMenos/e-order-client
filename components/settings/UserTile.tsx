@@ -11,16 +11,9 @@ type Props = {
   onView: () => void;
   onEdit: () => void;
   onToggleActive?: () => void;
-  isTogglePending?: boolean;
 };
 
-export function UserTile({
-  user,
-  onView,
-  onEdit,
-  onToggleActive,
-  isTogglePending = false,
-}: Props) {
+export function UserTile({ user, onView, onEdit, onToggleActive }: Props) {
   const { t } = useTranslation();
   const fullName =
     [user.fname, user.lname].filter(Boolean).join(" ") ||
@@ -60,7 +53,6 @@ export function UserTile({
             <Switch
               checked={isActive}
               onCheckedChange={() => onToggleActive()}
-              disabled={isTogglePending}
             />
           )}
         </div>

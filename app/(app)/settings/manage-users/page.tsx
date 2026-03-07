@@ -35,7 +35,6 @@ export default function ManageUsersPage() {
 
   const toggleMutation = useUsersToggleActive({
     onSuccess: () => {
-      toast.success(t("settings_user_toggle_success"));
       usersQuery.refetch();
     },
     onError: (err) => {
@@ -113,7 +112,6 @@ export default function ManageUsersPage() {
                       onToggleActive={() =>
                         u.appUserUID && toggleMutation.mutate(u.appUserUID)
                       }
-                      isTogglePending={toggleMutation.isPending}
                     />
                   </motion.div>
                 ))}

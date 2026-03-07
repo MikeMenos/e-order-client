@@ -24,8 +24,42 @@ export function usePrefScheduleUpdate() {
       const res = await api.post("/store-pref-schedule-update", payload);
       return res.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pref-schedule"] });
+    onMutate: async (payload) => {
+      await queryClient.cancelQueries({ queryKey: ["pref-schedule"] });
+      const previous = queryClient.getQueryData<PrefScheduleResponse>([
+        "pref-schedule",
+      ]);
+      queryClient.setQueryData<PrefScheduleResponse>(
+        ["pref-schedule"],
+        (old) => {
+          if (!old?.storeSchedules) return old;
+          return {
+            ...old,
+            storeSchedules: old.storeSchedules.map((s) =>
+              (s.supplierUID ?? "").toLowerCase() ===
+              (payload.supplierUID ?? "").toLowerCase()
+                ? {
+                    ...s,
+                    dailyProgram: (s.dailyProgram ?? []).map((d) =>
+                      d.dayNum === payload.dayNum
+                        ? { ...d, isMarked: payload.isMarked }
+                        : d,
+                    ),
+                  }
+                : s,
+            ),
+          };
+        },
+      );
+      return { previous };
+    },
+    onError: (_err, _payload, context) => {
+      if (context?.previous != null) {
+        queryClient.setQueryData(["pref-schedule"], context.previous);
+      }
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ["pref-schedule"] });
     },
   });
 }
