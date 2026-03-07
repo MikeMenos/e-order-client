@@ -42,12 +42,67 @@ export const useUsersToggleActive = (options?: {
       const res = await api.post("/users-toggle-active", { appUserUID });
       return res.data;
     },
+    onMutate: async (appUserUID) => {
+      await queryClient.cancelQueries({ queryKey: ["mystore-users"] });
+      await queryClient.cancelQueries({
+        queryKey: ["user-profile", appUserUID],
+      });
+      const previousUsers = queryClient.getQueriesData<{
+        listUsers?: { appUserUID?: string; isActive?: boolean }[];
+      }>({ queryKey: ["mystore-users"] });
+      const previousProfile = queryClient.getQueryData<{
+        userProfile?: { appUserUID?: string; isActive?: boolean } | null;
+      }>(["user-profile", appUserUID]);
+
+      const flipIsActive = (u: { isActive?: boolean }) => ({
+        ...u,
+        isActive: !(u.isActive ?? true),
+      });
+
+      queryClient.setQueriesData<{ listUsers?: { appUserUID?: string; isActive?: boolean }[] }>(
+        { queryKey: ["mystore-users"] },
+        (old) => {
+          if (!old?.listUsers) return old;
+          return {
+            ...old,
+            listUsers: old.listUsers.map((u) =>
+              u.appUserUID === appUserUID ? flipIsActive(u) : u,
+            ),
+          };
+        },
+      );
+      queryClient.setQueryData<{
+        userProfile?: { appUserUID?: string; isActive?: boolean } | null;
+      }>(["user-profile", appUserUID], (old) => {
+        if (!old?.userProfile || old.userProfile.appUserUID !== appUserUID)
+          return old;
+        return {
+          ...old,
+          userProfile: flipIsActive(old.userProfile),
+        };
+      });
+
+      return { previousUsers, previousProfile };
+    },
+    onError: (err, appUserUID, context) => {
+      if (context?.previousUsers) {
+        context.previousUsers.forEach(([queryKey, data]) => {
+          if (data != null)
+            queryClient.setQueryData(queryKey, data);
+        });
+      }
+      if (context?.previousProfile != null) {
+        queryClient.setQueryData(["user-profile", appUserUID], context.previousProfile);
+      }
+      options?.onError?.(err);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["mystore-users"] });
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
       options?.onSuccess?.();
     },
-    onError: options?.onError,
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ["mystore-users"] });
+      void queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+    },
   });
 };
 

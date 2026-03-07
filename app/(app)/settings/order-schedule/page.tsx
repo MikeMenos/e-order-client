@@ -65,11 +65,6 @@ function SupplierScheduleCard({
         <div className="px-4 pb-4">
           <ul className="mt-3 divide-y divide-slate-100">
             {dailyProgram.map((day) => {
-              const isUpdating =
-                updateMutation.isPending &&
-                updateMutation.variables?.supplierUID === supplierUID &&
-                updateMutation.variables?.dayNum === day.dayNum;
-
               const dayLabel = day.day ?? day.dayShort ?? String(day.dayNum);
 
               const hasTimeOrAbbrev =
@@ -110,7 +105,6 @@ function SupplierScheduleCard({
                           isMarked: !!checked,
                         });
                       }}
-                      disabled={isUpdating}
                       aria-label={`${dayLabel} ${t("timetable_enabled")}`}
                     />
                   )}

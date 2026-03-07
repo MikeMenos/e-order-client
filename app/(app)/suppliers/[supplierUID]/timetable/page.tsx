@@ -57,10 +57,6 @@ export default function TimetablePage() {
             )}
             <ul className="divide-y divide-slate-100">
               {dailyProgram.map((day) => {
-                const isUpdating =
-                  updateMutation.isPending &&
-                  updateMutation.variables?.supplierUID === supplierUID &&
-                  updateMutation.variables?.dayNum === day.dayNum;
                 const dayLabel = day.day ?? day.dayShort ?? String(day.dayNum);
                 const hasTimeOrAbbrev =
                   (day.orderTillHour ?? "").trim() !== "" ||
@@ -97,7 +93,6 @@ export default function TimetablePage() {
                             isMarked: !!checked,
                           });
                         }}
-                        disabled={isUpdating}
                         aria-label={`${dayLabel} ${t("timetable_enabled")}`}
                       />
                     )}
