@@ -40,7 +40,7 @@ function SupplierScheduleCard({
       className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden"
     >
       <CollapsibleTrigger asChild>
-        <div className="px-4 py-2 space-y-1 mb-1 cursor-pointer transition hover:bg-slate-100/60">
+        <div className="px-4 py-2 space-y-1 cursor-pointer transition hover:bg-slate-100/60">
           <div className="flex items-center justify-between gap-2">
             <p className="font-medium text-slate-900">
               {schedule.supplierTitle ?? supplierUID}
@@ -64,7 +64,7 @@ function SupplierScheduleCard({
 
       <CollapsibleContent>
         <div className="px-4 pb-4">
-          <ul className="mt-3 divide-y divide-slate-100">
+          <ul className="mt-3">
             {dailyProgram.map((day) => {
               const dayLabel = day.day ?? day.dayShort ?? String(day.dayNum);
 

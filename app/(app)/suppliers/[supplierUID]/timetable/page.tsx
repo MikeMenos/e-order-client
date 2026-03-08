@@ -56,7 +56,7 @@ export default function TimetablePage() {
                 {supplierSchedule.selectedDaysInfo}
               </p>
             )}
-            <ul className="divide-y divide-slate-100">
+            <ul>
               {dailyProgram.map((day) => {
                 const dayLabel = day.day ?? day.dayShort ?? String(day.dayNum);
                 const hasTimeOrAbbrev =
@@ -101,6 +101,7 @@ export default function TimetablePage() {
                 );
               })}
             </ul>
+            <hr className="my-2 border-slate-200" />
             {(() => {
               const { daysPart, orderTillHour } =
                 formatTimetableDeliveryDays(dailyProgram);
