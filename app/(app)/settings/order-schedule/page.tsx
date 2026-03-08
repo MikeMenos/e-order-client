@@ -11,6 +11,7 @@ import { usePrefSchedule, usePrefScheduleUpdate } from "@/hooks/useSchedule";
 import { Switch } from "@/components/ui/switch";
 import { ClearableInput } from "@/components/ui/clearable-input";
 import type { PrefScheduleSupplier } from "@/lib/types/schedule";
+import { formatTimetableDeliveryDays } from "@/lib/types/schedule";
 import {
   Collapsible,
   CollapsibleContent,
@@ -39,7 +40,7 @@ function SupplierScheduleCard({
       className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden"
     >
       <CollapsibleTrigger asChild>
-        <div className="border-b border-slate-100 bg-slate-50/50 px-4 py-4 space-y-1 mb-1 cursor-pointer transition hover:bg-slate-100/60">
+        <div className="px-4 py-2 space-y-1 mb-1 cursor-pointer transition hover:bg-slate-100/60">
           <div className="flex items-center justify-between gap-2">
             <p className="font-medium text-slate-900">
               {schedule.supplierTitle ?? supplierUID}
@@ -112,23 +113,34 @@ function SupplierScheduleCard({
               );
             })}
           </ul>
-          {schedule.supplierDeliveryDays?.length ? (
-            <div className="pt-1">
-              <div className="text-base text-slate-600">
-                <span className="font-medium text-slate-700">
-                  {t("timetable_delivery_days")}:
-                </span>
-              </div>
-
-              <ul className="mt-1 space-y-0.5">
-                {schedule.supplierDeliveryDays.map((day) => (
-                  <li key={day} className="text-base text-slate-600">
-                    {day}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
+          <hr className="my-2 border-slate-200" />
+          {(() => {
+            const { daysPart, orderTillHour } =
+              formatTimetableDeliveryDays(dailyProgram);
+            const hasContent = daysPart || orderTillHour;
+            return (
+              hasContent && (
+                <div className="pt-1 space-y-0.5">
+                  {daysPart && (
+                    <p className="text-base text-slate-600">
+                      <span className="font-medium text-slate-700">
+                        {t("timetable_delivery_days")}:{" "}
+                      </span>
+                      <span>{daysPart}</span>
+                    </p>
+                  )}
+                  {orderTillHour && (
+                    <p className="text-base text-slate-600">
+                      <span className="font-medium text-slate-700">
+                        {t("timetable_order_time_until")}:{" "}
+                      </span>
+                      <span>{orderTillHour}</span>
+                    </p>
+                  )}
+                </div>
+              )
+            );
+          })()}
         </div>
       </CollapsibleContent>
     </Collapsible>

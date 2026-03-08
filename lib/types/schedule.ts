@@ -27,3 +27,25 @@ export type PrefScheduleUpdatePayload = {
   dayNum: number;
   isMarked: boolean;
 };
+
+export type TimetableDeliveryInfo = {
+  daysPart: string;
+  orderTillHour: string | null;
+};
+
+/** Extract delivery days (dayShorts) and orderTillHour from dailyProgram. */
+export function formatTimetableDeliveryDays(
+  dailyProgram: PrefScheduleDay[],
+): TimetableDeliveryInfo {
+  const withDeliv = dailyProgram.filter((d) => d.orderExpectedDelivDay);
+  const dayShorts =
+    withDeliv.length > 0
+      ? withDeliv
+          .map((d) => d.dayShort ?? d.orderExpectedDelivDay ?? "")
+          .filter(Boolean)
+          .join(" - ")
+      : "";
+  const orderTillHour =
+    withDeliv.find((d) => d.orderTillHour)?.orderTillHour ?? null;
+  return { daysPart: dayShorts, orderTillHour };
+}
