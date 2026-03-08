@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { usePrefSchedule, usePrefScheduleUpdate } from "@/hooks/useSchedule";
+import { formatTimetableDeliveryDays } from "@/lib/types/schedule";
 import { Switch } from "@/components/ui/switch";
 import Loading from "@/components/ui/loading";
 
@@ -100,19 +101,33 @@ export default function TimetablePage() {
                 );
               })}
             </ul>
-            {supplierSchedule.supplierDeliveryDays &&
-              supplierSchedule.supplierDeliveryDays.length > 0 && (
-                <p className="text-base text-slate-600 pt-1">
-                  <span className="font-medium text-slate-700">
-                    {t("timetable_delivery_days")}:{" "}
-                  </span>
-                  {supplierSchedule.supplierDeliveryDays.map((day) => (
-                    <p key={day} className="text-slate-600">
-                      {day}
-                    </p>
-                  ))}
-                </p>
-              )}
+            {(() => {
+              const { daysPart, orderTillHour } =
+                formatTimetableDeliveryDays(dailyProgram);
+              const hasContent = daysPart || orderTillHour;
+              return (
+                hasContent && (
+                  <div className="text-base text-slate-600 pt-1 space-y-0.5">
+                    {daysPart && (
+                      <p>
+                        <span className="font-medium text-slate-700">
+                          {t("timetable_delivery_days")}:{" "}
+                        </span>
+                        <span className="text-slate-600">{daysPart}</span>
+                      </p>
+                    )}
+                    {orderTillHour && (
+                      <p>
+                        <span className="font-medium text-slate-700">
+                          {t("timetable_order_time_until")}:{" "}
+                        </span>
+                        <span className="text-slate-600">{orderTillHour}</span>
+                      </p>
+                    )}
+                  </div>
+                )
+              );
+            })()}
           </div>
           {/* Program list: day + time/abbrev + toggle */}
         </div>
