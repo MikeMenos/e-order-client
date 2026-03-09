@@ -6,6 +6,7 @@ import { History } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { Button } from "@/components/ui/button";
+import { useBasketItems } from "@/hooks/useBasket";
 
 export type SupplierCheckoutBarProps = {
   supplierUID: string;
@@ -22,6 +23,16 @@ export function SupplierCheckoutBar({
   const searchParams = useSearchParams();
   const fromParam = searchParams.get("from");
 
+  const { data: basketData } = useBasketItems(
+    supplierUID ? { SupplierUID: supplierUID } : undefined,
+  );
+  const totalBasketsCount = basketData?.totalBasketsCount ?? 0;
+  const supplierBasket = basketData?.basketsList?.find(
+    (b) => b.supplierUID === supplierUID,
+  );
+  const hasItems =
+    totalBasketsCount > 0 || (supplierBasket?.totalItems ?? 0) > 0;
+
   const queryParams = new URLSearchParams();
   if (fromParam) queryParams.set("from", fromParam);
   const queryString = queryParams.toString()
@@ -30,6 +41,10 @@ export function SupplierCheckoutBar({
 
   const checkoutHref = `/suppliers/${supplierUID}/checkout${queryString}`;
   const orderHistoryHref = `/suppliers/${supplierUID}/order-history${queryString}`;
+
+  const hasAnyButton = hasAccess("P5") || hasItems;
+
+  if (!hasAnyButton) return null;
 
   return (
     <div
@@ -45,9 +60,11 @@ export function SupplierCheckoutBar({
           </Link>
         </Button>
       )}
-      <Button size="lg">
-        <Link href={checkoutHref}>{t("checkout_button")}</Link>
-      </Button>
+      {hasItems && (
+        <Button size="lg">
+          <Link href={checkoutHref}>{t("checkout_button")}</Link>
+        </Button>
+      )}
     </div>
   );
 }

@@ -1,6 +1,11 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Calendar as CalendarIcon } from "lucide-react";
+import {
+  ArrowRight,
+  Calendar as CalendarIcon,
+  ShoppingCart,
+  ShoppingBag,
+} from "lucide-react";
 import { useTranslation } from "../../lib/i18n";
 import { listVariants, listItemVariants } from "../../lib/motion";
 import { Button } from "../ui/button";
@@ -11,6 +16,7 @@ import { usePathname } from "next/navigation";
 import { SuppliersListItem } from "@/lib/types/dashboard";
 import { useAppHeaderHeight } from "@/app/(app)/AppHeaderContext";
 import { RefDateCalendarDialog } from "./RefDateCalendarDialog";
+import { Switch } from "../ui/switch";
 
 type Props = {
   suppliers: SuppliersListItem[];
@@ -55,6 +61,7 @@ export function SuppliersSection({
   const [searchQuery, setSearchQuery] = useState("");
   const [isAscending, setIsAscending] = useState(true);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [onlyWithBasket, setOnlyWithBasket] = useState(false);
   const { t } = useTranslation();
   const pathname = usePathname();
   const headerHeight = useAppHeaderHeight();
@@ -68,6 +75,12 @@ export function SuppliersSection({
 
   const filteredSuppliers = useMemo(() => {
     let data = [...suppliers];
+
+    if (pathname === "/all-suppliers" && onlyWithBasket) {
+      data = data.filter(
+        (s: { basketIconStatus?: number | null }) => s.basketIconStatus === 2,
+      );
+    }
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -104,16 +117,55 @@ export function SuppliersSection({
     }
 
     return data;
-  }, [suppliers, searchQuery, isAscending, pathname, calendarDateView]);
+  }, [
+    suppliers,
+    searchQuery,
+    isAscending,
+    pathname,
+    calendarDateView,
+    onlyWithBasket,
+  ]);
 
   return (
     <section>
       <div
-        className="sticky z-20 -mx-3 mb-2 w-[calc(100%+1.5rem)] flex flex-col gap-2 bg-app-bg-solid"
+        className="sticky z-20 -mx-3 w-[calc(100%+1.5rem)] flex flex-col gap-2 bg-app-bg-solid"
         style={{ top: headerHeight }}
       >
         <div className="flex h-9 items-center gap-1 mt-2 px-3">
           <SuppliersSearchBar value={searchQuery} onChange={setSearchQuery} />
+          {pathname === "/all-suppliers" && (
+            <div
+              className="relative flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-slate-300 bg-slate-50 px-2"
+              title={
+                onlyWithBasket
+                  ? t("suppliers_filter_with_basket")
+                  : t("suppliers_filter_all_suppliers")
+              }
+            >
+              <ShoppingBag
+                className={`h-4 w-4 shrink-0 transition-opacity ${
+                  !onlyWithBasket ? "text-slate-400" : "opacity-40"
+                }`}
+                aria-hidden
+              />
+              <Switch
+                checked={onlyWithBasket}
+                onCheckedChange={setOnlyWithBasket}
+                aria-label={
+                  onlyWithBasket
+                    ? t("suppliers_filter_with_basket")
+                    : t("suppliers_filter_all_suppliers")
+                }
+              />
+              <ShoppingCart
+                className={`h-4 w-4 shrink-0 transition-opacity ${
+                  onlyWithBasket ? "text-brand-500" : "opacity-40"
+                }`}
+                aria-hidden
+              />
+            </div>
+          )}
           {showCalendarButton && (
             <Button
               type="button"
