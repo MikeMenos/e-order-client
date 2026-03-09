@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { Star, Loader2 } from "lucide-react";
 import { useTranslation } from "../../lib/i18n";
 import { api } from "../../lib/api";
+import { useBasketItems, useBasketRemoveItem } from "@/hooks/useBasket";
 import { getApiErrorMessage } from "../../lib/api-error";
 import { useWishlistToggle } from "../../hooks/useWishlistToggle";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
@@ -66,6 +67,24 @@ export function SupplierProductCard({
     },
   });
   const isTogglingFavorite = wishlistToggle.isPending;
+
+  useBasketItems({
+    SupplierUID: supplierUID ?? undefined,
+    enabled: !!supplierUID,
+  });
+  const removeItemMutation = useBasketRemoveItem({
+    supplierUID: supplierUID ?? undefined,
+    onSuccess: () => {
+      if (supplierUID != null) {
+        void queryClient.invalidateQueries({
+          queryKey: ["supplier-products", supplierUID],
+        });
+      }
+    },
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err, t("basket_error")));
+    },
+  });
 
   const lastSuggestedQtyRef = useRef<number>(initialSuggestedQty ?? 0);
   const reserveDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -291,7 +310,7 @@ export function SupplierProductCard({
       // Calculate new value first
       const currentNum = toNonNegativeNum(basketQtyDisplay);
       const newNum = currentNum + delta;
-      const newValue = newNum <= 0 ? "" : String(newNum);
+      const newValue = newNum <= 0 ? "0" : String(newNum);
 
       // Update state
       setBasketQtyDisplay(newValue);
@@ -302,8 +321,12 @@ export function SupplierProductCard({
         basketDebounceRef.current = null;
       }
 
-      // Debounce API call for button clicks (800ms delay)
-      if (newNum > 0) {
+      if (newNum === 0) {
+        basketDebounceRef.current = setTimeout(() => {
+          basketDebounceRef.current = null;
+          syncFromBasketRef.current(0);
+        }, DEBOUNCE_MS);
+      } else if (newNum > 0) {
         basketDebounceRef.current = setTimeout(() => {
           basketDebounceRef.current = null;
           syncFromBasketRef.current();
@@ -361,35 +384,68 @@ export function SupplierProductCard({
     }
   }, [id, reserveQtyNum, supplierUID, queryClient, t]);
 
-  const syncFromBasket = useCallback(async () => {
-    if (skipNextBasketDebounceRef.current) {
-      skipNextBasketDebounceRef.current = false;
-      return;
-    }
-    const qtyToSend = basketQtyNum;
-    setIsLoading(true);
-    try {
-      const suggestedQty = lastSuggestedQtyRef.current ?? qtyToSend;
-      await api.post<{ message?: string }>("/basket-add-or-update", {
-        productUID: id,
-        qty: qtyToSend,
-        stock: reserveQtyNum,
-        suggestedQty,
-        comments: "",
-      });
-      if (supplierUID != null) {
-        void queryClient.invalidateQueries({
-          queryKey: ["supplier-products", supplierUID],
-        });
+  const syncFromBasket = useCallback(
+    async (overrideQty?: number) => {
+      if (skipNextBasketDebounceRef.current) {
+        skipNextBasketDebounceRef.current = false;
+        return;
       }
-      void queryClient.invalidateQueries({ queryKey: ["basket-items"] });
-      void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });
-    } catch (err: unknown) {
-      toast.error(getApiErrorMessage(err, t("basket_error")));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [id, basketQtyNum, reserveQtyNum, supplierUID, queryClient, t]);
+      const qtyToSend = overrideQty ?? basketQtyNum;
+      setIsLoading(true);
+      try {
+        if (qtyToSend === 0 && supplierUID) {
+          let data = queryClient.getQueryData<{
+            basketsList?: Array<{
+              supplierUID: string;
+              items?: Array<{ basketUID: string; productUID: string }>;
+            }>;
+          }>(["basket-items", supplierUID]);
+          if (!data) {
+            const res = await api.get<typeof data>("/basket-items", {
+              params: { SupplierUID: supplierUID },
+            });
+            data = res.data;
+          }
+          const basket = data?.basketsList?.find(
+            (b) => b.supplierUID === supplierUID,
+          );
+          const item = basket?.items?.find((i) => i.productUID === id);
+          if (item?.basketUID) {
+            await removeItemMutation.mutateAsync(item.basketUID);
+          }
+        } else {
+          const suggestedQty = lastSuggestedQtyRef.current ?? qtyToSend;
+          await api.post<{ message?: string }>("/basket-add-or-update", {
+            productUID: id,
+            qty: qtyToSend,
+            stock: reserveQtyNum,
+            suggestedQty,
+            comments: "",
+          });
+          if (supplierUID != null) {
+            void queryClient.invalidateQueries({
+              queryKey: ["supplier-products", supplierUID],
+            });
+          }
+          void queryClient.invalidateQueries({ queryKey: ["basket-items"] });
+          void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });
+        }
+      } catch (err: unknown) {
+        toast.error(getApiErrorMessage(err, t("basket_error")));
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [
+      id,
+      basketQtyNum,
+      reserveQtyNum,
+      supplierUID,
+      queryClient,
+      t,
+      removeItemMutation,
+    ],
+  );
 
   const syncFromReserveRef = useRef(syncFromReserve);
   const syncFromBasketRef = useRef(syncFromBasket);
