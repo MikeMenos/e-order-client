@@ -15,6 +15,8 @@ import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api-error";
 import type { SuppliersListItem } from "@/lib/types/dashboard";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { usePrefCollaborationUpdate } from "@/hooks/usePrefCollaborationUpdate";
 
 export default function ManageSupplierMenuPage() {
   const { t } = useTranslation();
@@ -35,6 +37,15 @@ export default function ManageSupplierMenuPage() {
   } = useAuthStore();
 
   const queryClient = useQueryClient();
+
+  const updateCollaborationMutation = usePrefCollaborationUpdate({
+    onError: (err) =>
+      toast.error(getApiErrorMessage(err, t("suppliers_error"))),
+    onSuccess: () => {
+      void queryClient.invalidateQueries();
+      router.push("/settings/manage-suppliers");
+    },
+  });
 
   const roles = useMemo(
     () => users?.userInfos?.storeAccess ?? [],
@@ -178,6 +189,23 @@ export default function ManageSupplierMenuPage() {
               }
             />
           )}
+
+          <div className="flex flex-row items-center justify-between gap-3 rounded-2xl bg-white p-3 shadow-sm border border-slate-200">
+            <span className="text-lg font-semibold text-slate-900">
+              {t("settings_hide_supplier")}
+            </span>
+            <Switch
+              checked={!(selectedSupplier.isApproved ?? true)}
+              onCheckedChange={(checked) => {
+                updateCollaborationMutation.mutate({
+                  supplierUID: selectedSupplier.supplierUID,
+                  isApproved: !checked,
+                });
+              }}
+              disabled={updateCollaborationMutation.isPending}
+              aria-label={t("settings_hide_supplier")}
+            />
+          </div>
         </div>
 
         <StoreSelectDialog

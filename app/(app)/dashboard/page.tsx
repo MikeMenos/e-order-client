@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { listVariants, listItemVariants } from "@/lib/motion";
 import { TileCard } from "@/components/ui/tile-card";
+import { NotificationsUnreadBanner } from "@/components/dashboard/NotificationsUnreadBanner";
 
 const cards = [
   {
@@ -43,6 +44,7 @@ export default function DashboardPage() {
           priority
         />
       </div>
+      <NotificationsUnreadBanner />
       <motion.div
         className="mx-auto grid grid-cols-2 auto-rows-fr gap-4 max-w-xl"
         variants={listVariants}

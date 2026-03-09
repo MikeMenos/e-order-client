@@ -47,7 +47,6 @@ export type SupplierBasicInfoResponse = {
   message?: string;
   detailedMessage?: string;
   supplier?: SupplierBasicInfoSupplier;
-  /** Some backends may return a list when no SupplierUID is passed */
   suppliers?: SupplierBasicInfoSupplier[];
 };
 
@@ -83,8 +82,8 @@ export type SuppliersListItem = {
   counterTodayOrders: number;
   counterOpenBaskets: number;
   categories: SupplierDisplayCategory[];
-  /** When basketIconStatus === 200, today's completed order UID for Order_View */
   todaysOrderUID?: string | null;
+  isApproved?: boolean;
 };
 
 export type SuppliersListResponse = {

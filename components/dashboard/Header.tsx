@@ -3,14 +3,17 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronLeft, Home } from "lucide-react";
+import { ChevronLeft, Home, Bell } from "lucide-react";
 import { useAuthStore, useEffectiveSelectedUser } from "../../stores/auth";
 import { useNavigationHistory } from "@/app/(app)/NavigationHistoryContext";
+import { useNotificationsCountUnread } from "@/hooks/useNotifications";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
   const pathname = usePathname();
   const users = useAuthStore((s) => s.users);
+  const { data: countData } = useNotificationsCountUnread();
+  const unreadCount = countData?.unreadCounter ?? 0;
   const effectiveUser = useEffectiveSelectedUser();
   const { canGoBack, goBack } = useNavigationHistory();
   const isDashboard = pathname === "/dashboard";
@@ -31,8 +34,8 @@ export function Header() {
   if (isDashboard) return null;
 
   return (
-    <header className="flex items-center justify-between gap-3 bg-transparent px-3 py-0.5 w-full min-w-0 border-b-0">
-      <div className="flex w-14 shrink-0 justify-start">
+    <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 bg-transparent px-3 py-2 w-full min-w-0 border-b-0 min-h-18">
+      <div className="flex justify-start">
         {canGoBack ? (
           <Button
             type="button"
@@ -44,12 +47,10 @@ export function Header() {
           >
             <ChevronLeft className="h-8 w-8 text-brand-500" aria-hidden />
           </Button>
-        ) : (
-          <span className="w-9" />
-        )}
+        ) : null}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col items-center justify-center text-center">
+      <div className="flex flex-col items-center justify-center text-center">
         <Link href="/dashboard" className="inline-block shrink-0">
           <img
             src="/assets/logo.png"
@@ -58,13 +59,25 @@ export function Header() {
           />
         </Link>
         {storeTitle && (
-          <p className="mt-0.5 text-base font-medium text-slate-600 line-clamp-1">
+          <p className="mt-0.5 text-base font-medium text-slate-600 line-clamp-1 max-w-48">
             {storeTitle}
           </p>
         )}
       </div>
 
-      <div className="flex w-14 shrink-0 justify-end">
+      <div className="flex items-center justify-end gap-1">
+        <Link
+          href="/notifications"
+          aria-label="Notifications"
+          className="relative flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white hover:bg-slate-50"
+        >
+          <Bell className="h-6 w-6 text-brand-500" aria-hidden />
+          {unreadCount > 0 && (
+            <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-500 px-1 text-xs font-bold text-white">
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
+        </Link>
         <Button
           variant="outline"
           size="icon"

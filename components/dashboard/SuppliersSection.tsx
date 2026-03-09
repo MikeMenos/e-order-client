@@ -42,6 +42,13 @@ type Props = {
   calendarDayNameShort?: string | null;
   /** When in calendar date view, called when user clicks "Today's orders" to show today's list. */
   onShowTodayClick?: () => void;
+  /** For partner-suppliers: called when approval toggle changes. */
+  onPartnerApprovalToggle?: (
+    supplier: SuppliersListItem,
+    isApproved: boolean,
+  ) => void;
+  /** For partner-suppliers: true when approval mutation is in progress. */
+  isPartnerApprovalPending?: boolean;
 };
 
 export function SuppliersSection({
@@ -58,6 +65,8 @@ export function SuppliersSection({
   selectedRefDate = null,
   calendarDayNameShort = null,
   onShowTodayClick,
+  onPartnerApprovalToggle,
+  isPartnerApprovalPending = false,
 }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAscending, setIsAscending] = useState(true);
@@ -290,6 +299,17 @@ export function SuppliersSection({
                   }
                   onClick={
                     onSupplierClick ? () => onSupplierClick(s) : undefined
+                  }
+                  partnerApprovalToggle={
+                    pathname === "/settings/partner-suppliers" &&
+                    onPartnerApprovalToggle
+                      ? {
+                          isApproved: s.isApproved ?? false,
+                          onToggle: (isApproved) =>
+                            onPartnerApprovalToggle(s, isApproved),
+                          isPending: isPartnerApprovalPending,
+                        }
+                      : undefined
                   }
                 />
               </motion.div>
