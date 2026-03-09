@@ -11,7 +11,13 @@ import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistr
 import { initAuthFromCookies } from "../lib/cookies";
 import { ScrollToTop } from "./(app)/ScrollToTop";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 0,
+    },
+  },
+});
 
 export function ClientApp({ children }: { children: ReactNode }) {
   useEffect(() => {
