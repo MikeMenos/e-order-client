@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useAllSuppliersFilterStore } from "@/stores/allSuppliersFilter";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -61,7 +62,10 @@ export function SuppliersSection({
   const [searchQuery, setSearchQuery] = useState("");
   const [isAscending, setIsAscending] = useState(true);
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [onlyWithBasket, setOnlyWithBasket] = useState(false);
+  const onlyWithBasket = useAllSuppliersFilterStore((s) => s.onlyWithBasket);
+  const setOnlyWithBasket = useAllSuppliersFilterStore(
+    (s) => s.setOnlyWithBasket,
+  );
   const { t } = useTranslation();
   const pathname = usePathname();
   const headerHeight = useAppHeaderHeight();
@@ -132,7 +136,7 @@ export function SuppliersSection({
         className="sticky z-20 -mx-3 w-[calc(100%+1.5rem)] flex flex-col gap-2 bg-app-bg-solid"
         style={{ top: headerHeight }}
       >
-        <div className="flex h-9 items-center gap-1 mt-2 px-3">
+        <div className="flex h-9 items-center gap-1 my-2 px-3">
           <SuppliersSearchBar value={searchQuery} onChange={setSearchQuery} />
           {pathname === "/all-suppliers" && (
             <div

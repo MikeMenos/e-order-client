@@ -52,6 +52,7 @@ export const useSuppliersForDate = (
       return res.data;
     },
     enabled,
+    staleTime: 0,
   });
 };
 
