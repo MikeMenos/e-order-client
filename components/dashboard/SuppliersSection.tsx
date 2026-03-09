@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import {
   ArrowRight,
   Calendar as CalendarIcon,
+  RotateCcw,
   ShoppingCart,
   ShoppingBag,
 } from "lucide-react";
@@ -42,13 +43,13 @@ type Props = {
   calendarDayNameShort?: string | null;
   /** When in calendar date view, called when user clicks "Today's orders" to show today's list. */
   onShowTodayClick?: () => void;
-  /** For partner-suppliers: called when approval toggle changes. */
-  onPartnerApprovalToggle?: (
+  /** For manage-suppliers inactive tab: send isApproved when Restore clicked. */
+  onInactiveApprovalToggle?: (
     supplier: SuppliersListItem,
     isApproved: boolean,
-  ) => void;
-  /** For partner-suppliers: true when approval mutation is in progress. */
-  isPartnerApprovalPending?: boolean;
+  ) => void | Promise<void>;
+  /** For manage-suppliers inactive tab: true when approval mutation is in progress. */
+  isInactiveApprovalPending?: boolean;
 };
 
 export function SuppliersSection({
@@ -65,8 +66,8 @@ export function SuppliersSection({
   selectedRefDate = null,
   calendarDayNameShort = null,
   onShowTodayClick,
-  onPartnerApprovalToggle,
-  isPartnerApprovalPending = false,
+  onInactiveApprovalToggle,
+  isInactiveApprovalPending = false,
 }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAscending, setIsAscending] = useState(true);
@@ -302,14 +303,15 @@ export function SuppliersSection({
                   onClick={
                     onSupplierClick ? () => onSupplierClick(s) : undefined
                   }
-                  partnerApprovalToggle={
-                    pathname === "/settings/partner-suppliers" &&
-                    onPartnerApprovalToggle
+                  partnerApprovalAction={
+                    pathname === "/settings/manage-suppliers" &&
+                    onInactiveApprovalToggle
                       ? {
-                          isApproved: s.isApproved ?? false,
-                          onToggle: (isApproved) =>
-                            onPartnerApprovalToggle(s, isApproved),
-                          isPending: isPartnerApprovalPending,
+                          onAction: () =>
+                            onInactiveApprovalToggle(s, true),
+                          isPending: isInactiveApprovalPending,
+                          labelKey: "manage_suppliers_restore",
+                          icon: RotateCcw,
                         }
                       : undefined
                   }

@@ -56,8 +56,12 @@ export function useNotificationsMarkAsRead(options?: {
     },
     onSuccess: () => {
       onSuccess?.();
-      void queryClient.invalidateQueries({ queryKey: ["notifications-count-unread"] });
-      void queryClient.invalidateQueries({ queryKey: ["notifications-get-items"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["notifications-count-unread"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["notifications-get-items"],
+      });
     },
     onError,
   });

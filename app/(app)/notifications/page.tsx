@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslation } from "@/lib/i18n";
+import { useBackToTop } from "@/hooks/useBackToTop";
 import Loading from "@/components/ui/loading";
 import { useNotificationsMarkAsRead } from "@/hooks/useNotifications";
 import { useNotificationsWithSearch } from "@/hooks/useNotificationsWithSearch";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/ui/search-input";
 import { NotificationCard } from "@/components/notifications/NotificationCard";
 import { PaginationControls } from "@/components/ui/pagination-controls";
+import { BackToTopButton } from "@/components/ui/BackToTopButton";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { EmptyState } from "@/components/ui/empty-state";
 import toast from "react-hot-toast";
@@ -26,6 +28,8 @@ export default function NotificationsPage() {
     isLoading,
     isError,
   } = useNotificationsWithSearch();
+
+  const showBackToTop = useBackToTop();
 
   const markAsReadMutation = useNotificationsMarkAsRead({
     onError: (err) =>
@@ -92,6 +96,12 @@ export default function NotificationsPage() {
         onPageChange={setPage}
         prevLabel={t("erg_prev_page")}
         nextLabel={t("erg_next_page")}
+      />
+
+      <BackToTopButton
+        show={showBackToTop}
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        ariaLabel={t("nav_back_to_top")}
       />
     </main>
   );

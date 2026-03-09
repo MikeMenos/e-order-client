@@ -29,7 +29,7 @@ export function NotificationCard({
 }: NotificationCardProps) {
   return (
     <div
-      className={`rounded-xl bg-white p-4 shadow-sm ${
+      className={`rounded-xl bg-white px-4 py-2 shadow-sm ${
         item.isRead
           ? "border border-slate-200 opacity-75"
           : "border-2 border-brand-500"

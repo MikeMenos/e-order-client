@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "../../lib/i18n";
+import type { LucideIcon } from "lucide-react";
 import {
   Calendar,
   CheckCircle2,
@@ -12,7 +13,6 @@ import {
 } from "lucide-react";
 import { SuppliersListItem } from "@/lib/types/dashboard";
 import { Button } from "../ui/button";
-import { Switch } from "../ui/switch";
 
 type Props = {
   supplier: SuppliersListItem;
@@ -33,11 +33,14 @@ type Props = {
   displayAsDraft?: boolean;
   /** When true, list uses all-suppliers style (grid, no delivery/basket) and children (tabs) are hidden. */
   calendarDateView?: boolean;
-  /** When provided (partner-suppliers), show approval toggle. */
-  partnerApprovalToggle?: {
-    isApproved: boolean;
-    onToggle: (isApproved: boolean) => void;
+  /** When provided (partner-suppliers / manage-suppliers inactive), show action button (approve/restore). */
+  partnerApprovalAction?: {
+    onAction: () => void;
     isPending?: boolean;
+    /** i18n key for button label */
+    labelKey: string;
+    /** Icon to show in the button */
+    icon?: LucideIcon;
   };
 };
 
@@ -56,7 +59,7 @@ export function SupplierTile({
   displayAsDraft = false,
   calendarDateView = false,
   titleHref,
-  partnerApprovalToggle,
+  partnerApprovalAction,
 }: Props) {
   const { t } = useTranslation();
   const pathname = usePathname();
@@ -159,18 +162,24 @@ export function SupplierTile({
             </span>
           </span>
         )}
-        {partnerApprovalToggle && (
-          <div className="flex items-center gap-1">
-            <span className="text-sm text-slate-500">
-              {t("suppliers_partner_approved")}
-            </span>
-            <Switch
-              checked={partnerApprovalToggle.isApproved}
-              onCheckedChange={partnerApprovalToggle.onToggle}
-              disabled={partnerApprovalToggle.isPending}
-              aria-label={t("suppliers_partner_approved")}
-            />
-          </div>
+        {partnerApprovalAction && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-1 gap-1.5"
+            onClick={(e) => {
+              e.stopPropagation();
+              partnerApprovalAction.onAction();
+            }}
+            disabled={partnerApprovalAction.isPending}
+            aria-label={t(partnerApprovalAction.labelKey)}
+          >
+            {partnerApprovalAction.icon && (
+              <partnerApprovalAction.icon className="h-4 w-4 shrink-0" />
+            )}
+            {t(partnerApprovalAction.labelKey)}
+          </Button>
         )}
       </div>
       <div className="mt-2 flex items-center justify-center gap-1" aria-hidden>

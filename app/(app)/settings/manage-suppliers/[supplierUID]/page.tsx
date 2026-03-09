@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useCallback, useState, useMemo } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
@@ -14,8 +14,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api-error";
 import type { SuppliersListItem } from "@/lib/types/dashboard";
+import { EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { HideSupplierConfirmDialog } from "@/components/settings/HideSupplierConfirmDialog";
+import { useBasketDelete } from "@/hooks/useBasket";
 import { usePrefCollaborationUpdate } from "@/hooks/usePrefCollaborationUpdate";
 
 export default function ManageSupplierMenuPage() {
@@ -25,6 +27,7 @@ export default function ManageSupplierMenuPage() {
   const params = useParams<{ supplierUID: string }>();
   const supplierUID = params.supplierUID;
   const [storeDialogOpen, setStoreDialogOpen] = useState(false);
+  const [hideConfirmOpen, setHideConfirmOpen] = useState(false);
 
   const { suppliers, isLoading, isError } = useSuppliersListForToday();
 
@@ -38,12 +41,16 @@ export default function ManageSupplierMenuPage() {
 
   const queryClient = useQueryClient();
 
+  const basketDeleteMutation = useBasketDelete({
+    onError: (err) =>
+      toast.error(getApiErrorMessage(err, t("suppliers_error"))),
+  });
+
   const updateCollaborationMutation = usePrefCollaborationUpdate({
     onError: (err) =>
       toast.error(getApiErrorMessage(err, t("suppliers_error"))),
     onSuccess: () => {
       void queryClient.invalidateQueries();
-      router.push("/settings/manage-suppliers");
     },
   });
 
@@ -69,6 +76,29 @@ export default function ManageSupplierMenuPage() {
         : null,
     [supplierUID, suppliers],
   );
+
+  const handleHideSupplier = useCallback(async () => {
+    if (!selectedSupplier) return;
+    const hasBasket =
+      selectedSupplier.basketIconStatus === 2 ||
+      (selectedSupplier.counterOpenBaskets ?? 0) > 0;
+    if (hasBasket) {
+      await basketDeleteMutation.mutateAsync({
+        supplierUID: selectedSupplier.supplierUID,
+        silent: true,
+      });
+    }
+    updateCollaborationMutation.mutate({
+      supplierUID: selectedSupplier.supplierUID,
+      isApproved: false,
+    });
+    router.push("/settings/manage-suppliers");
+  }, [
+    selectedSupplier,
+    basketDeleteMutation,
+    updateCollaborationMutation,
+    router,
+  ]);
 
   const handleSelectRole = (role: { store?: { storeUID?: string } }) => {
     setStoreDialogOpen(false);
@@ -190,22 +220,20 @@ export default function ManageSupplierMenuPage() {
             />
           )}
 
-          <div className="flex flex-row items-center justify-between gap-3 rounded-2xl bg-white p-3 shadow-sm border border-slate-200">
-            <span className="text-lg font-semibold text-slate-900">
-              {t("settings_hide_supplier")}
-            </span>
-            <Switch
-              checked={!(selectedSupplier.isApproved ?? true)}
-              onCheckedChange={(checked) => {
-                updateCollaborationMutation.mutate({
-                  supplierUID: selectedSupplier.supplierUID,
-                  isApproved: !checked,
-                });
-              }}
-              disabled={updateCollaborationMutation.isPending}
-              aria-label={t("settings_hide_supplier")}
-            />
-          </div>
+          <Button
+            type="button"
+            variant="outline"
+            className="h-full w-full self-stretch gap-2 rounded-2xl border-slate-200 py-6 text-lg font-semibold"
+            onClick={() => setHideConfirmOpen(true)}
+            disabled={
+            updateCollaborationMutation.isPending ||
+            basketDeleteMutation.isPending
+          }
+            aria-label={t("settings_hide_supplier")}
+          >
+            <EyeOff className="h-5 w-5 shrink-0" />
+            {t("settings_hide_supplier")}
+          </Button>
         </div>
 
         <StoreSelectDialog
@@ -214,6 +242,15 @@ export default function ManageSupplierMenuPage() {
           roles={roles}
           userName={userName || undefined}
           onSelectRole={handleSelectRole}
+        />
+        <HideSupplierConfirmDialog
+          open={hideConfirmOpen}
+          onOpenChange={setHideConfirmOpen}
+          onConfirm={handleHideSupplier}
+          isHiding={
+            updateCollaborationMutation.isPending ||
+            basketDeleteMutation.isPending
+          }
         />
       </div>
     </main>
