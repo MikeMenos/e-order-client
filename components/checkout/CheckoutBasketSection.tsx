@@ -294,8 +294,11 @@ export function CheckoutBasketSection({
 
   const basketDeleteMutation = useBasketDelete({
     supplierUID,
-    onSuccess: (d) => {
-      toast.success(d?.message?.trim() || t("checkout_delete_basket"));
+    onSuccess: (d, payload) => {
+      setRemovingBasketUID(null);
+      if (!payload?.silent) {
+        toast.success(d?.message?.trim() || t("checkout_delete_basket"));
+      }
       if (supplierUID) {
         router.replace(`/suppliers/${supplierUID}`);
       } else {
@@ -304,6 +307,7 @@ export function CheckoutBasketSection({
     },
     onError: (err) => {
       toast.error(getApiErrorMessage(err, t("basket_error")));
+      setRemovingBasketUID(null);
     },
   });
 
@@ -314,9 +318,13 @@ export function CheckoutBasketSection({
   const handleRemove = useCallback(
     (basketUID: string) => {
       setRemovingBasketUID(basketUID);
-      removeItemMutation.mutate(basketUID);
+      if (items.length === 1) {
+        basketDeleteMutation.mutate({ supplierUID, silent: true });
+      } else {
+        removeItemMutation.mutate(basketUID);
+      }
     },
-    [removeItemMutation],
+    [removeItemMutation, basketDeleteMutation, supplierUID, items.length],
   );
 
   const handleQtyChange = useCallback(

@@ -54,6 +54,8 @@ export type SupplierBasicInfoResponse = {
 export type SuppliersListItem = {
   title: string;
   customTitle: string | null;
+  companyName?: string | null;
+  companyVatNumb?: string | null;
   supplierUID: string;
   logo: string | null;
   bgImage: string | null;

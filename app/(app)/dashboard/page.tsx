@@ -35,7 +35,7 @@ export default function DashboardPage() {
 
   return (
     <main className="text-slate-900 overflow-hidden px-2">
-      <div className="flex justify-center py-2">
+      <div className="flex justify-center">
         <Image
           src="/icon0.svg"
           alt="E-Order Logo"

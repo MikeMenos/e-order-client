@@ -100,7 +100,9 @@ export function SuppliersSection({
       data = data.filter(
         (s) =>
           s.title?.toLowerCase().includes(q) ||
-          s.subTitle?.toLowerCase().includes(q),
+          s.subTitle?.toLowerCase().includes(q) ||
+          s.companyName?.toLowerCase().includes(q) ||
+          s.companyVatNumb?.toLowerCase().includes(q),
       );
     }
 

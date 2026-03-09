@@ -32,7 +32,7 @@ export function mapRawProductsToSupplierProducts(
     price: p.price,
     productPackaging: p.productPackaging ?? "",
     qty: p.basketQty ?? 0,
-    suggestedQty: p.basketSuggestedQty ?? null,
+    suggestedQty: p.basketLastStockQty ?? null,
     isFavorite: p.isFavByShopper,
     favIconColor: p.favIconColor ?? "#9CBDFA",
     favIconMode: p.favIconMode ?? "border",
