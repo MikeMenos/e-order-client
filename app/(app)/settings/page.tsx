@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-
-import { Bell } from "lucide-react";
 import { useAuthStore } from "@/stores/auth";
 import { useTranslation } from "@/lib/i18n";
 import { api } from "@/lib/api";
@@ -21,6 +19,8 @@ export default function SettingsPage() {
   const queryClient = useQueryClient();
 
   const [storeDialogOpen, setStoreDialogOpen] = useState(false);
+
+  const [contactOpen, setContactOpen] = useState(false);
 
   const {
     users,
