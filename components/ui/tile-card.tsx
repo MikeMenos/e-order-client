@@ -54,7 +54,7 @@ export function TileCard({
       />
       {badgeNum != null && badgeNum > 0 && (
         <span
-          className="absolute -top-1 -right-1 flex h-8 min-w-8 items-center justify-center rounded-full bg-red-500 px-2 text-sm font-bold text-white"
+          className="absolute -top-1 right-0 flex h-8 min-w-8 items-center justify-center rounded-full bg-red-500 px-2 text-sm font-bold text-white"
           aria-hidden
         >
           {badgeNum > 99 ? "99+" : badgeNum}
