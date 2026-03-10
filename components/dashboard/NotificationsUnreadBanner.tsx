@@ -20,7 +20,7 @@ export function NotificationsUnreadBanner() {
     >
       <div className="relative">
         <Image
-          src="/assets/notifications.png"
+          src="/assets/notifications-dashboard.png"
           alt=""
           width={40}
           height={40}
@@ -29,7 +29,7 @@ export function NotificationsUnreadBanner() {
         />
         {unreadCount > 0 && (
           <span
-            className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white"
+            className="absolute text-red-500 -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-xs font-bold"
             aria-hidden
           >
             {unreadCount > 99 ? "99+" : unreadCount}
