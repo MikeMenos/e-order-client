@@ -8,7 +8,6 @@ export default function PartnerSuppliersPage() {
   const { suppliers, isLoading, isError, errorMessage } =
     useSuppliersNoPartners();
 
-  // For now, tiles are non-clickable (no navigation)
   const handleSupplierClick = useCallback(() => {}, []);
 
   return (

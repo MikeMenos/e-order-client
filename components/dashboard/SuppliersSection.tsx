@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import {
   ArrowRight,
   Calendar as CalendarIcon,
+  RotateCcw,
   ShoppingCart,
   ShoppingBag,
 } from "lucide-react";
@@ -14,6 +15,7 @@ import Loading from "../ui/loading";
 import { SuppliersSearchBar } from "./SuppliersSearchBar";
 import { SupplierTile } from "./SupplierTile";
 import { usePathname } from "next/navigation";
+import { toDateOnly } from "@/lib/utils";
 import { SuppliersListItem } from "@/lib/types/dashboard";
 import { useAppHeaderHeight } from "@/app/(app)/AppHeaderContext";
 import { RefDateCalendarDialog } from "./RefDateCalendarDialog";
@@ -42,6 +44,13 @@ type Props = {
   calendarDayNameShort?: string | null;
   /** When in calendar date view, called when user clicks "Today's orders" to show today's list. */
   onShowTodayClick?: () => void;
+  /** For manage-suppliers inactive tab: send isApproved when Restore clicked. */
+  onInactiveApprovalToggle?: (
+    supplier: SuppliersListItem,
+    isApproved: boolean,
+  ) => void | Promise<void>;
+  /** For manage-suppliers inactive tab: true when approval mutation is in progress. */
+  isInactiveApprovalPending?: boolean;
 };
 
 export function SuppliersSection({
@@ -58,6 +67,8 @@ export function SuppliersSection({
   selectedRefDate = null,
   calendarDayNameShort = null,
   onShowTodayClick,
+  onInactiveApprovalToggle,
+  isInactiveApprovalPending = false,
 }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAscending, setIsAscending] = useState(true);
@@ -75,7 +86,9 @@ export function SuppliersSection({
     pathname === "/all-suppliers" ||
     pathname === "/settings/manage-suppliers" ||
     pathname === "/settings/partner-suppliers";
-  const showTabs = pathname === "/orders-of-the-day" && !calendarDateView;
+  const showTabs =
+    (pathname === "/orders-of-the-day" && !calendarDateView) ||
+    pathname === "/settings/manage-suppliers";
 
   const filteredSuppliers = useMemo(() => {
     let data = [...suppliers];
@@ -91,7 +104,9 @@ export function SuppliersSection({
       data = data.filter(
         (s) =>
           s.title?.toLowerCase().includes(q) ||
-          s.subTitle?.toLowerCase().includes(q),
+          s.subTitle?.toLowerCase().includes(q) ||
+          s.companyName?.toLowerCase().includes(q) ||
+          s.companyVatNumb?.toLowerCase().includes(q),
       );
     }
 
@@ -133,7 +148,7 @@ export function SuppliersSection({
   return (
     <section>
       <div
-        className="sticky z-20 -mx-3 w-[calc(100%+1.5rem)] flex flex-col gap-2 bg-app-bg-solid"
+        className="sticky z-20 -mx-3 w-[calc(100%+1.5rem)] flex shrink-0 flex-col gap-2 bg-app-bg-solid shadow-sm"
         style={{ top: headerHeight }}
       >
         <div className="flex h-9 items-center gap-1 my-2 px-3">
@@ -249,7 +264,7 @@ export function SuppliersSection({
             className={
               useAllSuppliersStyle
                 ? "grid grid-cols-2 gap-3 pb-8"
-                : "space-y-2 pb-8"
+                : "space-y-2 pb-8 pt-1"
             }
             variants={listVariants}
             initial="hidden"
@@ -273,23 +288,39 @@ export function SuppliersSection({
                     onSupplierClick
                       ? undefined
                       : (() => {
-                          if (
-                            pathname === "/orders-of-the-day" &&
-                            !calendarDateView
-                          ) {
+                          if (pathname === "/orders-of-the-day") {
                             if (
+                              !calendarDateView &&
                               s.basketIconStatus === 200 &&
                               s.todaysOrderUID
                             ) {
                               return `/orders-of-the-day/order/${encodeURIComponent(s.todaysOrderUID)}`;
                             }
-                            return `/suppliers/${encodeURIComponent(s.supplierUID)}?from=orders-of-the-day`;
+                            const base = `/suppliers/${encodeURIComponent(s.supplierUID)}?from=orders-of-the-day`;
+                            const refDateOnly =
+                              calendarDateView && selectedRefDate
+                                ? toDateOnly(selectedRefDate)
+                                : null;
+                            return refDateOnly
+                              ? `${base}&refDate=${encodeURIComponent(refDateOnly)}`
+                              : base;
                           }
                           return `/suppliers/${encodeURIComponent(s.supplierUID)}`;
                         })()
                   }
                   onClick={
                     onSupplierClick ? () => onSupplierClick(s) : undefined
+                  }
+                  partnerApprovalAction={
+                    pathname === "/settings/manage-suppliers" &&
+                    onInactiveApprovalToggle
+                      ? {
+                          onAction: () => onInactiveApprovalToggle(s, true),
+                          isPending: isInactiveApprovalPending,
+                          labelKey: "manage_suppliers_restore",
+                          icon: RotateCcw,
+                        }
+                      : undefined
                   }
                 />
               </motion.div>

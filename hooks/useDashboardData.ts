@@ -130,6 +130,82 @@ export function useSuppliersListForToday(refDateOverride?: string | null) {
 }
 
 /**
+ * POST Shop/Suppliers_GetList for manage-suppliers page.
+ * Active: supplierStatus 1, shopperStatus 200.
+ * Inactive: supplierStatus 1, shopperStatus 500.
+ */
+export function useSuppliersManageSuppliers(activeTab: "active" | "inactive") {
+  const users = useAuthStore((s) => s.users);
+  const effectiveUser = useEffectiveSelectedUser();
+  const selectedStoreUID = useAuthStore((s) => s.selectedStoreUID);
+  const setStoreAccessToken = useAuthStore((s) => s.setStoreAccessToken);
+  const setSelectedStoreUID = useAuthStore((s) => s.setSelectedStoreUID);
+  const storeAccessToken = useAuthStore((s) => s.storeAccessToken);
+
+  const derivedStoreUID = useMemo(() => {
+    if (!users && !effectiveUser) return null;
+    return users?.hasSelectedStore === true
+      ? users?.selectedStoreUID
+      : effectiveUser?.store?.storeUID
+        ? effectiveUser.store.storeUID
+        : (users?.role?.store?.storeUID ?? null);
+  }, [users, effectiveUser]);
+
+  const storeUID = selectedStoreUID || derivedStoreUID;
+
+  const selectStoreMutation = useMutation<SelectStoreResponse, unknown, string>(
+    {
+      mutationFn: async (storeID: string) => {
+        const res = await api.get<SelectStoreResponse>("/select-store", {
+          params: { StoreUID: storeID },
+        });
+        return res.data;
+      },
+      onSuccess: (data, storeID) => {
+        setStoreAccessToken(data?.accessToken ?? null);
+        setSelectedStoreUID(storeID);
+      },
+    },
+  );
+
+  useEffect(() => {
+    if (storeUID && !selectStoreMutation.isPending) {
+      selectStoreMutation.mutate(storeUID);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storeUID]);
+
+  const hasStoreToken = !!storeAccessToken;
+  const enabled = !!users && hasStoreToken;
+  const shopperStatus = activeTab === "active" ? 200 : 500;
+
+  const query = useQuery({
+    queryKey: ["suppliers-manage-suppliers", activeTab],
+    queryFn: async (): Promise<SuppliersListResponse> => {
+      const res = await api.post<SuppliersListResponse>("/suppliers-list", {
+        setCategories: true,
+        setLastOrders: true,
+        setDeliverySchedule: true,
+        setDailyAnalysisSchedule: true,
+        supplierStatus: 1,
+        shopperStatus,
+      });
+      return res.data;
+    },
+    enabled,
+    staleTime: 0,
+  });
+
+  const suppliers = query.data?.listSuppliers ?? [];
+  return {
+    suppliers,
+    isLoading: query.isLoading,
+    isError: !!query.error,
+    errorMessage: (query.error as Error)?.message,
+  };
+}
+
+/**
  * POST Shop/Suppliers_GetList with supplierStatus: 4.
  * Use on settings/partner-suppliers page.
  */

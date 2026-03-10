@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "../../lib/i18n";
+import type { LucideIcon } from "lucide-react";
 import {
   Calendar,
   CheckCircle2,
@@ -32,6 +33,15 @@ type Props = {
   displayAsDraft?: boolean;
   /** When true, list uses all-suppliers style (grid, no delivery/basket) and children (tabs) are hidden. */
   calendarDateView?: boolean;
+  /** When provided (partner-suppliers / manage-suppliers inactive), show action button (approve/restore). */
+  partnerApprovalAction?: {
+    onAction: () => void;
+    isPending?: boolean;
+    /** i18n key for button label */
+    labelKey: string;
+    /** Icon to show in the button */
+    icon?: LucideIcon;
+  };
 };
 
 const tileClassNameDefault =
@@ -49,6 +59,7 @@ export function SupplierTile({
   displayAsDraft = false,
   calendarDateView = false,
   titleHref,
+  partnerApprovalAction,
 }: Props) {
   const { t } = useTranslation();
   const pathname = usePathname();
@@ -137,19 +148,40 @@ export function SupplierTile({
     </>
   ) : isNotOrdersOfDayPage ? (
     <div className="flex min-h-[180px] flex-1 flex-col items-center justify-center px-4 py-4 text-center">
-      {supplier.logo ? (
-        <img
-          src={supplier.logo}
-          alt={supplier.title ?? ""}
-          className="h-14 w-14 shrink-0 rounded-full bg-slate-100 object-contain"
-        />
-      ) : (
-        <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-slate-100">
-          <span className="text-2xl font-semibold text-slate-500">
-            {(supplier.title ?? "").charAt(0).toUpperCase()}
+      <div className="flex flex-col items-center gap-1">
+        {supplier.logo ? (
+          <img
+            src={supplier.logo}
+            alt={supplier.title ?? ""}
+            className="h-14 w-14 shrink-0 rounded-full bg-slate-100 object-contain"
+          />
+        ) : (
+          <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-slate-100">
+            <span className="text-2xl font-semibold text-slate-500">
+              {(supplier.title ?? "").charAt(0).toUpperCase()}
+            </span>
           </span>
-        </span>
-      )}
+        )}
+        {partnerApprovalAction && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-1 gap-1.5"
+            onClick={(e) => {
+              e.stopPropagation();
+              partnerApprovalAction.onAction();
+            }}
+            disabled={partnerApprovalAction.isPending}
+            aria-label={t(partnerApprovalAction.labelKey)}
+          >
+            {partnerApprovalAction.icon && (
+              <partnerApprovalAction.icon className="h-4 w-4 shrink-0" />
+            )}
+            {t(partnerApprovalAction.labelKey)}
+          </Button>
+        )}
+      </div>
       <div className="mt-2 flex items-center justify-center gap-1" aria-hidden>
         {showOrangeDot && (
           <span
@@ -165,7 +197,7 @@ export function SupplierTile({
           />
         ))}
       </div>
-      <p className="mt-2 text-base font-semibold text-brand-800 line-clamp-2">
+      <p className="text-base font-semibold text-brand-800 line-clamp-2">
         {supplier.title}
       </p>
       {supplier.subTitle && (

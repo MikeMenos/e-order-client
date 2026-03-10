@@ -7,7 +7,11 @@ import toast from "react-hot-toast";
 import { Star, Loader2 } from "lucide-react";
 import { useTranslation } from "../../lib/i18n";
 import { api } from "../../lib/api";
-import { useBasketItems, useBasketRemoveItem } from "@/hooks/useBasket";
+import {
+  useBasketItems,
+  useBasketRemoveItem,
+  useBasketDelete,
+} from "@/hooks/useBasket";
 import { getApiErrorMessage } from "../../lib/api-error";
 import { useWishlistToggle } from "../../hooks/useWishlistToggle";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
@@ -83,6 +87,17 @@ export function SupplierProductCard({
     },
     onError: (err) => {
       toast.error(getApiErrorMessage(err, t("basket_error")));
+    },
+  });
+
+  const basketDeleteMutation = useBasketDelete({
+    supplierUID: supplierUID ?? undefined,
+    onSuccess: () => {
+      if (supplierUID != null) {
+        void queryClient.invalidateQueries({
+          queryKey: ["supplier-products", supplierUID],
+        });
+      }
     },
   });
 
@@ -293,7 +308,12 @@ export function SupplierProductCard({
       }
 
       // Debounce API call for button clicks (800ms delay)
-      if (newNum > 0) {
+      if (newNum === 0) {
+        reserveDebounceRef.current = setTimeout(() => {
+          reserveDebounceRef.current = null;
+          syncFromReserveRef.current(0);
+        }, DEBOUNCE_MS);
+      } else if (newNum > 0) {
         reserveDebounceRef.current = setTimeout(() => {
           reserveDebounceRef.current = null;
           syncFromReserveRef.current();
@@ -344,45 +364,82 @@ export function SupplierProductCard({
     [id, wishlistToggle, hasAccess],
   );
 
-  const syncFromReserve = useCallback(async () => {
-    const stock = reserveQtyNum;
-    setIsLoading(true);
-    try {
-      const { data } = await api.post<{ suggestedQty: number }>(
-        "/basket-suggest-qty",
-        {
-          productUID: id,
-          stock,
-        },
-      );
-      const suggestedTotal = data?.suggestedQty ?? 0;
-      lastSuggestedQtyRef.current = suggestedTotal;
-      setBasketQtyDisplay(suggestedTotal === 0 ? "" : String(suggestedTotal));
-      skipNextBasketDebounceRef.current = true;
+  const syncFromReserve = useCallback(
+    async (overrideStock?: number) => {
+      const stock = overrideStock ?? reserveQtyNum;
+      setIsLoading(true);
+      try {
+        const { data } = await api.post<{ suggestedQty: number }>(
+          "/basket-suggest-qty",
+          {
+            supplierUID: supplierUID ?? undefined,
+            productUID: id,
+            stock,
+          },
+        );
+        const suggestedTotal = data?.suggestedQty ?? 0;
+        lastSuggestedQtyRef.current = suggestedTotal;
+        setBasketQtyDisplay(suggestedTotal === 0 ? "" : String(suggestedTotal));
+        skipNextBasketDebounceRef.current = true;
 
-      const addRes = await api.post<{ message?: string }>(
-        "/basket-add-or-update",
-        {
-          productUID: id,
-          qty: suggestedTotal,
-          stock,
-          suggestedQty: suggestedTotal,
-          comments: "",
-        },
-      );
-      if (supplierUID != null) {
-        void queryClient.invalidateQueries({
-          queryKey: ["supplier-products", supplierUID],
-        });
+        if (stock === 0 && suggestedTotal === 0 && supplierUID) {
+          let basketData = queryClient.getQueryData<{
+            basketsList?: Array<{
+              supplierUID: string;
+              items?: Array<{ basketUID: string; productUID: string }>;
+            }>;
+          }>(["basket-items", supplierUID]);
+          if (!basketData) {
+            const res = await api.get<typeof basketData>("/basket-items", {
+              params: { SupplierUID: supplierUID },
+            });
+            basketData = res.data;
+          }
+          const basket = basketData?.basketsList?.find(
+            (b) => b.supplierUID === supplierUID,
+          );
+          const items = basket?.items ?? [];
+          const item = items.find(
+            (i: { productUID?: string }) => i.productUID === id,
+          );
+          if (items.length === 1) {
+            await basketDeleteMutation.mutateAsync({ supplierUID });
+          } else if (item?.basketUID) {
+            await removeItemMutation.mutateAsync(item.basketUID);
+          }
+        } else {
+          await api.post<{ message?: string }>("/basket-add-or-update", {
+            supplierUID: supplierUID ?? undefined,
+            productUID: id,
+            qty: suggestedTotal,
+            stock,
+            suggestedQty: suggestedTotal,
+            comments: "",
+          });
+          if (supplierUID != null) {
+            void queryClient.invalidateQueries({
+              queryKey: ["supplier-products", supplierUID],
+            });
+          }
+          void queryClient.invalidateQueries({ queryKey: ["basket-items"] });
+          void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });
+        }
+      } catch (err: unknown) {
+        toast.error(getApiErrorMessage(err, t("basket_error")));
+      } finally {
+        setIsLoading(false);
       }
-      void queryClient.invalidateQueries({ queryKey: ["basket-items"] });
-      void queryClient.invalidateQueries({ queryKey: ["basket-counter"] });
-    } catch (err: unknown) {
-      toast.error(getApiErrorMessage(err, t("basket_error")));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [id, reserveQtyNum, supplierUID, queryClient, t]);
+    },
+    [
+      id,
+      reserveQtyNum,
+      supplierUID,
+      queryClient,
+      t,
+      removeItemMutation,
+      basketDeleteMutation,
+    ],
+  );
 
   const syncFromBasket = useCallback(
     async (overrideQty?: number) => {
@@ -409,8 +466,13 @@ export function SupplierProductCard({
           const basket = data?.basketsList?.find(
             (b) => b.supplierUID === supplierUID,
           );
-          const item = basket?.items?.find((i) => i.productUID === id);
-          if (item?.basketUID) {
+          const items = basket?.items ?? [];
+          const item = items.find(
+            (i: { productUID?: string }) => i.productUID === id,
+          );
+          if (items.length === 1) {
+            await basketDeleteMutation.mutateAsync({ supplierUID });
+          } else if (item?.basketUID) {
             await removeItemMutation.mutateAsync(item.basketUID);
           }
         } else {
@@ -444,6 +506,7 @@ export function SupplierProductCard({
       queryClient,
       t,
       removeItemMutation,
+      basketDeleteMutation,
     ],
   );
 

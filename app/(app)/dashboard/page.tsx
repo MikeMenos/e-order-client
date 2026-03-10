@@ -1,22 +1,26 @@
 "use client";
 
+import { useMemo } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
+import { useSuppliersListForToday } from "@/hooks/useDashboardData";
 import { listVariants, listItemVariants } from "@/lib/motion";
 import { TileCard } from "@/components/ui/tile-card";
+import { NotificationsUnreadBanner } from "@/components/dashboard/NotificationsUnreadBanner";
 
 const cards = [
-  {
-    href: "/orders-of-the-day",
-    iconSrc: "/assets/orders-of-the-day.png",
-    labelKey: "dashboard_card_orders_of_day",
-  },
   {
     href: "/all-suppliers",
     iconSrc: "/assets/suppliers.png",
     labelKey: "dashboard_card_suppliers",
   },
+  {
+    href: "/orders-of-the-day",
+    iconSrc: "/assets/orders-of-the-day.png",
+    labelKey: "dashboard_card_orders_of_day",
+  },
+
   {
     href: "/statistics",
     iconSrc: "/assets/statistics.png",
@@ -31,10 +35,15 @@ const cards = [
 
 export default function DashboardPage() {
   const { t } = useTranslation();
+  const { suppliers } = useSuppliersListForToday();
+  const todayOrdersCount = useMemo(
+    () => suppliers.reduce((sum, s) => sum + (s.counterTodayOrders ?? 0), 0),
+    [suppliers],
+  );
 
   return (
     <main className="text-slate-900 overflow-hidden px-2">
-      <div className="flex justify-center py-2">
+      <div className="relative flex justify-center py-2">
         <Image
           src="/icon0.svg"
           alt="E-Order Logo"
@@ -42,6 +51,7 @@ export default function DashboardPage() {
           height={150}
           priority
         />
+        <NotificationsUnreadBanner />
       </div>
       <motion.div
         className="mx-auto grid grid-cols-2 auto-rows-fr gap-4 max-w-xl"
@@ -51,7 +61,14 @@ export default function DashboardPage() {
       >
         {cards.map(({ href, iconSrc, labelKey }) => (
           <motion.div key={labelKey} variants={listItemVariants}>
-            <TileCard href={href} iconSrc={iconSrc} label={t(labelKey)} />
+            <TileCard
+              href={href}
+              iconSrc={iconSrc}
+              label={t(labelKey)}
+              badgeNum={
+                href === "/orders-of-the-day" ? todayOrdersCount : undefined
+              }
+            />
           </motion.div>
         ))}
       </motion.div>

@@ -77,6 +77,7 @@ export type SupplierProductApi = {
   price: number;
   basketQty: number | null;
   basketSuggestedQty: number | null;
+  basketLastStockQty?: number | null;
   isAvailable: boolean;
   isInWishlist: boolean;
   isInOrders: boolean;

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useNavigationHistoryStore } from "@/stores/navigationHistory";
 
 type NavigationHistoryContextValue = {
@@ -23,6 +23,7 @@ export function NavigationHistoryProvider({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const stack = useNavigationHistoryStore((s) => s.stack);
   const pushPath = useNavigationHistoryStore((s) => s.pushPath);
@@ -30,9 +31,11 @@ export function NavigationHistoryProvider({
     (s) => s.popAndGetBackTarget,
   );
 
+  const fullPath = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+
   useEffect(() => {
-    pushPath(pathname);
-  }, [pathname, pushPath]);
+    pushPath(fullPath);
+  }, [fullPath, pushPath]);
 
   const goBack = useCallback(() => {
     const target = popAndGetBackTarget();

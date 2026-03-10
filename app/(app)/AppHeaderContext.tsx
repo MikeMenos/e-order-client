@@ -21,7 +21,7 @@ export function useAppHeaderHeight() {
 
 export function AppHeaderProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const header = useMeasuredHeight<HTMLDivElement>();
+  const header = useMeasuredHeight<HTMLDivElement>(pathname);
   const isDashboard = pathname === "/dashboard";
 
   const value = useMemo(

@@ -81,20 +81,23 @@ export const useBasketAddOrUpdate = (options?: {
 
 export const useBasketDelete = (options?: {
   supplierUID?: string;
-  onSuccess?: (data: { message?: string }) => void;
+  onSuccess?: (
+    data: { message?: string },
+    payload?: { supplierUID: string; silent?: boolean },
+  ) => void;
   onError?: (err: unknown) => void;
 }) => {
   const queryClient = useQueryClient();
   const { supplierUID, onSuccess, onError } = options ?? {};
   return useMutation({
-    mutationFn: async (payload: { supplierUID: string }) => {
+    mutationFn: async (payload: { supplierUID: string; silent?: boolean }) => {
       const res = await api.post<{ message?: string }>("/basket-delete", {
         supplierUID: payload.supplierUID,
       });
       return res.data;
     },
     onSuccess: (data, payload) => {
-      onSuccess?.(data);
+      onSuccess?.(data, payload);
       if (payload?.supplierUID != null) {
         void queryClient.refetchQueries({
           queryKey: ["basket-items", payload.supplierUID],
