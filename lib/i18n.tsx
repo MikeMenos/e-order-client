@@ -285,6 +285,7 @@ const resources: Resources = {
     settings_hide_supplier_confirm_title: "Hide supplier?",
     settings_hide_supplier_confirm_description:
       "If the supplier has a basket, it will be deleted.",
+    settings_hide_supplier_confirm_button: "Hide",
     settings_contact: "Contact",
     supplier_original_title: "Original name",
     supplier_custom_title: "Custom name",
@@ -664,6 +665,7 @@ const resources: Resources = {
     settings_hide_supplier_confirm_title: "Απόκρυψη Προμηθευτή;",
     settings_hide_supplier_confirm_description:
       "Εάν ο προμηθευτής έχει καλάθι, θα διαγραφεί.",
+    settings_hide_supplier_confirm_button: "Απόκρυψη",
     settings_contact: "Επικοινωνία",
     settings_reviews: "Αξιολογήσεις",
     settings_address: "Διευθυνση",

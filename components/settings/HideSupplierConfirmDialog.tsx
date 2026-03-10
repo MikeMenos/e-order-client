@@ -62,7 +62,7 @@ export function HideSupplierConfirmDialog({
                 {t("checkout_removing")}
               </>
             ) : (
-              t("settings_hide_supplier")
+              t("settings_hide_supplier_confirm_button")
             )}
           </Button>
         </div>

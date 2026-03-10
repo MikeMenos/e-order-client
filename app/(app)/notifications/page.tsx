@@ -55,19 +55,18 @@ export default function NotificationsPage() {
               onChange={setSearchQuery}
               className="h-9 border border-slate-300 bg-white px-3 py-2 shadow-sm focus-visible:ring-0"
             />
-            <div className="flex justify-center">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={
-                  markAsReadMutation.isPending ||
-                  notifications.every((n) => n.isRead)
-                }
-                onClick={() => markAsReadMutation.mutate(null)}
-              >
-                {t("notifications_mark_all_read")}
-              </Button>
-            </div>
+            {notifications.some((n) => !n.isRead) && (
+              <div className="flex justify-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={markAsReadMutation.isPending}
+                  onClick={() => markAsReadMutation.mutate(null)}
+                >
+                  {t("notifications_mark_all_read")}
+                </Button>
+              </div>
+            )}
           </>
         )}
       </div>
