@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { format, parse, parseISO, isValid } from "date-fns";
+import type { Locale } from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -70,6 +71,37 @@ export function toDateOnly(iso: string | null): string | null {
   return /^\d{4}-\d{2}-\d{2}$/.test(slice) ? slice : null;
 }
 
+/** Format an ISO date as short day name (e.g. "Thu" or "Τετ" with Greek locale). */
+export function formatShortDay(iso: string | null, locale?: Locale): string {
+  if (iso == null || iso === "") return "";
+  const dateOnly = toDateOnly(iso);
+  if (!dateOnly) return "";
+  try {
+    return format(parse(dateOnly, "yyyy-MM-dd", new Date()), "EEE", {
+      locale: locale ?? undefined,
+    });
+  } catch {
+    return "";
+  }
+}
+
+/** Format an ISO date for calendar display (e.g. "Σαβ, 16 Μαρτίου" or "Sat, 16 March"). */
+export function formatCalendarDateDisplay(
+  iso: string | null,
+  locale?: Locale,
+): string {
+  if (iso == null || iso === "") return "";
+  const dateOnly = toDateOnly(iso);
+  if (!dateOnly) return "";
+  try {
+    return format(parse(dateOnly, "yyyy-MM-dd", new Date()), "EEE, d MMMM", {
+      locale: locale ?? undefined,
+    });
+  } catch {
+    return "";
+  }
+}
+
 /** Format an ISO date string for display (e.g. "EEE, d MMM yyyy"). Uses date-only to avoid timezone shift. */
 export function formatDeliveryDateDisplay(iso: string | null): string {
   if (iso == null || iso === "") return "";
@@ -130,9 +162,7 @@ export function refDateInWeekDailyAnalysis(
 ): boolean {
   const key = toDateOnly(refDate);
   if (!key) return false;
-  return weekDailyAnalysis.some(
-    (it) => toDateOnly(it.dateObj ?? null) === key,
-  );
+  return weekDailyAnalysis.some((it) => toDateOnly(it.dateObj ?? null) === key);
 }
 
 /** Default when NO refDate: today only if processable; else next deliverable. */
@@ -152,9 +182,7 @@ export function getDefaultDeliveryDateNoRefDate(
   const sorted = [...weekDailyAnalysis]
     .map((it) => ({ ...it, dateOnly: toDateOnly(it.dateObj ?? null) }))
     .filter((it) => it.dateOnly)
-    .sort((a, b) =>
-      (a.dateOnly as string).localeCompare(b.dateOnly as string),
-    );
+    .sort((a, b) => (a.dateOnly as string).localeCompare(b.dateOnly as string));
 
   const todayItem = sorted.find((it) => (it.dateOnly as string) === key);
   if (todayItem && isProcessable(todayItem)) {
@@ -181,9 +209,7 @@ export function getDefaultDeliveryDateWithRefDate(
   const sorted = [...weekDailyAnalysis]
     .map((it) => ({ ...it, dateOnly: toDateOnly(it.dateObj ?? null) }))
     .filter((it) => it.dateOnly)
-    .sort((a, b) =>
-      (a.dateOnly as string).localeCompare(b.dateOnly as string),
-    );
+    .sort((a, b) => (a.dateOnly as string).localeCompare(b.dateOnly as string));
 
   const matchedItem = sorted.find((it) => (it.dateOnly as string) === key);
   if (matchedItem && isProcessable(matchedItem)) {
@@ -206,17 +232,14 @@ export function getEffectiveDeliveryDateFromPreferred(
   }>,
   fallback: string | null,
 ): string | null {
-  if (!preferredDate?.trim() || weekDailyAnalysis.length === 0)
-    return fallback;
+  if (!preferredDate?.trim() || weekDailyAnalysis.length === 0) return fallback;
   const key = toDateOnly(preferredDate);
   if (!key) return fallback;
 
   const sorted = [...weekDailyAnalysis]
     .map((it) => ({ ...it, dateOnly: toDateOnly(it.dateObj ?? null) }))
     .filter((it) => it.dateOnly)
-    .sort((a, b) =>
-      (a.dateOnly as string).localeCompare(b.dateOnly as string),
-    );
+    .sort((a, b) => (a.dateOnly as string).localeCompare(b.dateOnly as string));
 
   const fromIdx = sorted.findIndex((it) => (it.dateOnly as string) >= key);
   const toCheck = fromIdx >= 0 ? sorted.slice(fromIdx) : [];
@@ -236,23 +259,20 @@ export function getEffectiveRefDateFromSelection(
     supplierCanDeliver?: boolean;
   }>,
 ): string | null {
-  if (!selectedDate?.trim() || weekDailyAnalysis.length === 0) return selectedDate;
+  if (!selectedDate?.trim() || weekDailyAnalysis.length === 0)
+    return selectedDate;
   const key = toDateOnly(selectedDate);
   if (!key) return selectedDate;
 
   const sorted = [...weekDailyAnalysis]
     .map((it) => ({ ...it, dateOnly: toDateOnly(it.dateObj ?? null) }))
     .filter((it) => it.dateOnly)
-    .sort((a, b) =>
-      (a.dateOnly as string).localeCompare(b.dateOnly as string),
-    );
+    .sort((a, b) => (a.dateOnly as string).localeCompare(b.dateOnly as string));
 
   const fromIdx = sorted.findIndex((it) => (it.dateOnly as string) >= key);
   const toCheck = fromIdx >= 0 ? sorted.slice(fromIdx) : [];
 
-  const valid = toCheck.find(
-    (it) => !it.dayIsClosed && it.supplierCanDeliver,
-  );
+  const valid = toCheck.find((it) => !it.dayIsClosed && it.supplierCanDeliver);
   if (valid?.dateObj) {
     const d = valid.dateObj.slice(0, 10);
     return d ? `${d}T12:00:00.000Z` : selectedDate;

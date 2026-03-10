@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { isSameDay, format } from "date-fns";
-import { getEffectiveRefDateFromSelection } from "@/lib/utils";
+import { formatCalendarDateDisplay } from "@/lib/utils";
+import { el } from "date-fns/locale";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
+import { useTranslation } from "@/lib/i18n";
 import { SuppliersSection } from "@/components/dashboard/SuppliersSection";
 import {
   OrdersOfTheDayTabs,
@@ -12,9 +14,10 @@ import {
 import { useActiveTabsStore, activeTabKeys } from "@/stores/activeTabs";
 
 export default function OrdersOfTheDayPage() {
+  const { i18n } = useTranslation();
   const [calendarRefDate, setCalendarRefDate] = useState<string | null>(null);
 
-  const { suppliers, dayNameShort, isLoading, isError, errorMessage } =
+  const { suppliers, isLoading, isError, errorMessage } =
     useSuppliersListForToday(calendarRefDate ?? undefined);
 
   const suppliersInPrefDaySchedule = useMemo(
@@ -75,35 +78,6 @@ export default function OrdersOfTheDayPage() {
   const suppliersToShow =
     calendarRefDate != null ? suppliersInPrefDaySchedule : suppliersByTab;
 
-  useEffect(() => {
-    if (
-      calendarRefDate == null ||
-      isLoading ||
-      suppliersInPrefDaySchedule.length === 0
-    )
-      return;
-    const first = suppliersInPrefDaySchedule[0] as {
-      weekDailyAnalysis?: Array<{
-        dateObj?: string;
-        dayIsClosed?: boolean;
-        supplierCanDeliver?: boolean;
-      }>;
-    } | undefined;
-    const analysis = first?.weekDailyAnalysis ?? [];
-    if (analysis.length === 0) return;
-    const effective = getEffectiveRefDateFromSelection(
-      calendarRefDate,
-      analysis,
-    );
-    if (effective != null && effective !== calendarRefDate) {
-      setCalendarRefDate(effective);
-    }
-  }, [
-    calendarRefDate,
-    isLoading,
-    suppliersInPrefDaySchedule,
-  ]);
-
   return (
     <main className="text-slate-900 px-3">
       <SuppliersSection
@@ -123,7 +97,14 @@ export default function OrdersOfTheDayPage() {
         }}
         calendarDateView={calendarRefDate != null}
         selectedRefDate={calendarRefDate}
-        calendarDayNameShort={calendarRefDate != null ? dayNameShort : null}
+        calendarDayNameShort={
+          calendarRefDate != null
+            ? formatCalendarDateDisplay(
+                calendarRefDate,
+                i18n.language === "gr" ? el : undefined,
+              )
+            : null
+        }
         onShowTodayClick={
           calendarRefDate != null ? () => setCalendarRefDate(null) : undefined
         }
