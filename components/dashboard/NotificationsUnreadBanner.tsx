@@ -1,32 +1,41 @@
 "use client";
 
 import Link from "next/link";
-import { Bell } from "lucide-react";
-import { useTranslation } from "@/lib/i18n";
+import Image from "next/image";
 import { useNotificationsCountUnread } from "@/hooks/useNotifications";
-import { InterpolatedText } from "@/components/ui/interpolated-text";
 
 export function NotificationsUnreadBanner() {
-  const { t } = useTranslation();
   const { data: countData } = useNotificationsCountUnread();
   const unreadCount = countData?.unreadCounter ?? 0;
-
-  if (unreadCount <= 0) return null;
 
   return (
     <Link
       href="/notifications"
-      className="mx-auto mb-4 flex max-w-xl items-center justify-center gap-2 rounded-xl border-2 border-brand-500 bg-brand-50 px-4 py-3 text-brand-800 transition hover:bg-brand-100"
+      className="absolute right-2 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center transition opacity-90 hover:opacity-100 md:right-4"
+      aria-label={
+        unreadCount > 0
+          ? `${unreadCount} unread notification${unreadCount !== 1 ? "s" : ""}`
+          : "Notifications"
+      }
     >
-      <Bell className="h-5 w-5 shrink-0 text-brand-600" aria-hidden />
-      <span className="font-medium">
-        <InterpolatedText
-          template={t("dashboard_unread_banner")}
-          values={{ count: unreadCount }}
-          highlightedKey="count"
-          highlightedClassName="mx-0.5 font-bold text-lg"
+      <div className="relative">
+        <Image
+          src="/assets/notifications.png"
+          alt=""
+          width={40}
+          height={40}
+          className="object-contain rounded-md"
+          aria-hidden
         />
-      </span>
+        {unreadCount > 0 && (
+          <span
+            className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white"
+            aria-hidden
+          >
+            {unreadCount > 99 ? "99+" : unreadCount}
+          </span>
+        )}
+      </div>
     </Link>
   );
 }

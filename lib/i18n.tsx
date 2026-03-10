@@ -118,7 +118,7 @@ const resources: Resources = {
     notifications_search_placeholder: "Search notifications…",
     notifications_empty: "No notifications",
     notifications_no_matches: "No matching notifications",
-    notifications_mark_read: "Mark as read",
+    notifications_mark_read: "I read it",
     notifications_read: "Read",
     notifications_mark_all_read: "Mark all as read",
     breadcrumb_dashboard: "Dashboard",
@@ -220,7 +220,7 @@ const resources: Resources = {
     order_redo_dialog_description:
       "This will add the same items to your basket. Continue?",
     order_redo_success: "Order added to basket",
-    dashboard_card_suppliers: "Suppliers",
+    dashboard_card_suppliers: "Orders",
     dashboard_card_orders_of_day: "Orders of the Day",
     orders_today_button: "Today's orders",
     dashboard_card_statistics: "Statistics",
@@ -255,6 +255,10 @@ const resources: Resources = {
     checkout_quantity: "Quantity",
     checkout_remove_item: "Remove",
     checkout_removing: "Removing…",
+    checkout_order_cannot_process_date:
+      "The order cannot be processed for {date}",
+    checkout_order_cannot_process_no_dates:
+      "The order cannot be processed because there are no available dates.",
     settings_switch_store: "Switch store",
     settings_manage_suppliers: "Manage suppliers",
     manage_suppliers_tab_active: "Active",
@@ -490,9 +494,9 @@ const resources: Resources = {
     notifications_search_placeholder: "Αναζήτηση ειδοποιήσεων…",
     notifications_empty: "Δεν υπάρχουν ειδοποιήσεις.",
     notifications_no_matches: "Δεν βρέθηκαν ειδοποιήσεις",
-    notifications_mark_read: "Σημείωση ως διαβασμένη",
+    notifications_mark_read: "Το διάβασα",
     notifications_read: "Διαβασμένο",
-    notifications_mark_all_read: "Σημείωση όλων ως διαβασμένες",
+    notifications_mark_all_read: "Μαρκάρισμα όλων ως διαβασμένες",
     breadcrumb_dashboard: "Αρχική",
     breadcrumb_account: "Λογαριασμός",
     breadcrumb_checkout: "Ολοκλήρωση",
@@ -596,7 +600,7 @@ const resources: Resources = {
     order_redo_dialog_description:
       "Θα προστεθούν τα ίδια προϊόντα στο καλάθι σας. Συνέχεια;",
     order_redo_success: "Η παραγγελία προστέθηκε στο καλάθι",
-    dashboard_card_suppliers: "Προμηθευτές",
+    dashboard_card_suppliers: "Παραγγελίες",
     dashboard_card_orders_of_day: "Παραγγελίες Ημέρας",
     orders_today_button: "Παραγγελίες ημέρας",
     dashboard_card_statistics: "Στατιστικά",
@@ -631,6 +635,10 @@ const resources: Resources = {
     checkout_quantity: "Ποσότητα",
     checkout_remove_item: "Το προϊόν αφαιρέθηκε",
     checkout_removing: "Αφαιρείται…",
+    checkout_order_cannot_process_date:
+      "Η παραγγελία δεν μπορεί να εκτελεστεί για {date}",
+    checkout_order_cannot_process_no_dates:
+      "Η παραγγελία δεν μπορεί να εκτελεστεί διότι δεν υπάρχουν διαθέσιμες ημερομηνίες.",
     settings_switch_store: "Επιλογή Καταστήματος",
     settings_manage_suppliers: "Διαχείριση Προμηθευτών",
     manage_suppliers_tab_active: "Ενεργοί",

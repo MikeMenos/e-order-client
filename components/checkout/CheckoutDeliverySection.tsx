@@ -15,6 +15,7 @@ import {
   toDateOnly,
 } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { InterpolatedText } from "@/components/ui/interpolated-text";
 import { DeliveryDatePickerDialog } from "@/components/checkout/DeliveryDatePickerDialog";
 import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
 import type { WeekDailyAnalysisItem } from "@/lib/types/supplier-api";
@@ -24,6 +25,12 @@ export type CheckoutDeliverySectionProps = {
   initialDeliveryDate?: string | null;
   onEffectiveDateChange?: (isoDate: string) => void;
   weekDailyAnalysis?: WeekDailyAnalysisItem[];
+  /** When true, show message instead of date buttons (refDate not in weekDailyAnalysis or empty analysis) */
+  refDateNotInRange?: boolean;
+  /** When true, show "no available dates" message (ignores refDateDisplay) */
+  isEmptyAnalysis?: boolean;
+  /** The refDate to show in the warning (when refDateNotInRange and !isEmptyAnalysis) */
+  refDateDisplay?: string | null;
 };
 
 export function CheckoutDeliverySection({
@@ -31,6 +38,9 @@ export function CheckoutDeliverySection({
   initialDeliveryDate,
   onEffectiveDateChange,
   weekDailyAnalysis = [],
+  refDateNotInRange = false,
+  isEmptyAnalysis = false,
+  refDateDisplay = null,
 }: CheckoutDeliverySectionProps) {
   const { t } = useTranslation();
   const [deliveryOption, setDeliveryOption] = useState<"selected" | "other">(
@@ -138,6 +148,29 @@ export function CheckoutDeliverySection({
     setDeliveryOption("selected");
     onEffectiveDateChange?.(selectedDate as string);
   };
+
+  if (refDateNotInRange) {
+    const messageKey = isEmptyAnalysis
+      ? "checkout_order_cannot_process_no_dates"
+      : "checkout_order_cannot_process_date";
+    const message =
+      isEmptyAnalysis
+        ? t(messageKey)
+        : (
+            <InterpolatedText
+              template={t(messageKey)}
+              values={{ date: formatDeliveryDateDisplay(refDateDisplay ?? "") }}
+            />
+          );
+    return (
+      <section className="mb-4">
+        <CheckoutSectionHeading labelKey="checkout_delivery" />
+        <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+          {message}
+        </p>
+      </section>
+    );
+  }
 
   return (
     <section className="mb-4">

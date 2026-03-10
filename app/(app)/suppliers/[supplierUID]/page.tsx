@@ -72,22 +72,21 @@ export default function SupplierPage() {
 
   return (
     <main className="pb-16 text-slate-900 px-3">
-      <div className="w-full rounded-t-lg mt-2 bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90">
-        <SupplierPageBar
-          supplier={supplier}
-          selectedDate={selectedDate}
-          mainTab={mainTab}
-          onMainTabChange={setMainTab}
-        />
-      </div>
-
       <div className="flex flex-col">
         <div
           ref={stickyBarMeasurement.ref}
-          className="sticky z-20 w-full rounded-b-lg bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90"
+          className="sticky z-20 mt-2 flex shrink-0 flex-col w-full rounded-lg bg-app-card/95 shadow-sm backdrop-blur supports-backdrop-filter:bg-app-card/90"
           style={{ top: headerHeight }}
         >
-          <div className="mx-auto max-w-4xl">
+          <div className="w-full rounded-t-lg bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90">
+            <SupplierPageBar
+              supplier={supplier}
+              selectedDate={selectedDate}
+              mainTab={mainTab}
+              onMainTabChange={setMainTab}
+            />
+          </div>
+          <div className="mx-auto w-full max-w-4xl rounded-b-lg bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90">
             <SupplierSearchAndTabs
               searchPlaceholder={t("products_search_placeholder")}
               searchQuery={searchQuery}

@@ -42,7 +42,7 @@ export function NotificationCard({
           {formatNotificationDate(item.dateCreated)}
         </p>
         {!item.isRead && (
-          <div className="flex justify-center mt-1">
+          <div className="flex justify-end mt-1">
             <Button
               variant="outline"
               size="sm"

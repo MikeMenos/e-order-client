@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslation } from "@/lib/i18n";
+import { useAppHeaderHeight } from "@/app/(app)/AppHeaderContext";
 import { useBackToTop } from "@/hooks/useBackToTop";
 import Loading from "@/components/ui/loading";
 import { useNotificationsMarkAsRead } from "@/hooks/useNotifications";
@@ -17,6 +18,7 @@ import { getApiErrorMessage } from "@/lib/api-error";
 
 export default function NotificationsPage() {
   const { t } = useTranslation();
+  const headerHeight = useAppHeaderHeight();
   const {
     notifications,
     filteredNotifications,
@@ -38,7 +40,10 @@ export default function NotificationsPage() {
 
   return (
     <main className="space-y-4 text-slate-900 px-3 pb-12">
-      <header className="mb-2 my-2 space-y-2">
+      <div
+        className="sticky z-20 -mx-3 flex shrink-0 flex-col gap-2 bg-app-bg-solid px-3 pb-2 pt-2 shadow-sm"
+        style={{ top: headerHeight }}
+      >
         <h1 className="text-xl font-bold text-slate-900 text-center">
           {t("nav_notifications")}
         </h1>
@@ -65,7 +70,7 @@ export default function NotificationsPage() {
             </div>
           </>
         )}
-      </header>
+      </div>
 
       {isLoading && <Loading spinnerOnly />}
       {isError && <ErrorMessage>{t("suppliers_error")}</ErrorMessage>}

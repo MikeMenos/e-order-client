@@ -48,10 +48,7 @@ export default function ManageSuppliersPage() {
   });
 
   const handleInactiveApprovalToggle = useCallback(
-    async (
-      supplier: SuppliersListItem,
-      isApproved: boolean,
-    ) => {
+    async (supplier: SuppliersListItem, isApproved: boolean) => {
       const hasBasket =
         supplier.basketIconStatus === 2 ||
         (supplier.counterOpenBaskets ?? 0) > 0;
@@ -73,24 +70,6 @@ export default function ManageSuppliersPage() {
 
   return (
     <main className="text-slate-900 px-3">
-      <Tabs
-        value={activeTab}
-        onValueChange={(v) => setActiveTab(v as ManageSuppliersTabId)}
-      >
-        <div className="mb-2 overflow-x-auto overflow-y-hidden min-w-0 [-webkit-overflow-scrolling:touch]">
-          <TabsList
-            variant="line"
-            className="inline-flex w-max min-w-full flex-nowrap justify-start rounded-lg bg-white p-0"
-          >
-            <TabsTrigger value="active" className={tabTriggerClass}>
-              {t("manage_suppliers_tab_active")}
-            </TabsTrigger>
-            <TabsTrigger value="inactive" className={tabTriggerClass}>
-              {t("manage_suppliers_tab_inactive")}
-            </TabsTrigger>
-          </TabsList>
-        </div>
-      </Tabs>
       <SuppliersSection
         suppliers={suppliers}
         isLoading={isLoading}
@@ -105,7 +84,26 @@ export default function ManageSuppliersPage() {
             ? updateMutation.isPending || basketDeleteMutation.isPending
             : false
         }
-      />
+      >
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as ManageSuppliersTabId)}
+        >
+          <div className="overflow-x-auto overflow-y-hidden min-w-0 [-webkit-overflow-scrolling:touch]">
+            <TabsList
+              variant="line"
+              className="inline-flex w-max min-w-full flex-nowrap justify-start rounded-lg bg-white p-0"
+            >
+              <TabsTrigger value="active" className={tabTriggerClass}>
+                {t("manage_suppliers_tab_active")}
+              </TabsTrigger>
+              <TabsTrigger value="inactive" className={tabTriggerClass}>
+                {t("manage_suppliers_tab_inactive")}
+              </TabsTrigger>
+            </TabsList>
+          </div>
+        </Tabs>
+      </SuppliersSection>
     </main>
   );
 }

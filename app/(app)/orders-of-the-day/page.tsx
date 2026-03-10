@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { isSameDay, format } from "date-fns";
+import { getEffectiveRefDateFromSelection } from "@/lib/utils";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
 import { SuppliersSection } from "@/components/dashboard/SuppliersSection";
 import {
@@ -73,6 +74,35 @@ export default function OrdersOfTheDayPage() {
 
   const suppliersToShow =
     calendarRefDate != null ? suppliersInPrefDaySchedule : suppliersByTab;
+
+  useEffect(() => {
+    if (
+      calendarRefDate == null ||
+      isLoading ||
+      suppliersInPrefDaySchedule.length === 0
+    )
+      return;
+    const first = suppliersInPrefDaySchedule[0] as {
+      weekDailyAnalysis?: Array<{
+        dateObj?: string;
+        dayIsClosed?: boolean;
+        supplierCanDeliver?: boolean;
+      }>;
+    } | undefined;
+    const analysis = first?.weekDailyAnalysis ?? [];
+    if (analysis.length === 0) return;
+    const effective = getEffectiveRefDateFromSelection(
+      calendarRefDate,
+      analysis,
+    );
+    if (effective != null && effective !== calendarRefDate) {
+      setCalendarRefDate(effective);
+    }
+  }, [
+    calendarRefDate,
+    isLoading,
+    suppliersInPrefDaySchedule,
+  ]);
 
   return (
     <main className="text-slate-900 px-3">

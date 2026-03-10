@@ -15,6 +15,7 @@ import Loading from "../ui/loading";
 import { SuppliersSearchBar } from "./SuppliersSearchBar";
 import { SupplierTile } from "./SupplierTile";
 import { usePathname } from "next/navigation";
+import { toDateOnly } from "@/lib/utils";
 import { SuppliersListItem } from "@/lib/types/dashboard";
 import { useAppHeaderHeight } from "@/app/(app)/AppHeaderContext";
 import { RefDateCalendarDialog } from "./RefDateCalendarDialog";
@@ -85,7 +86,9 @@ export function SuppliersSection({
     pathname === "/all-suppliers" ||
     pathname === "/settings/manage-suppliers" ||
     pathname === "/settings/partner-suppliers";
-  const showTabs = pathname === "/orders-of-the-day" && !calendarDateView;
+  const showTabs =
+    (pathname === "/orders-of-the-day" && !calendarDateView) ||
+    pathname === "/settings/manage-suppliers";
 
   const filteredSuppliers = useMemo(() => {
     let data = [...suppliers];
@@ -145,7 +148,7 @@ export function SuppliersSection({
   return (
     <section>
       <div
-        className="sticky z-20 -mx-3 w-[calc(100%+1.5rem)] flex flex-col gap-2 bg-app-bg-solid"
+        className="sticky z-20 -mx-3 w-[calc(100%+1.5rem)] flex shrink-0 flex-col gap-2 bg-app-bg-solid shadow-sm"
         style={{ top: headerHeight }}
       >
         <div className="flex h-9 items-center gap-1 my-2 px-3">
@@ -261,7 +264,7 @@ export function SuppliersSection({
             className={
               useAllSuppliersStyle
                 ? "grid grid-cols-2 gap-3 pb-8"
-                : "space-y-2 pb-8"
+                : "space-y-2 pb-8 pt-1"
             }
             variants={listVariants}
             initial="hidden"
@@ -285,17 +288,22 @@ export function SuppliersSection({
                     onSupplierClick
                       ? undefined
                       : (() => {
-                          if (
-                            pathname === "/orders-of-the-day" &&
-                            !calendarDateView
-                          ) {
+                          if (pathname === "/orders-of-the-day") {
                             if (
+                              !calendarDateView &&
                               s.basketIconStatus === 200 &&
                               s.todaysOrderUID
                             ) {
                               return `/orders-of-the-day/order/${encodeURIComponent(s.todaysOrderUID)}`;
                             }
-                            return `/suppliers/${encodeURIComponent(s.supplierUID)}?from=orders-of-the-day`;
+                            const base = `/suppliers/${encodeURIComponent(s.supplierUID)}?from=orders-of-the-day`;
+                            const refDateOnly =
+                              calendarDateView && selectedRefDate
+                                ? toDateOnly(selectedRefDate)
+                                : null;
+                            return refDateOnly
+                              ? `${base}&refDate=${encodeURIComponent(refDateOnly)}`
+                              : base;
                           }
                           return `/suppliers/${encodeURIComponent(s.supplierUID)}`;
                         })()
@@ -307,8 +315,7 @@ export function SuppliersSection({
                     pathname === "/settings/manage-suppliers" &&
                     onInactiveApprovalToggle
                       ? {
-                          onAction: () =>
-                            onInactiveApprovalToggle(s, true),
+                          onAction: () => onInactiveApprovalToggle(s, true),
                           isPending: isInactiveApprovalPending,
                           labelKey: "manage_suppliers_restore",
                           icon: RotateCcw,

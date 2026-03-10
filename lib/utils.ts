@@ -8,7 +8,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function useMeasuredHeight<T extends HTMLElement>() {
+/**
+ * @param remountTrigger - When this changes, the effect re-runs to pick up newly mounted elements (e.g. pathname for conditional render).
+ */
+export function useMeasuredHeight<T extends HTMLElement>(
+  remountTrigger?: unknown,
+) {
   const ref = useRef<T | null>(null);
   const [height, setHeight] = useState(0);
 
@@ -30,7 +35,7 @@ export function useMeasuredHeight<T extends HTMLElement>() {
       ro.disconnect();
       window.removeEventListener("load", onLoad);
     };
-  }, []);
+  }, [remountTrigger]);
 
   return { ref, height };
 }
@@ -99,6 +104,160 @@ export function formatRefDateLong(refDate: string | null): string {
   } catch {
     return refDate;
   }
+}
+
+/** Deliverable: dayIsClosed false, supplierCanDeliver true */
+function isDeliverable(item: {
+  dayIsClosed?: boolean;
+  supplierCanDeliver?: boolean;
+}): boolean {
+  return !item.dayIsClosed && !!item.supplierCanDeliver;
+}
+
+/** Processable: deliverable + supplierCanProcessOrder true */
+function isProcessable(item: {
+  dayIsClosed?: boolean;
+  supplierCanDeliver?: boolean;
+  supplierCanProcessOrder?: boolean;
+}): boolean {
+  return isDeliverable(item) && !!item.supplierCanProcessOrder;
+}
+
+/** Check if refDate (yyyy-MM-dd) exists as dateObj in weekDailyAnalysis */
+export function refDateInWeekDailyAnalysis(
+  refDate: string | null,
+  weekDailyAnalysis: Array<{ dateObj?: string }>,
+): boolean {
+  const key = toDateOnly(refDate);
+  if (!key) return false;
+  return weekDailyAnalysis.some(
+    (it) => toDateOnly(it.dateObj ?? null) === key,
+  );
+}
+
+/** Default when NO refDate: today only if processable; else next deliverable. */
+export function getDefaultDeliveryDateNoRefDate(
+  weekDailyAnalysis: Array<{
+    dateObj?: string;
+    dayIsClosed?: boolean;
+    supplierCanDeliver?: boolean;
+    supplierCanProcessOrder?: boolean;
+  }>,
+  todayDate: string | null,
+): string | null {
+  if (!todayDate?.trim() || weekDailyAnalysis.length === 0) return todayDate;
+  const key = toDateOnly(todayDate);
+  if (!key) return todayDate;
+
+  const sorted = [...weekDailyAnalysis]
+    .map((it) => ({ ...it, dateOnly: toDateOnly(it.dateObj ?? null) }))
+    .filter((it) => it.dateOnly)
+    .sort((a, b) =>
+      (a.dateOnly as string).localeCompare(b.dateOnly as string),
+    );
+
+  const todayItem = sorted.find((it) => (it.dateOnly as string) === key);
+  if (todayItem && isProcessable(todayItem)) {
+    return todayItem.dateObj?.slice(0, 10) ?? todayDate;
+  }
+  const nextDeliverable = sorted.find((it) => isDeliverable(it));
+  return nextDeliverable?.dateObj?.slice(0, 10) ?? todayDate;
+}
+
+/** Default when refDate present: refDate if matched and processable; else next deliverable after refDate. */
+export function getDefaultDeliveryDateWithRefDate(
+  refDate: string | null,
+  weekDailyAnalysis: Array<{
+    dateObj?: string;
+    dayIsClosed?: boolean;
+    supplierCanDeliver?: boolean;
+    supplierCanProcessOrder?: boolean;
+  }>,
+): string | null {
+  if (!refDate?.trim() || weekDailyAnalysis.length === 0) return null;
+  const key = toDateOnly(refDate);
+  if (!key) return null;
+
+  const sorted = [...weekDailyAnalysis]
+    .map((it) => ({ ...it, dateOnly: toDateOnly(it.dateObj ?? null) }))
+    .filter((it) => it.dateOnly)
+    .sort((a, b) =>
+      (a.dateOnly as string).localeCompare(b.dateOnly as string),
+    );
+
+  const matchedItem = sorted.find((it) => (it.dateOnly as string) === key);
+  if (matchedItem && isProcessable(matchedItem)) {
+    return matchedItem.dateObj?.slice(0, 10) ?? key;
+  }
+  const fromIdx = sorted.findIndex((it) => (it.dateOnly as string) >= key);
+  const afterRef = fromIdx >= 0 ? sorted.slice(fromIdx) : sorted;
+  const nextDeliverable = afterRef.find((it) => isDeliverable(it));
+  return nextDeliverable?.dateObj?.slice(0, 10) ?? null;
+}
+
+/** Find effective delivery date from preferred: use preferred if valid, else next available matching criteria. */
+export function getEffectiveDeliveryDateFromPreferred(
+  preferredDate: string | null,
+  weekDailyAnalysis: Array<{
+    dateObj?: string;
+    dayIsClosed?: boolean;
+    supplierCanDeliver?: boolean;
+    supplierCanProcessOrder?: boolean;
+  }>,
+  fallback: string | null,
+): string | null {
+  if (!preferredDate?.trim() || weekDailyAnalysis.length === 0)
+    return fallback;
+  const key = toDateOnly(preferredDate);
+  if (!key) return fallback;
+
+  const sorted = [...weekDailyAnalysis]
+    .map((it) => ({ ...it, dateOnly: toDateOnly(it.dateObj ?? null) }))
+    .filter((it) => it.dateOnly)
+    .sort((a, b) =>
+      (a.dateOnly as string).localeCompare(b.dateOnly as string),
+    );
+
+  const fromIdx = sorted.findIndex((it) => (it.dateOnly as string) >= key);
+  const toCheck = fromIdx >= 0 ? sorted.slice(fromIdx) : [];
+
+  const valid = toCheck.find((it) => isProcessable(it));
+  if (valid?.dateObj) return valid.dateObj.slice(0, 10);
+  const firstValid = sorted.find((it) => isProcessable(it));
+  return firstValid?.dateObj?.slice(0, 10) ?? fallback;
+}
+
+/** Find the effective ref date when user selects a date: use selected if valid (!dayIsClosed && supplierCanDeliver), else next available in weekDailyAnalysis. */
+export function getEffectiveRefDateFromSelection(
+  selectedDate: string | null,
+  weekDailyAnalysis: Array<{
+    dateObj?: string;
+    dayIsClosed?: boolean;
+    supplierCanDeliver?: boolean;
+  }>,
+): string | null {
+  if (!selectedDate?.trim() || weekDailyAnalysis.length === 0) return selectedDate;
+  const key = toDateOnly(selectedDate);
+  if (!key) return selectedDate;
+
+  const sorted = [...weekDailyAnalysis]
+    .map((it) => ({ ...it, dateOnly: toDateOnly(it.dateObj ?? null) }))
+    .filter((it) => it.dateOnly)
+    .sort((a, b) =>
+      (a.dateOnly as string).localeCompare(b.dateOnly as string),
+    );
+
+  const fromIdx = sorted.findIndex((it) => (it.dateOnly as string) >= key);
+  const toCheck = fromIdx >= 0 ? sorted.slice(fromIdx) : [];
+
+  const valid = toCheck.find(
+    (it) => !it.dayIsClosed && it.supplierCanDeliver,
+  );
+  if (valid?.dateObj) {
+    const d = valid.dateObj.slice(0, 10);
+    return d ? `${d}T12:00:00.000Z` : selectedDate;
+  }
+  return selectedDate;
 }
 
 /** True if refDate (yyyy-MM-dd or ISO) is the same calendar day as today. Uses date-only to avoid timezone shift. */

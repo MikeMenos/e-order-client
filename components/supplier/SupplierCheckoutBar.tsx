@@ -22,6 +22,7 @@ export function SupplierCheckoutBar({
   const { hasAccess } = useUserPermissions();
   const searchParams = useSearchParams();
   const fromParam = searchParams.get("from");
+  const refDateParam = searchParams.get("refDate");
 
   const { data: basketData } = useBasketItems(
     supplierUID ? { SupplierUID: supplierUID } : undefined,
@@ -35,6 +36,7 @@ export function SupplierCheckoutBar({
 
   const queryParams = new URLSearchParams();
   if (fromParam) queryParams.set("from", fromParam);
+  if (refDateParam) queryParams.set("refDate", refDateParam);
   const queryString = queryParams.toString()
     ? `?${queryParams.toString()}`
     : "";

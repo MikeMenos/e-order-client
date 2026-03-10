@@ -38,6 +38,7 @@ export function SupplierPageBar({
   const searchParams = useSearchParams();
   const supplierUID = supplier?.supplierUID;
   const fromParam = searchParams.get("from");
+  const refDateParam = searchParams.get("refDate");
 
   const { data: basketData } = useBasketItems(
     supplierUID ? { SupplierUID: supplierUID } : undefined,
@@ -49,7 +50,12 @@ export function SupplierPageBar({
 
   const supplierLabel = supplier?.title ?? supplier?.subTitle;
 
-  const queryString = fromParam ? `?from=${encodeURIComponent(fromParam)}` : "";
+  const checkoutQuery = new URLSearchParams();
+  if (fromParam) checkoutQuery.set("from", fromParam);
+  if (refDateParam) checkoutQuery.set("refDate", refDateParam);
+  const queryString = checkoutQuery.toString()
+    ? `?${checkoutQuery.toString()}`
+    : "";
   const checkoutHref = `/suppliers/${encodeURIComponent(supplierUID as string)}/checkout${queryString}`;
 
   const showProductTabs =
