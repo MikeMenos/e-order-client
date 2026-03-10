@@ -61,11 +61,7 @@ function isDeliveryDateBlocked(
   const key = toYyyyMmDd(effectiveDate);
   if (!key) return false;
   const item = weekDailyAnalysis.find((it) => it.dateObj.slice(0, 10) === key);
-  return item
-    ? item.dayIsClosed ||
-        !item.supplierCanDeliver ||
-        !item.supplierCanProcessOrder
-    : false;
+  return item ? item.dayIsClosed || !item.supplierCanDeliver : false;
 }
 
 export default function SupplierCheckoutPage() {
@@ -100,10 +96,7 @@ export default function SupplierCheckoutPage() {
   useEffect(() => {
     if (hasPrefilledFromBasketRef.current || !basketForSupplier) return;
     hasPrefilledFromBasketRef.current = true;
-    if (
-      basketForSupplier.desiredDeliveryDate?.trim() &&
-      !refDateFromUrl
-    ) {
+    if (basketForSupplier.desiredDeliveryDate?.trim() && !refDateFromUrl) {
       setDeliveryDate(basketForSupplier.desiredDeliveryDate.trim());
     }
     if (
@@ -162,32 +155,32 @@ export default function SupplierCheckoutPage() {
       }
 
       if (!refDateFromUrl) {
-      const defaultDate = getDefaultDeliveryDateNoRefDate(analysis, todayStr);
+        const defaultDate = getDefaultDeliveryDateNoRefDate(analysis, todayStr);
+        return {
+          defaultDeliveryDate: defaultDate ?? toYyyyMmDd(selectedDate),
+          refDateNotInRange: false,
+          isEmptyAnalysis: false,
+        };
+      }
+
+      if (!refDateInWeekDailyAnalysis(refDateFromUrl, analysis)) {
+        return {
+          defaultDeliveryDate: null,
+          refDateNotInRange: true,
+          isEmptyAnalysis: false,
+        };
+      }
+
+      const defaultDate = getDefaultDeliveryDateWithRefDate(
+        refDateFromUrl,
+        analysis,
+      );
       return {
         defaultDeliveryDate: defaultDate ?? toYyyyMmDd(selectedDate),
         refDateNotInRange: false,
         isEmptyAnalysis: false,
       };
-    }
-
-    if (!refDateInWeekDailyAnalysis(refDateFromUrl, analysis)) {
-      return {
-        defaultDeliveryDate: null,
-        refDateNotInRange: true,
-        isEmptyAnalysis: false,
-      };
-    }
-
-    const defaultDate = getDefaultDeliveryDateWithRefDate(
-      refDateFromUrl,
-      analysis,
-    );
-    return {
-      defaultDeliveryDate: defaultDate ?? toYyyyMmDd(selectedDate),
-      refDateNotInRange: false,
-      isEmptyAnalysis: false,
-    };
-  }, [supplier?.weekDailyAnalysis, selectedDate, refDateFromUrl]);
+    }, [supplier?.weekDailyAnalysis, selectedDate, refDateFromUrl]);
 
   const effectiveDeliveryDate = deliveryDate ?? defaultDeliveryDate;
   const isDeliveryDateInvalid = isDeliveryDateBlocked(
