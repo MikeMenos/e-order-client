@@ -37,10 +37,13 @@ export default function DashboardPage() {
   const { t } = useTranslation();
   const { suppliers } = useSuppliersListForToday();
   const todayOrdersCount = useMemo(
-    () => suppliers.reduce((sum, s) => sum + (s.counterTodayOrders ?? 0), 0),
+    () =>
+      suppliers.filter(
+        (s: { isInPrefDaySchedule?: boolean }) =>
+          s.isInPrefDaySchedule === true,
+      ).length,
     [suppliers],
   );
-
   return (
     <main className="text-slate-900 overflow-hidden px-2">
       <div className="relative flex justify-center py-2">
@@ -66,7 +69,9 @@ export default function DashboardPage() {
               iconSrc={iconSrc}
               label={t(labelKey)}
               badgeNum={
-                href === "/orders-of-the-day" ? todayOrdersCount : undefined
+                href === "/orders-of-the-day" && todayOrdersCount > 0
+                  ? todayOrdersCount
+                  : undefined
               }
             />
           </motion.div>
