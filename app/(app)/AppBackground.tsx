@@ -17,11 +17,7 @@ export function AppBackground() {
   const fromParam = searchParams?.get("from");
 
   useEffect(() => {
-    const noScroll =
-      pathname === "/dashboard" ||
-      pathname === "/settings" ||
-      pathname === "/settings/manage-suppliers" ||
-      pathname?.startsWith("/settings/manage-suppliers/");
+    const noScroll = pathname === "/dashboard" || pathname === "/settings";
     if (noScroll) {
       document.documentElement.classList.add("overflow-hidden");
       document.body.classList.add("overflow-hidden");
