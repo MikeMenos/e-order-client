@@ -132,7 +132,7 @@ export default function SupplierPage() {
             <motion.div
               className="space-y-3"
               style={{
-                paddingBottom: `max(4rem, 18rem)`,
+                paddingBottom: `max(4rem, 20rem)`,
               }}
               variants={listVariants}
               initial="hidden"
