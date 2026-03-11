@@ -130,7 +130,10 @@ export default function SupplierPage() {
             </p>
           ) : (
             <motion.div
-              className="space-y-3 pb-16"
+              className="space-y-3"
+              style={{
+                paddingBottom: `max(4rem, 18rem)`,
+              }}
               variants={listVariants}
               initial="hidden"
               animate="visible"

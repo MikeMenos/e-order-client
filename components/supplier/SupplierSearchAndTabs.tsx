@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { SearchInput } from "../ui/search-input";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
@@ -29,8 +30,21 @@ export function SupplierSearchAndTabs({
   backgroundClassName,
   hideTabs = false,
 }: Props) {
+  const tabsScrollRef = useRef<HTMLDivElement>(null);
   const value = activeSectionId ?? sections[0]?.id ?? "";
   const panelClassName = backgroundClassName ?? "bg-app-card/95";
+
+  useEffect(() => {
+    if (!activeSectionId || hideTabs || sections.length <= 1) return;
+    const tabEl = tabsScrollRef.current?.querySelector(
+      `[data-section-id="${activeSectionId}"]`,
+    ) as HTMLElement | null;
+    tabEl?.scrollIntoView({
+      behavior: "smooth",
+      inline: "nearest",
+      block: "nearest",
+    });
+  }, [activeSectionId, hideTabs, sections.length]);
 
   return (
     <div
@@ -51,7 +65,8 @@ export function SupplierSearchAndTabs({
         <div className="-mx-4 flex flex-col gap-0 rounded-2xl overflow-hidden">
           <Tabs value={value} onValueChange={onTabClick}>
             <motion.div
-              className="overflow-x-auto border-slate-200/80 px-4 py-2"
+              ref={tabsScrollRef}
+              className="overflow-x-auto overflow-y-hidden [-webkit-overflow-scrolling:touch] border-slate-200/80 px-4 py-2"
               variants={listItemVariants}
               initial="hidden"
               animate="visible"
@@ -61,6 +76,7 @@ export function SupplierSearchAndTabs({
                   <TabsTrigger
                     key={section.id}
                     value={section.id}
+                    data-section-id={section.id}
                     className={[
                       "shrink-0 rounded-lg px-4 py-2 text-sm font-semibold tracking-[0.18em] whitespace-nowrap",
                       "text-slate-500 transition",
