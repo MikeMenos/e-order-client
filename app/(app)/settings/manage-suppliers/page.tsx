@@ -69,7 +69,7 @@ export default function ManageSuppliersPage() {
   const noop = useCallback(() => {}, []);
 
   return (
-    <main className="text-slate-900 px-3">
+    <main className="text-slate-900 px-2">
       <SuppliersSection
         suppliers={suppliers}
         isLoading={isLoading}

@@ -64,7 +64,7 @@ export default function ManageUsersPage() {
   }, []);
 
   return (
-    <main className="text-slate-900 px-3">
+    <main className="text-slate-900 px-2">
       <div className="mx-auto max-w-2xl">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-2 mb-4">
           <h1 className="text-xl font-bold text-slate-900 text-center sm:text-left">

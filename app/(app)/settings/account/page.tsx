@@ -72,7 +72,7 @@ export default function AccountSettingsPage() {
     : "";
 
   return (
-    <main className="pb-16 text-slate-900 px-3">
+    <main className="pb-16 text-slate-900 px-2">
       <div className="mx-auto max-w-2xl">
         <div className="my-3">
           <h1 className="text-xl font-bold text-slate-900 mt-2">{fullName}</h1>

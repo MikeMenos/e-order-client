@@ -11,7 +11,7 @@ export default function PartnerSuppliersPage() {
   const handleSupplierClick = useCallback(() => {}, []);
 
   return (
-    <main className="text-slate-900 px-3">
+    <main className="text-slate-900 px-2">
       <SuppliersSection
         suppliers={suppliers}
         isLoading={isLoading}

@@ -3,11 +3,7 @@
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  DndContext,
-  DragOverlay,
-  closestCenter,
-} from "@dnd-kit/core";
+import { DndContext, DragOverlay, closestCenter } from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -69,7 +65,7 @@ export default function FavoritesPage() {
     activeItem,
     itemIds,
   } = useFavoritesSortable(orderedItems, setOrderedItems, (payload) =>
-    wishlistSort.mutate({ ...payload, supplierUID: supplierUID ?? undefined })
+    wishlistSort.mutate({ ...payload, supplierUID: supplierUID ?? undefined }),
   );
 
   const handleRemoveFavorite = (productUID: string, rank?: number) => {
@@ -83,7 +79,7 @@ export default function FavoritesPage() {
   const canEditFavorites = hasAccess("P6");
 
   return (
-    <main className="space-y-3 text-slate-900 px-3">
+    <main className="space-y-3 text-slate-900 px-2">
       <header className="space-y-1 mb-1">
         <h1 className="text-xl font-bold text-slate-900 mt-2 text-center">
           {t("supplier_favorites")}
@@ -98,7 +94,9 @@ export default function FavoritesPage() {
         </p>
       )}
 
-      {items.length === 0 && !wishlistQuery.isLoading && !wishlistQuery.error ? (
+      {items.length === 0 &&
+      !wishlistQuery.isLoading &&
+      !wishlistQuery.error ? (
         <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
           {t("config_empty_favorites") || "No favorites found"}
         </p>
@@ -127,7 +125,8 @@ export default function FavoritesPage() {
                   index={index}
                   isRemoving={
                     wishlistToggle.isPending &&
-                    (wishlistToggle.variables === (item.productUID ?? item.id) ||
+                    (wishlistToggle.variables ===
+                      (item.productUID ?? item.id) ||
                       (typeof wishlistToggle.variables === "object" &&
                         wishlistToggle.variables?.productUID ===
                           (item.productUID ?? item.id)))

@@ -28,7 +28,7 @@ export default function OrderOfTheDayViewPage() {
   const shopperComments = orderRecord?.shopperComments;
 
   return (
-    <main className="pb-12 text-slate-900 px-3">
+    <main className="pb-12 text-slate-900 px-2">
       <div className="mx-auto max-w-2xl">
         {orderViewQuery.isLoading && <Loading spinnerOnly />}
 
