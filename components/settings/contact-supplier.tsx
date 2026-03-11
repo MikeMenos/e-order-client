@@ -1,90 +1,91 @@
 "use client";
 
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
+import { useTranslation } from "@/lib/i18n";
+import { getApiErrorMessage } from "@/lib/api-error";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useSupplierContact } from "@/hooks/useSupplierContact";
 
 interface Props {
-    open: boolean;
-    onClose: () => void;
-    supplierUID: string;
+  open: boolean;
+  onClose: () => void;
+  supplierUID: string;
 }
 
-export default function ContactSupplier({
-    open,
-    onClose,
-    supplierUID,
-}: Props) {
-    const [subject, setSubject] = useState("");
-    const [message, setMessage] = useState("");
-    const [loading, setLoading] = useState(false);
+export default function ContactSupplier({ open, onClose, supplierUID }: Props) {
+  const { t } = useTranslation();
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
 
-    if (!open) return null;
+  const contactMutation = useSupplierContact({
+    onSuccess: () => {
+      onClose();
+      setSubject("");
+      setMessage("");
+    },
+    onError: (err) =>
+      toast.error(getApiErrorMessage(err, t("suppliers_error"))),
+  });
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) onClose();
+  };
 
-        setLoading(true);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    contactMutation.mutate({
+      supplierUID,
+      subject,
+      message,
+    });
+  };
 
-        await fetch(`/api/suppliers/${supplierUID}/contact`, {
-            method: "POST",
-            body: JSON.stringify({
-                subject,
-                message,
-            }),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-
-        setLoading(false);
-        onClose();
-    };
-
-    return (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl w-full max-w-lg p-6">
-
-                <h2 className="text-lg font-semibold mb-4">
-                    Επικοινωνία με τον προμηθευτή
-                </h2>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-
-                    <input
-                        className="w-full border rounded p-2"
-                        placeholder="Θέμα"
-                        value={subject}
-                        onChange={(e) => setSubject(e.target.value)}
-                    />
-
-                    <textarea
-                        className="w-full border rounded p-2 h-32"
-                        placeholder="Πληκτρολογήστε το μήνυμά σας εδώ..."
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                    />
-
-                    <div className="flex justify-end gap-2 pt-2">
-
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-4 py-2 border rounded-full"
-                        >
-                            Ακύρωση
-                        </button>
-
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="px-4 py-2 bg-brand-600 rounded-full text-white rounded"
-                        >
-                            {loading ? "Αποστολή..." : "Αποστολή"}
-                        </button>
-
-                    </div>
-
-                </form>
-            </div>
-        </div>
-    );
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>{t("settings_contact_supplier")}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4 mt-2">
+          <Input
+            placeholder={t("settings_contact_subject")}
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            className="placeholder:text-sm"
+          />
+          <Textarea
+            placeholder={t("settings_contact_message_placeholder")}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="min-h-32 placeholder:text-sm"
+          />
+          <div className="flex justify-end gap-2 pt-2">
+            <Button type="button" variant="outline" onClick={onClose}>
+              {t("checkout_date_cancel")}
+            </Button>
+            <Button type="submit" disabled={contactMutation.isPending}>
+              {contactMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                  {t("settings_contact_sending")}
+                </>
+              ) : (
+                t("settings_contact_send")
+              )}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
 }
