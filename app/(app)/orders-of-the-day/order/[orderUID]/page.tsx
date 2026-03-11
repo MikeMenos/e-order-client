@@ -59,7 +59,7 @@ export default function OrderOfTheDayViewPage() {
                   null && (
                   <div>
                     <dt className="text-slate-500 inline">
-                      {t("order_ref_date")}{" "}
+                      {t("order_ref_date_order_of_day")}{" "}
                     </dt>
                     <dd className="inline text-slate-900">
                       {String(

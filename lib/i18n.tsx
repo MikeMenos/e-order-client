@@ -201,6 +201,7 @@ const resources: Resources = {
     supplier_order_history_error: "Failed to load orders.",
     supplier_order_history_empty: "No orders found for this supplier.",
     order_ref_date: "Order date:",
+    order_ref_date_order_of_day: "Order:",
     order_delivery_date: "Delivery:",
     order_min_order: "Min. order:",
     order_remaining: "Remaining:",
@@ -587,6 +588,7 @@ const resources: Resources = {
     supplier_order_history_empty:
       "Δεν βρέθηκαν παραγγελίες για αυτόν τον προμηθευτή.",
     order_ref_date: "Order:",
+    order_ref_date_order_of_day: "Παραγγελία",
     order_delivery_date: "Παράδοση:",
     order_min_order: "Ελάχ. παραγγελία:",
     order_remaining: "Υπόλοιπο:",

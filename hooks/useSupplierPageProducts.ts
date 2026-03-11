@@ -3,6 +3,7 @@ import { useSupplierDisplay, useSupplierProducts } from "@/hooks/useSupplier";
 import {
   buildSectionsFromProducts,
   mapRawProductsToSupplierProducts,
+  sortSectionsByCategoryOrder,
 } from "@/lib/supplier";
 import type { SupplierProduct, SupplierSection } from "@/lib/types/supplier";
 
@@ -34,15 +35,19 @@ export function useSupplierPageProducts(
     [rawProducts],
   );
 
+  const categories = supplier?.categories ?? [];
+
   const catalogSections = useMemo((): SupplierSection[] => {
     const list = products.filter((p) => !p.isFavorite);
-    return buildSectionsFromProducts(list);
-  }, [products]);
+    const sections = buildSectionsFromProducts(list);
+    return sortSectionsByCategoryOrder(sections, categories);
+  }, [products, categories]);
 
   const favoriteSections = useMemo((): SupplierSection[] => {
     const list = products.filter((p) => p.isFavorite);
-    return buildSectionsFromProducts(list);
-  }, [products]);
+    const sections = buildSectionsFromProducts(list);
+    return sortSectionsByCategoryOrder(sections, categories);
+  }, [products, categories]);
 
   return {
     supplier,
@@ -51,6 +56,7 @@ export function useSupplierPageProducts(
     catalogSections,
     favoriteSections,
     isLoading: supplierInfoQuery.isLoading || productsQuery.isLoading,
+    isFetching: productsQuery.isFetching,
     error: supplierInfoQuery.error ?? productsQuery.error,
   };
 }

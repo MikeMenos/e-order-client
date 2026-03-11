@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useTranslation } from "../../../../lib/i18n";
@@ -44,6 +44,7 @@ export default function SupplierPage() {
     catalogSections,
     favoriteSections,
     isLoading,
+    isFetching,
     error,
   } = useSupplierPageProducts(supplierUID, {
     mainTab,
@@ -52,6 +53,20 @@ export default function SupplierPage() {
 
   const currentTabSections =
     mainTab === "catalog" ? catalogSections : favoriteSections;
+  const prevMainTabRef = useRef(mainTab);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [mainTab]);
+
+  useEffect(() => {
+    if (!isLoading && !isFetching) {
+      prevMainTabRef.current = mainTab;
+    }
+  }, [mainTab, isLoading, isFetching]);
+
+  const isTabChanging =
+    prevMainTabRef.current !== mainTab && (isFetching || isLoading);
 
   const showBackToTop = useBackToTop();
   const isInputFocused = useInputFocusTracking();
@@ -95,11 +110,12 @@ export default function SupplierPage() {
               activeSectionId={activeSectionId}
               onTabClick={handleTabClick}
               backgroundClassName="bg-transparent"
+              hideTabs={isLoading || isTabChanging}
             />
           </div>
         </div>
 
-        {isLoading && <Loading spinnerOnly />}
+        {(isLoading || isTabChanging) && <Loading spinnerOnly />}
 
         {error && (
           <p className="text-base text-red-400">
@@ -107,29 +123,30 @@ export default function SupplierPage() {
           </p>
         )}
 
-        {currentTabSections.length === 0 && !isLoading && !error ? (
-          <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
-            {t("supplier_empty_products")}
-          </p>
-        ) : (
-          <motion.div
-            className="space-y-3 pb-16"
-            variants={listVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {currentTabSections.map((section) => (
-              <motion.div key={section.id} variants={listItemVariants}>
-                <SupplierProductSection
-                  section={section}
-                  stickyOffset={scrollOffset}
-                  supplierUID={supplierUID}
-                  sectionRef={(el) => setSectionRef(section.id, el)}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
+        {!(isLoading || isTabChanging) &&
+          (currentTabSections.length === 0 && !error ? (
+            <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
+              {t("supplier_empty_products")}
+            </p>
+          ) : (
+            <motion.div
+              className="space-y-3 pb-16"
+              variants={listVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {currentTabSections.map((section) => (
+                <motion.div key={section.id} variants={listItemVariants}>
+                  <SupplierProductSection
+                    section={section}
+                    stickyOffset={scrollOffset}
+                    supplierUID={supplierUID}
+                    sectionRef={(el) => setSectionRef(section.id, el)}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          ))}
       </div>
 
       <SupplierCheckoutBar

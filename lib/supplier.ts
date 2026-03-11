@@ -1,5 +1,24 @@
 import type { SupplierProduct, SupplierSection } from "@/lib/types/supplier";
-import type { SupplierProductApi } from "@/lib/types/supplier-api";
+import type {
+  SupplierProductApi,
+  SupplierDisplayCategory,
+} from "@/lib/types/supplier-api";
+
+/** Sort sections by category position from supplier. Categories not in the list go last. */
+export function sortSectionsByCategoryOrder(
+  sections: SupplierSection[],
+  categories: SupplierDisplayCategory[],
+): SupplierSection[] {
+  if (!categories?.length) return sections;
+  const positionByLabel = new Map(
+    categories.map((c) => [String(c.title).toUpperCase().trim(), c.position]),
+  );
+  return [...sections].sort((a, b) => {
+    const posA = positionByLabel.get(a.label) ?? Number.MAX_SAFE_INTEGER;
+    const posB = positionByLabel.get(b.label) ?? Number.MAX_SAFE_INTEGER;
+    return posA - posB;
+  });
+}
 
 export function buildSectionsFromProducts(
   products: SupplierProduct[],

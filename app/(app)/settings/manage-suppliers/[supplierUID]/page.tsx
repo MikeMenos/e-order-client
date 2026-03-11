@@ -196,18 +196,18 @@ export default function ManageSupplierMenuPage() {
               )
             }
           />
-
-          <TileCard
-            iconSrc="/assets/manage-products.png"
-            label={t("settings_edit_products")}
-            horizontal={true}
-            onClick={() =>
-              router.push(
-                `/settings/manage-suppliers/${selectedSupplier.supplierUID}/manage-products`,
-              )
-            }
-          />
-
+          {hasAccess("P6") && (
+            <TileCard
+              iconSrc="/assets/manage-products.png"
+              label={t("settings_edit_products")}
+              horizontal={true}
+              onClick={() =>
+                router.push(
+                  `/settings/manage-suppliers/${selectedSupplier.supplierUID}/manage-products`,
+                )
+              }
+            />
+          )}
           {hasAccess("P5") && (
             <TileCard
               iconSrc="/assets/order-history.png"
@@ -235,20 +235,15 @@ export default function ManageSupplierMenuPage() {
             supplierUID={selectedSupplier.supplierUID}
           />
 
-          <Button
-            type="button"
-            variant="outline"
-            className="h-full w-full self-stretch gap-2 rounded-2xl border-slate-200 py-6 text-lg font-semibold"
-            onClick={() => setHideConfirmOpen(true)}
-            disabled={
-              updateCollaborationMutation.isPending ||
-              basketDeleteMutation.isPending
-            }
-            aria-label={t("settings_hide_supplier")}
-          >
-            <EyeOff className="h-5 w-5 shrink-0" />
-            {t("settings_hide_supplier")}
-          </Button>
+          {hasAccess("P2") && (
+            <TileCard
+              iconSrc="/assets/hide-supplier.png"
+              label={t("settings_hide_supplier")}
+              iconColor="text-blue-600"
+              horizontal={true}
+              onClick={() => setHideConfirmOpen(true)}
+            />
+          )}
         </div>
 
         <StoreSelectDialog
