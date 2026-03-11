@@ -90,7 +90,7 @@ export default function SupplierPage() {
       <div className="flex flex-col">
         <div
           ref={stickyBarMeasurement.ref}
-          className="sticky z-20 mt-2 flex shrink-0 flex-col w-full rounded-lg app-bg-brand-gradient shadow-sm backdrop-blur"
+          className="sticky z-20 flex shrink-0 flex-col w-full rounded-lg bg-white shadow-sm backdrop-blur"
           style={{ top: headerHeight }}
         >
           <div className="w-full rounded-t-lg bg-transparent">
@@ -132,7 +132,7 @@ export default function SupplierPage() {
             <motion.div
               className="space-y-3"
               style={{
-                paddingBottom: `max(4rem, 20rem)`,
+                paddingBottom: `max(4rem, 22rem)`,
               }}
               variants={listVariants}
               initial="hidden"
