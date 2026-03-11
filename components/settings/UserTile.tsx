@@ -24,7 +24,7 @@ export function UserTile({ user, onView, onEdit, onToggleActive }: Props) {
   const username = user.username;
   return (
     <div
-      className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:shadow-md"
+      className="flex items-center justify-between gap-3 rounded-2xl border-2 border-brand-500 bg-white p-4 shadow-sm transition hover:shadow-md"
       aria-label={`${fullName}, ${isActive ? t("settings_user_active") : t("settings_user_inactive")}`}
     >
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -41,11 +41,10 @@ export function UserTile({ user, onView, onEdit, onToggleActive }: Props) {
         )}
         <div className="mt-1 flex items-center gap-2">
           <span
-            className={`inline-flex w-fit rounded-full px-2 py-0.5 text-xs font-medium ${
-              isActive
+            className={`inline-flex w-fit rounded-full px-2 py-0.5 text-xs font-medium ${isActive
                 ? "bg-green-100 text-green-800"
                 : "bg-slate-200 text-slate-600"
-            }`}
+              }`}
           >
             {isActive ? t("settings_user_active") : t("settings_user_inactive")}
           </span>

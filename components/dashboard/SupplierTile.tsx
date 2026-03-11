@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "../../lib/i18n";
@@ -9,7 +8,9 @@ import {
   Calendar,
   CheckCircle2,
   CircleAlert,
+  FileText,
   MoreHorizontal,
+  ShoppingBasket,
 } from "lucide-react";
 import { SuppliersListItem } from "@/lib/types/dashboard";
 import { Button } from "../ui/button";
@@ -45,9 +46,9 @@ type Props = {
 };
 
 const tileClassNameDefault =
-  "flex flex-col rounded-lg bg-brand-100 shadow-sm cursor-pointer transition hover:border-brand-400/70 hover:shadow-md";
+  "flex flex-col rounded-lg bg-card/90 shadow-sm cursor-pointer transition hover:border-brand-400/70 hover:shadow-md";
 const tileClassNameSettings =
-  "flex h-full w-full flex-col items-center justify-center gap-3 rounded-lg bg-brand-100 p-6 shadow-sm transition hover:shadow-md cursor-pointer";
+  "flex h-full w-full flex-col items-center justify-center gap-3 rounded-lg bg-card/90 p-6 shadow-sm transition hover:shadow-md cursor-pointer";
 
 export function SupplierTile({
   supplier,
@@ -106,22 +107,22 @@ export function SupplierTile({
     ? draftPillStyle
     : supplier.basketIconColor
       ? {
-          color: supplier.basketIconColor,
-          backgroundColor:
-            supplier.basketIconColor.startsWith("#") &&
+        color: supplier.basketIconColor,
+        backgroundColor:
+          supplier.basketIconColor.startsWith("#") &&
             supplier.basketIconColor.length === 7
-              ? `${supplier.basketIconColor}1A`
-              : supplier.basketIconColor,
-        }
+            ? `${supplier.basketIconColor}1A`
+            : supplier.basketIconColor,
+      }
       : undefined;
   const iconStyle = displayAsDraft
     ? draftIconStyle
     : supplier.basketIconColor
       ? {
-          color: "white",
-          backgroundColor: supplier.basketIconColor,
-          borderRadius: "50%",
-        }
+        color: "white",
+        backgroundColor: supplier.basketIconColor,
+        borderRadius: "50%",
+      }
       : undefined;
   const isSettingsStyle = tileStyle === "settings";
 
@@ -185,16 +186,22 @@ export function SupplierTile({
       <div className="mt-2 flex items-center justify-center gap-1" aria-hidden>
         {showOrangeDot && (
           <span
-            className="h-2 w-2 rounded-full bg-orange-500 animate-pulse-strong"
+            className="relative inline-flex h-4 w-4 items-center justify-center"
             title={t("suppliers_baskets")}
-          />
+          >
+            <FileText className="h-4 w-4 text-orange-600" aria-hidden />
+            <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-orange-500 animate-pulse-strong" />
+          </span>
         )}
         {Array.from({ length: greenDotCount }, (_, i) => (
           <span
             key={i}
-            className="h-2 w-2 rounded-full bg-green-500"
+            className="relative inline-flex h-4 w-4 items-center justify-center"
             title={t("suppliers_orders")}
-          />
+          >
+            <ShoppingBasket className="h-4 w-4 text-green-600" aria-hidden />
+            <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-green-500" />
+          </span>
         ))}
       </div>
       <p className="text-base font-semibold text-brand-800 line-clamp-2">
@@ -211,9 +218,8 @@ export function SupplierTile({
       {/* Top: logo + title + delivery (or subTitle on all-suppliers) + dots (all-suppliers / orders-of-the-day) */}
       {titleHref && isOrdersOfDayPage ? (
         <div
-          className={`flex items-center gap-3 px-4 py-2 pb-2 hover:bg-slate-50/50 transition-colors ${
-            showDotArea ? "md:items-center md:justify-between" : ""
-          }`}
+          className={`flex items-center gap-3 px-4 py-2 pb-2 hover:bg-slate-50/50 transition-colors ${showDotArea ? "md:items-center md:justify-between" : ""
+            }`}
         >
           <Link
             href={titleHref}
@@ -273,25 +279,30 @@ export function SupplierTile({
             <div className="flex items-center gap-1 shrink-0 ml-2" aria-hidden>
               {showOrangeDot && (
                 <span
-                  className="h-2 w-2 rounded-full bg-orange-500 animate-pulse-strong"
+                  className="relative inline-flex h-4 w-4 items-center justify-center"
                   title={t("suppliers_baskets")}
-                />
+                >
+                  <FileText className="h-4 w-4 text-orange-600" aria-hidden />
+                  <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-orange-500 animate-pulse-strong" />
+                </span>
               )}
               {Array.from({ length: greenDotCount }, (_, i) => (
                 <span
                   key={i}
-                  className="h-2 w-2 rounded-full bg-green-500"
+                  className="relative inline-flex h-4 w-4 items-center justify-center"
                   title={t("suppliers_orders")}
-                />
+                >
+                  <ShoppingBasket className="h-4 w-4 text-green-600" aria-hidden />
+                  <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-green-500" />
+                </span>
               ))}
             </div>
           )}
         </div>
       ) : (
         <div
-          className={`flex items-center gap-3 px-4 py-2 pb-2 ${
-            showDotArea ? "md:items-center md:justify-between" : ""
-          }`}
+          className={`flex items-center gap-3 px-4 py-2 pb-2 ${showDotArea ? "md:items-center md:justify-between" : ""
+            }`}
         >
           <div className="flex items-start gap-3 flex-1 min-w-0">
             {supplier.logo && (
@@ -347,16 +358,22 @@ export function SupplierTile({
             <div className="flex items-center gap-1 shrink-0 ml-2" aria-hidden>
               {showOrangeDot && (
                 <span
-                  className="h-2 w-2 rounded-full bg-orange-500 animate-pulse-strong"
+                  className="relative inline-flex h-4 w-4 items-center justify-center"
                   title={t("suppliers_baskets")}
-                />
+                >
+                  <FileText className="h-4 w-4 text-orange-600" aria-hidden />
+                  <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-orange-500 animate-pulse-strong" />
+                </span>
               )}
               {Array.from({ length: greenDotCount }, (_, i) => (
                 <span
                   key={i}
-                  className="h-2 w-2 rounded-full bg-green-500"
+                  className="relative inline-flex h-4 w-4 items-center justify-center"
                   title={t("suppliers_orders")}
-                />
+                >
+                  <ShoppingBasket className="h-4 w-4 text-green-600" aria-hidden />
+                  <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-green-500" />
+                </span>
               ))}
             </div>
           )}

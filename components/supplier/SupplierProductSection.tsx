@@ -25,9 +25,9 @@ export function SupplierProductSection({
       ref={sectionRef}
       data-section-id={section.id}
       style={{ scrollMarginTop: stickyOffset }}
-      className="space-y-1 rounded-xl border border-slate-200/70 bg-brand-100 backdrop-blur-sm p-2 mt-1"
+      className="space-y-1 rounded-xl border border-slate-200/70 app-bg-brand-gradient backdrop-blur-sm p-2 mt-1"
     >
-      <div className="border-slate-200 pb-0 pl-3 text-base font-semibold uppercase tracking-[0.18em] text-brand-800">
+      <div className="border-slate-200 pb-0 pl-3 text-base font-semibold uppercase tracking-[0.18em] text-brand-700">
         {section.label}
       </div>
 

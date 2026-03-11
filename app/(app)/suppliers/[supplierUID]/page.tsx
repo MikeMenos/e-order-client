@@ -75,10 +75,10 @@ export default function SupplierPage() {
       <div className="flex flex-col">
         <div
           ref={stickyBarMeasurement.ref}
-          className="sticky z-20 mt-2 flex shrink-0 flex-col w-full rounded-lg bg-app-card/95 shadow-sm backdrop-blur supports-backdrop-filter:bg-app-card/90"
+          className="sticky z-20 mt-2 flex shrink-0 flex-col w-full rounded-lg app-bg-brand-gradient shadow-sm backdrop-blur"
           style={{ top: headerHeight }}
         >
-          <div className="w-full rounded-t-lg bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90">
+          <div className="w-full rounded-t-lg bg-transparent">
             <SupplierPageBar
               supplier={supplier}
               selectedDate={selectedDate}
@@ -86,7 +86,7 @@ export default function SupplierPage() {
               onMainTabChange={setMainTab}
             />
           </div>
-          <div className="mx-auto w-full max-w-4xl rounded-b-lg bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90">
+          <div className="mx-auto w-full max-w-4xl rounded-b-lg bg-transparent">
             <SupplierSearchAndTabs
               searchPlaceholder={t("products_search_placeholder")}
               searchQuery={searchQuery}
@@ -94,6 +94,7 @@ export default function SupplierPage() {
               sections={currentTabSections}
               activeSectionId={activeSectionId}
               onTabClick={handleTabClick}
+              backgroundClassName="bg-transparent"
             />
           </div>
         </div>

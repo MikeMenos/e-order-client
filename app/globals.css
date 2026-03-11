@@ -15,69 +15,6 @@
   --color-brand-800: #004C78;
   --color-brand-900: #00395A;
 
-  /* --color-brand-50: #fff3ed;
-  --color-brand-100: #ffe7dc;
-  --color-brand-200: #ffd1bf;
-  --color-brand-400: #ff9a70;
-  --color-brand-500: #F47A45;
-  --color-brand-600: #E76635;
-  --color-brand-700: #C9562B; */
-
-  /* --color-brand-50: #fdf4f1;
-  --color-brand-100: #f9e3dc;
-  --color-brand-200: #f2c6b8;
-  --color-brand-300: #eaa08a;
-  --color-brand-400: #df7a5e;
-  --color-brand-500: #E7643C;
-  --color-brand-600: #cf5532;
-  --color-brand-700: #ad4529;
-  --color-brand-800: #8c3721;
-  --color-brand-900: #6d2919; */
-
-  /* --color-brand-50: #fff4f1;
-  --color-brand-100: #ffe5de;
-  --color-brand-200: #ffc9b8;
-  --color-brand-300: #ffab8f;
-  --color-brand-400: #ff8a66;
-  --color-brand-500: #ff6b3d;
-  --color-brand-600: #e85a2f;
-  --color-brand-700: #c94824;
-  --color-brand-800: #a63a1d;
-  --color-brand-900: #7f2b15; */
-
-  /* --color-brand-50:  #f5f3ff;
---color-brand-100: #ede9fe;
---color-brand-200: #ddd6fe;
---color-brand-300: #c4b5fd;
---color-brand-400: #a78bfa;
---color-brand-500: #7c3aed; 
---color-brand-600: #6d28d9;
---color-brand-700: #5b21b6;
---color-brand-800: #4c1d95;
---color-brand-900: #3b1674; */
-
-  /* --color-brand-50: #eff6ff;
-  --color-brand-100: #dbeafe;
-  --color-brand-200: #bfdbfe;
-  --color-brand-300: #93c5fd;
-  --color-brand-400: #60a5fa;
-  --color-brand-500: #3b82f6;
-  --color-brand-600: #2563eb;
-  --color-brand-700: #1d4ed8;
-  --color-brand-800: #1e40af;
-  --color-brand-900: #1e3a8a; */
-
-  /* --color-brand-50: #f1faf6;
-  --color-brand-100: #dff3ea;
-  --color-brand-200: #bfe6d5;
-  --color-brand-300: #98d6bd;
-  --color-brand-400: #6cc8a4;
-  --color-brand-500: #44BC87;
-  --color-brand-600: #3aa978;
-  --color-brand-700: #2f8f64;
-  --color-brand-800: #247353;
-  --color-brand-900: #1a5942; */
-
   /* Redesign: main app background and cards */
   --color-app-bg: #ffffff;
   --color-app-bg-solid: #ffffff;
@@ -109,12 +46,10 @@
   --color-app-bg: #ffffff;
   --color-app-bg-solid: #ffffff;
   --color-app-card: #ffffff;
---gradient-app-card-bg: linear-gradient(
-  180deg,
-  #EAF7FC 0%,
-  #9DD9F2 50%,
-  #006FB0 120%
-);
+  --gradient-app-card-bg: linear-gradient(180deg,
+      #EAF7FC 0%,
+      #9DD9F2 50%,
+      #006FB0 120%);
   --foreground: #111827;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -297,13 +232,23 @@ body {
 
   }
 
-  /* Background image only on dashboard, settings, and settings/manage-suppliers (set by AppBackground) */
-  body.app-bg-image {
+  body.app-bg-image,
+  .app-bg-image {
+    background-color: #f7f9fc;
     background-image: url("/assets/background.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+  }
+
+  body.app-bg-brand-gradient,
+  .app-bg-brand-gradient {
+    background-color: #e4f5fb;
+    background-image:
+      radial-gradient(1200px circle at 10% 12%, rgba(90, 170, 255, 0.10), transparent 62%),
+      radial-gradient(1000px circle at 90% 18%, rgba(120, 210, 255, 0.10), transparent 58%),
+      linear-gradient(180deg, #f2fbff 0%, #e4f5fb 100%);
   }
 }
 
