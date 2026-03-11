@@ -52,7 +52,7 @@ export function AppHeaderProvider({ children }: { children: React.ReactNode }) {
             ref={header.ref}
             className={cn(
               "sticky top-0 z-30 -mt-5 border-b-0 shadow-sm",
-              showHeaderImage ? "app-bg-image" : "bg-white/90",
+              showHeaderImage ? "app-bg-image" : "bg-white",
             )}
           >
             <Header />

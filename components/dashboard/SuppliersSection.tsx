@@ -84,9 +84,9 @@ export function SuppliersSection({
     pathname === "/settings/manage-suppliers"
       ? "app-bg-image"
       : pathname === "/orders-of-the-day" ||
-          pathname === "/all-suppliers" ||
-          pathname === "/settings/partner-suppliers"
-        ? "bg-brand-100/90"
+        pathname === "/all-suppliers" ||
+        pathname === "/settings/partner-suppliers"
+        ? "bg-brand-100"
         : "bg-white";
 
   const useAllSuppliersStyle =
@@ -239,7 +239,7 @@ export function SuppliersSection({
       )}
 
       {filteredSuppliers.length === 0 && !isLoading ? (
-        <p className="text-base text-slate-400 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
+        <p className="text-base text-slate-400 bg-white backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
           {t("suppliers_empty")}
         </p>
       ) : (
