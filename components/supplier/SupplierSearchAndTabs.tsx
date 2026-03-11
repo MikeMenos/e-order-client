@@ -13,6 +13,8 @@ type Props = {
   sections: SupplierSection[];
   activeSectionId: string | null;
   onTabClick: (sectionId: string) => void;
+  /** When true, hide the category tabs (e.g. during loading) */
+  hideTabs?: boolean;
 };
 
 export function SupplierSearchAndTabs({
@@ -22,6 +24,7 @@ export function SupplierSearchAndTabs({
   sections,
   activeSectionId,
   onTabClick,
+  hideTabs = false,
 }: Props) {
   const value = activeSectionId ?? sections[0]?.id ?? "";
 
@@ -35,7 +38,7 @@ export function SupplierSearchAndTabs({
           className="h-9 w-full border border-slate-200 bg-white px-3 py-2 rounded-lg focus:outline-none"
         />
       </div>
-      {sections.length > 1 && (
+      {!hideTabs && sections.length > 1 && (
         <div className="-mx-4 flex flex-col gap-0 rounded-2xl bg-app-card/95 overflow-hidden">
           <Tabs value={value} onValueChange={onTabClick}>
             <motion.div

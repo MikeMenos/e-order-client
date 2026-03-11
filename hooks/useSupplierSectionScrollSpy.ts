@@ -28,9 +28,15 @@ export function useSupplierSectionScrollSpy({
   useEffect(() => {
     if (filteredSections.length === 0) return;
     const prev = prevFilteredSectionsRef.current;
+    const sectionIdsChanged =
+      prev.length !== filteredSections.length ||
+      prev.some((s, i) => filteredSections[i]?.id !== s.id);
     prevFilteredSectionsRef.current = filteredSections;
-    // Only lock after initial load (prev had content) to avoid blocking first paint
-    if (prev.length > 0) {
+    // When sections change (e.g. category added/removed), reset to first so active tab stays correct
+    if (sectionIdsChanged && prev.length > 0) {
+      setActiveSectionId(filteredSections[0].id);
+      lockActiveUntilRef.current = Date.now() + 400;
+    } else if (prev.length > 0) {
       lockActiveUntilRef.current = Date.now() + 400;
     }
   }, [filteredSections]);
@@ -71,66 +77,45 @@ export function useSupplierSectionScrollSpy({
     }
   }, [filteredSections, activeSectionId]);
 
+  /** Use scroll listener to check ALL sections on each scroll. IntersectionObserver
+   * only fires for entries that changed, giving partial data and clanky behavior. */
   useEffect(() => {
     if (filteredSections.length === 0) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (Date.now() < lockActiveUntilRef.current) return;
+    let rafId: number;
 
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .map((e) => {
-            const id = e.target.getAttribute("data-section-id");
-            return {
-              id,
-              top: e.boundingClientRect.top,
-              bottom: e.boundingClientRect.bottom,
-              ratio: e.intersectionRatio,
-            };
-          })
-          .filter(
-            (
-              x,
-            ): x is {
-              id: string;
-              top: number;
-              bottom: number;
-              ratio: number;
-            } => !!x.id,
-          );
+    const updateActiveFromScroll = () => {
+      if (Date.now() < lockActiveUntilRef.current) return;
 
-        if (visible.length === 0) return;
+      const lineY = scrollOffset;
+      let activeId: string | null = filteredSections[0]?.id ?? null;
 
-        const lineY = scrollOffset;
-        const started = visible.filter((v) => v.top <= lineY + 1);
-
-        let activeId: string;
-        if (started.length > 0) {
-          activeId = started.reduce((best, curr) =>
-            curr.top > best.top ? curr : best,
-          ).id;
-        } else {
-          activeId = visible.reduce((best, curr) =>
-            curr.top < best.top ? curr : best,
-          ).id;
+      for (const section of filteredSections) {
+        const el = sectionRefs.current[section.id];
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        // Active = last section whose top has scrolled past the threshold line
+        if (top <= lineY + 1) {
+          activeId = section.id;
         }
+      }
 
-        setActiveSectionId(activeId);
-      },
-      {
-        root: null,
-        rootMargin: `-${scrollOffset}px 0px -60% 0px`,
-        threshold: [0, 0.01, 0.1, 0.25, 0.5, 1],
-      },
-    );
+      setActiveSectionId((prev) => (prev !== activeId ? activeId : prev));
+    };
 
-    filteredSections.forEach((section) => {
-      const el = sectionRefs.current[section.id];
-      if (el) observer.observe(el);
-    });
+    const handleScroll = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(updateActiveFromScroll);
+    };
 
-    return () => observer.disconnect();
+    // Initial sync
+    updateActiveFromScroll();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, [filteredSections, scrollOffset]);
 
   const setSectionRef = (sectionId: string, el: HTMLDivElement | null) => {
