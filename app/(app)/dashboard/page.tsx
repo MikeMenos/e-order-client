@@ -39,8 +39,10 @@ export default function DashboardPage() {
   const todayOrdersCount = useMemo(
     () =>
       suppliers.filter(
-        (s: { isInPrefDaySchedule?: boolean }) =>
-          s.isInPrefDaySchedule === true,
+        (s: {
+          isInPrefDaySchedule?: boolean;
+          basketIconStatus?: number | null;
+        }) => s.isInPrefDaySchedule === true && s.basketIconStatus !== 200,
       ).length,
     [suppliers],
   );
@@ -54,7 +56,7 @@ export default function DashboardPage() {
           height={150}
           priority
         />
-        <NotificationsUnreadBanner />
+        {/* <NotificationsUnreadBanner /> */}
       </div>
       <motion.div
         className="mx-auto grid grid-cols-2 auto-rows-fr gap-4 max-w-xl"
