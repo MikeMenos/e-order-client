@@ -19,8 +19,10 @@ import { Button } from "@/components/ui/button";
 import { HideSupplierConfirmDialog } from "@/components/settings/HideSupplierConfirmDialog";
 import { useBasketDelete } from "@/hooks/useBasket";
 import { usePrefCollaborationUpdate } from "@/hooks/usePrefCollaborationUpdate";
+import ContactSupplier from "@/components/settings/contact-supplier";
 
 export default function ManageSupplierMenuPage() {
+  const [contactOpen, setContactOpen] = useState(false);
   const { t } = useTranslation();
   const { hasAccess } = useUserPermissions();
   const router = useRouter();
@@ -71,8 +73,8 @@ export default function ManageSupplierMenuPage() {
     (): SuppliersListItem | null =>
       supplierUID && suppliers?.length
         ? (suppliers.find(
-            (s: SuppliersListItem) => s.supplierUID === supplierUID,
-          ) ?? null)
+          (s: SuppliersListItem) => s.supplierUID === supplierUID,
+        ) ?? null)
         : null,
     [supplierUID, suppliers],
   );
@@ -220,6 +222,19 @@ export default function ManageSupplierMenuPage() {
             />
           )}
 
+          <TileCard
+            iconSrc="/assets/contact.png"
+            label={t("settings_contact_supplier")}
+            horizontal={true}
+            onClick={() => setContactOpen(true)}
+          />
+
+          <ContactSupplier
+            open={contactOpen}
+            onClose={() => setContactOpen(false)}
+            supplierUID={selectedSupplier.supplierUID}
+          />
+
           {hasAccess("P2") && (
             <TileCard
               iconSrc="/assets/hide-supplier.png"
@@ -247,6 +262,7 @@ export default function ManageSupplierMenuPage() {
             basketDeleteMutation.isPending
           }
         />
+
       </div>
     </main>
   );

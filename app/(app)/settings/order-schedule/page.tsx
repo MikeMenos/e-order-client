@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import * as React from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -37,12 +36,12 @@ function SupplierScheduleCard({
     <Collapsible
       open={open}
       onOpenChange={setOpen}
-      className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden"
+      className="rounded-xl border-2 border-brand-500 bg-app-card shadow-sm overflow-hidden"
     >
       <CollapsibleTrigger asChild>
-        <div className="px-4 py-2 space-y-1 cursor-pointer transition hover:bg-slate-100/60">
+        <div className="px-4 py-2 space-y-1 cursor-pointer transition hover:bg-slate-100">
           <div className="flex items-center justify-between gap-2">
-            <p className="font-medium text-slate-900">
+            <p className="font-bold text-brand-700">
               {schedule.supplierTitle ?? supplierUID}
             </p>
 
@@ -86,7 +85,7 @@ function SupplierScheduleCard({
                   className="flex items-center justify-between gap-3 px-1 py-3"
                 >
                   <div className="min-w-0 flex-1">
-                    <span className="font-medium text-slate-900">
+                    <span className="font-medium text-brand-700">
                       {dayLabel}
                     </span>
                     {hasTimeOrAbbrev && (
