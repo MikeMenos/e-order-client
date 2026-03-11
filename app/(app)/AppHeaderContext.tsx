@@ -14,12 +14,13 @@ const AppHeaderContext = createContext<AppHeaderContextValue>({
   headerHeight: FALLBACK_HEADER_HEIGHT,
 });
 
-function shouldShowBackgroundImage(pathname: string): boolean {
-  if (pathname === "/dashboard" || pathname === "/settings") return true;
-  if (pathname === "/settings/manage-suppliers") return true;
-  if (pathname.startsWith("/settings/manage-suppliers/")) return true;
-  if (pathname === "/settings/manage-users") return true;
-  return false;
+function shouldShowHeaderImage(pathname: string): boolean {
+  return (
+    pathname === "/dashboard" ||
+    pathname === "/settings" ||
+    pathname === "/settings/manage-suppliers" ||
+    pathname?.startsWith("/settings/manage-suppliers/")
+  );
 }
 
 export function useAppHeaderHeight() {
@@ -31,8 +32,7 @@ export function AppHeaderProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const header = useMeasuredHeight<HTMLDivElement>(pathname);
   const isDashboard = pathname === "/dashboard";
-  const showImage = shouldShowBackgroundImage(pathname ?? "");
-  const showHeaderImage = showImage && pathname !== "/settings/manage-users";
+  const showHeaderImage = shouldShowHeaderImage(pathname ?? "");
 
   const value = useMemo(
     () => ({

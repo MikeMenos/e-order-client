@@ -4,11 +4,12 @@ import { useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 function shouldShowBackgroundImage(pathname: string): boolean {
-  if (pathname === "/dashboard" || pathname === "/settings") return true;
-  if (pathname === "/settings/manage-suppliers") return true;
-  if (pathname.startsWith("/settings/manage-suppliers/")) return true;
-  if (pathname === "/settings/manage-users") return true;
-  return false;
+  return (
+    pathname === "/dashboard" ||
+    pathname === "/settings" ||
+    pathname === "/settings/manage-suppliers" ||
+    pathname?.startsWith("/settings/manage-suppliers/")
+  );
 }
 
 export function AppBackground() {
@@ -17,7 +18,10 @@ export function AppBackground() {
   const fromParam = searchParams?.get("from");
 
   useEffect(() => {
-    const noScroll = pathname === "/dashboard" || pathname === "/settings";
+    const noScroll =
+      pathname === "/dashboard" ||
+      pathname === "/settings" ||
+      pathname?.startsWith("/settings/manage-suppliers/");
     if (noScroll) {
       document.documentElement.classList.add("overflow-hidden");
       document.body.classList.add("overflow-hidden");
@@ -26,21 +30,8 @@ export function AppBackground() {
       document.body.classList.remove("overflow-hidden");
     }
 
-    const showBrandBackground =
-      (!!pathname?.startsWith("/suppliers/") &&
-        (fromParam === "settings" ||
-          (fromParam === "orders-of-the-day" &&
-            pathname?.endsWith("/checkout")))) ||
-      pathname === "/all-suppliers" ||
-      pathname === "/settings/account" ||
-      pathname === "/settings/order-schedule" ||
-      pathname === "/settings/partner-suppliers" ||
-      pathname === "/notifications" ||
-      pathname === "/settings/manage-users" ||
-      pathname === "/orders-of-the-day" ||
-      pathname?.startsWith("/orders-of-the-day/");
-    const showImage =
-      shouldShowBackgroundImage(pathname ?? "") && !showBrandBackground;
+    const showImage = shouldShowBackgroundImage(pathname ?? "");
+    const showBrandBackground = !showImage;
 
     if (showImage) {
       document.body.classList.add("app-bg-image");

@@ -137,6 +137,18 @@ export function useSupplierSectionScrollSpy({
     };
     window.addEventListener("scrollend", onScrollEnd, { once: true });
 
+    const idx = filteredSections.findIndex((s) => s.id === id);
+    const isLastSection = idx >= 0 && idx === filteredSections.length - 1;
+
+    if (isLastSection && idx > 0) {
+      const scrollY = window.scrollY ?? document.documentElement.scrollTop;
+      const lastRect = el.getBoundingClientRect();
+      const lastTopInDoc = lastRect.top + scrollY;
+      const targetScroll = lastTopInDoc - scrollOffset;
+      window.scrollTo({ top: Math.max(0, targetScroll), behavior: "smooth" });
+      return;
+    }
+
     el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 

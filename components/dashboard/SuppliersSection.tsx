@@ -84,8 +84,8 @@ export function SuppliersSection({
     pathname === "/settings/manage-suppliers"
       ? "app-bg-image"
       : pathname === "/orders-of-the-day" ||
-        pathname === "/all-suppliers" ||
-        pathname === "/settings/partner-suppliers"
+          pathname === "/all-suppliers" ||
+          pathname === "/settings/partner-suppliers"
         ? "bg-brand-100"
         : "bg-white";
 
