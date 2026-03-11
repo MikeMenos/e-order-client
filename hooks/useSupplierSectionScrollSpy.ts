@@ -21,8 +21,19 @@ export function useSupplierSectionScrollSpy({
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const prevMainTabRef = useRef<string | null>(null);
+  const prevFilteredSectionsRef = useRef<SupplierSection[]>([]);
   const hasRestoredSectionRef = useRef(false);
   const lockActiveUntilRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (filteredSections.length === 0) return;
+    const prev = prevFilteredSectionsRef.current;
+    prevFilteredSectionsRef.current = filteredSections;
+    // Only lock after initial load (prev had content) to avoid blocking first paint
+    if (prev.length > 0) {
+      lockActiveUntilRef.current = Date.now() + 400;
+    }
+  }, [filteredSections]);
 
   useEffect(() => {
     if (filteredSections.length === 0) return;
