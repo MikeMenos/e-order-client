@@ -252,7 +252,7 @@ export function SuppliersSection({
             }
             onSelect={(date) => onRefDateSelect?.(date)}
           />
-          {calendarDateView && calendarDayNameShort && (
+          {calendarDateView && calendarDayNameShort && !isLoading && (
             <div className="flex items-center gap-2 my-1 justify-between">
               <p className="text-center text-lg text-brand-500 font-medium">
                 {calendarDayNameShort}
