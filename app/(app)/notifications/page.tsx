@@ -39,7 +39,7 @@ export default function NotificationsPage() {
   });
 
   return (
-    <main className="space-y-4 text-slate-900 px-3 pb-12">
+    <main className="space-y-4 text-slate-900 px-2 pb-12">
       <div
         className="sticky z-20 -mx-3 flex shrink-0 flex-col gap-2 bg-app-bg-solid px-3 pb-2 pt-2 shadow-sm"
         style={{ top: headerHeight }}
@@ -77,9 +77,12 @@ export default function NotificationsPage() {
       {!isLoading && !isError && notifications.length === 0 && (
         <EmptyState>{t("notifications_empty")}</EmptyState>
       )}
-      {!isLoading && !isError && notifications.length > 0 && filteredNotifications.length === 0 && (
-        <EmptyState>{t("notifications_no_matches")}</EmptyState>
-      )}
+      {!isLoading &&
+        !isError &&
+        notifications.length > 0 &&
+        filteredNotifications.length === 0 && (
+          <EmptyState>{t("notifications_no_matches")}</EmptyState>
+        )}
       {!isLoading && !isError && filteredNotifications.length > 0 && (
         <div className="space-y-3">
           {filteredNotifications.map((item) => (

@@ -86,7 +86,7 @@ export default function SupplierPage() {
     });
 
   return (
-    <main className="pb-16 text-slate-900 px-3">
+    <main className="pb-16 text-slate-900 px-2">
       <div className="flex flex-col">
         <div
           ref={stickyBarMeasurement.ref}

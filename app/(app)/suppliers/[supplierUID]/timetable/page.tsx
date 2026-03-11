@@ -25,7 +25,7 @@ export default function TimetablePage() {
   const dailyProgram = supplierSchedule?.dailyProgram ?? [];
 
   return (
-    <main className="space-y-4 text-slate-900 px-3 pb-12">
+    <main className="space-y-4 text-slate-900 px-2 pb-12">
       <header className="space-y-1 mb-1">
         <h1 className="text-xl font-bold text-slate-900 mt-2 text-center my-2">
           {t("settings_order_schedule")}

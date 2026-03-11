@@ -79,7 +79,7 @@ export default function OrdersOfTheDayPage() {
     calendarRefDate != null ? suppliersInPrefDaySchedule : suppliersByTab;
 
   return (
-    <main className="text-slate-900 px-3">
+    <main className="text-slate-900 px-2">
       <SuppliersSection
         suppliers={suppliersToShow}
         isLoading={isLoading}

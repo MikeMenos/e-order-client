@@ -82,7 +82,7 @@ export default function SupplierInfoPage() {
   }, [isEditingTitle]);
 
   return (
-    <main className=" text-slate-900 px-3">
+    <main className=" text-slate-900 px-2">
       <div className="mx-auto max-w-2xl">
         <div className="my-3 flex items-center justify-between gap-3 min-w-0">
           <h1 className="text-xl font-bold text-slate-900 mt-2 min-w-0">

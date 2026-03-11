@@ -36,11 +36,17 @@ export default function ManageProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebouncedValue(searchQuery, 500);
 
-  const { supplier, catalogSections, favoriteSections, isLoading, isFetching, error } =
-    useSupplierPageProducts(supplierUID, {
-      mainTab,
-      search: debouncedSearch,
-    });
+  const {
+    supplier,
+    catalogSections,
+    favoriteSections,
+    isLoading,
+    isFetching,
+    error,
+  } = useSupplierPageProducts(supplierUID, {
+    mainTab,
+    search: debouncedSearch,
+  });
 
   const currentTabSections =
     mainTab === "catalog" ? catalogSections : favoriteSections;
@@ -76,7 +82,7 @@ export default function ManageProductsPage() {
     });
 
   return (
-    <main className="pb-16 text-slate-900 px-3">
+    <main className="pb-16 text-slate-900 px-2">
       <h1 className="text-center text-xl font-bold text-slate-900 mt-2 mb-1">
         {t("settings_edit_products")}
       </h1>
@@ -122,24 +128,24 @@ export default function ManageProductsPage() {
               {t("supplier_empty_products")}
             </p>
           ) : (
-          <motion.div
-            className="space-y-3 pb-16"
-            variants={listVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {currentTabSections.map((section) => (
-              <motion.div key={section.id} variants={listItemVariants}>
-                <SupplierProductSection
-                  section={section}
-                  stickyOffset={scrollOffset}
-                  supplierUID={supplierUID}
-                  sectionRef={(el) => setSectionRef(section.id, el)}
-                  compact
-                />
-              </motion.div>
-            ))}
-          </motion.div>
+            <motion.div
+              className="space-y-3 pb-16"
+              variants={listVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {currentTabSections.map((section) => (
+                <motion.div key={section.id} variants={listItemVariants}>
+                  <SupplierProductSection
+                    section={section}
+                    stickyOffset={scrollOffset}
+                    supplierUID={supplierUID}
+                    sectionRef={(el) => setSectionRef(section.id, el)}
+                    compact
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
           ))}
       </div>
 
