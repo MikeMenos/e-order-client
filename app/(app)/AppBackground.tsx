@@ -17,6 +17,19 @@ export function AppBackground() {
   const fromParam = searchParams?.get("from");
 
   useEffect(() => {
+    const noScroll =
+      pathname === "/dashboard" ||
+      pathname === "/settings" ||
+      pathname === "/settings/manage-suppliers" ||
+      pathname?.startsWith("/settings/manage-suppliers/");
+    if (noScroll) {
+      document.documentElement.classList.add("overflow-hidden");
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.documentElement.classList.remove("overflow-hidden");
+      document.body.classList.remove("overflow-hidden");
+    }
+
     const showBrandBackground =
       (!!pathname?.startsWith("/suppliers/") &&
         (fromParam === "settings" ||
@@ -46,6 +59,8 @@ export function AppBackground() {
     }
 
     return () => {
+      document.documentElement.classList.remove("overflow-hidden");
+      document.body.classList.remove("overflow-hidden");
       document.body.classList.remove("app-bg-image");
       document.body.classList.remove("app-bg-brand-gradient");
     };
