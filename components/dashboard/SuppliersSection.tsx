@@ -84,8 +84,8 @@ export function SuppliersSection({
     pathname === "/settings/manage-suppliers"
       ? "app-bg-image"
       : pathname === "/orders-of-the-day" ||
-        pathname === "/all-suppliers" ||
-        pathname === "/settings/partner-suppliers"
+          pathname === "/all-suppliers" ||
+          pathname === "/settings/partner-suppliers"
         ? "bg-brand-100/90"
         : "bg-white";
 
@@ -157,7 +157,7 @@ export function SuppliersSection({
     <section>
       <div
         className={cn(
-          "sticky z-20 -mx-3 w-[calc(100%+1.5rem)] flex shrink-0 flex-col gap-2 mb-0",
+          "sticky z-20 -mx-3 w-[calc(100%+1.5rem)] flex shrink-0 flex-col mb-0",
           sectionBackgroundClass,
         )}
         style={{ top: headerHeight }}
@@ -174,8 +174,9 @@ export function SuppliersSection({
               }
             >
               <ShoppingBag
-                className={`h-4 w-4 shrink-0 transition-opacity ${!onlyWithBasket ? "text-slate-700" : "opacity-40"
-                  }`}
+                className={`h-4 w-4 shrink-0 transition-opacity ${
+                  !onlyWithBasket ? "text-slate-700" : "opacity-40"
+                }`}
                 aria-hidden
               />
               <Switch
@@ -188,8 +189,9 @@ export function SuppliersSection({
                 }
               />
               <ShoppingCart
-                className={`h-4 w-4 shrink-0 transition-opacity ${onlyWithBasket ? "text-slate-700" : "opacity-40"
-                  }`}
+                className={`h-4 w-4 shrink-0 transition-opacity ${
+                  onlyWithBasket ? "text-slate-700" : "opacity-40"
+                }`}
                 aria-hidden
               />
             </div>
@@ -210,21 +212,21 @@ export function SuppliersSection({
             pathname === "/settings/manage-suppliers" ||
             pathname === "/settings/partner-suppliers" ||
             calendarDateView) && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="h-9 shrink-0 gap-1 border-slate-300  bg-brand-50 text-slate-700"
-                aria-label={
-                  isAscending
-                    ? t("suppliers_sort_alpha_asc")
-                    : t("suppliers_sort_alpha_desc")
-                }
-                onClick={() => setIsAscending((v) => !v)}
-              >
-                {isAscending ? "A → Z" : "Z → A"}
-              </Button>
-            )}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-9 shrink-0 gap-1 border-slate-300  bg-brand-50 text-slate-700"
+              aria-label={
+                isAscending
+                  ? t("suppliers_sort_alpha_asc")
+                  : t("suppliers_sort_alpha_desc")
+              }
+              onClick={() => setIsAscending((v) => !v)}
+            >
+              {isAscending ? "A → Z" : "Z → A"}
+            </Button>
+          )}
         </div>
         {showTabs && children}
       </div>
@@ -272,7 +274,7 @@ export function SuppliersSection({
           <motion.div
             className={
               useAllSuppliersStyle
-                ? "grid grid-cols-2 gap-3 pb-8"
+                ? "grid grid-cols-2 gap-3 pb-8 pt-1"
                 : "space-y-2 pb-8 pt-1"
             }
             variants={listVariants}
@@ -297,38 +299,38 @@ export function SuppliersSection({
                     onSupplierClick
                       ? undefined
                       : (() => {
-                        if (pathname === "/orders-of-the-day") {
-                          if (
-                            !calendarDateView &&
-                            s.basketIconStatus === 200 &&
-                            s.todaysOrderUID
-                          ) {
-                            return `/orders-of-the-day/order/${encodeURIComponent(s.todaysOrderUID)}`;
+                          if (pathname === "/orders-of-the-day") {
+                            if (
+                              !calendarDateView &&
+                              s.basketIconStatus === 200 &&
+                              s.todaysOrderUID
+                            ) {
+                              return `/orders-of-the-day/order/${encodeURIComponent(s.todaysOrderUID)}`;
+                            }
+                            const base = `/suppliers/${encodeURIComponent(s.supplierUID)}?from=orders-of-the-day`;
+                            const refDateOnly =
+                              calendarDateView && selectedRefDate
+                                ? toDateOnly(selectedRefDate)
+                                : null;
+                            return refDateOnly
+                              ? `${base}&refDate=${encodeURIComponent(refDateOnly)}`
+                              : base;
                           }
-                          const base = `/suppliers/${encodeURIComponent(s.supplierUID)}?from=orders-of-the-day`;
-                          const refDateOnly =
-                            calendarDateView && selectedRefDate
-                              ? toDateOnly(selectedRefDate)
-                              : null;
-                          return refDateOnly
-                            ? `${base}&refDate=${encodeURIComponent(refDateOnly)}`
-                            : base;
-                        }
-                        return `/suppliers/${encodeURIComponent(s.supplierUID)}`;
-                      })()
+                          return `/suppliers/${encodeURIComponent(s.supplierUID)}`;
+                        })()
                   }
                   onClick={
                     onSupplierClick ? () => onSupplierClick(s) : undefined
                   }
                   partnerApprovalAction={
                     pathname === "/settings/manage-suppliers" &&
-                      onInactiveApprovalToggle
+                    onInactiveApprovalToggle
                       ? {
-                        onAction: () => onInactiveApprovalToggle(s, true),
-                        isPending: isInactiveApprovalPending,
-                        labelKey: "manage_suppliers_restore",
-                        icon: RotateCcw,
-                      }
+                          onAction: () => onInactiveApprovalToggle(s, true),
+                          isPending: isInactiveApprovalPending,
+                          labelKey: "manage_suppliers_restore",
+                          icon: RotateCcw,
+                        }
                       : undefined
                   }
                 />

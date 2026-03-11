@@ -12,8 +12,8 @@ import { Button } from "@/components/ui/button";
 export function Header() {
   const pathname = usePathname();
   const users = useAuthStore((s) => s.users);
-  const { data: countData } = useNotificationsCountUnread();
-  const unreadCount = countData?.unreadCounter ?? 0;
+  // const { data: countData } = useNotificationsCountUnread();
+  // const unreadCount = countData?.unreadCounter ?? 0;
   const effectiveUser = useEffectiveSelectedUser();
   const { canGoBack, goBack } = useNavigationHistory();
   const isDashboard = pathname === "/dashboard";
