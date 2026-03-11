@@ -66,7 +66,7 @@ export function Header() {
       </div>
 
       <div className="flex items-center justify-end gap-1">
-        <Link
+        {/* <Link
           href="/notifications"
           aria-label="Notifications"
           className="relative flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white hover:bg-slate-50"
@@ -77,7 +77,7 @@ export function Header() {
               {unreadCount > 99 ? "99+" : unreadCount}
             </span>
           )}
-        </Link>
+        </Link> */}
         <Button
           variant="outline"
           size="icon"
