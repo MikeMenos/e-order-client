@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
@@ -36,7 +36,7 @@ export default function ManageProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebouncedValue(searchQuery, 500);
 
-  const { supplier, catalogSections, favoriteSections, isLoading, error } =
+  const { supplier, catalogSections, favoriteSections, isLoading, isFetching, error } =
     useSupplierPageProducts(supplierUID, {
       mainTab,
       search: debouncedSearch,
@@ -44,6 +44,20 @@ export default function ManageProductsPage() {
 
   const currentTabSections =
     mainTab === "catalog" ? catalogSections : favoriteSections;
+  const prevMainTabRef = useRef(mainTab);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [mainTab]);
+
+  useEffect(() => {
+    if (!isLoading && !isFetching) {
+      prevMainTabRef.current = mainTab;
+    }
+  }, [mainTab, isLoading, isFetching]);
+
+  const isTabChanging =
+    prevMainTabRef.current !== mainTab && (isFetching || isLoading);
 
   const showBackToTop = useBackToTop();
 
@@ -66,23 +80,22 @@ export default function ManageProductsPage() {
       <h1 className="text-center text-xl font-bold text-slate-900 mt-2 mb-1">
         {t("settings_edit_products")}
       </h1>
-      <div className="w-full rounded-t-lg mt-2 bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90">
-        <SupplierPageBar
-          supplier={supplier}
-          mainTab={mainTab}
-          onMainTabChange={setMainTab}
-          hideCartIcon
-          centerLayout
-        />
-      </div>
-
       <div className="flex flex-col">
         <div
           ref={stickyBarMeasurement.ref}
-          className="sticky z-20 w-full rounded-b-lg bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90"
+          className="sticky z-20 flex shrink-0 flex-col w-full rounded-lg bg-app-card/95 shadow-sm backdrop-blur supports-backdrop-filter:bg-app-card/90"
           style={{ top: headerHeight }}
         >
-          <div className="mx-auto max-w-4xl">
+          <div className="w-full rounded-t-lg bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90">
+            <SupplierPageBar
+              supplier={supplier}
+              mainTab={mainTab}
+              onMainTabChange={setMainTab}
+              hideCartIcon
+              centerLayout
+            />
+          </div>
+          <div className="mx-auto w-full max-w-4xl rounded-b-lg bg-app-card/95 backdrop-blur supports-backdrop-filter:bg-app-card/90">
             <SupplierSearchAndTabs
               searchPlaceholder={t("products_search_placeholder")}
               searchQuery={searchQuery}
@@ -90,11 +103,12 @@ export default function ManageProductsPage() {
               sections={currentTabSections}
               activeSectionId={activeSectionId}
               onTabClick={handleTabClick}
+              hideTabs={isLoading || isTabChanging}
             />
           </div>
         </div>
 
-        {isLoading && <Loading spinnerOnly />}
+        {(isLoading || isTabChanging) && <Loading spinnerOnly />}
 
         {error && (
           <p className="text-base text-red-400">
@@ -102,11 +116,12 @@ export default function ManageProductsPage() {
           </p>
         )}
 
-        {currentTabSections.length === 0 && !isLoading && !error ? (
-          <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
-            {t("supplier_empty_products")}
-          </p>
-        ) : (
+        {!(isLoading || isTabChanging) &&
+          (currentTabSections.length === 0 && !error ? (
+            <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">
+              {t("supplier_empty_products")}
+            </p>
+          ) : (
           <motion.div
             className="space-y-3 pb-16"
             variants={listVariants}
@@ -125,7 +140,7 @@ export default function ManageProductsPage() {
               </motion.div>
             ))}
           </motion.div>
-        )}
+          ))}
       </div>
 
       <BackToTopButton
