@@ -7,6 +7,7 @@ import { useTranslation } from "@/lib/i18n";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import Loading from "@/components/ui/loading";
 import { usePrefSchedule, usePrefScheduleUpdate } from "@/hooks/useSchedule";
+import { useSuppliersListForToday } from "@/hooks/useDashboardData";
 import { Switch } from "@/components/ui/switch";
 import { ClearableInput } from "@/components/ui/clearable-input";
 import type { PrefScheduleSupplier } from "@/lib/types/schedule";
@@ -19,11 +20,13 @@ import {
 
 function SupplierScheduleCard({
   schedule,
+  weekDeliveryDaysText,
   updateMutation,
   t,
   canEdit,
 }: {
   schedule: PrefScheduleSupplier;
+  weekDeliveryDaysText?: string;
   updateMutation: ReturnType<typeof usePrefScheduleUpdate>;
   t: (key: string) => string;
   canEdit: boolean;
@@ -114,8 +117,8 @@ function SupplierScheduleCard({
           </ul>
           <hr className="my-2 border-slate-200" />
           {(() => {
-            const { daysPart, orderTillHour } =
-              formatTimetableDeliveryDays(dailyProgram);
+            const { orderTillHour } = formatTimetableDeliveryDays(dailyProgram);
+            const daysPart = weekDeliveryDaysText ?? "";
             const hasContent = daysPart || orderTillHour;
             return (
               hasContent && (
@@ -151,7 +154,18 @@ export default function OrderSchedulePage() {
   const { hasAccess } = useUserPermissions();
   const scheduleQuery = usePrefSchedule();
   const updateMutation = usePrefScheduleUpdate();
+  const { suppliers } = useSuppliersListForToday();
   const storeSchedules = scheduleQuery.data?.storeSchedules ?? [];
+
+  const suppliersByUID = React.useMemo(() => {
+    const map = new Map<string, string>();
+    for (const s of suppliers) {
+      if (s.supplierUID) {
+        map.set(s.supplierUID.toLowerCase(), s.weekDeliveryDaysText?.trim() ?? "");
+      }
+    }
+    return map;
+  }, [suppliers]);
 
   const [query, setQuery] = React.useState("");
 
@@ -204,6 +218,9 @@ export default function OrderSchedulePage() {
             <SupplierScheduleCard
               key={schedule.supplierUID}
               schedule={schedule}
+              weekDeliveryDaysText={
+                suppliersByUID.get((schedule.supplierUID ?? "").toLowerCase()) ?? ""
+              }
               updateMutation={updateMutation}
               t={t}
               canEdit={hasAccess("P4")}
