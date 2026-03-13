@@ -20,21 +20,33 @@ import { DeliveryDatePickerDialog } from "@/components/checkout/DeliveryDatePick
 import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
 import type { WeekDailyAnalysisItem } from "@/lib/types/supplier-api";
 
+function toYyyyMmDd(dateStr: string | null): string | null {
+  if (!dateStr?.trim()) return null;
+  const slice = dateStr.trim().slice(0, 10);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(slice)) return slice;
+  try {
+    const d = new Date(dateStr);
+    if (Number.isNaN(d.getTime())) return null;
+    return d.toISOString().slice(0, 10);
+  } catch {
+    return null;
+  }
+}
+
 export type CheckoutDeliverySectionProps = {
   selectedDate: string | null;
+  desiredDeliveryDateFromBasket?: string | null;
   initialDeliveryDate?: string | null;
   onEffectiveDateChange?: (isoDate: string) => void;
   weekDailyAnalysis?: WeekDailyAnalysisItem[];
-  /** When true, show message instead of date buttons (refDate not in weekDailyAnalysis or empty analysis) */
   refDateNotInRange?: boolean;
-  /** When true, show "no available dates" message (ignores refDateDisplay) */
   isEmptyAnalysis?: boolean;
-  /** The refDate to show in the warning (when refDateNotInRange and !isEmptyAnalysis) */
   refDateDisplay?: string | null;
 };
 
 export function CheckoutDeliverySection({
   selectedDate,
+  desiredDeliveryDateFromBasket,
   initialDeliveryDate,
   onEffectiveDateChange,
   weekDailyAnalysis = [],
@@ -53,24 +65,40 @@ export function CheckoutDeliverySection({
   );
   const hasAppliedInitialRef = useRef(false);
 
+  // Use desiredDeliveryDateFromBasket as default when it's not today/past and in weekDailyAnalysis and deliverable
+  const effectiveDefaultDate = useMemo(() => {
+    const desiredStr = toYyyyMmDd(desiredDeliveryDateFromBasket ?? null);
+    const todayStr = format(new Date(), "yyyy-MM-dd");
+    if (!desiredStr || desiredStr <= todayStr) return selectedDate;
+    const item = weekDailyAnalysis.find(
+      (it) => toDateOnly(it.dateObj) === desiredStr,
+    );
+    if (!item || item.dayIsClosed || !item.supplierCanDeliver) {
+      return selectedDate;
+    }
+    return desiredStr;
+  }, [desiredDeliveryDateFromBasket, selectedDate, weekDailyAnalysis]);
+
   useEffect(() => {
     if (
       hasAppliedInitialRef.current ||
       !initialDeliveryDate?.trim() ||
-      !selectedDate
+      !effectiveDefaultDate
     )
       return;
-    const initial = initialDeliveryDate.trim();
-    const sel = selectedDate.trim();
+    const initial =
+      toYyyyMmDd(initialDeliveryDate) ?? initialDeliveryDate.trim();
+    const sel = (effectiveDefaultDate ?? "").trim();
     if (initial !== sel) {
       hasAppliedInitialRef.current = true;
       setOtherDate(initial);
       setDeliveryOption("other");
     }
-  }, [initialDeliveryDate, selectedDate]);
+  }, [initialDeliveryDate, effectiveDefaultDate]);
 
   const defaultDeliveryLabel =
-    formatDeliveryDateDisplay(selectedDate) || (selectedDate ?? "");
+    formatDeliveryDateDisplay(effectiveDefaultDate) ||
+    (effectiveDefaultDate ?? "");
 
   const deliveryLabel =
     deliveryOption === "other" && otherDate
@@ -86,13 +114,13 @@ export function CheckoutDeliverySection({
 
   useEffect(() => {
     if (deliveryOption === "selected") {
-      notifyEffectiveDate(selectedDate ?? null);
+      notifyEffectiveDate(effectiveDefaultDate ?? null);
     } else if (otherDate) {
       notifyEffectiveDate(otherDate);
     } else {
-      notifyEffectiveDate(selectedDate ?? null);
+      notifyEffectiveDate(effectiveDefaultDate ?? null);
     }
-  }, [deliveryOption, otherDate, selectedDate, notifyEffectiveDate]);
+  }, [deliveryOption, otherDate, effectiveDefaultDate, notifyEffectiveDate]);
 
   const { disabledDatesSet, minDateOnly, maxDateOnly, isEmpty } =
     useMemo(() => {
@@ -130,7 +158,7 @@ export function CheckoutDeliverySection({
   );
 
   const openOtherDateDialog = () => {
-    setDialogDateValue(parseDateForPicker(otherDate ?? selectedDate));
+    setDialogDateValue(parseDateForPicker(otherDate ?? effectiveDefaultDate));
     setDialogOpen(true);
   };
 
@@ -153,15 +181,14 @@ export function CheckoutDeliverySection({
     const messageKey = isEmptyAnalysis
       ? "checkout_order_cannot_process_no_dates"
       : "checkout_order_cannot_process_date";
-    const message =
-      isEmptyAnalysis
-        ? t(messageKey)
-        : (
-            <InterpolatedText
-              template={t(messageKey)}
-              values={{ date: formatDeliveryDateDisplay(refDateDisplay ?? "") }}
-            />
-          );
+    const message = isEmptyAnalysis ? (
+      t(messageKey)
+    ) : (
+      <InterpolatedText
+        template={t(messageKey)}
+        values={{ date: formatDeliveryDateDisplay(refDateDisplay ?? "") }}
+      />
+    );
     return (
       <section className="mb-4">
         <CheckoutSectionHeading labelKey="checkout_delivery" />

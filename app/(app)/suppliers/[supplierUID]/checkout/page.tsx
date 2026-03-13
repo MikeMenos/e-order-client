@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
+import { useAuthStore } from "@/stores/auth";
 import { useSupplierDisplay } from "@/hooks/useSupplier";
 import { useBasketItems } from "@/hooks/useBasket";
 import { useOrderAdd } from "@/hooks/useOrderAdd";
@@ -73,6 +74,16 @@ export default function SupplierCheckoutPage() {
   const supplierInfoQuery = useSupplierDisplay(supplierUID);
   const supplier = supplierInfoQuery.data?.supplier ?? null;
   const selectedDate = supplierInfoQuery.data?.selectedDate ?? null;
+  const users = useAuthStore((s) => s.users);
+  const currentUserName = useMemo(
+    () =>
+      [users?.userInfos?.fname, users?.userInfos?.lname]
+        .filter(Boolean)
+        .join(" ") ||
+      users?.userInfos?.username ||
+      "",
+    [users?.userInfos?.fname, users?.userInfos?.lname, users?.userInfos?.username],
+  );
 
   const refDateFromUrl = searchParams.get("refDate")
     ? toYyyyMmDd(searchParams.get("refDate"))
@@ -93,11 +104,23 @@ export default function SupplierCheckoutPage() {
     basketData?.basketsList?.find((b) => b.supplierUID === supplierUID) ??
     basketData?.basketsList?.[0];
 
+  /** API may return desiredDeliveryDate or desiredliveryDate (typo) */
+  const desiredDeliveryDateFromBasket =
+    basketForSupplier?.desiredDeliveryDate ??
+    (basketForSupplier as { desiredliveryDate?: string } | undefined)
+      ?.desiredliveryDate;
+
   useEffect(() => {
     if (hasPrefilledFromBasketRef.current || !basketForSupplier) return;
     hasPrefilledFromBasketRef.current = true;
-    if (basketForSupplier.desiredDeliveryDate?.trim() && !refDateFromUrl) {
-      setDeliveryDate(basketForSupplier.desiredDeliveryDate.trim());
+    const desiredStr = toYyyyMmDd(desiredDeliveryDateFromBasket ?? null);
+    const todayStr = format(new Date(), "yyyy-MM-dd");
+    if (
+      desiredStr &&
+      desiredStr > todayStr &&
+      !refDateFromUrl
+    ) {
+      setDeliveryDate(desiredStr);
     }
     if (
       basketForSupplier.shopperComments != null &&
@@ -141,14 +164,30 @@ export default function SupplierCheckoutPage() {
   const isSubmitting = orderAddMutation.isPending;
   const isSavingTemp = orderTempSaveMutation.isPending;
 
-  const { defaultDeliveryDate, refDateNotInRange, isEmptyAnalysis } =
-    useMemo(() => {
+  const {
+    defaultDeliveryDate,
+    selectedDateForDelivery,
+    isDesiredDateValid,
+    refDateNotInRange,
+    isEmptyAnalysis,
+  } = useMemo(() => {
       const analysis = supplier?.weekDailyAnalysis ?? [];
       const todayStr = format(new Date(), "yyyy-MM-dd");
+      const desiredDateStr = toYyyyMmDd(
+        desiredDeliveryDateFromBasket ?? null,
+      );
+      const isDesiredInFuture =
+        desiredDateStr && desiredDateStr > todayStr;
+      const isDesiredValid =
+        isDesiredInFuture &&
+        refDateInWeekDailyAnalysis(desiredDateStr, analysis) &&
+        !isDeliveryDateBlocked(desiredDateStr, analysis);
 
       if (analysis.length === 0) {
         return {
           defaultDeliveryDate: null,
+          selectedDateForDelivery: null,
+          isDesiredDateValid: false,
           refDateNotInRange: true,
           isEmptyAnalysis: true,
         };
@@ -156,8 +195,13 @@ export default function SupplierCheckoutPage() {
 
       if (!refDateFromUrl) {
         const defaultDate = getDefaultDeliveryDateNoRefDate(analysis, todayStr);
+        const fallback = defaultDate ?? toYyyyMmDd(selectedDate);
         return {
-          defaultDeliveryDate: defaultDate ?? toYyyyMmDd(selectedDate),
+          defaultDeliveryDate: fallback,
+          selectedDateForDelivery: isDesiredValid
+            ? desiredDateStr
+            : (fallback ?? null),
+          isDesiredDateValid: !!isDesiredValid,
           refDateNotInRange: false,
           isEmptyAnalysis: false,
         };
@@ -166,6 +210,8 @@ export default function SupplierCheckoutPage() {
       if (!refDateInWeekDailyAnalysis(refDateFromUrl, analysis)) {
         return {
           defaultDeliveryDate: null,
+          selectedDateForDelivery: null,
+          isDesiredDateValid: false,
           refDateNotInRange: true,
           isEmptyAnalysis: false,
         };
@@ -175,14 +221,27 @@ export default function SupplierCheckoutPage() {
         refDateFromUrl,
         analysis,
       );
+      const fallback = defaultDate ?? toYyyyMmDd(selectedDate);
       return {
-        defaultDeliveryDate: defaultDate ?? toYyyyMmDd(selectedDate),
+        defaultDeliveryDate: fallback,
+        selectedDateForDelivery: isDesiredValid
+          ? desiredDateStr
+          : (fallback ?? null),
+        isDesiredDateValid: !!isDesiredValid,
         refDateNotInRange: false,
         isEmptyAnalysis: false,
       };
-    }, [supplier?.weekDailyAnalysis, selectedDate, refDateFromUrl]);
+    }, [
+      supplier?.weekDailyAnalysis,
+      selectedDate,
+      refDateFromUrl,
+      desiredDeliveryDateFromBasket,
+    ]);
 
-  const effectiveDeliveryDate = deliveryDate ?? defaultDeliveryDate;
+  const effectiveDeliveryDate =
+    deliveryDate?.trim() ||
+    selectedDateForDelivery ||
+    defaultDeliveryDate;
   const isDeliveryDateInvalid = isDeliveryDateBlocked(
     effectiveDeliveryDate,
     supplier?.weekDailyAnalysis ?? [],
@@ -230,6 +289,13 @@ export default function SupplierCheckoutPage() {
         titleKey="order_completion_title"
         supplierName={supplier?.title ?? null}
         supplierLogo={supplier?.logo ?? null}
+        savedByUserName={
+          (basketData?.basketsList?.length ?? 0) > 0 &&
+          (basketForSupplier?.items?.length ?? 0) > 0 &&
+          !!(desiredDeliveryDateFromBasket?.trim?.())
+            ? currentUserName || null
+            : null
+        }
       />
 
       <div className="flex-1 min-h-0 overflow-y-auto -mx-3 px-3 space-y-3">
@@ -238,11 +304,12 @@ export default function SupplierCheckoutPage() {
           onHasItemsChange={setHasBasketItems}
         />
         <CheckoutDeliverySection
-          selectedDate={defaultDeliveryDate ?? null}
+          selectedDate={selectedDateForDelivery ?? null}
+          desiredDeliveryDateFromBasket={desiredDeliveryDateFromBasket}
           initialDeliveryDate={
-            refDateFromUrl
+            refDateFromUrl || isDesiredDateValid
               ? undefined
-              : (basketForSupplier?.desiredDeliveryDate ?? undefined)
+              : desiredDeliveryDateFromBasket
           }
           onEffectiveDateChange={setDeliveryDate}
           weekDailyAnalysis={supplier?.weekDailyAnalysis ?? []}

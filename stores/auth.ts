@@ -24,6 +24,8 @@ export interface AuthState {
   setStoreAccessToken: (token: string | null) => void;
   setSelectedStoreUID: (uid: string | null) => void;
   setRefreshToken: (token: string | null) => void;
+  /** Merge userInfos from select-store etc. into users when missing or stale */
+  mergeUserInfos: (userInfos: AnyObject | null) => void;
   logout: () => void;
 }
 
@@ -77,6 +79,15 @@ export const useAuthStore = create<AuthState>()(
         set(() => ({
           refreshToken: token,
         })),
+      mergeUserInfos: (userInfos) =>
+        set((state) => {
+          if (!userInfos) return state;
+          return {
+            users: state.users
+              ? { ...state.users, userInfos }
+              : { userInfos },
+          };
+        }),
       logout: () => {
         setCookie("accessToken", null);
         setCookie("storeAccessToken", null);
@@ -97,11 +108,6 @@ export const useAuthStore = create<AuthState>()(
   ),
 );
 
-/**
- * When selectedUser is null and storeAccess has exactly one item, use that as the effective user (e.g. for store title, store UID).
- * When multiple stores exist, try to match selectedStoreUID to get the correct store's policies.
- * Also considers users.role when set (e.g. from multi-store login or settings store switch).
- */
 export function useEffectiveSelectedUser(): AnyObject | null {
   return useAuthStore((state) => {
     if (state.selectedUser) return state.selectedUser;
