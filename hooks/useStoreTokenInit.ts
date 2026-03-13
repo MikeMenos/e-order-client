@@ -17,6 +17,7 @@ export function useStoreTokenInit() {
   const accessToken = useAuthStore((s) => s.accessToken);
   const setStoreAccessToken = useAuthStore((s) => s.setStoreAccessToken);
   const setSelectedStoreUID = useAuthStore((s) => s.setSelectedStoreUID);
+  const mergeUserInfos = useAuthStore((s) => s.mergeUserInfos);
 
   const derivedStoreUID = useMemo(() => {
     if (!users && !effectiveUser) return null;
@@ -41,6 +42,7 @@ export function useStoreTokenInit() {
       onSuccess: (data, storeID) => {
         setStoreAccessToken(data?.accessToken ?? null);
         setSelectedStoreUID(storeID);
+        if (data?.userInfos) mergeUserInfos(data.userInfos);
       },
       // Do not clear store token/cookies on error; only clear on explicit logout
     },

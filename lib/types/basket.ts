@@ -3,6 +3,7 @@ export type BasketItemsData = {
     supplierUID: string;
     totalItems?: number;
     items: unknown[];
+    desiredDeliveryDate?: string | null;
   }>;
   totalBasketsCount?: number;
   totalBasketsCost?: number;

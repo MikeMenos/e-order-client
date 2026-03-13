@@ -6,12 +6,14 @@ export type CheckoutPageHeaderProps = {
   titleKey: string;
   supplierName: string | null;
   supplierLogo?: string | null;
+  savedByUserName?: string | null;
 };
 
 export function CheckoutPageHeader({
   titleKey,
   supplierName,
   supplierLogo,
+  savedByUserName,
 }: CheckoutPageHeaderProps) {
   const { t } = useTranslation();
   return (
@@ -27,6 +29,11 @@ export function CheckoutPageHeader({
         )}
         <p className="text-base text-slate-500">{supplierName ?? "—"}</p>
       </div>
+      {savedByUserName && (
+        <p className="mt-1 text-sm text-slate-500">
+          {t("checkout_saved_by")}: {savedByUserName}
+        </p>
+      )}
     </div>
   );
 }
