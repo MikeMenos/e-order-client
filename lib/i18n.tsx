@@ -660,7 +660,7 @@ const resources: Resources = {
     settings_order_schedule: "Πρόγραμμα Παραγγελιών",
     timetable_day: "Ημέρα",
     timetable_order_until: "Παραγγελία έως",
-    timetable_order_time_until: "Ώρα παραγγελίας έως",
+    timetable_order_time_until: "Παραγγελία έως",
     timetable_expected_delivery: "Αναμενόμενη παράδοση",
     timetable_enabled: "Ενεργό",
     timetable_delivery_days: "Ημέρες παράδοσης",
