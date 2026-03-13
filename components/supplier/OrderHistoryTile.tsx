@@ -169,8 +169,8 @@ export function OrderHistoryTile({
                           {hasQty && (
                             <>
                               {" "}
-                              <span className="font-normal text-slate-500 float-end">
-                                {t("checkout_quantity")}: {String(qty)}
+                              <span className="float-end font-bold text-slate-700">
+                                {String(qty)}
                               </span>
                             </>
                           )}
