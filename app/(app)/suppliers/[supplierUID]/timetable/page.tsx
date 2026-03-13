@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { usePrefSchedule, usePrefScheduleUpdate } from "@/hooks/useSchedule";
+import { useSuppliersListForToday } from "@/hooks/useDashboardData";
 import { formatTimetableDeliveryDays } from "@/lib/types/schedule";
 import { Switch } from "@/components/ui/switch";
 import Loading from "@/components/ui/loading";
@@ -16,8 +17,14 @@ export default function TimetablePage() {
 
   const scheduleQuery = usePrefSchedule();
   const updateMutation = usePrefScheduleUpdate();
+  const { suppliers } = useSuppliersListForToday();
 
   const schedules = scheduleQuery.data?.storeSchedules ?? [];
+  const matchedSupplier = suppliers.find(
+    (s) =>
+      (s.supplierUID ?? "").toLowerCase() === (supplierUID ?? "").toLowerCase(),
+  );
+  const weekDeliveryDaysText = matchedSupplier?.weekDeliveryDaysText?.trim() ?? "";
   const supplierSchedule = schedules.find(
     (s) =>
       (s.supplierUID ?? "").toLowerCase() === (supplierUID ?? "").toLowerCase(),
@@ -103,8 +110,9 @@ export default function TimetablePage() {
             </ul>
             <hr className="my-2 border-slate-200" />
             {(() => {
-              const { daysPart, orderTillHour } =
+              const { orderTillHour } =
                 formatTimetableDeliveryDays(dailyProgram);
+              const daysPart = weekDeliveryDaysText;
               const hasContent = daysPart || orderTillHour;
               return (
                 hasContent && (

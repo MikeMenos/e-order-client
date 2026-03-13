@@ -13,6 +13,8 @@ export type PrefScheduleSupplier = {
   selectedDaysInfo?: string;
   dailyProgram: PrefScheduleDay[];
   supplierDeliveryDays?: string[];
+  /** Delivery days text from API (e.g. "Mon - Wed - Fri"); preferred over formatTimetableDeliveryDays */
+  weekDeliveryDaysText?: string | null;
 };
 
 export type PrefScheduleResponse = {
