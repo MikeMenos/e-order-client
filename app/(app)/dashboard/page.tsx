@@ -2,8 +2,10 @@
 
 import { useMemo } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
+import { useAuthStore } from "@/stores/auth";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
 import { listVariants, listItemVariants } from "@/lib/motion";
 import { TileCard } from "@/components/ui/tile-card";
@@ -35,6 +37,8 @@ const cards = [
 
 export default function DashboardPage() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const logout = useAuthStore((s) => s.logout);
   const { suppliers } = useSuppliersListForToday();
   const todayOrdersCount = useMemo(
     () =>
@@ -49,13 +53,23 @@ export default function DashboardPage() {
   return (
     <main className="text-slate-900 overflow-hidden px-2">
       <div className="relative flex justify-center py-2">
-        <Image
-          src="/icon0.svg"
-          alt="E-Order Logo"
-          width={150}
-          height={150}
-          priority
-        />
+        <button
+          type="button"
+          onClick={() => {
+            logout();
+            router.replace("/");
+          }}
+          className="cursor-pointer border-0 bg-transparent p-0"
+          aria-label={t("logout")}
+        >
+          <Image
+            src="/icon0.svg"
+            alt="E-Order Logo"
+            width={150}
+            height={150}
+            priority
+          />
+        </button>
         {/* <NotificationsUnreadBanner /> */}
       </div>
       <motion.div
