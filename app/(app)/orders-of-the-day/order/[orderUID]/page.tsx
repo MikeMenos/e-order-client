@@ -142,28 +142,14 @@ export default function OrderOfTheDayViewPage() {
                         key={item.productUID ?? idx}
                         className="flex items-start gap-3 rounded-md bg-slate-50 px-2 py-1.5 text-slate-700"
                       >
-                        {/* {typeof imageUrl === "string" && imageUrl !== "" ? (
-                          <div className="shrink-0">
-                            <img
-                              src={imageUrl}
-                              alt=""
-                              className="h-12 w-12 rounded border border-slate-200 bg-slate-100 object-cover"
-                            />
-                          </div>
-                        ) : null} */}
-                        <div className="min-w-0 flex-1">
+                        <div className="min-w-0 flex-1 flex justify-between">
                           <p className="font-medium text-slate-900">
                             {item.productTitle ??
                               item.productOriginalTitle ??
                               "—"}
                           </p>
                           {qty != null && qty !== "" && (
-                            <>
-                              {" "}
-                              <span className="font-normal text-slate-500">
-                                {t("checkout_quantity")}: {String(qty)}
-                              </span>
-                            </>
+                            <p className="font-bold ">{String(qty)}</p>
                           )}
                           {item.productPackaging && (
                             <p className="text-base text-slate-500">
