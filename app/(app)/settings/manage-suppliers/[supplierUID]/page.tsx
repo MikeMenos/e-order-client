@@ -14,15 +14,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api-error";
 import type { SuppliersListItem } from "@/lib/types/dashboard";
-import { EyeOff } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { HideSupplierConfirmDialog } from "@/components/settings/HideSupplierConfirmDialog";
 import { useBasketDelete } from "@/hooks/useBasket";
 import { usePrefCollaborationUpdate } from "@/hooks/usePrefCollaborationUpdate";
-// import ContactSupplier from "@/components/settings/contact-supplier";
+import ContactSupplier from "@/components/settings/contact-supplier";
 
 export default function ManageSupplierMenuPage() {
-  // const [contactOpen, setContactOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const { t } = useTranslation();
   const { hasAccess } = useUserPermissions();
   const router = useRouter();
@@ -73,8 +71,8 @@ export default function ManageSupplierMenuPage() {
     (): SuppliersListItem | null =>
       supplierUID && suppliers?.length
         ? (suppliers.find(
-          (s: SuppliersListItem) => s.supplierUID === supplierUID,
-        ) ?? null)
+            (s: SuppliersListItem) => s.supplierUID === supplierUID,
+          ) ?? null)
         : null,
     [supplierUID, suppliers],
   );
@@ -222,7 +220,7 @@ export default function ManageSupplierMenuPage() {
             />
           )}
 
-          {/* <TileCard
+          <TileCard
             iconSrc="/assets/contact.png"
             label={t("settings_contact_supplier")}
             horizontal={true}
@@ -233,7 +231,7 @@ export default function ManageSupplierMenuPage() {
             open={contactOpen}
             onClose={() => setContactOpen(false)}
             supplierUID={selectedSupplier.supplierUID}
-          /> */}
+          />
 
           {hasAccess("P2") && (
             <TileCard
@@ -262,7 +260,6 @@ export default function ManageSupplierMenuPage() {
             basketDeleteMutation.isPending
           }
         />
-
       </div>
     </main>
   );

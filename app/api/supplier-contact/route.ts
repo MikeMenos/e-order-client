@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       );
     }
     const res = await backend.post(
-      "Shop/Supplier_Contact",
+      "Shop/Supplier_SendContactMessage",
       { supplierUID, subject: subject ?? "", message: message ?? "" },
       { headers: getBackendHeaders(req) },
     );

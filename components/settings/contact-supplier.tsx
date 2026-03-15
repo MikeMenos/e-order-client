@@ -29,6 +29,7 @@ export default function ContactSupplier({ open, onClose, supplierUID }: Props) {
 
   const contactMutation = useSupplierContact({
     onSuccess: () => {
+      toast.success(t("settings_contact_success"));
       onClose();
       setSubject("");
       setMessage("");
