@@ -4,7 +4,6 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
-import { useAuthStore } from "@/stores/auth";
 import { useSupplierDisplay } from "@/hooks/useSupplier";
 import { useBasketItems } from "@/hooks/useBasket";
 import { useOrderAdd } from "@/hooks/useOrderAdd";
@@ -74,16 +73,6 @@ export default function SupplierCheckoutPage() {
   const supplierInfoQuery = useSupplierDisplay(supplierUID);
   const supplier = supplierInfoQuery.data?.supplier ?? null;
   const selectedDate = supplierInfoQuery.data?.selectedDate ?? null;
-  const users = useAuthStore((s) => s.users);
-  const currentUserName = useMemo(
-    () =>
-      [users?.userInfos?.fname, users?.userInfos?.lname]
-        .filter(Boolean)
-        .join(" ") ||
-      users?.userInfos?.username ||
-      "",
-    [users?.userInfos?.fname, users?.userInfos?.lname, users?.userInfos?.username],
-  );
 
   const refDateFromUrl = searchParams.get("refDate")
     ? toYyyyMmDd(searchParams.get("refDate"))
@@ -115,11 +104,7 @@ export default function SupplierCheckoutPage() {
     hasPrefilledFromBasketRef.current = true;
     const desiredStr = toYyyyMmDd(desiredDeliveryDateFromBasket ?? null);
     const todayStr = format(new Date(), "yyyy-MM-dd");
-    if (
-      desiredStr &&
-      desiredStr > todayStr &&
-      !refDateFromUrl
-    ) {
+    if (desiredStr && desiredStr > todayStr && !refDateFromUrl) {
       setDeliveryDate(desiredStr);
     }
     if (
@@ -171,56 +156,27 @@ export default function SupplierCheckoutPage() {
     refDateNotInRange,
     isEmptyAnalysis,
   } = useMemo(() => {
-      const analysis = supplier?.weekDailyAnalysis ?? [];
-      const todayStr = format(new Date(), "yyyy-MM-dd");
-      const desiredDateStr = toYyyyMmDd(
-        desiredDeliveryDateFromBasket ?? null,
-      );
-      const isDesiredInFuture =
-        desiredDateStr && desiredDateStr > todayStr;
-      const isDesiredValid =
-        isDesiredInFuture &&
-        refDateInWeekDailyAnalysis(desiredDateStr, analysis) &&
-        !isDeliveryDateBlocked(desiredDateStr, analysis);
+    const analysis = supplier?.weekDailyAnalysis ?? [];
+    const todayStr = format(new Date(), "yyyy-MM-dd");
+    const desiredDateStr = toYyyyMmDd(desiredDeliveryDateFromBasket ?? null);
+    const isDesiredInFuture = desiredDateStr && desiredDateStr > todayStr;
+    const isDesiredValid =
+      isDesiredInFuture &&
+      refDateInWeekDailyAnalysis(desiredDateStr, analysis) &&
+      !isDeliveryDateBlocked(desiredDateStr, analysis);
 
-      if (analysis.length === 0) {
-        return {
-          defaultDeliveryDate: null,
-          selectedDateForDelivery: null,
-          isDesiredDateValid: false,
-          refDateNotInRange: true,
-          isEmptyAnalysis: true,
-        };
-      }
+    if (analysis.length === 0) {
+      return {
+        defaultDeliveryDate: null,
+        selectedDateForDelivery: null,
+        isDesiredDateValid: false,
+        refDateNotInRange: true,
+        isEmptyAnalysis: true,
+      };
+    }
 
-      if (!refDateFromUrl) {
-        const defaultDate = getDefaultDeliveryDateNoRefDate(analysis, todayStr);
-        const fallback = defaultDate ?? toYyyyMmDd(selectedDate);
-        return {
-          defaultDeliveryDate: fallback,
-          selectedDateForDelivery: isDesiredValid
-            ? desiredDateStr
-            : (fallback ?? null),
-          isDesiredDateValid: !!isDesiredValid,
-          refDateNotInRange: false,
-          isEmptyAnalysis: false,
-        };
-      }
-
-      if (!refDateInWeekDailyAnalysis(refDateFromUrl, analysis)) {
-        return {
-          defaultDeliveryDate: null,
-          selectedDateForDelivery: null,
-          isDesiredDateValid: false,
-          refDateNotInRange: true,
-          isEmptyAnalysis: false,
-        };
-      }
-
-      const defaultDate = getDefaultDeliveryDateWithRefDate(
-        refDateFromUrl,
-        analysis,
-      );
+    if (!refDateFromUrl) {
+      const defaultDate = getDefaultDeliveryDateNoRefDate(analysis, todayStr);
       const fallback = defaultDate ?? toYyyyMmDd(selectedDate);
       return {
         defaultDeliveryDate: fallback,
@@ -231,17 +187,41 @@ export default function SupplierCheckoutPage() {
         refDateNotInRange: false,
         isEmptyAnalysis: false,
       };
-    }, [
-      supplier?.weekDailyAnalysis,
-      selectedDate,
+    }
+
+    if (!refDateInWeekDailyAnalysis(refDateFromUrl, analysis)) {
+      return {
+        defaultDeliveryDate: null,
+        selectedDateForDelivery: null,
+        isDesiredDateValid: false,
+        refDateNotInRange: true,
+        isEmptyAnalysis: false,
+      };
+    }
+
+    const defaultDate = getDefaultDeliveryDateWithRefDate(
       refDateFromUrl,
-      desiredDeliveryDateFromBasket,
-    ]);
+      analysis,
+    );
+    const fallback = defaultDate ?? toYyyyMmDd(selectedDate);
+    return {
+      defaultDeliveryDate: fallback,
+      selectedDateForDelivery: isDesiredValid
+        ? desiredDateStr
+        : (fallback ?? null),
+      isDesiredDateValid: !!isDesiredValid,
+      refDateNotInRange: false,
+      isEmptyAnalysis: false,
+    };
+  }, [
+    supplier?.weekDailyAnalysis,
+    selectedDate,
+    refDateFromUrl,
+    desiredDeliveryDateFromBasket,
+  ]);
 
   const effectiveDeliveryDate =
-    deliveryDate?.trim() ||
-    selectedDateForDelivery ||
-    defaultDeliveryDate;
+    deliveryDate?.trim() || selectedDateForDelivery || defaultDeliveryDate;
   const isDeliveryDateInvalid = isDeliveryDateBlocked(
     effectiveDeliveryDate,
     supplier?.weekDailyAnalysis ?? [],
@@ -290,10 +270,9 @@ export default function SupplierCheckoutPage() {
         supplierName={supplier?.title ?? null}
         supplierLogo={supplier?.logo ?? null}
         savedByUserName={
-          (basketData?.basketsList?.length ?? 0) > 0 &&
           (basketForSupplier?.items?.length ?? 0) > 0 &&
-          !!(desiredDeliveryDateFromBasket?.trim?.())
-            ? currentUserName || null
+          !!basketForSupplier?.lastTempOrderModifiedBy?.trim?.()
+            ? basketForSupplier.lastTempOrderModifiedBy.trim()
             : null
         }
       />

@@ -18,7 +18,9 @@ export type BasketGetItemsBasket = {
   totalItems?: number;
   items: BasketGetItemsProduct[];
   desiredDeliveryDate?: string | null;
+  desiredliveryDate?: string | null;
   shopperComments?: string | null;
+  lastTempOrderModifiedBy?: string | null;
 };
 
 export type BasketGetItemsResponse = {
