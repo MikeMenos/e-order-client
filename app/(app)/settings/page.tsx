@@ -100,14 +100,6 @@ export default function SettingsPage() {
             />
           </motion.div>
 
-          <motion.div variants={listItemVariants}>
-            <TileCard
-              href="/settings/partner-suppliers"
-              iconSrc="/assets/collab-suppliers.png"
-              label={t("dashboard_card_partner_suppliers")}
-            />
-          </motion.div>
-
           {roles.length > 1 && (
             <motion.div variants={listItemVariants}>
               <TileCard
@@ -134,6 +126,14 @@ export default function SettingsPage() {
               iconSrc="/assets/manage-users.png"
               label={t("config_link_users")}
               iconColor="text-blue-600"
+            />
+          </motion.div>
+
+          <motion.div variants={listItemVariants}>
+            <TileCard
+              href="/settings/information"
+              iconSrc="/assets/info.png"
+              label={t("settings_information")}
             />
           </motion.div>
 
