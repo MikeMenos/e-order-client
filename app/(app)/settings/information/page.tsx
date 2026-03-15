@@ -25,7 +25,9 @@ export default function InformationPage() {
   return (
     <main className="text-slate-900 overflow-hidden px-2">
       <div className="mx-auto flex max-w-xl flex-col p-4 justify-center">
-        <h1 className="mb-4 text-2xl font-bold">{t("settings_information")}</h1>
+        <h1 className="mb-4 text-2xl font-bold text-center">
+          {t("settings_information")}
+        </h1>
 
         <div className="rounded-2xl bg-white shadow-sm overflow-hidden border border-slate-100">
           {INFORMATION_ITEMS.map(({ slug, labelKey }) => (
