@@ -20,7 +20,6 @@ export function usePrefCollaborationUpdate(options?: {
     },
     onSuccess: (data, variables) => {
       onSuccess?.(data, variables);
-      void queryClient.invalidateQueries({ queryKey: ["suppliers-no-partners"] });
       void queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       void queryClient.invalidateQueries({
         queryKey: ["suppliers-manage-suppliers"],

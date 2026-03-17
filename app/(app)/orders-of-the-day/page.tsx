@@ -1,21 +1,40 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { isSameDay, format } from "date-fns";
+import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 import { formatCalendarDateDisplay } from "@/lib/utils";
 import { el } from "date-fns/locale";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
+import { useSupplierTempHideFromList } from "@/hooks/useSupplierTempHideFromList";
+import { useBasketDelete } from "@/hooks/useBasket";
+import { getApiErrorMessage } from "@/lib/api-error";
 import { useTranslation } from "@/lib/i18n";
 import { SuppliersSection } from "@/components/dashboard/SuppliersSection";
+import { DeleteBasketConfirmDialog } from "@/components/checkout/DeleteBasketConfirmDialog";
+import { HideFromPendingConfirmDialog } from "@/components/dashboard/HideFromPendingConfirmDialog";
 import {
   OrdersOfTheDayTabs,
   type OrdersOfTheDayTabId,
 } from "@/components/dashboard/OrdersOfTheDayTabs";
 import { useActiveTabsStore, activeTabKeys } from "@/stores/activeTabs";
+import type { SuppliersListItem } from "@/lib/types/dashboard";
+import { isPendingVisible } from "@/lib/dashboard";
 
 export default function OrdersOfTheDayPage() {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const queryClient = useQueryClient();
   const [calendarRefDate, setCalendarRefDate] = useState<string | null>(null);
+  const [deleteConfirmSupplier, setDeleteConfirmSupplier] =
+    useState<SuppliersListItem | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [hideConfirmSupplier, setHideConfirmSupplier] =
+    useState<SuppliersListItem | null>(null);
+  const [hideDialogOpen, setHideDialogOpen] = useState(false);
+  const [showInPendingSupplierUID, setShowInPendingSupplierUID] = useState<
+    string | null
+  >(null);
 
   const { suppliers, isLoading, isError, errorMessage } =
     useSuppliersListForToday(calendarRefDate ?? undefined);
@@ -31,9 +50,7 @@ export default function OrdersOfTheDayPage() {
 
   const { all, pending, drafts, completed } = useMemo(() => {
     const allList = suppliersInPrefDaySchedule;
-    const pendingList = allList.filter(
-      (s: { basketIconStatus?: number | null }) => s.basketIconStatus === 3,
-    );
+    const pendingList = allList.filter(isPendingVisible);
     const draftsList = allList.filter(
       (s: { basketIconStatus?: number | null }) => s.basketIconStatus === 2,
     );
@@ -78,6 +95,66 @@ export default function OrdersOfTheDayPage() {
   const suppliersToShow =
     calendarRefDate != null ? suppliersInPrefDaySchedule : suppliersByTab;
 
+  const hideFromListMutation = useSupplierTempHideFromList({
+    onSuccess: (data) => {
+      setHideDialogOpen(false);
+      setHideConfirmSupplier(null);
+      toast.success(data?.message?.trim() || t("orders_of_day_hide_success"));
+    },
+    onError: (err) => {
+      setHideDialogOpen(false);
+      setHideConfirmSupplier(null);
+      toast.error(getApiErrorMessage(err, t("suppliers_error")));
+    },
+  });
+
+  const showInPendingMutation = useSupplierTempHideFromList({
+    onSuccess: (data) =>
+      toast.success(
+        data?.message?.trim() || t("orders_of_day_show_in_pending_success"),
+      ),
+    onError: (err) =>
+      toast.error(getApiErrorMessage(err, t("suppliers_error"))),
+  });
+
+  useEffect(() => {
+    if (!showInPendingMutation.isPending) {
+      setShowInPendingSupplierUID(null);
+    }
+  }, [showInPendingMutation.isPending]);
+
+  const basketDeleteMutation = useBasketDelete({
+    onSuccess: (data) => {
+      setDeleteDialogOpen(false);
+      setDeleteConfirmSupplier(null);
+      toast.success(data?.message?.trim() || t("checkout_delete_basket"));
+      void queryClient.invalidateQueries({ queryKey: ["suppliers"] });
+    },
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err, t("suppliers_error")));
+      setDeleteDialogOpen(false);
+      setDeleteConfirmSupplier(null);
+    },
+  });
+
+  const handleDeleteBasketConfirm = useCallback(() => {
+    if (deleteConfirmSupplier) {
+      basketDeleteMutation.mutate({
+        supplierUID: deleteConfirmSupplier.supplierUID,
+      });
+    }
+  }, [deleteConfirmSupplier, basketDeleteMutation]);
+
+  const handleHideConfirm = useCallback(() => {
+    if (hideConfirmSupplier) {
+      hideFromListMutation.mutate({
+        supplierUID: hideConfirmSupplier.supplierUID,
+        refDate: null,
+        hideFromList: true,
+      });
+    }
+  }, [hideConfirmSupplier, hideFromListMutation]);
+
   return (
     <main className="text-slate-900 px-2">
       <SuppliersSection
@@ -87,6 +164,54 @@ export default function OrdersOfTheDayPage() {
         errorMessage={errorMessage}
         displayAsDraft={activeTab === "drafts"}
         showCalendarButton={true}
+        hideFromListAction={
+          activeTab === "pending" && calendarRefDate == null
+            ? {
+                onHide: (s) => {
+                  setHideConfirmSupplier(s);
+                  setHideDialogOpen(true);
+                },
+                isPending: hideFromListMutation.isPending,
+                refDate: null,
+              }
+            : undefined
+        }
+        hidePendingSupplierUID={
+          hideFromListMutation.isPending ? hideConfirmSupplier?.supplierUID : undefined
+        }
+        emptyBasketAction={
+          activeTab === "drafts" && calendarRefDate == null
+            ? {
+                onEmptyBasket: (s) => {
+                  setDeleteConfirmSupplier(s);
+                  setDeleteDialogOpen(true);
+                },
+                isPending: basketDeleteMutation.isPending,
+              }
+            : undefined
+        }
+        emptyBasketPendingSupplierUID={
+          basketDeleteMutation.isPending ? deleteConfirmSupplier?.supplierUID : undefined
+        }
+        showInPendingAction={
+          activeTab === "all" && calendarRefDate == null
+            ? {
+                onShowInPending: (s) => {
+                  setShowInPendingSupplierUID(s.supplierUID);
+                  showInPendingMutation.mutate({
+                    supplierUID: s.supplierUID,
+                    refDate: null,
+                    hideFromList: false,
+                  });
+                },
+                isPending: showInPendingMutation.isPending,
+                refDate: null,
+              }
+            : undefined
+        }
+        showInPendingSupplierUID={
+          showInPendingMutation.isPending ? showInPendingSupplierUID ?? undefined : undefined
+        }
         onRefDateSelect={(date) => {
           if (isSameDay(date, new Date())) {
             setCalendarRefDate(null);
@@ -119,6 +244,20 @@ export default function OrdersOfTheDayPage() {
           />
         )}
       </SuppliersSection>
+
+      <DeleteBasketConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDeleteBasketConfirm}
+        isDeleting={basketDeleteMutation.isPending}
+      />
+
+      <HideFromPendingConfirmDialog
+        open={hideDialogOpen}
+        onOpenChange={setHideDialogOpen}
+        onConfirm={handleHideConfirm}
+        isHiding={hideFromListMutation.isPending}
+      />
     </main>
   );
 }

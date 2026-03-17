@@ -206,35 +206,6 @@ export function useSuppliersManageSuppliers(activeTab: "active" | "inactive") {
 }
 
 /**
- * POST Shop/Suppliers_GetList with supplierStatus: 4.
- * Use on settings/partner-suppliers page.
- */
-export function useSuppliersNoPartners() {
-  const query = useQuery({
-    queryKey: ["suppliers-no-partners"],
-    queryFn: async (): Promise<SuppliersListResponse> => {
-      const res = await api.post<SuppliersListResponse>("/suppliers-list", {
-        setCategories: true,
-        setLastOrders: true,
-        setDeliverySchedule: true,
-        setDailyAnalysisSchedule: true,
-        supplierStatus: 4,
-        shopperStatus: null,
-      });
-      return res.data;
-    },
-  });
-
-  const suppliers = query.data?.listSuppliers ?? [];
-  return {
-    suppliers,
-    isLoading: query.isLoading,
-    isError: !!query.error,
-    errorMessage: (query.error as Error)?.message,
-  };
-}
-
-/**
  * GET Shop/Supplier_BasicInfos.
  * When supplierUID is null/undefined, calls with no params (backend may return list for today).
  */

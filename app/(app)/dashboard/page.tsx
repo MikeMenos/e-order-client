@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { useAuthStore } from "@/stores/auth";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
+import { isCountedForOrdersOfDayBadge } from "@/lib/dashboard";
 import { listVariants, listItemVariants } from "@/lib/motion";
 import { TileCard } from "@/components/ui/tile-card";
 import { NotificationsUnreadBanner } from "@/components/dashboard/NotificationsUnreadBanner";
@@ -41,13 +42,7 @@ export default function DashboardPage() {
   const logout = useAuthStore((s) => s.logout);
   const { suppliers } = useSuppliersListForToday();
   const todayOrdersCount = useMemo(
-    () =>
-      suppliers.filter(
-        (s: {
-          isInPrefDaySchedule?: boolean;
-          basketIconStatus?: number | null;
-        }) => s.isInPrefDaySchedule === true && s.basketIconStatus !== 200,
-      ).length,
+    () => suppliers.filter(isCountedForOrdersOfDayBadge).length,
     [suppliers],
   );
   return (

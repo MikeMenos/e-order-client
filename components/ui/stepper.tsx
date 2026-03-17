@@ -32,6 +32,20 @@ export function Stepper({
   tone: StepperTone;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }) {
+  const num =
+    typeof value === "number"
+      ? value
+      : value === ""
+        ? 0
+        : parseInt(String(value), 10) || 0;
+
+  const qtyBorderStyle =
+    num >= 30
+      ? { borderWidth: 2, borderColor: "rgb(239 68 68)" }
+      : num >= 20
+        ? { borderWidth: 2, borderColor: "rgb(234 179 8)" }
+        : undefined;
+
   const toneStyles =
     tone === "reserve"
       ? {
@@ -53,6 +67,7 @@ export function Stepper({
 
       <div
         className={`inline-flex items-center overflow-hidden rounded-xl border h-9 focus-within:ring-4 ${toneStyles.wrap} ${toneStyles.ring}`}
+        style={qtyBorderStyle}
       >
         <Button
           type="button"
