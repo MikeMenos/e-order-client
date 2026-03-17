@@ -81,6 +81,7 @@ export type SuppliersListItem = {
   minOrderAmount: number | null;
   deliveryCost: number | null;
   isInPrefDaySchedule: boolean;
+  showInList: boolean;
   counterTodayOrders: number;
   counterOpenBaskets: number;
   categories: SupplierDisplayCategory[];

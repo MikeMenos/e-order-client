@@ -2,16 +2,28 @@ import { useMemo, useState } from "react";
 import { useAllSuppliersFilterStore } from "@/stores/allSuppliersFilter";
 import { motion } from "framer-motion";
 import {
+  SwipeableList,
+  SwipeableListItem,
+  TrailingActions,
+  SwipeAction,
+} from "react-swipeable-list";
+import "react-swipeable-list/dist/styles.css";
+import {
   ArrowRight,
   Calendar as CalendarIcon,
+  Eye,
   RotateCcw,
   ShoppingCart,
   ShoppingBag,
+  Trash2,
 } from "lucide-react";
+import { isHiddenFromPending } from "@/lib/dashboard";
+import { OrdersOfDaySwipeContent } from "./OrdersOfDaySwipeContent";
 import { useTranslation } from "../../lib/i18n";
 import { listVariants, listItemVariants } from "../../lib/motion";
 import { Button } from "../ui/button";
 import Loading from "../ui/loading";
+import { Spinner } from "../ui/spinner";
 import { SuppliersSearchBar } from "./SuppliersSearchBar";
 import { SupplierTile } from "./SupplierTile";
 import { usePathname } from "next/navigation";
@@ -51,6 +63,29 @@ type Props = {
   ) => void | Promise<void>;
   /** For manage-suppliers inactive tab: true when approval mutation is in progress. */
   isInactiveApprovalPending?: boolean;
+  /** For orders-of-the-day Pending tab: hide supplier from list. RefDate ISO string for API. */
+  hideFromListAction?: {
+    onHide: (supplier: SuppliersListItem) => void;
+    isPending?: boolean;
+    refDate: null;
+  };
+  /** For orders-of-the-day Drafts tab: empty basket (same as checkout Άδειασμα καλαθιού). Red swipe area. */
+  emptyBasketAction?: {
+    onEmptyBasket: (supplier: SuppliersListItem) => void;
+    isPending?: boolean;
+  };
+  /** For orders-of-the-day All tab: show in Pending (opposite of hide). Only for basketIconStatus===3 && showInList===false. Green swipe area. */
+  showInPendingAction?: {
+    onShowInPending: (supplier: SuppliersListItem) => void;
+    isPending?: boolean;
+    refDate: null;
+  };
+  /** Supplier UID being hidden (Pending tab) - show overlay + loader on that card. */
+  hidePendingSupplierUID?: string;
+  /** Supplier UID being emptied (Drafts tab) - show overlay + loader on that card. */
+  emptyBasketPendingSupplierUID?: string;
+  /** Supplier UID being moved to Pending (All tab) - show overlay + loader on that card. */
+  showInPendingSupplierUID?: string;
 };
 
 export function SuppliersSection({
@@ -69,6 +104,12 @@ export function SuppliersSection({
   onShowTodayClick,
   onInactiveApprovalToggle,
   isInactiveApprovalPending = false,
+  hideFromListAction,
+  emptyBasketAction,
+  showInPendingAction,
+  hidePendingSupplierUID,
+  emptyBasketPendingSupplierUID,
+  showInPendingSupplierUID,
 }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAscending, setIsAscending] = useState(true);
@@ -83,17 +124,14 @@ export function SuppliersSection({
   const sectionBackgroundClass =
     pathname === "/settings/manage-suppliers"
       ? "app-bg-image"
-      : pathname === "/orders-of-the-day" ||
-          pathname === "/all-suppliers" ||
-          pathname === "/settings/partner-suppliers"
+      : pathname === "/orders-of-the-day" || pathname === "/all-suppliers"
         ? "bg-brand-100"
         : "bg-white";
 
   const useAllSuppliersStyle =
     calendarDateView ||
     pathname === "/all-suppliers" ||
-    pathname === "/settings/manage-suppliers" ||
-    pathname === "/settings/partner-suppliers";
+    pathname === "/settings/manage-suppliers";
   const showTabs =
     (pathname === "/orders-of-the-day" && !calendarDateView) ||
     pathname === "/settings/manage-suppliers";
@@ -122,7 +160,6 @@ export function SuppliersSection({
     if (
       pathname === "/all-suppliers" ||
       pathname === "/settings/manage-suppliers" ||
-      pathname === "/settings/partner-suppliers" ||
       calendarDateView
     ) {
       data.sort((a, b) => {
@@ -210,7 +247,6 @@ export function SuppliersSection({
           )}
           {(pathname === "/all-suppliers" ||
             pathname === "/settings/manage-suppliers" ||
-            pathname === "/settings/partner-suppliers" ||
             calendarDateView) && (
             <Button
               type="button"
@@ -271,72 +307,222 @@ export function SuppliersSection({
               )}
             </div>
           )}
-          <motion.div
-            className={
-              useAllSuppliersStyle
-                ? "grid grid-cols-2 gap-3 pb-8 pt-1"
-                : "space-y-2 pb-8 pt-1"
-            }
-            variants={listVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {filteredSuppliers.map((s) => (
-              <motion.div key={s.supplierUID} variants={listItemVariants}>
-                <SupplierTile
-                  supplier={s}
-                  showDeliveryInfo={!useAllSuppliersStyle}
-                  showBasketStatus={!useAllSuppliersStyle}
-                  displayAsDraft={displayAsDraft}
-                  calendarDateView={calendarDateView}
-                  tileStyle="default"
-                  titleHref={
-                    pathname === "/orders-of-the-day" && !calendarDateView
-                      ? `/settings/manage-suppliers/${encodeURIComponent(s.supplierUID)}`
-                      : undefined
-                  }
-                  href={
-                    onSupplierClick
-                      ? undefined
-                      : (() => {
-                          if (pathname === "/orders-of-the-day") {
-                            if (
-                              !calendarDateView &&
-                              s.basketIconStatus === 200 &&
-                              s.todaysOrderUID
-                            ) {
-                              return `/orders-of-the-day/order/${encodeURIComponent(s.todaysOrderUID)}`;
+          {hideFromListAction || emptyBasketAction || showInPendingAction ? (
+            <SwipeableList
+              className={cn(
+                "w-full",
+                useAllSuppliersStyle
+                  ? "grid grid-cols-2 gap-3 pb-8 pt-1"
+                  : "space-y-2 pb-8 pt-1",
+              )}
+              fullSwipe={false}
+            >
+              {filteredSuppliers.map((s) => {
+                const hiddenFromPending = isHiddenFromPending(s);
+                const trailingActions = () => (
+                  <TrailingActions>
+                    {hideFromListAction ? (
+                      <SwipeAction onClick={() => hideFromListAction.onHide(s)}>
+                        <OrdersOfDaySwipeContent
+                          variant="hide"
+                          labelKey="orders_of_day_hide_from_list"
+                        />
+                      </SwipeAction>
+                    ) : emptyBasketAction ? (
+                      <SwipeAction
+                        onClick={() => emptyBasketAction.onEmptyBasket(s)}
+                      >
+                        <OrdersOfDaySwipeContent
+                          variant="emptyBasket"
+                          labelKey="checkout_delete_basket"
+                          icon={Trash2}
+                        />
+                      </SwipeAction>
+                    ) : showInPendingAction && hiddenFromPending ? (
+                      <SwipeAction
+                        onClick={() => showInPendingAction.onShowInPending(s)}
+                      >
+                        <OrdersOfDaySwipeContent
+                          variant="showInPending"
+                          labelKey="orders_of_day_show_in_pending"
+                          icon={Eye}
+                        />
+                      </SwipeAction>
+                    ) : null}
+                  </TrailingActions>
+                );
+                const isPending =
+                  hidePendingSupplierUID === s.supplierUID ||
+                  emptyBasketPendingSupplierUID === s.supplierUID ||
+                  showInPendingSupplierUID === s.supplierUID;
+                return (
+                  <SwipeableListItem
+                    key={s.supplierUID}
+                    trailingActions={trailingActions()}
+                    blockSwipe={
+                      showInPendingAction ? !hiddenFromPending : undefined
+                    }
+                  >
+                    <div className={cn("relative", isPending && "opacity-60")}>
+                      {isPending && (
+                        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/70">
+                          <Spinner size={32} />
+                        </div>
+                      )}
+                      <SupplierTile
+                      supplier={s}
+                      showDeliveryInfo={!useAllSuppliersStyle}
+                      showBasketStatus={!useAllSuppliersStyle}
+                      displayAsDraft={displayAsDraft}
+                      calendarDateView={calendarDateView}
+                      tileStyle="default"
+                      titleHref={
+                        pathname === "/orders-of-the-day" && !calendarDateView
+                          ? `/settings/manage-suppliers/${encodeURIComponent(s.supplierUID)}`
+                          : undefined
+                      }
+                      href={
+                        onSupplierClick
+                          ? undefined
+                          : (() => {
+                              if (pathname === "/orders-of-the-day") {
+                                if (
+                                  !calendarDateView &&
+                                  s.basketIconStatus === 200 &&
+                                  s.todaysOrderUID
+                                ) {
+                                  return `/orders-of-the-day/order/${encodeURIComponent(s.todaysOrderUID)}`;
+                                }
+                                const base = `/suppliers/${encodeURIComponent(s.supplierUID)}?from=orders-of-the-day`;
+                                const refDateOnly =
+                                  calendarDateView && selectedRefDate
+                                    ? toDateOnly(selectedRefDate)
+                                    : null;
+                                return refDateOnly
+                                  ? `${base}&refDate=${encodeURIComponent(refDateOnly)}`
+                                  : base;
+                              }
+                              return `/suppliers/${encodeURIComponent(s.supplierUID)}`;
+                            })()
+                      }
+                      onClick={
+                        onSupplierClick ? () => onSupplierClick(s) : undefined
+                      }
+                      hideFromListAction={
+                        hideFromListAction
+                          ? {
+                              onHide: () => hideFromListAction.onHide(s),
+                              isPending: hideFromListAction.isPending,
                             }
-                            const base = `/suppliers/${encodeURIComponent(s.supplierUID)}?from=orders-of-the-day`;
-                            const refDateOnly =
-                              calendarDateView && selectedRefDate
-                                ? toDateOnly(selectedRefDate)
-                                : null;
-                            return refDateOnly
-                              ? `${base}&refDate=${encodeURIComponent(refDateOnly)}`
-                              : base;
+                          : undefined
+                      }
+                      emptyBasketAction={
+                        emptyBasketAction
+                          ? {
+                              onEmptyBasket: () =>
+                                emptyBasketAction.onEmptyBasket(s),
+                              isPending: emptyBasketAction.isPending,
+                            }
+                          : undefined
+                      }
+                      showInPendingAction={
+                        showInPendingAction && hiddenFromPending
+                          ? {
+                              onShowInPending: () =>
+                                showInPendingAction.onShowInPending(s),
+                              isPending: showInPendingAction.isPending,
+                            }
+                          : undefined
+                      }
+                      isHiddenFromPending={
+                        showInPendingAction ? hiddenFromPending : undefined
+                      }
+                      partnerApprovalAction={
+                        pathname === "/settings/manage-suppliers" &&
+                        onInactiveApprovalToggle
+                          ? {
+                              onAction: () => onInactiveApprovalToggle(s, true),
+                              isPending: isInactiveApprovalPending,
+                              labelKey: "manage_suppliers_restore",
+                              icon: RotateCcw,
+                            }
+                          : undefined
+                      }
+                    />
+                    </div>
+                  </SwipeableListItem>
+                );
+              })}
+            </SwipeableList>
+          ) : (
+            <motion.div
+              className={cn(
+                "w-full",
+                useAllSuppliersStyle
+                  ? "grid grid-cols-2 gap-3 pb-8 pt-1"
+                  : "space-y-2 pb-8 pt-1",
+              )}
+              variants={listVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {filteredSuppliers.map((s) => (
+                <motion.div key={s.supplierUID} variants={listItemVariants}>
+                  <SupplierTile
+                    supplier={s}
+                    showDeliveryInfo={!useAllSuppliersStyle}
+                    showBasketStatus={!useAllSuppliersStyle}
+                    displayAsDraft={displayAsDraft}
+                    calendarDateView={calendarDateView}
+                    tileStyle="default"
+                    titleHref={
+                      pathname === "/orders-of-the-day" && !calendarDateView
+                        ? `/settings/manage-suppliers/${encodeURIComponent(s.supplierUID)}`
+                        : undefined
+                    }
+                    href={
+                      onSupplierClick
+                        ? undefined
+                        : (() => {
+                            if (pathname === "/orders-of-the-day") {
+                              if (
+                                !calendarDateView &&
+                                s.basketIconStatus === 200 &&
+                                s.todaysOrderUID
+                              ) {
+                                return `/orders-of-the-day/order/${encodeURIComponent(s.todaysOrderUID)}`;
+                              }
+                              const base = `/suppliers/${encodeURIComponent(s.supplierUID)}?from=orders-of-the-day`;
+                              const refDateOnly =
+                                calendarDateView && selectedRefDate
+                                  ? toDateOnly(selectedRefDate)
+                                  : null;
+                              return refDateOnly
+                                ? `${base}&refDate=${encodeURIComponent(refDateOnly)}`
+                                : base;
+                            }
+                            return `/suppliers/${encodeURIComponent(s.supplierUID)}`;
+                          })()
+                    }
+                    onClick={
+                      onSupplierClick ? () => onSupplierClick(s) : undefined
+                    }
+                    partnerApprovalAction={
+                      pathname === "/settings/manage-suppliers" &&
+                      onInactiveApprovalToggle
+                        ? {
+                            onAction: () => onInactiveApprovalToggle(s, true),
+                            isPending: isInactiveApprovalPending,
+                            labelKey: "manage_suppliers_restore",
+                            icon: RotateCcw,
                           }
-                          return `/suppliers/${encodeURIComponent(s.supplierUID)}`;
-                        })()
-                  }
-                  onClick={
-                    onSupplierClick ? () => onSupplierClick(s) : undefined
-                  }
-                  partnerApprovalAction={
-                    pathname === "/settings/manage-suppliers" &&
-                    onInactiveApprovalToggle
-                      ? {
-                          onAction: () => onInactiveApprovalToggle(s, true),
-                          isPending: isInactiveApprovalPending,
-                          labelKey: "manage_suppliers_restore",
-                          icon: RotateCcw,
-                        }
-                      : undefined
-                  }
-                />
-              </motion.div>
-            ))}
-          </motion.div>
+                        : undefined
+                    }
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
         </>
       )}
     </section>
