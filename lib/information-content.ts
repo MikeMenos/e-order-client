@@ -99,8 +99,7 @@ const CONTENT: Record<InformationSlug, string> = {
 
   contact: `Για οποιαδήποτε βοήθεια ή πληροφορία, μπορείτε να επικοινωνήσετε με την ομάδα υποστήριξης.
 
-Email: info@eorder.gr
-Τηλέφωνο: 210 XXXXXXX`,
+Email: info@eorder.gr`,
 
   "terms-of-use": `Όροι χρήσης`,
 
