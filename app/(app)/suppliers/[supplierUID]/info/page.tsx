@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Pencil, Loader2 } from "lucide-react";
 import { useSupplierBasicInfos } from "@/hooks/useDashboardData";
+import { useSupplierDisplay } from "@/hooks/useSupplier";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { usePersonalizedTextsUpdate } from "@/hooks/usePersonalizedTextsUpdate";
 import { useTranslation } from "@/lib/i18n";
@@ -24,6 +25,8 @@ export default function SupplierInfoPage() {
   const queryClient = useQueryClient();
 
   const basicInfoQuery = useSupplierBasicInfos(supplierUID, !!supplierUID);
+  const displayQuery = useSupplierDisplay(supplierUID ?? undefined);
+  const genericUsersMessage = displayQuery.data?.supplier?.genericUsersMessage;
   const supplier =
     basicInfoQuery.data?.supplier ??
     basicInfoQuery.data?.suppliers?.[0] ??
@@ -282,6 +285,13 @@ export default function SupplierInfoPage() {
                   {supplier.personalNotes}
                 </p>
               </DetailSection>
+            )}
+
+            {/* Generic users message from suppliers-display */}
+            {genericUsersMessage?.trim() && (
+              <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-base text-slate-800">
+                {genericUsersMessage.trim()}
+              </div>
             )}
           </div>
         )}
