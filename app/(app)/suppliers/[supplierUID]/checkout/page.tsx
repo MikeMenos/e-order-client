@@ -279,10 +279,16 @@ export default function SupplierCheckoutPage() {
 
       <div className="flex-1 min-h-0 overflow-y-auto -mx-3 px-3 space-y-3">
         {supplier?.genericUsersMessage?.trim().startsWith("#") && (
-          <div className="rounded-lg border-2 border-red-300 bg-red-50 px-3 py-2 text-base text-red-800">
+          <div className="rounded-lg border-2 border-red-300 bg-red-50 px-2 py-1 text-sm text-red-800">
             {supplier.genericUsersMessage.trim()}
           </div>
         )}
+        {supplier?.genericUsersMessage?.trim() &&
+          !supplier.genericUsersMessage.trim().startsWith("#") && (
+            <div className="rounded-lg border border-green-200 bg-green-50 px-2 py-1 text-sm text-slate-800">
+              {supplier.genericUsersMessage.trim()}
+            </div>
+          )}
         <CheckoutBasketSection
           supplierUID={supplierUID}
           onHasItemsChange={setHasBasketItems}

@@ -25,6 +25,7 @@
 .DS_Store
 *.pem
 /react-native
+/serverListen.js
 
 # debug
 npm-debug.log*
