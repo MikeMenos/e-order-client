@@ -53,6 +53,7 @@ export type SupplierDisplay = {
   deliveryCost: number | null;
   isInPrefDaySchedule: boolean;
   categories: SupplierDisplayCategory[];
+  genericUsersMessage?: string | null;
 };
 
 export type SupplierDisplayResponse = {
