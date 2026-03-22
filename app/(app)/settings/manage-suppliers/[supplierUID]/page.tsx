@@ -7,6 +7,7 @@ import { useSuppliersListForToday } from "@/hooks/useDashboardData";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { TileCard } from "@/components/ui/tile-card";
 import Loading from "@/components/ui/loading";
+import { ErrorMessage } from "@/components/ui/error-message";
 import { StoreSelectDialog } from "@/components/auth/StoreSelectDialog";
 import { useAuthStore } from "@/stores/auth";
 import toast from "react-hot-toast";
@@ -140,7 +141,7 @@ export default function ManageSupplierMenuPage() {
   if (isError || !selectedSupplier) {
     return (
       <main className="px-3 text-slate-900 overflow-hidden">
-        <p className="text-base text-slate-500">{t("suppliers_error")}</p>
+        <ErrorMessage>{t("suppliers_error")}</ErrorMessage>
       </main>
     );
   }

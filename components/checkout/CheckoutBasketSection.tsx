@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { DeleteBasketConfirmDialog } from "@/components/checkout/DeleteBasketConfirmDialog";
 import Loading from "@/components/ui/loading";
+import { ErrorMessage } from "@/components/ui/error-message";
 import { CheckoutSectionHeading } from "./CheckoutSectionHeading";
 import {
   useBasketItems,
@@ -377,9 +378,9 @@ export function CheckoutBasketSection({
       />
       {isLoading && <Loading spinnerOnly />}
       {isError && (
-        <p className=" text-red-500">
+        <ErrorMessage>
           {error instanceof Error ? error.message : t("basket_error")}
-        </p>
+        </ErrorMessage>
       )}
       {!isLoading && !isError && items.length === 0 && (
         <p className="text-slate-500 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">

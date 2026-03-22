@@ -13,6 +13,7 @@ import { SupplierProductSection } from "../../../../components/supplier/Supplier
 import { SupplierCheckoutBar } from "../../../../components/supplier/SupplierCheckoutBar";
 import { BackToTopButton } from "../../../../components/ui/BackToTopButton";
 import Loading from "../../../../components/ui/loading";
+import { ErrorMessage } from "../../../../components/ui/error-message";
 import { getApiErrorMessage } from "../../../../lib/api-error";
 import { useActiveTabsStore, activeTabKeys } from "@/stores/activeTabs";
 import { useSupplierPageProducts } from "../../../../hooks/useSupplierPageProducts";
@@ -118,9 +119,9 @@ export default function SupplierPage() {
         {(isLoading || isTabChanging) && <Loading spinnerOnly />}
 
         {error && (
-          <p className="text-base text-red-400">
+          <ErrorMessage>
             {getApiErrorMessage(error, t("supplier_error_products"))}
-          </p>
+          </ErrorMessage>
         )}
 
         {!(isLoading || isTabChanging) &&

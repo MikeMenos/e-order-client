@@ -19,6 +19,7 @@ import { getApiErrorMessage } from "../../../../../lib/api-error";
 import type { WishlistItem } from "../../../../../lib/types/wishlist";
 import toast from "react-hot-toast";
 import Loading from "../../../../../components/ui/loading";
+import { ErrorMessage } from "../../../../../components/ui/error-message";
 import { FavoriteRowContent } from "../../../../../components/supplier/FavoriteRowContent";
 import { SortableFavoriteRow } from "../../../../../components/supplier/SortableFavoriteRow";
 
@@ -89,9 +90,9 @@ export default function FavoritesPage() {
       {wishlistQuery.isLoading && <Loading spinnerOnly />}
 
       {wishlistQuery.error && (
-        <p className="text-base text-red-400">
+        <ErrorMessage>
           {t("config_error_favorites") || "Error loading favorites"}
-        </p>
+        </ErrorMessage>
       )}
 
       {items.length === 0 &&

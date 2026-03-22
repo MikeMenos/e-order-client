@@ -11,6 +11,7 @@ import {
 import { useOrderView } from "@/hooks/useOrderView";
 import { OrderHistoryTile } from "@/components/supplier/OrderHistoryTile";
 import Loading from "@/components/ui/loading";
+import { ErrorMessage } from "@/components/ui/error-message";
 import { useTranslation } from "@/lib/i18n";
 import { listVariants, listItemVariants } from "@/lib/motion";
 
@@ -49,9 +50,7 @@ export default function SupplierOrderHistoryPage() {
       <div>
         {ordersQuery.isLoading && <Loading spinnerOnly />}
         {ordersQuery.error && (
-          <p className="text-base text-red-400">
-            {t("supplier_order_history_error")}
-          </p>
+          <ErrorMessage>{t("supplier_order_history_error")}</ErrorMessage>
         )}
         {orders.length === 0 && !ordersQuery.isLoading && !ordersQuery.error && (
           <p className="text-base text-slate-600 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2 inline-block">

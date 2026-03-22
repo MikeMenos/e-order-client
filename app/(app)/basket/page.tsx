@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useBasketCounter, useBasketItems } from "../../../hooks/useBasket";
 import { useTranslation } from "../../../lib/i18n";
 import Loading from "../../../components/ui/loading";
+import { ErrorMessage } from "../../../components/ui/error-message";
 import { listVariants, listItemVariants } from "../../../lib/motion";
 
 export default function BasketPage() {
@@ -26,7 +27,7 @@ export default function BasketPage() {
 
       {basketQuery.isLoading && <Loading spinnerOnly />}
       {basketQuery.error && (
-        <p className="text-base text-red-400">{t("basket_error")}</p>
+        <ErrorMessage>{t("basket_error")}</ErrorMessage>
       )}
 
       {baskets.length === 0 && !basketQuery.isLoading && !basketQuery.error ? (

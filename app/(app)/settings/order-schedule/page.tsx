@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import Loading from "@/components/ui/loading";
+import { ErrorMessage } from "@/components/ui/error-message";
 import { usePrefSchedule, usePrefScheduleUpdate } from "@/hooks/useSchedule";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
 import { Switch } from "@/components/ui/switch";
@@ -199,7 +200,7 @@ export default function OrderSchedulePage() {
       {scheduleQuery.isLoading && <Loading spinnerOnly />}
 
       {scheduleQuery.error && (
-        <p className="text-red-400">{t("config_error_schedule")}</p>
+        <ErrorMessage>{t("config_error_schedule")}</ErrorMessage>
       )}
 
       {!scheduleQuery.isLoading &&
