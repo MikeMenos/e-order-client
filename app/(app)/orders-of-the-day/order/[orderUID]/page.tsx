@@ -7,6 +7,7 @@ import { useTranslation } from "@/lib/i18n";
 import { formatOrderDate } from "@/lib/utils";
 import { DetailSection } from "@/components/ui/detail-section";
 import Loading from "@/components/ui/loading";
+import { ErrorMessage } from "@/components/ui/error-message";
 import { ChevronLeft } from "lucide-react";
 import type { OrderLineItem } from "@/lib/types/order";
 
@@ -33,9 +34,7 @@ export default function OrderOfTheDayViewPage() {
         {orderViewQuery.isLoading && <Loading spinnerOnly />}
 
         {orderViewQuery.error && (
-          <p className="text-base text-red-400">
-            {t("supplier_order_history_error")}
-          </p>
+          <ErrorMessage>{t("supplier_order_history_error")}</ErrorMessage>
         )}
 
         {!orderViewQuery.isLoading && !orderViewQuery.error && order && (
