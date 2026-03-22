@@ -245,23 +245,6 @@ export function StatisticsCharts({ stats, t }: Props) {
         )}
       </ChartSection>
 
-      <ChartSection title={`${t("stats_forecast_top_products")}`}>
-        {forecastCharts.topByTotal.length > 0 ? (
-          <HorizontalBarChart
-            data={forecastCharts.topByTotal}
-            barColor={CHART_COLORS.bar1}
-            maxLabelWidth={isMobile ? 90 : 130}
-            t={t}
-            tooltipFn={(p) => [
-              `${t("stats_total")}: ${p.quantity}`,
-              `${t("stats_forecast_next_week")}: ${p.forecast ?? 0}`,
-            ]}
-          />
-        ) : (
-          <NoDataPlaceholder message={noData} />
-        )}
-      </ChartSection>
-
       <ChartSection title={t("stats_top_products")}>
         {topProducts.length > 0 ? (
           <HorizontalBarChart
