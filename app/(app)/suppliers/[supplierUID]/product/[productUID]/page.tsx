@@ -15,6 +15,7 @@ import { DetailSection } from "@/components/ui/detail-section";
 import { DetailRow } from "@/components/ui/detail-row";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
+import { ErrorMessage } from "@/components/ui/error-message";
 import { ClearableInput } from "@/components/ui/clearable-input";
 import { formatOrderDate } from "@/lib/utils";
 
@@ -103,9 +104,9 @@ export default function SupplierProductPage() {
         {displayQuery.isLoading && <Loading spinnerOnly />}
 
         {displayQuery.error && (
-          <p className="text-base text-red-400">
+          <ErrorMessage>
             {getApiErrorMessage(displayQuery.error, t("suppliers_error"))}
-          </p>
+          </ErrorMessage>
         )}
 
         {!displayQuery.isLoading && !displayQuery.error && !product && (

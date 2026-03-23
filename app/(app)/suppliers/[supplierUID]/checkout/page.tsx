@@ -15,6 +15,7 @@ import {
   getDefaultDeliveryDateWithRefDate,
   refDateInWeekDailyAnalysis,
 } from "@/lib/utils";
+import { ErrorMessage } from "@/components/ui/error-message";
 import { CheckoutPageHeader } from "@/components/checkout/CheckoutPageHeader";
 import { CheckoutBasketSection } from "@/components/checkout/CheckoutBasketSection";
 import { CheckoutDeliverySection } from "@/components/checkout/CheckoutDeliverySection";
@@ -253,12 +254,12 @@ export default function SupplierCheckoutPage() {
   if (supplierInfoQuery.error) {
     return (
       <main className="min-h-screen flex flex-col pb-36 text-slate-900 px-2 pt-6">
-        <p className="text-base text-red-400">
+        <ErrorMessage>
           {getApiErrorMessage(
             supplierInfoQuery.error,
             t("supplier_error_products"),
           )}
-        </p>
+        </ErrorMessage>
       </main>
     );
   }

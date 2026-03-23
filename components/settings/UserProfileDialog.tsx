@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import Loading from "@/components/ui/loading";
+import { ErrorMessage } from "@/components/ui/error-message";
 import {
   useUserProfile,
   useUsersToggleActive,
@@ -209,9 +210,7 @@ export function UserProfileDialog({
             {profileQuery.isLoading && <Loading spinnerOnly />}
 
             {profileQuery.error && (
-              <p className="text-base text-red-400">
-                {t("settings_manage_users_error")}
-              </p>
+              <ErrorMessage>{t("settings_manage_users_error")}</ErrorMessage>
             )}
 
             {!profileQuery.isLoading && !profileQuery.error && user && (

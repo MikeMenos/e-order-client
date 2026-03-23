@@ -23,6 +23,7 @@ import { useTranslation } from "../../lib/i18n";
 import { listVariants, listItemVariants } from "../../lib/motion";
 import { Button } from "../ui/button";
 import Loading from "../ui/loading";
+import { ErrorMessage } from "../ui/error-message";
 import { Spinner } from "../ui/spinner";
 import { SuppliersSearchBar } from "./SuppliersSearchBar";
 import { SupplierTile } from "./SupplierTile";
@@ -269,9 +270,7 @@ export function SuppliersSection({
 
       {isLoading && <Loading spinnerOnly />}
       {isError && (
-        <p className="text-base text-red-400">
-          {errorMessage ?? t("suppliers_error")}
-        </p>
+        <ErrorMessage>{errorMessage ?? t("suppliers_error")}</ErrorMessage>
       )}
 
       {filteredSuppliers.length === 0 && !isLoading ? (

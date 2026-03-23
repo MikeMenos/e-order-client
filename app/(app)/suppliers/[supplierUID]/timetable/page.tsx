@@ -8,6 +8,7 @@ import { useSuppliersListForToday } from "@/hooks/useDashboardData";
 import { formatTimetableDeliveryDays } from "@/lib/types/schedule";
 import { Switch } from "@/components/ui/switch";
 import Loading from "@/components/ui/loading";
+import { ErrorMessage } from "@/components/ui/error-message";
 
 export default function TimetablePage() {
   const { t } = useTranslation();
@@ -42,7 +43,7 @@ export default function TimetablePage() {
       {scheduleQuery.isLoading && <Loading spinnerOnly />}
 
       {scheduleQuery.error && (
-        <p className=" text-red-400">{t("config_error_schedule")}</p>
+        <ErrorMessage>{t("config_error_schedule")}</ErrorMessage>
       )}
 
       {!supplierSchedule && !scheduleQuery.isLoading && scheduleQuery.data && (

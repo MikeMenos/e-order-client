@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
+import { ErrorMessage } from "@/components/ui/error-message";
 import type { StoreUser } from "@/lib/types/users";
 import { listVariants, listItemVariants } from "@/lib/motion";
 import { UserTile } from "@/components/settings/UserTile";
@@ -82,12 +83,12 @@ export default function ManageUsersPage() {
         {usersQuery.isLoading && <Loading spinnerOnly />}
 
         {usersQuery.error && (
-          <p className="text-base text-red-400">
+          <ErrorMessage>
             {getApiErrorMessage(
               usersQuery.error as Error,
               t("config_error_users"),
             )}
-          </p>
+          </ErrorMessage>
         )}
 
         {!usersQuery.isLoading && !usersQuery.error && (

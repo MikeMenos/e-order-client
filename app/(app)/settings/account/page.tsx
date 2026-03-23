@@ -13,6 +13,7 @@ import { ClearableInput } from "@/components/ui/clearable-input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
+import { ErrorMessage } from "@/components/ui/error-message";
 import { getApiErrorMessage } from "@/lib/api-error";
 
 export default function AccountSettingsPage() {
@@ -84,9 +85,7 @@ export default function AccountSettingsPage() {
         {profileQuery.isLoading && <Loading spinnerOnly />}
 
         {profileQuery.error && (
-          <p className="text-base text-red-400">
-            {t("settings_account_error")}
-          </p>
+          <ErrorMessage>{t("settings_account_error")}</ErrorMessage>
         )}
 
         {!profileQuery.isLoading && !profileQuery.error && user && (

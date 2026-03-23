@@ -15,6 +15,7 @@ import { DetailSection } from "@/components/ui/detail-section";
 import { DetailRow } from "@/components/ui/detail-row";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
+import { ErrorMessage } from "@/components/ui/error-message";
 import { ClearableInput } from "@/components/ui/clearable-input";
 
 export default function SupplierInfoPage() {
@@ -111,7 +112,7 @@ export default function SupplierInfoPage() {
         {basicInfoQuery.isLoading && <Loading spinnerOnly />}
 
         {basicInfoQuery.error && (
-          <p className="text-base text-red-400">{t("suppliers_error")}</p>
+          <ErrorMessage>{t("suppliers_error")}</ErrorMessage>
         )}
 
         {!basicInfoQuery.isLoading && !basicInfoQuery.error && !supplier && (
