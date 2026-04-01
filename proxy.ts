@@ -1,9 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/"];
+const PUBLIC_PATHS = ["/", "/register"];
 
 function isPublicPath(pathname: string): boolean {
-  return PUBLIC_PATHS.includes(pathname);
+  if (PUBLIC_PATHS.includes(pathname)) return true;
+  /** e.g. /register/verify */
+  if (pathname.startsWith("/register/")) return true;
+  return false;
 }
 
 export function proxy(request: NextRequest) {
@@ -29,6 +32,8 @@ export const config = {
   // Run only on page routes we need for auth; avoid interfering with internal routes
   matcher: [
     "/",
+    "/register",
+    "/register/:path*",
     "/dashboard",
     "/basket",
     "/configuration",

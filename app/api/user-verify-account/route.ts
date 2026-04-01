@@ -2,36 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAxiosError } from "axios";
 import { backend } from "../../../lib/backend";
 import { getBackendHeaders } from "../../../lib/backend-headers";
-import {
-  registerRequestDigest,
-  utcRegisterTimeToken,
-} from "../../../lib/register-digest";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const accountUsername = String(body?.accountUsername ?? "").trim();
-    const accountEmail = String(body?.accountEmail ?? "").trim();
-    const vat = String(body?.vat ?? "")
-      .replace(/\s/g, "")
-      .trim();
-    const postalCode = String(body?.postalCode ?? "")
-      .replace(/\s/g, "")
-      .trim();
-    const timeToken = utcRegisterTimeToken();
-    const digest = registerRequestDigest({
-      timeToken,
-      accountUsername,
-      accountEmail,
-    });
-    const payload = {
-      ...body,
-      vat,
-      postalCode,
-      timeToken,
-      digest,
-    };
-    const res = await backend.post("Account/User_Register", payload, {
+    const res = await backend.post("Account/User_VerifyAccount", body, {
       headers: {
         ...getBackendHeaders(req, { includeAuth: false }),
         "Content-Type": "application/json",
@@ -46,9 +21,9 @@ export async function POST(req: NextRequest) {
       });
     }
     const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("Error in /api/register:", message);
+    console.error("Error in /api/user-verify-account:", message);
     return NextResponse.json(
-      { message: "Registration failed" },
+      { message: "Verification failed" },
       { status: 500 },
     );
   }
