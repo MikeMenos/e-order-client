@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { isSameDay, format } from "date-fns";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -25,7 +26,33 @@ import { isPendingVisible } from "@/lib/dashboard";
 export default function OrdersOfTheDayPage() {
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
-  const [calendarRefDate, setCalendarRefDate] = useState<string | null>(null);
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  /** Calendar day (yyyy-MM-dd) kept in the URL so back from supplier restores this view. */
+  const calendarRefDate = useMemo(() => {
+    const raw = searchParams.get("refDate");
+    if (!raw || !/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+    return `${raw}T12:00:00.000Z`;
+  }, [searchParams]);
+
+  const setCalendarRefDate = useCallback(
+    (isoOrNull: string | null) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (isoOrNull == null) {
+        params.delete("refDate");
+      } else {
+        const day = isoOrNull.trim().slice(0, 10);
+        if (/^\d{4}-\d{2}-\d{2}$/.test(day)) {
+          params.set("refDate", day);
+        }
+      }
+      const q = params.toString();
+      router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
+    },
+    [pathname, router, searchParams],
+  );
   const [deleteConfirmSupplier, setDeleteConfirmSupplier] =
     useState<SuppliersListItem | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
