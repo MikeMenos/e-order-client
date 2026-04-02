@@ -12,26 +12,26 @@ import { REGISTER_VERIFY_STORAGE_KEY } from "@/lib/register-verification";
 export default function RegisterVerifyPage() {
   const router = useRouter();
   const { t, i18n } = useTranslation();
-  const [appUserUID, setAppUserUID] = useState<string | undefined | null>(
-    undefined,
-  );
+  const [registrationUID, setRegistrationUID] = useState<
+    string | undefined | null
+  >(undefined);
 
   useEffect(() => {
     try {
       const v = sessionStorage.getItem(REGISTER_VERIFY_STORAGE_KEY)?.trim();
       if (v) {
-        setAppUserUID(v);
+        setRegistrationUID(v);
         return;
       }
     } catch {
       /* ignore */
     }
-    setAppUserUID(null);
+    setRegistrationUID(null);
     toast.error(t("register_verify_missing_session"));
     router.replace("/register");
   }, [router, t]);
 
-  if (appUserUID === undefined) {
+  if (registrationUID === undefined) {
     return (
       <main
         className="flex min-h-dvh flex-col items-center justify-center bg-cover bg-center bg-no-repeat text-slate-900"
@@ -42,7 +42,7 @@ export default function RegisterVerifyPage() {
     );
   }
 
-  if (appUserUID === null) {
+  if (registrationUID === null) {
     return null;
   }
 
@@ -83,7 +83,7 @@ export default function RegisterVerifyPage() {
           <h1 className="mb-6 text-center text-2xl font-semibold text-slate-900">
             {t("register_verify_title")}
           </h1>
-          <RegisterVerifyStepper appUserUID={appUserUID} />
+          <RegisterVerifyStepper registrationUID={registrationUID} />
         </div>
       </div>
     </main>

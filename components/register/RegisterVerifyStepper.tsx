@@ -22,7 +22,11 @@ const stepMotion = {
 
 type Step = "email" | "sms";
 
-export function RegisterVerifyStepper({ appUserUID }: { appUserUID: string }) {
+export function RegisterVerifyStepper({
+  registrationUID,
+}: {
+  registrationUID: string;
+}) {
   const router = useRouter();
   const { t } = useTranslation();
   const [step, setStep] = useState<Step>("email");
@@ -72,7 +76,7 @@ export function RegisterVerifyStepper({ appUserUID }: { appUserUID: string }) {
   const submitEmail = (e: React.FormEvent) => {
     e.preventDefault();
     verifyMutation.mutate({
-      appUserUID,
+      registrationUID,
       smsCode: null,
       emailCode: emailCode.trim() || null,
     });
@@ -81,7 +85,7 @@ export function RegisterVerifyStepper({ appUserUID }: { appUserUID: string }) {
   const submitSms = (e: React.FormEvent) => {
     e.preventDefault();
     verifyMutation.mutate({
-      appUserUID,
+      registrationUID,
       smsCode: smsCode.trim() || null,
       emailCode: null,
     });

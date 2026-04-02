@@ -15,7 +15,7 @@ export interface ClearableInputProps
 export const ClearableInput = React.forwardRef<
   HTMLInputElement,
   ClearableInputProps
->(({ className, value, onChange, ...props }, ref) => {
+>(({ className, value, onChange, disabled, ...props }, ref) => {
   const hasValue =
     value != null && String(value).trim().length > 0;
 
@@ -32,10 +32,11 @@ export const ClearableInput = React.forwardRef<
         ref={ref}
         value={value}
         onChange={onChange}
-        className={cn(hasValue && "pr-10", className)}
+        disabled={disabled}
+        className={cn(hasValue && !disabled && "pr-10", className)}
         {...props}
       />
-      {hasValue && (
+      {hasValue && !disabled && (
         <button
           type="button"
           onClick={handleClear}

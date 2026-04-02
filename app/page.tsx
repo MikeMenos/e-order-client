@@ -306,14 +306,14 @@ export default function HomePage() {
               ? t("login_signing_in")
               : t("login_submit")}
           </Button>
-          {/* <p className="text-center text-sm text-slate-600">
+          <p className="text-center text-sm text-slate-600">
             <Link
               href="/register"
               className="font-medium text-brand-600 hover:text-brand-700 hover:underline"
             >
               {t("login_create_account")}
             </Link>
-          </p> */}
+          </p>
         </form>
         <StoreSelectDialog
           open={showRoleDialog && !!userResponse}
