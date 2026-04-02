@@ -5,6 +5,8 @@ const APP_VERSION = "1.0.0";
 
 /** Body sent to POST /api/register (digest/timeToken are added server-side). */
 export type RegisterPayload = {
+  /** From User_CheckVat; required when registration follows VAT lookup. */
+  registrationUID?: string;
   companyName: string;
   vat: string;
   address: string;
@@ -31,8 +33,12 @@ export type RegisterResponse = {
   message2?: string;
   message3?: string;
   extraActions?: string;
-  /** Present when registration succeeds; used for follow-up verification */
-  appUserUID?: string;
+  /** Returned by User_Register; used for User_VerifyAccount */
+  registrationUID?: string;
+  RegistrationUID?: string;
+  /** Legacy; prefer registrationUID */
+  appUserUID?: string | number;
+  AppUserUID?: string | number;
 };
 
 export function useRegister(options?: {

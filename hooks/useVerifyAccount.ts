@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { api } from "../lib/api";
 
 export type VerifyAccountPayload = {
-  appUserUID: string;
+  registrationUID: string;
   smsCode: string | null;
   emailCode: string | null;
 };

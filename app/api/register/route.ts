@@ -7,30 +7,45 @@ import {
   utcRegisterTimeToken,
 } from "../../../lib/register-digest";
 
+/** Node runtime required for `crypto.createHash` in register digest. */
+export const runtime = "nodejs";
+
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const accountUsername = String(body?.accountUsername ?? "").trim();
-    const accountEmail = String(body?.accountEmail ?? "").trim();
-    const vat = String(body?.vat ?? "")
+    const raw = await req.json();
+    const body =
+      raw && typeof raw === "object" && !Array.isArray(raw)
+        ? (raw as Record<string, unknown>)
+        : {};
+
+    const accountUsername = String(body.accountUsername ?? "").trim();
+    const accountEmail = String(body.accountEmail ?? "").trim();
+    const vat = String(body.vat ?? "")
       .replace(/\s/g, "")
       .trim();
-    const postalCode = String(body?.postalCode ?? "")
+    const postalCode = String(body.postalCode ?? "")
       .replace(/\s/g, "")
       .trim();
+
     const timeToken = utcRegisterTimeToken();
     const digest = registerRequestDigest({
       timeToken,
       accountUsername,
       accountEmail,
     });
+
+    const rest: Record<string, unknown> = { ...body };
+    delete rest.timeToken;
+    delete rest.digest;
+
     const payload = {
-      ...body,
+      ...rest,
       vat,
       postalCode,
       timeToken,
       digest,
     };
+
     const res = await backend.post("Account/User_Register", payload, {
       headers: {
         ...getBackendHeaders(req, { includeAuth: false }),
