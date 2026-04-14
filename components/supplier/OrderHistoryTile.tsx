@@ -91,12 +91,22 @@ export function OrderHistoryTile({
                 <dd className="inline">{formatOrderDate(o.dateCreated)}</dd>
               </div>
             )}
-            {o.deliveryDateText && (
+            {(o.desiredDeliveryDate ??
+              o.desiredDeliveryDateText ??
+              o.deliveryDate ??
+              o.deliveryDateText) && (
               <div>
                 <dt className="inline font-medium text-slate-500">
                   {t("order_delivery_date")}{" "}
                 </dt>
-                <dd className="inline">{o.deliveryDateText}</dd>
+                <dd className="inline">
+                  {formatOrderDate(
+                    (o.desiredDeliveryDate ??
+                      o.desiredDeliveryDateText ??
+                      o.deliveryDate ??
+                      o.deliveryDateText) as string,
+                  )}
+                </dd>
               </div>
             )}
             {o.nextAvailDeliveryMessage && (

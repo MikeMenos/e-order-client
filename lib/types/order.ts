@@ -27,8 +27,10 @@ export type OrderHistoryOrder = {
   productsCost: number | null;
   totalCost: number | null;
   totalItems: number | null;
-  deliveryDate: string | null;
-  deliveryDateText: string | null;
+  desiredDeliveryDate: string | null;
+  desiredDeliveryDateText?: string | null;
+  deliveryDate?: string | null;
+  deliveryDateText?: string | null;
   orderRefDate: string | null;
   orderRefDateText: string | null;
   dateCreated: string | null;
