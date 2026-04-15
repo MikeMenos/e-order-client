@@ -34,10 +34,6 @@ export function TileCard({
   "aria-label": ariaLabel,
   ...rest
 }: TileCardProps) {
-  const isNotificationsLabel = ["notifications", "ειδοποιήσεις"].includes(
-    label.trim().toLocaleLowerCase(),
-  );
-
   /* Icon area - smaller when horizontal */
   const iconContent = iconSrc ? (
     <div
@@ -60,7 +56,7 @@ export function TileCard({
         <span
           className={cn(
             "absolute flex h-8 min-w-8 items-center justify-center rounded-full bg-red-500 px-2 text-sm font-bold text-white",
-            isNotificationsLabel ? "-top-1 right-6" : "-top-1 right-0",
+            "-top-1 right-0",
           )}
           aria-hidden
         >
