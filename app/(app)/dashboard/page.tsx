@@ -7,10 +7,10 @@ import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { useAuthStore } from "@/stores/auth";
 import { useSuppliersListForToday } from "@/hooks/useDashboardData";
+import { useNotificationsCountUnread } from "@/hooks/useNotifications";
 import { isCountedForOrdersOfDayBadge } from "@/lib/dashboard";
 import { listVariants, listItemVariants } from "@/lib/motion";
 import { TileCard } from "@/components/ui/tile-card";
-import { NotificationsUnreadBanner } from "@/components/dashboard/NotificationsUnreadBanner";
 
 const cards = [
   {
@@ -24,15 +24,20 @@ const cards = [
     labelKey: "dashboard_card_orders_of_day",
   },
 
-  {
-    href: "/statistics",
-    iconSrc: "/assets/statistics.png",
-    labelKey: "dashboard_card_statistics",
-  },
+  // {
+  //   href: "/statistics",
+  //   iconSrc: "/assets/statistics.png",
+  //   labelKey: "dashboard_card_statistics",
+  // },
   {
     href: "/settings",
     iconSrc: "/assets/settings.png",
     labelKey: "dashboard_card_settings",
+  },
+  {
+    href: "/notifications",
+    iconSrc: "/assets/notifications.png",
+    labelKey: "nav_notifications",
   },
 ] as const;
 
@@ -41,6 +46,8 @@ export default function DashboardPage() {
   const router = useRouter();
   const logout = useAuthStore((s) => s.logout);
   const { suppliers } = useSuppliersListForToday();
+  const { data: unreadData } = useNotificationsCountUnread();
+  const unreadNotificationsCount = unreadData?.unreadCounter ?? 0;
   const todayOrdersCount = useMemo(
     () => suppliers.filter(isCountedForOrdersOfDayBadge).length,
     [suppliers],
@@ -82,6 +89,8 @@ export default function DashboardPage() {
               badgeNum={
                 href === "/orders-of-the-day" && todayOrdersCount > 0
                   ? todayOrdersCount
+                  : href === "/notifications" && unreadNotificationsCount > 0
+                    ? unreadNotificationsCount
                   : undefined
               }
             />

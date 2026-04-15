@@ -7,7 +7,7 @@ import Loading from "@/components/ui/loading";
 import { useNotificationsMarkAsRead } from "@/hooks/useNotifications";
 import { useNotificationsWithSearch } from "@/hooks/useNotificationsWithSearch";
 import { Button } from "@/components/ui/button";
-import { SearchInput } from "@/components/ui/search-input";
+// import { SearchInput } from "@/components/ui/search-input";
 import { NotificationCard } from "@/components/notifications/NotificationCard";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { BackToTopButton } from "@/components/ui/BackToTopButton";
@@ -49,12 +49,12 @@ export default function NotificationsPage() {
         </h1>
         {notifications.length > 0 && (
           <>
-            <SearchInput
+            {/* <SearchInput
               placeholder={t("notifications_search_placeholder")}
               value={searchQuery}
               onChange={setSearchQuery}
               className="h-9 border border-slate-300 bg-white px-3 py-2 shadow-sm focus-visible:ring-0"
-            />
+            /> */}
             {notifications.some((n) => !n.isRead) && (
               <div className="flex justify-center">
                 <Button
@@ -89,7 +89,6 @@ export default function NotificationsPage() {
             <NotificationCard
               key={item.notificationUID}
               item={item}
-              markAsReadLabel={t("notifications_mark_read")}
               isMarking={markAsReadMutation.isPending}
               onMarkAsRead={(uid) => markAsReadMutation.mutate(uid)}
             />
