@@ -23,21 +23,15 @@ const cards = [
     iconSrc: "/assets/orders-of-the-day.png",
     labelKey: "dashboard_card_orders_of_day",
   },
-
-  // {
-  //   href: "/statistics",
-  //   iconSrc: "/assets/statistics.png",
-  //   labelKey: "dashboard_card_statistics",
-  // },
-  {
-    href: "/settings",
-    iconSrc: "/assets/settings.png",
-    labelKey: "dashboard_card_settings",
-  },
   {
     href: "/notifications",
     iconSrc: "/assets/notifications.png",
     labelKey: "nav_notifications",
+  },
+  {
+    href: "/settings",
+    iconSrc: "/assets/settings.png",
+    labelKey: "dashboard_card_settings",
   },
 ] as const;
 
@@ -91,7 +85,7 @@ export default function DashboardPage() {
                   ? todayOrdersCount
                   : href === "/notifications" && unreadNotificationsCount > 0
                     ? unreadNotificationsCount
-                  : undefined
+                    : undefined
               }
             />
           </motion.div>
