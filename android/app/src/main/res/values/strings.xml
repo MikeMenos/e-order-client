@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">eorder</string>
+    <string name="title_activity_main">eorder</string>
+    <string name="package_name">gr.eorder.app</string>
+    <string name="custom_url_scheme">gr.eorder.app</string>
+</resources>

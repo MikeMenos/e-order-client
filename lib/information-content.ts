@@ -22,8 +22,8 @@ export const INFORMATION_ITEMS: Array<{
   { slug: "useful-instructions", labelKey: "info_useful_instructions" },
   { slug: "advantages", labelKey: "info_advantages" },
   { slug: "contact", labelKey: "info_contact" },
-  // { slug: "terms-of-use", labelKey: "info_terms_of_use" },
-  // { slug: "privacy-policy", labelKey: "info_privacy_policy" },
+  { slug: "terms-of-use", labelKey: "info_terms_of_use" },
+  { slug: "privacy-policy", labelKey: "info_privacy_policy" },
 ];
 
 const CONTENT: Record<InformationSlug, string> = {
@@ -101,9 +101,22 @@ const CONTENT: Record<InformationSlug, string> = {
 
 Email: info@eorder.gr`,
 
-  "terms-of-use": `Όροι χρήσης`,
+  "terms-of-use": `Όροι χρήσης
 
-  "privacy-policy": `Πολιτική απορρήτου`,
+Χρησιμοποιώντας την εφαρμογή eorder, αποδέχεστε ότι η πρόσβαση και χρήση της γίνεται σύμφωνα με τους ισχύοντες όρους συνεργασίας και τη νομοθεσία.
+
+Οι χρήστες οφείλουν να χρησιμοποιούν αληθή στοιχεία, να προστατεύουν τα διαπιστευτήριά τους και να αποφεύγουν ενέργειες που επηρεάζουν την ασφάλεια ή τη διαθεσιμότητα της υπηρεσίας.
+
+Η εταιρεία διατηρεί το δικαίωμα βελτίωσης ή τροποποίησης λειτουργιών όταν αυτό απαιτείται για επιχειρησιακούς, νομικούς ή τεχνικούς λόγους.`,
+
+  "privacy-policy": `Πολιτική απορρήτου
+
+Το eorder επεξεργάζεται δεδομένα που είναι απαραίτητα για τη λειτουργία της υπηρεσίας (όπως στοιχεία λογαριασμού, στοιχεία καταστήματος και ιστορικό παραγγελιών).
+
+Τα δεδομένα χρησιμοποιούνται αποκλειστικά για την παροχή, ασφάλεια και βελτίωση της υπηρεσίας και δεν διατίθενται σε μη εξουσιοδοτημένα μέρη.
+
+Για αιτήματα σχετικά με πρόσβαση, διόρθωση ή διαγραφή προσωπικών δεδομένων, επικοινωνήστε στο:
+Email: info@eorder.gr`,
 };
 
 export function getInformationContent(slug: string): string | null {

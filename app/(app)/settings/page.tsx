@@ -137,15 +137,6 @@ export default function SettingsPage() {
             />
           </motion.div>
 
-          <motion.div variants={listItemVariants}>
-            <TileCard
-              href="/notifications"
-              className="w-full"
-              iconSrc="/assets/notifications.png"
-              label={t("nav_notifications")}
-              iconColor="text-blue-600"
-            />
-          </motion.div>
         </motion.div>
       </div>
 

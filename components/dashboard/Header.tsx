@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronLeft, Home, Bell } from "lucide-react";
+import { Capacitor } from "@capacitor/core";
 import { useAuthStore, useEffectiveSelectedUser } from "../../stores/auth";
 import { useNavigationHistory } from "@/app/(app)/NavigationHistoryContext";
 import { useNotificationsCountUnread } from "@/hooks/useNotifications";
@@ -17,6 +18,8 @@ export function Header() {
   const effectiveUser = useEffectiveSelectedUser();
   const { canGoBack, goBack } = useNavigationHistory();
   const isDashboard = pathname === "/dashboard";
+  const isIosNative =
+    Capacitor.isNativePlatform() && Capacitor.getPlatform() === "ios";
 
   const storeTitle = useMemo(
     () =>
@@ -34,7 +37,11 @@ export function Header() {
   if (isDashboard) return null;
 
   return (
-    <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 bg-transparent px-3 py-2 w-full min-w-0 border-b-0 min-h-18">
+    <header
+      className={`grid grid-cols-[1fr_auto_1fr] items-center gap-3 bg-transparent px-3 pb-2 w-full min-w-0 border-b-0 min-h-18 ${
+        isIosNative ? "pt-12 md:pt-2" : "pt-2"
+      }`}
+    >
       <div className="flex justify-start">
         {canGoBack ? (
           <Button
