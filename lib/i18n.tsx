@@ -373,6 +373,22 @@ const resources: Resources = {
     info_contact: "Contact",
     info_terms_of_use: "Terms of use",
     info_privacy_policy: "Privacy policy",
+    legal_privacy_title: "Privacy Policy",
+    legal_privacy_p1:
+      "eorder processes personal and business data required to provide the ordering service, including account details, store data, and order history.",
+    legal_privacy_p2:
+      "Data is used only for service operation, security, and support. We do not disclose data to unauthorized third parties.",
+    legal_privacy_p3_before:
+      "For requests regarding access, correction, or deletion of personal data, contact us at",
+    legal_privacy_p3_after: ".",
+    legal_terms_title: "Terms of Use",
+    legal_terms_p1:
+      "By using eorder, you agree to use the service in accordance with applicable laws and your business agreement.",
+    legal_terms_p2:
+      "Users are responsible for protecting their account credentials and for the accuracy of the information submitted through the service.",
+    legal_terms_p3:
+      "We may update features and terms when required for legal, operational, or security reasons.",
+    legal_back_to_login: "Back to login",
     products_search_placeholder: "Search…",
     timetable_day: "Day",
     timetable_order_until: "Order until",
@@ -864,6 +880,22 @@ const resources: Resources = {
     info_contact: "Επικοινωνία",
     info_terms_of_use: "Όροι χρήσης",
     info_privacy_policy: "Πολιτική απορρήτου",
+    legal_privacy_title: "Πολιτική απορρήτου",
+    legal_privacy_p1:
+      "Η eorder επεξεργάζεται προσωπικά και επιχειρησιακά δεδομένα που απαιτούνται για την παροχή της υπηρεσίας παραγγελιών, συμπεριλαμβανομένων στοιχείων λογαριασμού, δεδομένων καταστήματος και ιστορικού παραγγελιών.",
+    legal_privacy_p2:
+      "Τα δεδομένα χρησιμοποιούνται αποκλειστικά για τη λειτουργία της υπηρεσίας, την ασφάλεια και την υποστήριξη. Δεν κοινοποιούμε δεδομένα σε μη εξουσιοδοτημένους τρίτους.",
+    legal_privacy_p3_before:
+      "Για αιτήματα σχετικά με την πρόσβαση, τη διόρθωση ή τη διαγραφή προσωπικών δεδομένων, επικοινωνήστε μαζί μας στο",
+    legal_privacy_p3_after: ".",
+    legal_terms_title: "Όροι χρήσης",
+    legal_terms_p1:
+      "Χρησιμοποιώντας την eorder, αποδέχεστε ότι θα χρησιμοποιείτε την υπηρεσία σύμφωνα με την ισχύουσα νομοθεσία και τη συμφωνία με την επιχείρησή σας.",
+    legal_terms_p2:
+      "Οι χρήστες ευθύνονται για την προστασία των διαπιστευτηρίων του λογαριασμού τους και για την ακρίβεια των πληροφοριών που υποβάλλονται μέσω της υπηρεσίας.",
+    legal_terms_p3:
+      "Ενδέχεται να ενημερώνουμε λειτουργίες και όρους όταν απαιτείται για νομικούς, λειτουργικούς ή λόγους ασφάλειας.",
+    legal_back_to_login: "Επιστροφή στη σύνδεση",
     timetable_day: "Ημέρα",
     timetable_order_until: "Παραγγελία έως",
     timetable_order_time_until: "Παραγγελία έως",
