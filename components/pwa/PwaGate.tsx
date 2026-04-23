@@ -2,7 +2,6 @@
 
 import { useEffect, type ReactNode } from "react";
 import { isIOS, isAndroid, isStandalone, isCapacitorNative } from "@/lib/pwa-env";
-import { useTranslation } from "@/lib/i18n";
 import { IOSInstallScreen } from "./IOSInstallScreen";
 import { AndroidInstallScreen } from "./AndroidInstallScreen";
 
@@ -14,8 +13,6 @@ const isDev =
   process.env.NEXT_PUBLIC_PWA_STRICT !== "true";
 
 export function PwaGate({ children }: { children: ReactNode }) {
-  const { t } = useTranslation();
-
   useEffect(() => {
     if (isDev) return;
     const checkVersion = async () => {
@@ -23,11 +20,7 @@ export function PwaGate({ children }: { children: ReactNode }) {
         const res = await fetch("/version.json?t=" + Date.now());
         const data = await res.json();
         const serverVersion = data?.version;
-        if (
-          serverVersion &&
-          serverVersion !== APP_VERSION &&
-          window.confirm(t("pwa_update_available"))
-        ) {
+        if (serverVersion && serverVersion !== APP_VERSION) {
           window.location.reload();
         }
       } catch {
@@ -35,7 +28,7 @@ export function PwaGate({ children }: { children: ReactNode }) {
       }
     };
     checkVersion();
-  }, [t]);
+  }, []);
 
   const onIOS = isIOS();
   const onAndroid = isAndroid();
