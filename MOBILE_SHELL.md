@@ -6,7 +6,7 @@ This project now includes a Capacitor shell for publishing to Google Play and Ap
 
 - Capacitor dependencies in `package.json`
 - `capacitor.config.ts` with:
-  - `appId: "gr.eorder.app"`
+  - `appId: "pro.eorder.mobile"`
   - `appName: "eorder"`
   - `webDir: "capacitor-web"` (tooling fallback)
   - Optional remote app loading via `CAPACITOR_SERVER_URL`

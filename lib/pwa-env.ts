@@ -21,3 +21,30 @@ export function isStandalone(): boolean {
     window.matchMedia("(display-mode: standalone)").matches
   );
 }
+
+type CapacitorWindow = Window & {
+  Capacitor?: {
+    isNativePlatform?: () => boolean;
+    getPlatform?: () => string;
+  };
+};
+
+/**
+ * Detects native Capacitor runtime (Android/iOS app) so we can bypass
+ * browser-only PWA install prompts inside store builds.
+ */
+export function isCapacitorNative(): boolean {
+  if (typeof window === "undefined") return false;
+  const capacitor = (window as CapacitorWindow).Capacitor;
+  if (!capacitor) return false;
+
+  if (typeof capacitor.isNativePlatform === "function") {
+    return capacitor.isNativePlatform();
+  }
+
+  if (typeof capacitor.getPlatform === "function") {
+    return capacitor.getPlatform() !== "web";
+  }
+
+  return false;
+}

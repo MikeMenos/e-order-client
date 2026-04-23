@@ -1,4 +1,4 @@
-package gr.eorder.app;
+package pro.eorder.mobile;
 
 import com.getcapacitor.BridgeActivity;
 

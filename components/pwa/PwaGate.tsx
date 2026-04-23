@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, type ReactNode } from "react";
-import { isIOS, isAndroid, isStandalone } from "@/lib/pwa-env";
+import { isIOS, isAndroid, isStandalone, isCapacitorNative } from "@/lib/pwa-env";
 import { useTranslation } from "@/lib/i18n";
 import { IOSInstallScreen } from "./IOSInstallScreen";
 import { AndroidInstallScreen } from "./AndroidInstallScreen";
@@ -40,12 +40,13 @@ export function PwaGate({ children }: { children: ReactNode }) {
   const onIOS = isIOS();
   const onAndroid = isAndroid();
   const standalone = isStandalone();
+  const nativeApp = isCapacitorNative();
 
-  if (!isDev && onIOS && !standalone) {
+  if (!isDev && !nativeApp && onIOS && !standalone) {
     return <IOSInstallScreen />;
   }
 
-  if (!isDev && onAndroid && !standalone) {
+  if (!isDev && !nativeApp && onAndroid && !standalone) {
     return <AndroidInstallScreen />;
   }
 
