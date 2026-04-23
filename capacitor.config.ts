@@ -3,10 +3,10 @@ import { config as loadEnv } from "dotenv";
 
 loadEnv();
 
-const serverUrl = process.env.CAPACITOR_SERVER_URL?.trim();
+const serverUrl = "https://mobile.e-order.pro/";
 
 const config: CapacitorConfig = {
-  appId: "gr.eorder.app",
+  appId: "pro.eorder.mobile",
   appName: "eorder",
   // Minimal local fallback required by Capacitor tooling even when server.url is used.
   webDir: "capacitor-web",
