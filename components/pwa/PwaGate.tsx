@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
-import { isIOS, isAndroid, isStandalone, isCapacitorNative } from "@/lib/pwa-env";
+import { type ReactNode } from "react";
+import {
+  isIOS,
+  isAndroid,
+  isStandalone,
+  isCapacitorNative,
+} from "@/lib/pwa-env";
 import { IOSInstallScreen } from "./IOSInstallScreen";
 import { AndroidInstallScreen } from "./AndroidInstallScreen";
-
-const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "1.0.0";
 
 /** In development we skip PWA strictness so you can test the app in the browser (e.g. localhost). */
 const isDev =
@@ -13,23 +16,6 @@ const isDev =
   process.env.NEXT_PUBLIC_PWA_STRICT !== "true";
 
 export function PwaGate({ children }: { children: ReactNode }) {
-  useEffect(() => {
-    if (isDev) return;
-    const checkVersion = async () => {
-      try {
-        const res = await fetch("/version.json?t=" + Date.now());
-        const data = await res.json();
-        const serverVersion = data?.version;
-        if (serverVersion && serverVersion !== APP_VERSION) {
-          window.location.reload();
-        }
-      } catch {
-        // ignore
-      }
-    };
-    checkVersion();
-  }, []);
-
   const onIOS = isIOS();
   const onAndroid = isAndroid();
   const standalone = isStandalone();
