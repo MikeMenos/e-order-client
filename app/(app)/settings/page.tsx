@@ -12,6 +12,7 @@ import { getApiErrorMessage } from "@/lib/api-error";
 import { listVariants, listItemVariants } from "@/lib/motion";
 import { StoreSelectDialog } from "@/components/auth/StoreSelectDialog";
 import { TileCard } from "@/components/ui/tile-card";
+import { getPushDebugInfo, initPushNotifications } from "@/lib/push-notifications";
 
 export default function SettingsPage() {
   const { t } = useTranslation();
@@ -19,8 +20,16 @@ export default function SettingsPage() {
   const queryClient = useQueryClient();
 
   const [storeDialogOpen, setStoreDialogOpen] = useState(false);
+  const [pushDebug, setPushDebug] = useState<{
+    native: boolean;
+    supported: boolean;
+    permission: string;
+    token: string | null;
+  } | null>(null);
+  const [pushDebugLoading, setPushDebugLoading] = useState(false);
 
   const [contactOpen, setContactOpen] = useState(false);
+  const isPushDebugEnabled = process.env.NODE_ENV !== "production";
 
   const {
     users,
@@ -73,6 +82,20 @@ export default function SettingsPage() {
     }
 
     router.push("/dashboard");
+  };
+
+  const refreshPushDebug = async () => {
+    setPushDebugLoading(true);
+    try {
+      await initPushNotifications();
+      const info = await getPushDebugInfo();
+      setPushDebug(info);
+    } catch (err) {
+      console.error("Push debug failed:", err);
+      toast.error("Failed to read push status.");
+    } finally {
+      setPushDebugLoading(false);
+    }
   };
 
   return (
@@ -138,6 +161,30 @@ export default function SettingsPage() {
           </motion.div>
 
         </motion.div>
+
+        {isPushDebugEnabled && (
+          <div className="mt-5 rounded-2xl bg-white p-4 shadow-sm">
+            <div className="mb-3 text-sm font-semibold text-slate-800">
+              Push debug (dev only)
+            </div>
+            <button
+              type="button"
+              onClick={refreshPushDebug}
+              className="mb-3 rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
+              disabled={pushDebugLoading}
+            >
+              {pushDebugLoading ? "Refreshing..." : "Refresh push status"}
+            </button>
+            <div className="space-y-1 text-xs text-slate-700">
+              <div>Native: {String(pushDebug?.native ?? false)}</div>
+              <div>Supported: {String(pushDebug?.supported ?? false)}</div>
+              <div>Permission: {pushDebug?.permission ?? "-"}</div>
+              <div className="break-all">
+                Token: {pushDebug?.token ?? "(not registered yet)"}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <StoreSelectDialog

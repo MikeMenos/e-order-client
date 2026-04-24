@@ -10,6 +10,7 @@ import { PwaInstallProvider } from "@/components/pwa/PwaInstallContext";
 import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
 import { initAuthFromCookies } from "../lib/cookies";
 import { ScrollToTop } from "./(app)/ScrollToTop";
+import { initPushNotifications } from "@/lib/push-notifications";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,6 +23,17 @@ const queryClient = new QueryClient({
 export function ClientApp({ children }: { children: ReactNode }) {
   useEffect(() => {
     initAuthFromCookies();
+  }, []);
+
+  useEffect(() => {
+    void initPushNotifications(() => {
+      void queryClient.invalidateQueries({
+        queryKey: ["notifications-count-unread"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["notifications-get-items"],
+      });
+    });
   }, []);
 
   return (
