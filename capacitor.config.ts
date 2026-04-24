@@ -7,7 +7,7 @@ const serverUrl = "https://mobile.e-order.pro/";
 
 const config: CapacitorConfig = {
   appId: "pro.eorder.mobile",
-  appName: "eorder",
+  appName: "Eorder",
   // Minimal local fallback required by Capacitor tooling even when server.url is used.
   webDir: "capacitor-web",
   ...(serverUrl

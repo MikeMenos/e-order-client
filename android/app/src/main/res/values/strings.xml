@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">eorder</string>
-    <string name="title_activity_main">eorder</string>
+    <string name="app_name">Eorder</string>
+    <string name="title_activity_main">Eorder</string>
     <string name="package_name">pro.eorder.mobile</string>
     <string name="custom_url_scheme">pro.eorder.mobile</string>
 </resources>
