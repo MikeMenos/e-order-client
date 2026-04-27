@@ -18,12 +18,7 @@ export function AppBackground() {
   const fromParam = searchParams?.get("from");
 
   useEffect(() => {
-    const isManageSupplierDetail =
-      pathname?.match(/^\/settings\/manage-suppliers\/[^/]+$/) != null;
-    const noScroll =
-      pathname === "/dashboard" ||
-      pathname === "/settings" ||
-      isManageSupplierDetail;
+    const noScroll = pathname === "/dashboard" || pathname === "/settings";
     if (noScroll) {
       document.documentElement.classList.add("overflow-hidden");
       document.body.classList.add("overflow-hidden");
