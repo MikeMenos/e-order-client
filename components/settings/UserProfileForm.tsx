@@ -172,6 +172,28 @@ export function UserProfileForm({
           />
         </div>
         <div className="space-y-1">
+          <label className="block font-medium text-slate-600">
+            {t("login_password")}
+          </label>
+          <PasswordInput
+            value={form.newPassword1}
+            onChange={(e) => onFormChange("newPassword1", e.target.value)}
+            disabled={isPending}
+            required
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="block font-medium text-slate-600">
+            {t("signup_password_confirm")}
+          </label>
+          <PasswordInput
+            value={form.newPassword2}
+            onChange={(e) => onFormChange("newPassword2", e.target.value)}
+            disabled={isPending}
+            required
+          />
+        </div>
+        <div className="space-y-1">
           <label className="block  font-medium text-slate-600">
             {t("signup_email")}
           </label>
@@ -262,28 +284,7 @@ export function UserProfileForm({
             </div>
           </div>
         )}
-        <div className="space-y-1">
-          <label className="block font-medium text-slate-600">
-            {t("login_password")}
-          </label>
-          <PasswordInput
-            value={form.newPassword1}
-            onChange={(e) => onFormChange("newPassword1", e.target.value)}
-            disabled={isPending}
-            required
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="block font-medium text-slate-600">
-            {t("signup_password_confirm")}
-          </label>
-          <PasswordInput
-            value={form.newPassword2}
-            onChange={(e) => onFormChange("newPassword2", e.target.value)}
-            disabled={isPending}
-            required
-          />
-        </div>
+
         <div className="flex gap-2 pt-2">
           <Button
             type="button"
