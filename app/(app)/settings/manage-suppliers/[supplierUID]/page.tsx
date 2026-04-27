@@ -132,7 +132,7 @@ export default function ManageSupplierMenuPage() {
 
   if (isLoading || !supplierUID) {
     return (
-      <main className="px-3 text-slate-900 overflow-hidden">
+      <main className="px-3 text-slate-900 overflow-y-auto overflow-x-hidden">
         <Loading spinnerOnly />
       </main>
     );
@@ -140,14 +140,14 @@ export default function ManageSupplierMenuPage() {
 
   if (isError || !selectedSupplier) {
     return (
-      <main className="px-3 text-slate-900 overflow-hidden">
+      <main className="px-3 text-slate-900 overflow-y-auto overflow-x-hidden">
         <ErrorMessage>{t("suppliers_error")}</ErrorMessage>
       </main>
     );
   }
 
   return (
-    <main className="px-3 text-slate-900 overflow-hidden">
+    <main className="px-3 text-slate-900">
       <div className="mx-auto flex max-w-xl flex-col mt-2">
         <div className="my-3 flex items-center justify-center gap-3">
           {selectedSupplier.logo && (

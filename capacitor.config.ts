@@ -3,7 +3,8 @@ import { config as loadEnv } from "dotenv";
 
 loadEnv();
 
-const serverUrl = "https://mobile.e-order.pro/";
+const envServerUrl = process.env.CAPACITOR_SERVER_URL?.trim();
+const serverUrl = envServerUrl || "https://mobile.e-order.pro/";
 
 const config: CapacitorConfig = {
   appId: "pro.eorder.mobile",

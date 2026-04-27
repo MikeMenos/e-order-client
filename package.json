@@ -13,6 +13,8 @@
     "cap:open:ios:local": "CAPACITOR_SERVER_URL=http://localhost:3000 cap sync ios && cap open ios",
     "cap:sync:android:local": "CAPACITOR_SERVER_URL=http://10.0.2.2:3000 cap sync android",
     "cap:open:android:local": "CAPACITOR_SERVER_URL=http://10.0.2.2:3000 cap sync android && cap open android",
+    "cap:sync:android:device:local": "CAPACITOR_SERVER_URL=http://192.168.1.194:3000 cap sync android",
+    "cap:open:android:device:local": "CAPACITOR_SERVER_URL=http://192.168.1.194:3000 cap sync android && cap open android",
     "cap:copy": "cap copy",
     "cap:open:android": "cap open android",
     "cap:open:ios": "cap open ios"

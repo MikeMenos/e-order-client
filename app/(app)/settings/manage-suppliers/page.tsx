@@ -89,7 +89,7 @@ export default function ManageSuppliersPage() {
           value={activeTab}
           onValueChange={(v) => setActiveTab(v as ManageSuppliersTabId)}
         >
-          <div className="overflow-x-auto overflow-y-hidden min-w-0 [-webkit-overflow-scrolling:touch]">
+          <div>
             <TabsList
               variant="line"
               className="inline-flex w-max min-w-full flex-nowrap justify-start rounded-lg bg-white p-0"
