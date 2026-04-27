@@ -402,6 +402,39 @@ export default function RegisterPage() {
               <h2 className="text-lg font-semibold text-slate-800 border-b border-slate-200 pb-2">
                 {t("store_register_section_account")}
               </h2>
+              <div className="space-y-1">
+                <ReqLabel htmlFor="accountUsername">
+                  {t("signup_account_username")}
+                </ReqLabel>
+                <ClearableInput
+                  id="accountUsername"
+                  value={accountUsername}
+                  onChange={(e) => setAccountUsername(e.target.value)}
+                  autoComplete="username"
+                />
+              </div>
+              <div className="space-y-1">
+                <ReqLabel htmlFor="accountPassword1">
+                  {t("signup_password")}
+                </ReqLabel>
+                <PasswordInput
+                  id="accountPassword1"
+                  value={accountPassword1}
+                  onChange={(e) => setAccountPassword1(e.target.value)}
+                  autoComplete="new-password"
+                />
+              </div>
+              <div className="space-y-1">
+                <ReqLabel htmlFor="accountPassword2">
+                  {t("signup_password_confirm")}
+                </ReqLabel>
+                <PasswordInput
+                  id="accountPassword2"
+                  value={accountPassword2}
+                  onChange={(e) => setAccountPassword2(e.target.value)}
+                  autoComplete="new-password"
+                />
+              </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1">
                   <ReqLabel htmlFor="accountFname">{t("first_name")}</ReqLabel>
@@ -445,39 +478,6 @@ export default function RegisterPage() {
                   value={accountMobile}
                   onChange={(e) => setAccountMobile(e.target.value)}
                   autoComplete="tel"
-                />
-              </div>
-              <div className="space-y-1">
-                <ReqLabel htmlFor="accountUsername">
-                  {t("signup_account_username")}
-                </ReqLabel>
-                <ClearableInput
-                  id="accountUsername"
-                  value={accountUsername}
-                  onChange={(e) => setAccountUsername(e.target.value)}
-                  autoComplete="username"
-                />
-              </div>
-              <div className="space-y-1">
-                <ReqLabel htmlFor="accountPassword1">
-                  {t("signup_password")}
-                </ReqLabel>
-                <PasswordInput
-                  id="accountPassword1"
-                  value={accountPassword1}
-                  onChange={(e) => setAccountPassword1(e.target.value)}
-                  autoComplete="new-password"
-                />
-              </div>
-              <div className="space-y-1">
-                <ReqLabel htmlFor="accountPassword2">
-                  {t("signup_password_confirm")}
-                </ReqLabel>
-                <PasswordInput
-                  id="accountPassword2"
-                  value={accountPassword2}
-                  onChange={(e) => setAccountPassword2(e.target.value)}
-                  autoComplete="new-password"
                 />
               </div>
             </section>
