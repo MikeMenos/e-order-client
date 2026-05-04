@@ -98,7 +98,7 @@ function RoleLevelDropdown({
         <Button
           variant="outline"
           disabled={disabled}
-          className="flex h-9 w-full justify-between border-slate-300 font-normal"
+          className="flex min-h-11 h-auto w-full justify-between border-slate-300 py-2.5 font-normal"
         >
           <span className="truncate">{label}</span>
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -205,7 +205,7 @@ export function UserProfileForm({
             required
           />
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-1">
             <label className="block  font-medium text-slate-600">
               {t("first_name")}
@@ -326,7 +326,7 @@ export function UserProfileForm({
             disabled={isPending}
           />
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-1">
             <label className="block  font-medium text-slate-600">
               {t("first_name")}

@@ -23,6 +23,14 @@ export default function PrivacyPolicyPage() {
             </a>
             {t("legal_privacy_p3_after")}
           </p>
+          <p>
+            <Link
+              href="/legal/account-deletion"
+              className="font-medium text-brand-600 underline"
+            >
+              {t("legal_privacy_account_deletion_link")}
+            </Link>
+          </p>
         </div>
 
         <div className="mt-8">

@@ -68,17 +68,25 @@ export default function AccountSettingsPage() {
     updateMutation.mutate(form);
   };
 
+  const proceedToAccountDeletion = () => {
+    router.push("/legal/account-deletion");
+  };
+
   const fullName = user
     ? [user.fname, user.lname].filter(Boolean).join(" ")
     : "";
 
   return (
-    <main className="pb-16 text-slate-900 px-2">
-      <div className="mx-auto max-w-2xl">
-        <div className="my-3">
-          <h1 className="text-xl font-bold text-slate-900 mt-2">{fullName}</h1>
+    <main className="safe-area-insets pb-16 text-slate-900 px-4 md:px-6">
+      <div className="mx-auto w-full max-w-2xl md:max-w-3xl lg:max-w-4xl">
+        <div className="my-4 md:my-6 px-2">
+          <h1 className="mt-2 text-xl font-bold text-slate-900 md:text-2xl">
+            {fullName}
+          </h1>
           {user?.username && (
-            <p className="mt-1 text-base text-slate-500">@{user.username}</p>
+            <p className="mt-1 text-base text-slate-500 md:text-lg">
+              @{user.username}
+            </p>
           )}
         </div>
 
@@ -159,28 +167,41 @@ export default function AccountSettingsPage() {
                     disabled={updateMutation.isPending}
                   />
                 </div>
-                <div className="py-2">
-                  <Button type="submit" disabled={updateMutation.isPending}>
+                <div className="py-3 md:py-4">
+                  <Button
+                    type="submit"
+                    disabled={updateMutation.isPending}
+                    className="min-h-11 px-8"
+                  >
                     {updateMutation.isPending
                       ? t("checkout_submitting")
                       : t("settings_save_account_settings")}
                   </Button>
                 </div>
               </form>
-              <div className="pt-2 border-t border-slate-100">
+              <div className="border-t border-slate-100 pt-5 md:pt-6 space-y-3">
+                <p className="text-sm md:text-base text-slate-600 leading-relaxed">
+                  {t("account_delete_section_hint")}
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={proceedToAccountDeletion}
+                  disabled={updateMutation.isPending}
+                  className="min-h-11 w-full border-red-200 text-red-700 hover:bg-red-50"
+                >
+                  {t("account_delete_button")}
+                </Button>
                 <Button
                   type="button"
                   onClick={() => {
                     logout();
                     router.replace("/");
                   }}
-                  className="group flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200/80 bg-red-500 px-6 py-4 text-base font-medium shadow-sm transition hover:border-red-200 hover:bg-red-50 text-white hover:text-red-700 active:scale-[0.99]"
+                  className="group flex min-h-11 w-full items-center justify-center gap-3 rounded-md border border-slate-200/80 bg-red-500 px-6 py-4 text-base font-medium text-white shadow-sm transition hover:bg-red-600 hover:text-white active:scale-[0.99]"
                   aria-label={t("logout")}
                 >
-                  <LogOut
-                    className="h-5 w-5 shrink-0 text-white transition-colors group-hover:text-red-600"
-                    aria-hidden
-                  />
+                  <LogOut className="h-5 w-5 shrink-0 text-white" aria-hidden />
                   {t("logout")}
                 </Button>
               </div>

@@ -259,9 +259,6 @@ export default function SupplierProductPage() {
             {/* Last orders - hidden for userTypeId 3 (Employee) */}
             {userTypeId !== 3 && (
               <DetailSection title={t("product_last_orders")}>
-                <p className="text-sm font-medium text-slate-600 mb-3">
-                  {t("product_last_orders")}
-                </p>
                 {lastOrders.length === 0 ? (
                   <p className="text-base text-slate-500">
                     {t("supplier_order_history_empty")}

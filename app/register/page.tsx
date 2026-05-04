@@ -193,10 +193,10 @@ export default function RegisterPage() {
 
   return (
     <main
-      className="flex min-h-dvh flex-col items-center bg-cover bg-center bg-no-repeat text-slate-900 pb-10"
+      className="safe-area-insets flex min-h-dvh flex-col items-center bg-cover bg-center bg-no-repeat text-slate-900 pb-12 md:pb-14"
       style={{ backgroundImage: "url(/assets/background.png)" }}
     >
-      <div className="flex w-full max-w-lg items-center justify-between p-4 pb-0">
+      <div className="flex w-full max-w-lg items-center justify-between p-4 pb-0 md:max-w-2xl xl:max-w-3xl md:px-6">
         <Button
           type="button"
           variant="outline"
@@ -227,11 +227,11 @@ export default function RegisterPage() {
           className="h-20 w-20 object-contain"
         />
       </div>
-      <div className="w-full max-w-lg px-4">
+      <div className="w-full max-w-lg px-4 md:max-w-2xl xl:max-w-3xl md:px-6">
         {step === "vat" ? (
           <form
             onSubmit={handleVatSubmit}
-            className="space-y-6 rounded-2xl border border-slate-200/80 p-6 shadow-lg bg-app-card"
+            className="space-y-6 rounded-2xl border border-slate-200/80 p-6 shadow-lg bg-app-card md:p-8 md:space-y-8"
           >
             <div>
               <h1 className="text-2xl font-semibold text-slate-900">
@@ -274,7 +274,7 @@ export default function RegisterPage() {
         ) : (
           <form
             onSubmit={handleSubmit}
-            className="space-y-6 rounded-2xl border border-slate-200/80 p-6 shadow-lg bg-app-card"
+            className="space-y-6 rounded-2xl border border-slate-200/80 p-6 shadow-lg bg-app-card md:p-8 md:space-y-8"
           >
             <div className="mb-3">
               <h1 className="text-2xl font-semibold text-slate-900">
