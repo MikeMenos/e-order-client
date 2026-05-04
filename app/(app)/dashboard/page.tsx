@@ -70,7 +70,7 @@ export default function DashboardPage() {
         {/* <NotificationsUnreadBanner /> */}
       </div>
       <motion.div
-        className="mx-auto grid max-w-xl auto-rows-fr grid-cols-2 gap-5 md:max-w-2xl md:gap-7 lg:max-w-none lg:gap-8"
+        className="px-2 mx-auto grid max-w-xl auto-rows-fr grid-cols-2 gap-5 md:max-w-2xl md:gap-7 lg:max-w-none lg:gap-8"
         variants={listVariants}
         initial="hidden"
         animate="visible"
