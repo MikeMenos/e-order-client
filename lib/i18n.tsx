@@ -360,6 +360,23 @@ const resources: Resources = {
     manage_suppliers_restore: "Restore",
     settings_edit_account_button: "Account",
     settings_save_account_settings: "Save",
+    account_delete_section_hint:
+      "Open the account deletion page to complete your request. You can return to this screen at any time.",
+    account_delete_button: "Delete account",
+    legal_account_deletion_back_to_account: "Back to account settings",
+    legal_account_deletion_title: "Account deletion",
+    legal_account_deletion_intro:
+      "You can request permanent deletion of your e-order user account and related personal data processed for the service. After we verify your request, we remove your credentials and discontinue app access tied to your account.",
+    legal_account_deletion_steps_title: "How to complete your request",
+    legal_account_deletion_step1:
+      "Use the button below to open an email draft to our team from your preferred mail app.",
+    legal_account_deletion_step2:
+      "Fill in your username, the email registered on your account, and store VAT number if applicable, then send the message.",
+    legal_account_deletion_step3:
+      "We process requests as soon as we can confirm you own the account. You will not be able to sign in once deletion has been processed.",
+    legal_account_deletion_note:
+      "Send the email from an address we can associate with your account when possible—it helps us confirm ownership without extra steps.",
+    legal_account_deletion_cta: "Open email draft",
     settings_create_user: "Create user",
     settings_all_suppliers: "All suppliers",
     settings_back_to_suppliers: "Back to suppliers",
@@ -381,6 +398,8 @@ const resources: Resources = {
     legal_privacy_p3_before:
       "For requests regarding access, correction, or deletion of personal data, contact us at",
     legal_privacy_p3_after: ".",
+    legal_privacy_account_deletion_link:
+      "How to permanently delete your e-order account →",
     legal_terms_title: "Terms of Use",
     legal_terms_p1:
       "By using eorder, you agree to use the service in accordance with applicable laws and your business agreement.",
@@ -867,6 +886,23 @@ const resources: Resources = {
     manage_suppliers_restore: "Επαναφορά",
     settings_edit_account_button: "Λογαριασμός",
     settings_save_account_settings: "Αποθήκευση",
+    account_delete_section_hint:
+      "Ανοίξτε τη σελίδα διαγραφής για να ολοκληρώσετε το αίτημα. Μπορείτε να επιστρέψτε εδώ οποτεδήποτε.",
+    account_delete_button: "Διαγραφή λογαριασμού",
+    legal_account_deletion_back_to_account: "Πίσω στις ρυθμίσεις λογαριασμού",
+    legal_account_deletion_title: "Διαγραφή λογαριασμού",
+    legal_account_deletion_intro:
+      "Μπορείτε να ζητήσετε τη μόνιμη διαγραφή του λογαριασμού χρήστη e-order και των σχετικών προσωπικών δεδομένων που επεξεργαζόμαστε για την υπηρεσία. Μετά την επαλήθευση του αιτήματος, αφαιρούμε τα διαπιστευτήρια και διακόπτουμε την πρόσβαση στην εφαρμογή που συνδέεται με τον λογαριασμό σας.",
+    legal_account_deletion_steps_title: "Πώς ολοκληρώνετε το αίτημα",
+    legal_account_deletion_step1:
+      "Χρησιμοποιήστε το παρακάτω κουμπί για να ανοίξει προσχέδιο email στην εφαρμογή αλληλογραφίας σας.",
+    legal_account_deletion_step2:
+      "Συμπληρώστε όνομα χρήστη, το email που είναι καταχωρημένο στον λογαριασμό σας και ΑΦΜ καταστήματος αν ισχύει, και στείλτε το μήνυμα.",
+    legal_account_deletion_step3:
+      "Επεξεργαζόμαστε τα αιτήματα μόλις επιβεβαιώσουμε ότι είστε κάτοχος του λογαριασμού. Μετά τη διαγραφή δεν θα μπορείτε να συνδεθείτε.",
+    legal_account_deletion_note:
+      "Στείλτε το email από διεύθυνση που μπορούμε να συσχετίσουμε με τον λογαριασμό σας όταν είναι δυνατό—διευκολύνει την επιβεβαίωση χωρίς επιπλέον βήματα.",
+    legal_account_deletion_cta: "Αποστολή email",
     settings_create_user: "Δημιουργία Χρήστη",
     settings_all_suppliers: "Όλοι οι Προμηθευτές",
     settings_back_to_suppliers: "Πίσω στους προμηθευτές",
@@ -888,6 +924,8 @@ const resources: Resources = {
     legal_privacy_p3_before:
       "Για αιτήματα σχετικά με την πρόσβαση, τη διόρθωση ή τη διαγραφή προσωπικών δεδομένων, επικοινωνήστε μαζί μας στο",
     legal_privacy_p3_after: ".",
+    legal_privacy_account_deletion_link:
+      "Οδηγίες μόνιμης διαγραφής λογαριασμού e-order →",
     legal_terms_title: "Όροι χρήσης",
     legal_terms_p1:
       "Χρησιμοποιώντας την eorder, αποδέχεστε ότι θα χρησιμοποιείτε την υπηρεσία σύμφωνα με την ισχύουσα νομοθεσία και τη συμφωνία με την επιχείρησή σας.",

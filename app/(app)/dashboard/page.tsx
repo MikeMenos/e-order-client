@@ -47,8 +47,8 @@ export default function DashboardPage() {
     [suppliers],
   );
   return (
-    <main className="text-slate-900 overflow-hidden px-2">
-      <div className="relative flex justify-center py-2">
+    <main className="safe-area-insets text-slate-900 overflow-hidden px-4 pb-10 md:px-8 lg:mx-auto lg:max-w-4xl lg:pb-14">
+      <div className="relative flex justify-center py-3 md:py-5">
         <button
           type="button"
           onClick={() => {
@@ -64,12 +64,13 @@ export default function DashboardPage() {
             width={150}
             height={150}
             priority
+            className="mx-auto md:w-[175px] md:h-auto lg:w-[188px]"
           />
         </button>
         {/* <NotificationsUnreadBanner /> */}
       </div>
       <motion.div
-        className="mx-auto grid grid-cols-2 auto-rows-fr gap-4 max-w-xl"
+        className="mx-auto grid max-w-xl auto-rows-fr grid-cols-2 gap-5 md:max-w-2xl md:gap-7 lg:max-w-none lg:gap-8"
         variants={listVariants}
         initial="hidden"
         animate="visible"

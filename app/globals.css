@@ -86,6 +86,13 @@ html {
   min-height: 100dvh;
 }
 
+/* Comfortable reading / tap targets when the app runs scaled on iPad and similar widths */
+@media (min-width: 768px) {
+  html {
+    font-size: 17px;
+  }
+}
+
 body {
   @apply text-slate-900;
   min-height: 100dvh;

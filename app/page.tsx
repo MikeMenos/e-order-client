@@ -238,10 +238,10 @@ export default function HomePage() {
 
   return (
     <main
-      className="flex min-h-dvh flex-col items-center bg-cover bg-center bg-no-repeat text-slate-900"
+      className="safe-area-insets flex min-h-dvh flex-col items-center bg-cover bg-center bg-no-repeat text-slate-900"
       style={{ backgroundImage: "url(/assets/background.png)" }}
     >
-      <div className="mb-6 mt-14 flex w-full max-w-sm items-center justify-center px-4 md:mt-10">
+      <div className="mb-6 mt-14 flex w-full max-w-sm items-center justify-center px-4 sm:max-w-md md:mt-12 md:max-w-lg md:mb-8">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/assets/logo.png"
@@ -249,10 +249,10 @@ export default function HomePage() {
           className="h-24 w-24 object-contain"
         />
       </div>
-      <div className="w-full max-w-sm space-y-6 px-4">
+      <div className="w-full max-w-sm space-y-6 px-4 pb-12 sm:max-w-md md:max-w-lg md:space-y-8">
         <form
           onSubmit={handleSubmit}
-          className="space-y-6 rounded-2xl border border-slate-200/80 p-6 shadow-lg bg-app-card"
+          className="space-y-6 rounded-2xl border border-slate-200/80 p-6 shadow-lg bg-app-card md:p-8 md:space-y-8"
         >
           <div className="flex items-center justify-between gap-2">
             <h1 className="text-2xl font-semibold text-slate-900">

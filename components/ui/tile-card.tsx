@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "./button";
 
 const tileCardClass =
-  "flex h-full w-full flex-col items-stretch gap-2 rounded-2xl bg-white pt-4 pb-3 px-2 shadow-sm transition hover:shadow-md hover:shadow-slate-200/50 active:scale-[0.99] cursor-pointer";
+  "flex h-full w-full flex-col items-stretch gap-2 rounded-2xl bg-white px-3 pt-5 pb-4 shadow-sm transition hover:shadow-md hover:shadow-slate-200/50 active:scale-[0.99] cursor-pointer md:gap-3 md:px-4 md:pt-6 md:pb-5";
 
 const tileCardClassHorizontal =
   "flex h-full w-full flex-row items-center gap-3 rounded-2xl bg-white p-3 shadow-sm transition hover:shadow-md hover:shadow-slate-200/50 active:scale-[0.99] cursor-pointer";
@@ -39,7 +39,7 @@ export function TileCard({
     <div
       className={cn(
         "relative flex shrink-0 items-center justify-center",
-        horizontal ? "h-12 w-12" : "h-28 min-h-0 w-full",
+        horizontal ? "h-12 w-12" : "h-28 min-h-[7rem] w-full md:min-h-[8.75rem]",
       )}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -68,7 +68,7 @@ export function TileCard({
     <div
       className={cn(
         "flex shrink-0 items-center justify-center",
-        horizontal ? "h-12 w-12" : "h-28 w-full",
+        horizontal ? "h-12 w-12" : "h-28 min-h-[7rem] w-full md:min-h-[8.75rem]",
       )}
     >
       <Icon
@@ -93,7 +93,7 @@ export function TileCard({
       >
         <span
           className={cn(
-            "text-lg font-semibold text-slate-900 leading-tight wrap-break-word text-wrap",
+            "text-lg md:text-xl font-semibold text-slate-900 leading-tight wrap-break-word text-wrap",
             horizontal ? "text-left" : "text-center",
           )}
         >

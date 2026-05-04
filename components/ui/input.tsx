@@ -81,7 +81,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         onFocus={handleFocus}
         onBlur={handleBlur}
         className={cn(
-          "flex h-9 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-lg text-slate-900 shadow-sm transition-colors placeholder:text-slate-400 focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60",
+          "flex min-h-11 h-11 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-lg text-slate-900 shadow-sm transition-colors placeholder:text-slate-400 focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 md:min-h-12 md:h-12",
           className,
         )}
         {...props}
