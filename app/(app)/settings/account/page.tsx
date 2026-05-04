@@ -97,7 +97,7 @@ export default function AccountSettingsPage() {
         )}
 
         {!profileQuery.isLoading && !profileQuery.error && user && (
-          <div className="space-y-4">
+          <div className="space-y-4 px-2">
             <DetailSection title={t("settings_edit_account_button")}>
               <form className="space-y-3" onSubmit={handleSubmit}>
                 <div className="space-y-1 mb-1">
