@@ -361,8 +361,13 @@ const resources: Resources = {
     settings_edit_account_button: "Account",
     settings_save_account_settings: "Save",
     account_delete_section_hint:
-      "Open the account deletion page to complete your request. You can return to this screen at any time.",
+      "Permanently delete your account. This action cannot be undone.",
     account_delete_button: "Delete account",
+    account_delete_confirm_title: "Delete account?",
+    account_delete_confirm_description:
+      "Are you sure you want to permanently delete your account?",
+    account_delete_success: "Your account was deleted successfully.",
+    account_delete_error: "Failed to delete account.",
     legal_account_deletion_back_to_account: "Back to account settings",
     legal_account_deletion_title: "Account deletion",
     legal_account_deletion_intro:
@@ -887,8 +892,13 @@ const resources: Resources = {
     settings_edit_account_button: "Λογαριασμός",
     settings_save_account_settings: "Αποθήκευση",
     account_delete_section_hint:
-      "Ανοίξτε τη σελίδα διαγραφής για να ολοκληρώσετε το αίτημα. Μπορείτε να επιστρέψτε εδώ οποτεδήποτε.",
+      "Διαγράψτε οριστικά τον λογαριασμό σας. Αυτή η ενέργεια δεν αναιρείται.",
     account_delete_button: "Διαγραφή λογαριασμού",
+    account_delete_confirm_title: "Διαγραφή λογαριασμού;",
+    account_delete_confirm_description:
+      "Είστε βέβαιοι ότι θέλετε να διαγράψετε οριστικά τον λογαριασμό σας;",
+    account_delete_success: "Ο λογαριασμός σας διαγράφηκε επιτυχώς.",
+    account_delete_error: "Η διαγραφή λογαριασμού απέτυχε.",
     legal_account_deletion_back_to_account: "Πίσω στις ρυθμίσεις λογαριασμού",
     legal_account_deletion_title: "Διαγραφή λογαριασμού",
     legal_account_deletion_intro:

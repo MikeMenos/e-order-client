@@ -172,6 +172,16 @@ export type MyProfileUpdateResponse = {
   detailedMessage?: string;
 };
 
+/** Response from Account/DeleteMyAccount */
+export type DeleteMyAccountResponse = {
+  statusCode?: number;
+  message?: string;
+  detailedMessage?: string;
+  message2?: string;
+  message3?: string;
+  extraActions?: string;
+};
+
 /** Supplier tile/card (e.g. for dashboard supplier list) */
 export type Supplier = {
   supplierUID: string;

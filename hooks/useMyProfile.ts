@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import type {
+  DeleteMyAccountResponse,
   MyProfileResponse,
   MyProfileUpdateRequest,
   MyProfileUpdateResponse,
@@ -36,6 +37,21 @@ export function useMyProfileUpdate(options?: {
       void queryClient.invalidateQueries({ queryKey: ["my-profile"] });
       onSuccess?.(data);
     },
+    onError,
+  });
+}
+
+export function useDeleteMyAccount(options?: {
+  onSuccess?: (data: DeleteMyAccountResponse) => void;
+  onError?: (err: unknown) => void;
+}) {
+  const { onSuccess, onError } = options ?? {};
+  return useMutation({
+    mutationFn: async () => {
+      const res = await api.post<DeleteMyAccountResponse>("/delete-my-account");
+      return res.data;
+    },
+    onSuccess,
     onError,
   });
 }
