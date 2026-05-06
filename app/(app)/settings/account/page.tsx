@@ -6,7 +6,11 @@ import toast from "react-hot-toast";
 import { LogOut } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import type { MyProfileUpdateRequest } from "@/lib/types/dashboard";
-import { useMyProfile, useMyProfileUpdate } from "@/hooks/useMyProfile";
+import {
+  useDeleteMyAccount,
+  useMyProfile,
+  useMyProfileUpdate,
+} from "@/hooks/useMyProfile";
 import { useAuthStore } from "@/stores/auth";
 import { DetailSection } from "@/components/ui/detail-section";
 import { ClearableInput } from "@/components/ui/clearable-input";
@@ -14,6 +18,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
 import { ErrorMessage } from "@/components/ui/error-message";
+import { AccountDeleteConfirmDialog } from "@/components/settings/AccountDeleteConfirmDialog";
 import { getApiErrorMessage } from "@/lib/api-error";
 
 export default function AccountSettingsPage() {
@@ -34,6 +39,18 @@ export default function AccountSettingsPage() {
     },
   });
 
+  const deleteAccountMutation = useDeleteMyAccount({
+    onSuccess: (data) => {
+      const msg = (data.message ?? "").toString().trim();
+      toast.success(msg || t("account_delete_success"));
+      logout();
+      router.replace("/");
+    },
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err, t("account_delete_error")));
+    },
+  });
+
   const [form, setForm] = useState<MyProfileUpdateRequest>({
     email: "",
     fname: "",
@@ -43,6 +60,7 @@ export default function AccountSettingsPage() {
     newPassword2: "",
     profilePic: "",
   });
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -68,8 +86,8 @@ export default function AccountSettingsPage() {
     updateMutation.mutate(form);
   };
 
-  const proceedToAccountDeletion = () => {
-    router.push("/legal/account-deletion");
+  const handleDeleteAccount = () => {
+    deleteAccountMutation.mutate();
   };
 
   const fullName = user
@@ -186,12 +204,22 @@ export default function AccountSettingsPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={proceedToAccountDeletion}
-                  disabled={updateMutation.isPending}
+                  onClick={() => setIsDeleteDialogOpen(true)}
+                  disabled={
+                    updateMutation.isPending || deleteAccountMutation.isPending
+                  }
                   className="min-h-11 w-full border-red-200 text-red-700 hover:bg-red-50"
                 >
-                  {t("account_delete_button")}
+                  {deleteAccountMutation.isPending
+                    ? t("checkout_submitting")
+                    : t("account_delete_button")}
                 </Button>
+                <AccountDeleteConfirmDialog
+                  open={isDeleteDialogOpen}
+                  onOpenChange={setIsDeleteDialogOpen}
+                  onConfirm={handleDeleteAccount}
+                  isDeleting={deleteAccountMutation.isPending}
+                />
                 <Button
                   type="button"
                   onClick={() => {
