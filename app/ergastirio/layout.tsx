@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ergastirioStore } from "@/stores/ergastirioStore";
+import { ERGASTIRIO_INTRO_SESSION_KEY } from "@/lib/ergastirio-constants";
 import ErgastirioAppShell from "@/components/ergastirio/AppShell";
+import { ErgastirioLoginIntro } from "@/components/ergastirio/LoginIntro";
 import { Spinner } from "@/components/ui/spinner";
 
 const ERGASTIRIO_SESSION_COOKIE = "ergastirio_session";
@@ -21,6 +23,7 @@ export default function ErgastirioLayout({
 }) {
   const router = useRouter();
   const [allowed, setAllowed] = useState<boolean | null>(null);
+  const [showLoginIntro, setShowLoginIntro] = useState(false);
 
   useEffect(() => {
     ergastirioStore.persist.rehydrate();
@@ -35,6 +38,13 @@ export default function ErgastirioLayout({
 
     if (hasCookie || hasStoreData) {
       setAllowed(true);
+      if (
+        typeof sessionStorage !== "undefined" &&
+        sessionStorage.getItem(ERGASTIRIO_INTRO_SESSION_KEY) === "1"
+      ) {
+        sessionStorage.removeItem(ERGASTIRIO_INTRO_SESSION_KEY);
+        setShowLoginIntro(true);
+      }
     } else {
       setAllowed(false);
       router.replace("/");
@@ -68,7 +78,12 @@ export default function ErgastirioLayout({
 
   return (
     <div className={`flex flex-col ${bgClass}`} style={bgStyle}>
-      <ErgastirioAppShell>{children}</ErgastirioAppShell>
+      {showLoginIntro && (
+        <ErgastirioLoginIntro onComplete={() => setShowLoginIntro(false)} />
+      )}
+      <ErgastirioAppShell className={showLoginIntro ? "invisible" : undefined}>
+        {children}
+      </ErgastirioAppShell>
     </div>
   );
 }
