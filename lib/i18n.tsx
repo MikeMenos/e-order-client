@@ -1048,7 +1048,7 @@ const resources: Resources = {
     erg_no_results: "Δεν βρέθηκαν αποτελέσματα.",
     erg_cart_aria: "Καλάθι",
     erg_footer_copyright:
-      "© 2026 E-order App. Με επιφύλαξη παντός δικαιώματος.",
+      "© 2026 Δια Χειρός Εργαστήριο. Με επιφύλαξη παντός δικαιώματος.",
     erg_clients_link: "ΠΕΛΑΤΕΣ",
     erg_logout: "Αποσύνδεση",
     erg_toast_order_sent: "Η παραγγελία σας έχει σταλθεί",

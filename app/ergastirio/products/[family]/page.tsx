@@ -19,6 +19,7 @@ export default function ErgastirioProductsFamilyPage() {
   const params = useParams();
   const router = useRouter();
   const family = decodeURIComponent(String(params?.family ?? "")).trim();
+  const hydrated = ergastirioStore((s) => s.hydrated);
   const currentBranch = ergastirioStore((s) => s.currentBranch);
   const trdr = currentBranch?.TRDR ? String(currentBranch.TRDR) : undefined;
   const branch = currentBranch?.BRANCH
@@ -26,10 +27,11 @@ export default function ErgastirioProductsFamilyPage() {
     : undefined;
 
   useEffect(() => {
-    if (!family || (!currentBranch?.TRDR && !currentBranch?.BRANCH)) {
+    if (!hydrated) return;
+    if (!family || !currentBranch?.BRANCH) {
       router.replace(`${ERGASTIRIO_BASE}/stores`);
     }
-  }, [family, currentBranch, router]);
+  }, [family, currentBranch, router, hydrated]);
 
   const { data, isLoading } = useGetProductsPerFamily({
     family,
