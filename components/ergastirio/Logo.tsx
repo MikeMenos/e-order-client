@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ergastirioStore } from "@/stores/ergastirioStore";
 import { getGroupChainIconSrc } from "@/lib/ergastirio-utils";
 import type { ClientResponse } from "@/lib/ergastirio-interfaces";
+import { ErgastirioBrandLogos } from "./BrandLogos";
 
 interface LogoProps {
   pathname: string;
@@ -26,17 +27,14 @@ export function ErgastirioLogo({ pathname, clientData }: LogoProps) {
           className="object-contain"
         />
       ) : (
-        <img
-          src="/assets/logo.png"
-          alt="E-Order"
-          width={60}
-          height={60}
-          className={`object-contain ${
+        <ErgastirioBrandLogos
+          size={52}
+          className={
             pathname.startsWith("/ergastirio/products") &&
             currentBranch?.GROUP_CHAIN !== "L'ARTIGIANO"
-              ? "hidden md:block"
-              : "block"
-          }`}
+              ? "hidden md:flex"
+              : undefined
+          }
         />
       )}
     </>

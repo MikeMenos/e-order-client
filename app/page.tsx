@@ -23,6 +23,7 @@ import {
 import { useTranslation } from "../lib/i18n";
 import { getApiErrorMessage } from "../lib/api-error";
 import { isApiSuccess, getApiResponseMessage } from "../lib/api-response";
+import { ERGASTIRIO_INTRO_SESSION_KEY } from "../lib/ergastirio-constants";
 
 const ERGASTIRIO_SESSION_COOKIE = "ergastirio_session";
 const ERGASTIRIO_SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
@@ -183,6 +184,7 @@ export default function HomePage() {
 
             if (typeof document !== "undefined") {
               document.cookie = `${ERGASTIRIO_SESSION_COOKIE}=1; path=/; max-age=${ERGASTIRIO_SESSION_MAX_AGE}; sameSite=lax`;
+              sessionStorage.setItem(ERGASTIRIO_INTRO_SESSION_KEY, "1");
             }
             toast.success(t("login_toast_success"));
             router.replace("/ergastirio");
