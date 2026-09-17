@@ -11,25 +11,22 @@ import "../../app/globals.css";
 
 export default function ErgastirioHomePage() {
   const router = useRouter();
+  const hydrated = ergastirioStore((s) => s.hydrated);
   const currentBranch = ergastirioStore((s) => s.currentBranch);
   const clientData = ergastirioStore((s) => s.clientData);
 
   const { data: families, isLoading } = useGetFamilies();
 
   useEffect(() => {
-    const count = clientData?.length ?? 0;
-    if (count > 1 && !currentBranch?.BRANCH) {
+    if (!hydrated) return;
+    if (!currentBranch?.BRANCH) {
       router.replace(`${ERGASTIRIO_BASE}/stores`);
       return;
     }
-    if (currentBranch?.GROUP_CHAIN === "L'ARTIGIANO") {
+    if (currentBranch.GROUP_CHAIN === "L'ARTIGIANO") {
       router.replace(`${ERGASTIRIO_BASE}/products/LARTIGIANO`);
-      return;
     }
-    if (count === 1) {
-      router.replace(`${ERGASTIRIO_BASE}/stores`);
-    }
-  }, [clientData?.length, currentBranch, router]);
+  }, [hydrated, clientData?.length, currentBranch, router]);
 
   if (isLoading) return <Loading />;
 
