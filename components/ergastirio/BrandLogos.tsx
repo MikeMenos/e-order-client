@@ -29,14 +29,14 @@ export function ErgastirioBrandLogos({
         alt=""
         width={size}
         height={size}
-        className={cn("object-contain", imageClassName)}
+        className={cn("h-12 w-auto max-h-12 object-contain sm:h-14 sm:max-h-14", imageClassName)}
       />
       <img
         src={ERGASTIRIO_LOGO_RIGHT}
         alt=""
         width={size}
         height={size}
-        className={cn("object-contain", imageClassName)}
+        className={cn("h-12 w-auto max-h-12 object-contain sm:h-14 sm:max-h-14", imageClassName)}
       />
     </div>
   );
