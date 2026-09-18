@@ -76,8 +76,8 @@ export default function ErgastirioHeader() {
     : undefined;
 
   return (
-    <header className="z-50 w-full max-w-full overflow-x-hidden border-b border-slate-200 bg-app-card/95 shadow-sm backdrop-blur">
-      <div className="flex h-16 w-full max-w-full min-w-0 items-center px-2 sm:px-4 justify-between overflow-x-hidden">
+    <header className="z-50 w-full max-w-full overflow-hidden border-b border-slate-200 bg-app-card/95 shadow-sm backdrop-blur">
+      <div className="flex min-h-16 w-full max-w-full min-w-0 items-center px-2 py-1.5 sm:px-4 justify-between overflow-hidden">
         <ErgastirioLogo pathname={pathname} clientData={clientDataForLogo} />
         {!isFetching && pathname !== `${ERGASTIRIO_BASE}/stores` && (
           <>
@@ -90,7 +90,9 @@ export default function ErgastirioHeader() {
               onBranchChange={handleBranchChange}
               onLogout={handleLogout}
             />
-            <div className="flex flex-1 min-w-0 overflow-x-auto items-center">
+            <div
+              className="flex flex-1 min-w-0 items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            >
               <ErgastirioProductCategoriesNav
                 families={families}
                 shouldShow={

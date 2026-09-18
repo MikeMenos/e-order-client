@@ -41,7 +41,7 @@ export function ErgastirioBranchSelector({
         {clientData?.data.length === 1 || !clientData ? (
           <Button
             variant="ghost"
-            className="min-w-0 cursor-default px-2 sm:px-3 py-2 sm:py-3 text-slate-700"
+            className="min-w-0 h-auto cursor-default px-2 sm:px-3 py-1 text-slate-700"
           >
             <BranchInfo
               branch={currentBranch}
@@ -75,7 +75,7 @@ export function ErgastirioBranchSelector({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="min-w-0 px-2 sm:px-3 py-2 sm:py-3 flex items-center gap-2 text-slate-700"
+                className="min-w-0 h-auto px-2 sm:px-3 py-1 flex items-center gap-2 text-slate-700"
               >
                 <BranchInfo
                   branch={currentBranch}

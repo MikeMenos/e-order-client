@@ -24,7 +24,7 @@ export function ErgastirioLogo({ pathname, clientData }: LogoProps) {
           alt="Group icon"
           width={80}
           height={80}
-          className="object-contain"
+          className="h-12 w-auto max-h-12 object-contain sm:h-14 sm:max-h-14"
         />
       ) : (
         <ErgastirioBrandLogos
